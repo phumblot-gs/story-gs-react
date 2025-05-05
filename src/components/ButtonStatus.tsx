@@ -39,9 +39,6 @@ export const ButtonStatus: React.FC<ButtonStatusProps> = ({
         `hover:bg-[var(--status-bg-color)]`,
         // Active state - should match hover state exactly
         isActive && "bg-[var(--status-bg-color)]",
-        // Apply white or black icon color for active and hover states
-        "hover:[&_svg]:fill-current",
-        isActive && "[&_svg]:fill-current",
         // Determine icon color based on status background
         useWhiteIcon ? 
           "hover:[&_svg]:text-white active:[&_svg]:text-white" : 
