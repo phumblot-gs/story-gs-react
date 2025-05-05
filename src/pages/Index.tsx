@@ -61,9 +61,9 @@ const Index = () => {
             <div className="grid grid-cols-3 gap-8 w-full">
               <div className="space-y-6">
                 <h3 className="text-lg font-medium">Default State</h3>
-                {Object.values(MediaStatus).map((status) => (
+                {Object.values(MediaStatus).filter(value => typeof value === 'number').map((status) => (
                   <div key={`check-${status}`} className="flex flex-col items-center gap-2">
-                    <ButtonStatus status={status} icon="Check" />
+                    <ButtonStatus status={status as MediaStatus} icon="Check" />
                     <span className="text-xs">{status}</span>
                   </div>
                 ))}
@@ -71,9 +71,9 @@ const Index = () => {
               
               <div className="space-y-6">
                 <h3 className="text-lg font-medium">Active State</h3>
-                {Object.values(MediaStatus).map((status) => (
+                {Object.values(MediaStatus).filter(value => typeof value === 'number').map((status) => (
                   <div key={`check-active-${status}`} className="flex flex-col items-center gap-2">
-                    <ButtonStatus status={status} icon="Check" isActive={true} />
+                    <ButtonStatus status={status as MediaStatus} icon="Check" isActive={true} />
                     <span className="text-xs">{status} (Active)</span>
                   </div>
                 ))}
@@ -81,9 +81,9 @@ const Index = () => {
               
               <div className="space-y-6">
                 <h3 className="text-lg font-medium">Disabled State</h3>
-                {Object.values(MediaStatus).map((status) => (
+                {Object.values(MediaStatus).filter(value => typeof value === 'number').map((status) => (
                   <div key={`check-disabled-${status}`} className="flex flex-col items-center gap-2">
-                    <ButtonStatus status={status} icon="Check" disabled={true} />
+                    <ButtonStatus status={status as MediaStatus} icon="Check" disabled={true} />
                     <span className="text-xs">{status} (Disabled)</span>
                   </div>
                 ))}
@@ -94,9 +94,9 @@ const Index = () => {
             <div className="grid grid-cols-3 gap-8 w-full mt-8">
               <div className="space-y-6">
                 <h3 className="text-lg font-medium">Default State (Reject)</h3>
-                {Object.values(MediaStatus).map((status) => (
+                {Object.values(MediaStatus).filter(value => typeof value === 'number').map((status) => (
                   <div key={`x-${status}`} className="flex flex-col items-center gap-2">
-                    <ButtonStatus status={status} icon="X" />
+                    <ButtonStatus status={status as MediaStatus} icon="X" />
                     <span className="text-xs">{status}</span>
                   </div>
                 ))}
@@ -104,9 +104,9 @@ const Index = () => {
               
               <div className="space-y-6">
                 <h3 className="text-lg font-medium">Active State (Reject)</h3>
-                {Object.values(MediaStatus).map((status) => (
+                {Object.values(MediaStatus).filter(value => typeof value === 'number').map((status) => (
                   <div key={`x-active-${status}`} className="flex flex-col items-center gap-2">
-                    <ButtonStatus status={status} icon="X" isActive={true} />
+                    <ButtonStatus status={status as MediaStatus} icon="X" isActive={true} />
                     <span className="text-xs">{status} (Active)</span>
                   </div>
                 ))}
@@ -114,9 +114,9 @@ const Index = () => {
               
               <div className="space-y-6">
                 <h3 className="text-lg font-medium">Disabled State (Reject)</h3>
-                {Object.values(MediaStatus).map((status) => (
+                {Object.values(MediaStatus).filter(value => typeof value === 'number').map((status) => (
                   <div key={`x-disabled-${status}`} className="flex flex-col items-center gap-2">
-                    <ButtonStatus status={status} icon="X" disabled={true} />
+                    <ButtonStatus status={status as MediaStatus} icon="X" disabled={true} />
                     <span className="text-xs">{status} (Disabled)</span>
                   </div>
                 ))}
@@ -127,9 +127,9 @@ const Index = () => {
             <div className="w-full mt-8">
               <h3 className="text-lg font-medium mb-4">Small Size Examples</h3>
               <div className="flex flex-wrap gap-4">
-                {Object.values(MediaStatus).slice(0, 5).map((status) => (
+                {Object.values(MediaStatus).filter(value => typeof value === 'number').slice(0, 5).map((status) => (
                   <div key={`small-${status}`} className="flex flex-col items-center gap-2">
-                    <ButtonStatus status={status} icon="Check" size="small" />
+                    <ButtonStatus status={status as MediaStatus} icon="Check" size="small" />
                     <span className="text-xs">{status} (Small)</span>
                   </div>
                 ))}
