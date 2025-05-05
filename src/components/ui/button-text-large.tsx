@@ -21,23 +21,30 @@ const ButtonTextLarge = React.forwardRef<HTMLButtonElement, ButtonTextLargeProps
        background === "black" ? "black" : 
        "grey") : "primary")
     
-    // Determine background color based on variant and disabled state
-    const getBgColor = () => {
-      if (disabled) return "bg-grey-strongest text-white"
-      
-      switch (effectiveVariant) {
+    // Determine button styling based on background, variant and states
+    const getButtonStyles = () => {
+      if (disabled) {
+        if (background === "white" || effectiveVariant === "primary" || effectiveVariant === "secondary") {
+          return "bg-white text-grey-stronger"
+        } else if (background === "black" || effectiveVariant === "black" || effectiveVariant === "blue") {
+          return "bg-black text-grey-stronger"
+        } else {
+          return "bg-grey text-grey-stronger"
+        }
+      }
+
+      switch (background || effectiveVariant) {
+        case "white":
         case "primary":
-          return "bg-white text-black"
         case "secondary":
-          return "bg-grey-lighter text-black"
+          return "bg-white text-black hover:bg-black hover:text-white active:bg-black active:text-blue-primary"
         case "black":
-          return "bg-black text-white"
         case "blue":
-          return "bg-black text-blue-primary"
+          return "bg-black text-white hover:bg-white hover:text-black active:bg-black active:text-blue-primary"
         case "grey":
-          return "bg-grey text-black"
-        case "disabled":
-          return "bg-grey-strongest text-white"
+          return "bg-grey text-black hover:bg-black hover:text-white active:bg-black active:text-blue-primary"
+        default:
+          return "bg-white text-black hover:bg-black hover:text-white"
       }
     }
 
@@ -46,8 +53,8 @@ const ButtonTextLarge = React.forwardRef<HTMLButtonElement, ButtonTextLargeProps
         <Button
           ref={ref}
           className={cn(
-            "relative rounded-full text-[0.8125rem] py-[10px] px-[15px] font-normal h-[30px] flex items-center justify-center font-custom",
-            getBgColor(),
+            "relative rounded-full text-[0.8125rem] py-[10px] px-[15px] font-normal h-[30px] flex items-center justify-center font-custom transition-colors duration-200",
+            getButtonStyles(),
             className
           )}
           disabled={disabled}
