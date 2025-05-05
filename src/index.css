@@ -6,21 +6,63 @@
 /* Définition des polices personnalisées */
 @layer base {
   @font-face {
-    font-family: 'MaPolicePersonnalisee';
-    src: url('/fonts/ma-police.woff2') format('woff2'),
-         url('/fonts/ma-police.woff') format('woff');
+    font-family: 'AvenirNextLTPro';
+    src: url('/fonts/AvenirNextLTPro-Regular.woff') format('woff'),
+         url('/fonts/AvenirNextLTPro-Regular.ttf') format('truetype');
     font-weight: 400;
     font-style: normal;
     font-display: swap;
   }
   
-  /* Vous pouvez ajouter d'autres variantes (bold, italic, etc.) */
   @font-face {
-    font-family: 'MaPolicePersonnalisee';
-    src: url('/fonts/ma-police-bold.woff2') format('woff2'),
-         url('/fonts/ma-police-bold.woff') format('woff');
+    font-family: 'AvenirNextLTPro';
+    src: url('/fonts/AvenirNextLTPro-Medium.woff') format('woff'),
+         url('/fonts/AvenirNextLTPro-Medium.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'AvenirNextLTPro';
+    src: url('/fonts/AvenirNextLTPro-Bold.woff') format('woff'),
+         url('/fonts/AvenirNextLTPro-Bold.ttf') format('truetype');
     font-weight: 700;
     font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'AvenirNextLTPro';
+    src: url('/fonts/AvenirNextLTPro-Italics.woff') format('woff'),
+         url('/fonts/AvenirNextLTPro-Italics.ttf') format('truetype');
+    font-weight: 400;
+    font-style: italic;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'AvenirNextLTPro';
+    src: url('/fonts/AvenirNextLTPro-BoldIt.woff') format('woff');
+    font-weight: 700;
+    font-style: italic;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'AvenirNextLTPro';
+    src: url('/fonts/AvenirNextLTPro-UltLt.woff') format('woff'),
+         url('/fonts/AvenirNextLTPro-UltLt.ttf') format('truetype');
+    font-weight: 200;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'AvenirNextLTPro';
+    src: url('/fonts/AvenirNextLTPro-HeavyIt.ttf') format('truetype');
+    font-weight: 900;
+    font-style: italic;
     font-display: swap;
   }
 
@@ -183,5 +225,6 @@
   body {
     @apply bg-background text-foreground;
     font-size: var(--font-size-base);
+    font-family: 'AvenirNextLTPro', sans-serif;
   }
 }

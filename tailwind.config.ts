@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -21,7 +20,7 @@ export default {
 		extend: {
 			// Ajout des polices personnalisées
 			fontFamily: {
-				'custom': ['MaPolicePersonnalisee', 'sans-serif'],
+				'custom': ['AvenirNextLTPro', 'sans-serif'],
 			},
 			colors: {
 				border: 'hsl(var(--border))',
