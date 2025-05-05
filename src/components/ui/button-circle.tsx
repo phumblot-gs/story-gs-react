@@ -136,6 +136,13 @@ const CustomUserIcon = () => (
   </svg>
 );
 
+// Add custom Star icon with the provided SVG
+const CustomStarIcon = () => (
+  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M6.42003 1.22L7.60039 3.75C7.66649 3.9 7.79869 4 7.95922 4.02L10.5938 4.43C10.9809 4.49 11.132 4.99 10.8582 5.28L8.95072 7.25C8.8374 7.36 8.79019 7.53 8.81852 7.69L9.27178 10.47C9.33788 10.88 8.93183 11.19 8.58245 11L6.22173 9.69001C6.08009 9.61001 5.91956 9.61001 5.77791 9.69001L3.4172 11C3.06781 11.19 2.66177 10.88 2.72787 10.47L3.18112 7.69C3.20945 7.53 3.1528 7.36 3.04892 7.25L1.14146 5.28C0.858178 4.99 1.01871 4.49 1.40586 4.43L4.04043 4.02C4.19151 4 4.32371 3.89 4.39925 3.75L5.57961 1.22C5.74958 0.850005 6.25006 0.850005 6.42947 1.22H6.42003Z" stroke="currentColor" strokeWidth="0.5"/>
+  </svg>
+);
+
 const ButtonCircle = React.forwardRef<HTMLButtonElement, ButtonCircleProps>(
   ({ className, variant, background, indicator, disabled, featured = false, size = "large", icon, letter, children, ...props }, ref) => {
     // Determine automatic variant based on background if variant is not explicitly provided
@@ -215,6 +222,8 @@ const ButtonCircle = React.forwardRef<HTMLButtonElement, ButtonCircleProps>(
           return <CustomSettingsIcon />;
         } else if (icon === "User") {
           return <CustomUserIcon />;
+        } else if (icon === "Star") {
+          return <CustomStarIcon />;
         } else {
           const IconComponent = LucideIcons[icon] as React.ElementType;
           return <IconComponent size={iconSize} className="max-w-[12px] max-h-[12px]" />;
