@@ -4,20 +4,28 @@ import { cn } from "@/lib/utils"
 import { Button, ButtonProps } from "@/components/ui/button"
 
 export type ButtonVariant = "primary" | "secondary" | "black" | "blue" | "grey" | "disabled"
+export type ButtonBackground = "white" | "black" | "grey"
 
 export interface ButtonTextLargeProps extends Omit<ButtonProps, 'variant'> {
   variant?: ButtonVariant
-  indicator?: number
+  background?: ButtonBackground
+  indicator?: boolean
   disabled?: boolean
 }
 
 const ButtonTextLarge = React.forwardRef<HTMLButtonElement, ButtonTextLargeProps>(
-  ({ className, variant = "primary", indicator, disabled, children, ...props }, ref) => {
+  ({ className, variant, background, indicator, disabled, children, ...props }, ref) => {
+    // Determine automatic variant based on background if variant is not explicitly provided
+    const effectiveVariant = variant || (background ? 
+      (background === "white" ? "primary" : 
+       background === "black" ? "black" : 
+       "grey") : "primary")
+    
     // Determine background color based on variant and disabled state
     const getBgColor = () => {
       if (disabled) return "bg-grey-strongest text-white"
       
-      switch (variant) {
+      switch (effectiveVariant) {
         case "primary":
           return "bg-white text-black"
         case "secondary":
@@ -48,10 +56,8 @@ const ButtonTextLarge = React.forwardRef<HTMLButtonElement, ButtonTextLargeProps
           {children}
         </Button>
         
-        {indicator !== undefined && (
-          <div className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-yellow flex items-center justify-center text-black text-xs">
-            {indicator}
-          </div>
+        {indicator && (
+          <div className="absolute -bottom-1 -right-1 w-[7px] h-[7px] rounded-full bg-yellow"></div>
         )}
       </div>
     )
