@@ -81,7 +81,7 @@ const ButtonTextSmall = React.forwardRef<HTMLButtonElement, ButtonTextSmallProps
         </Button>
         
         {indicator && (
-          <div className="absolute bottom-0 right-0 w-[5px] h-[5px] rounded-full bg-yellow"></div>
+          <div className="absolute bottom-0 right-0 w-[7px] h-[7px] rounded-full bg-yellow"></div>
         )}
       </div>
     )

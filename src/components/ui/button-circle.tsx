@@ -8,7 +8,7 @@ export type ButtonVariant = "primary" | "secondary" | "black" | "blue" | "grey" 
 export type ButtonBackground = "white" | "black" | "grey"
 export type ButtonSize = "small" | "large"
 
-export interface ButtonCircleProps extends Omit<ButtonProps, 'variant'> {
+export interface ButtonCircleProps extends Omit<ButtonProps, 'variant' | 'size'> {
   variant?: ButtonVariant
   background?: ButtonBackground
   indicator?: boolean
@@ -77,7 +77,7 @@ const ButtonCircle = React.forwardRef<HTMLButtonElement, ButtonCircleProps>(
     // Render the content based on what's provided (icon, letter, or children)
     const renderContent = () => {
       if (icon) {
-        const IconComponent = LucideIcons[icon];
+        const IconComponent = LucideIcons[icon] as React.ElementType;
         return <IconComponent size={iconSize} />;
       } else if (letter) {
         return <span className={size === "small" ? "text-xs" : "text-sm"}>{letter.charAt(0)}</span>;
@@ -102,7 +102,7 @@ const ButtonCircle = React.forwardRef<HTMLButtonElement, ButtonCircleProps>(
         </Button>
         
         {indicator && (
-          <div className="absolute bottom-0 right-0 w-[5px] h-[5px] rounded-full bg-yellow"></div>
+          <div className="absolute bottom-0 right-0 w-[7px] h-[7px] rounded-full bg-yellow"></div>
         )}
       </div>
     )
