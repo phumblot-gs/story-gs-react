@@ -3,7 +3,27 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Définition des polices personnalisées */
 @layer base {
+  @font-face {
+    font-family: 'MaPolicePersonnalisee';
+    src: url('/fonts/ma-police.woff2') format('woff2'),
+         url('/fonts/ma-police.woff') format('woff');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+  
+  /* Vous pouvez ajouter d'autres variantes (bold, italic, etc.) */
+  @font-face {
+    font-family: 'MaPolicePersonnalisee';
+    src: url('/fonts/ma-police-bold.woff2') format('woff2'),
+         url('/fonts/ma-police-bold.woff') format('woff');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+  }
+
   :root {
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
