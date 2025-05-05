@@ -101,29 +101,65 @@
   opacity: 0.8;
 }
 
+.status-blue {
+  fill: #74D4DA;
+}
+
+.status-khaki {
+  fill: #B7BB28;
+}
+
+.status-orange {
+  fill: #FF9900;
+}
+
+.status-red {
+  fill: #DD3733;
+}
+
+.status-grey {
+  fill: #EAEAEA;
+}
+
+.status-grey-strongest {
+  fill: #595959;
+}
+
 /* Button hover state - adjust status icon colors */
-button:hover .status-purple {
-  fill: currentColor;
-}
-
-button:hover .status-yellow {
-  fill: currentColor;
-}
-
-button:hover .status-green {
+button:hover .status-purple,
+button:hover .status-yellow,
+button:hover .status-green,
+button:hover .status-blue,
+button:hover .status-khaki,
+button:hover .status-orange,
+button:hover .status-red,
+button:hover .status-grey,
+button:hover .status-grey-strongest {
   fill: currentColor;
 }
 
 /* Button active/pressed state */
 button:active .status-purple,
 button:active .status-yellow,
-button:active .status-green {
+button:active .status-green,
+button:active .status-blue,
+button:active .status-khaki,
+button:active .status-orange,
+button:active .status-red,
+button:active .status-grey,
+button:active .status-grey-strongest {
   fill: #CDEDFF; /* blue-primary color for active state */
 }
 
 /* Button disabled state */
 button:disabled .status-purple,
 button:disabled .status-yellow,
-button:disabled .status-green {
+button:disabled .status-green,
+button:disabled .status-blue,
+button:disabled .status-khaki,
+button:disabled .status-orange,
+button:disabled .status-red,
+button:disabled .status-grey,
+button:disabled .status-grey-strongest {
   fill: #C1C1C1; /* grey-stronger color for disabled state */
 }
