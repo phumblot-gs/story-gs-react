@@ -53,6 +53,21 @@
     --padding-xlarge: 2rem;
     --padding-xxlarge: 3rem;
     --padding-xxxlarge: 4rem;
+    
+    /* Status color variables */
+    --status-purple-color: #A44C9F;
+    --status-yellow-color: #FFD331;
+    --status-green-color: #89CC52;
+    --status-blue-color: #74D4DA;
+    --status-khaki-color: #B7BB28;
+    --status-orange-color: #FF9900;
+    --status-red-color: #DD3733;
+    --status-grey-color: #EAEAEA;
+    --status-grey-strongest-color: #595959;
+    --status-validated-color: #89CC52;
+    --status-braun-color: #8B4513;
+    --status-transparent-color: transparent;
+    --status-error-color: #DD3733;
   }
 
   .dark {
@@ -89,50 +104,50 @@
 
 /* Status icon colors */
 .status-purple {
-  fill: #A44C9F;
+  fill: var(--status-purple-color);
 }
 
 .status-yellow {
-  fill: #FFD331;
+  fill: var(--status-yellow-color);
 }
 
 .status-green {
-  fill: #89CC52;
+  fill: var(--status-green-color);
   opacity: 0.8;
 }
 
 .status-blue {
-  fill: #74D4DA;
+  fill: var(--status-blue-color);
 }
 
 .status-khaki {
-  fill: #B7BB28;
+  fill: var(--status-khaki-color);
 }
 
 .status-orange {
-  fill: #FF9900;
+  fill: var(--status-orange-color);
 }
 
 .status-red {
-  fill: #DD3733;
+  fill: var(--status-red-color);
 }
 
 .status-grey {
-  fill: #EAEAEA;
+  fill: var(--status-grey-color);
 }
 
 .status-grey-strongest {
-  fill: #595959;
+  fill: var(--status-grey-strongest-color);
 }
 
 /* New status colors */
 .status-validated {
-  fill: #89CC52; /* Using the same color as status-green for validation */
+  fill: var(--status-validated-color); /* Using the same color as status-green for validation */
   opacity: 0.8;
 }
 
 .status-braun {
-  fill: #8B4513; /* Standard brown color */
+  fill: var(--status-braun-color); /* Standard brown color */
 }
 
 .status-transparent {
@@ -140,7 +155,7 @@
 }
 
 .status-error {
-  fill: #DD3733; /* Using the same color as status-red for error */
+  fill: var(--status-error-color); /* Using the same color as status-red for error */
 }
 
 /* Button hover state - adjust status icon colors */
