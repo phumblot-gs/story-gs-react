@@ -8,6 +8,21 @@ export type ButtonVariant = "primary" | "secondary" | "black" | "blue" | "grey" 
 export type ButtonBackground = "white" | "black" | "grey"
 export type ButtonSize = "small" | "large"
 
+// Define a list of approved pictogram icons to be used
+export type AllowedPictogram = 
+  | "Bell" 
+  | "Check" 
+  | "Plus" 
+  | "Minus" 
+  | "X" 
+  | "Mail" 
+  | "Heart" 
+  | "Star" 
+  | "Info" 
+  | "AlertCircle" 
+  | "Calendar" 
+  | "Clock"
+
 export interface ButtonCircleProps extends Omit<ButtonProps, 'variant' | 'size'> {
   variant?: ButtonVariant
   background?: ButtonBackground
@@ -15,7 +30,7 @@ export interface ButtonCircleProps extends Omit<ButtonProps, 'variant' | 'size'>
   disabled?: boolean
   featured?: boolean
   size?: ButtonSize
-  icon?: keyof typeof LucideIcons
+  icon?: keyof typeof LucideIcons | AllowedPictogram
   letter?: string
 }
 
@@ -72,13 +87,15 @@ const ButtonCircle = React.forwardRef<HTMLButtonElement, ButtonCircleProps>(
 
     // Determine size based on prop
     const sizeClasses = size === "small" ? "w-[20px] h-[20px]" : "w-[30px] h-[30px]";
-    const iconSize = size === "small" ? 12 : 16;
+    
+    // Maximum icon size is 12px regardless of button size to ensure pictograms never exceed 12x12px
+    const iconSize = 12;
 
     // Render the content based on what's provided (icon, letter, or children)
     const renderContent = () => {
       if (icon) {
         const IconComponent = LucideIcons[icon] as React.ElementType;
-        return <IconComponent size={iconSize} />;
+        return <IconComponent size={iconSize} className="max-w-[12px] max-h-[12px]" />;
       } else if (letter) {
         return <span className="text-sm leading-none">{letter.charAt(0)}</span>;
       } else {
