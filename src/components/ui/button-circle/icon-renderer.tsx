@@ -21,7 +21,7 @@ import {
  */
 export const renderIcon = (
   icon: keyof typeof LucideIcons | AllowedPictogram,
-  iconSize: number = 12
+  iconSize: number = 14
 ) => {
   // Check if it's a custom icon first
   if (icon === "Pencil") {
@@ -49,6 +49,6 @@ export const renderIcon = (
   } else {
     // It's a Lucide icon
     const IconComponent = LucideIcons[icon] as React.ElementType;
-    return <IconComponent size={iconSize} className="max-w-[12px] max-h-[12px]" />;
+    return <IconComponent size={iconSize} className="max-w-[14px] max-h-[14px]" />;
   }
 }
