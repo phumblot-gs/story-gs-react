@@ -1,14 +1,26 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import React from "react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import ButtonTextLargeExample from "@/components/examples/button-text-large-example"
 
 const Index = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
-      </div>
+    <div className="container mx-auto py-10">
+      <h1 className="text-4xl font-bold mb-8">Component Library</h1>
+      
+      <Card className="mb-8">
+        <CardHeader>
+          <CardTitle>ButtonTextLarge Component</CardTitle>
+          <CardDescription>
+            A circular button component with text and optional indicator, available in multiple variants.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <ButtonTextLargeExample />
+        </CardContent>
+      </Card>
     </div>
-  );
-};
+  )
+}
 
-export default Index;
+export default Index
