@@ -125,6 +125,24 @@
   fill: #595959;
 }
 
+/* New status colors */
+.status-validated {
+  fill: #89CC52; /* Using the same color as status-green for validation */
+  opacity: 0.8;
+}
+
+.status-braun {
+  fill: #8B4513; /* Standard brown color */
+}
+
+.status-transparent {
+  fill: transparent;
+}
+
+.status-error {
+  fill: #DD3733; /* Using the same color as status-red for error */
+}
+
 /* Button hover state - adjust status icon colors */
 button:hover .status-purple,
 button:hover .status-yellow,
@@ -134,7 +152,11 @@ button:hover .status-khaki,
 button:hover .status-orange,
 button:hover .status-red,
 button:hover .status-grey,
-button:hover .status-grey-strongest {
+button:hover .status-grey-strongest,
+button:hover .status-validated,
+button:hover .status-braun,
+button:hover .status-transparent,
+button:hover .status-error {
   fill: currentColor;
 }
 
@@ -147,7 +169,11 @@ button:active .status-khaki,
 button:active .status-orange,
 button:active .status-red,
 button:active .status-grey,
-button:active .status-grey-strongest {
+button:active .status-grey-strongest,
+button:active .status-validated,
+button:active .status-braun,
+button:active .status-transparent,
+button:active .status-error {
   fill: #CDEDFF; /* blue-primary color for active state */
 }
 
@@ -160,6 +186,10 @@ button:disabled .status-khaki,
 button:disabled .status-orange,
 button:disabled .status-red,
 button:disabled .status-grey,
-button:disabled .status-grey-strongest {
+button:disabled .status-grey-strongest,
+button:disabled .status-validated,
+button:disabled .status-braun,
+button:disabled .status-transparent,
+button:disabled .status-error {
   fill: #C1C1C1; /* grey-stronger color for disabled state */
 }
