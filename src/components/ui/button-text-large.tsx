@@ -70,7 +70,7 @@ const ButtonTextLarge = React.forwardRef<HTMLButtonElement, ButtonTextLargeProps
         <Button
           ref={ref}
           className={cn(
-            "relative rounded-full text-[0.8125rem] py-[10px] px-[15px] font-normal h-[30px] flex items-center justify-center font-custom transition-colors duration-200",
+            "relative rounded-full text-[0.8125rem] py-[10px] px-[15px] font-normal h-[30px] flex items-center leading-none justify-center font-custom transition-colors duration-200",
             getButtonStyles(),
             className
           )}
