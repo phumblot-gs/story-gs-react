@@ -70,7 +70,7 @@ const ButtonTextSmall = React.forwardRef<HTMLButtonElement, ButtonTextSmallProps
         <Button
           ref={ref}
           className={cn(
-            "relative rounded-full text-[0.8125rem] py-[6px] px-[10px] font-normal h-[20px] flex items-center leading-none justify-center font-custom transition-colors duration-200",
+            "relative rounded-full text-sm py-[6px] px-[10px] font-normal h-[20px] flex items-center leading-none justify-center font-custom transition-colors duration-200",
             getButtonStyles(),
             className
           )}
