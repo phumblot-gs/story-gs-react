@@ -24,6 +24,7 @@ export type AllowedPictogram =
   | "Clock"
   | "Tag"
   | "Pencil"
+  | "Sort"
 
 export interface ButtonCircleProps extends Omit<ButtonProps, 'variant' | 'size'> {
   variant?: ButtonVariant
@@ -61,6 +62,16 @@ const CustomBellIcon = () => (
     <path d="M2.24756 7.75681L1.23804 10.1952H5.99994H10.7618L9.75232 7.75681" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
     <path d="M6 0.23999V1.57439" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
     <path d="M9.75232 7.75679V5.39519C9.75232 3.29279 8.06661 1.56479 5.99994 1.56479C3.93327 1.56479 2.24756 3.28319 2.24756 5.39519V7.75679" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+// Add custom Sort icon with the provided SVG
+const CustomSortIcon = () => (
+  <svg width="12" height="13" viewBox="0 0 12 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M2.64001 11.76V0.23999" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M0.23999 9.56158L2.30399 11.6256C2.49599 11.8176 2.79359 11.8176 2.98559 11.6256L5.04959 9.56158" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M9.35999 0.23999V11.76" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M11.76 2.43839L9.69604 0.38399C9.50404 0.19199 9.20644 0.19199 9.01444 0.38399L6.95044 2.44799" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
 );
 
@@ -131,6 +142,8 @@ const ButtonCircle = React.forwardRef<HTMLButtonElement, ButtonCircleProps>(
           return <CustomTagIcon />;
         } else if (icon === "Bell") {
           return <CustomBellIcon />;
+        } else if (icon === "Sort") {
+          return <CustomSortIcon />;
         } else {
           const IconComponent = LucideIcons[icon] as React.ElementType;
           return <IconComponent size={iconSize} className="max-w-[12px] max-h-[12px]" />;
