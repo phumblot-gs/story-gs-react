@@ -4,11 +4,10 @@ import { MediaStatus, getMediaStatusColorClass, mediaStatusNames } from "@/utils
 import { ButtonCircle } from "@/components/ui/button-circle";
 import { cn } from "@/lib/utils";
 import { AllowedPictogram } from "@/components/ui/button-circle/types";
-import { renderIcon } from "@/components/ui/button-circle/icon-renderer";
 
 export interface ButtonStatusProps {
   status: MediaStatus;
-  icon: "Check" | "X"; // Changed from lowercase to match AllowedPictogram type
+  icon: "Check" | "X"; // Using capitalized names to match AllowedPictogram type
   isActive?: boolean;
   disabled?: boolean;
   onClick?: () => void;
@@ -37,7 +36,7 @@ export const ButtonStatus: React.FC<ButtonStatusProps> = ({
         `[&_svg]:${statusColorClass}`,
         // Hover state
         `hover:bg-[var(--status-bg-color)] hover:[&_svg]:fill-white hover:[&_svg]:!opacity-100`,
-        // Active state - added !opacity-100 to ensure full opacity
+        // Active state - should match hover state exactly
         isActive && "bg-[var(--status-bg-color)] [&_svg]:fill-white [&_svg]:!opacity-100",
         className
       )}
@@ -49,7 +48,7 @@ export const ButtonStatus: React.FC<ButtonStatusProps> = ({
         // Set CSS variables for dynamic colors
         "--status-bg-color": `var(--${statusColorClass}-color)`,
       } as React.CSSProperties}
-      icon={icon as AllowedPictogram} // Use the icon directly since it now matches AllowedPictogram type
+      icon={icon as AllowedPictogram}
     />
   );
 };
