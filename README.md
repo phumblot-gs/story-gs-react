@@ -1,8 +1,69 @@
+
 # Welcome to your Lovable project
 
 ## Project info
 
 **URL**: https://lovable.dev/projects/b47d4709-f8a9-430e-9c62-c4333e7b5f50
+
+## Components
+
+### Media Status Components
+
+The project includes components for handling media statuses:
+
+#### StatusIndicator
+
+A visual indicator that shows the status of a media item using color-coded dots:
+
+```jsx
+import StatusIndicator from "@/components/StatusIndicator";
+import { MediaStatus } from "@/utils/mediaStatus";
+
+// Example usage
+<StatusIndicator status={MediaStatus.VALIDATED} size="md" />
+```
+
+#### ButtonStatus
+
+Buttons that allow changing the status of a media item, with appropriate color coding and icons:
+
+```jsx
+import ButtonStatus from "@/components/ButtonStatus";
+import { MediaStatus } from "@/utils/mediaStatus";
+
+// Example usage - Approve button
+<ButtonStatus 
+  status={MediaStatus.VALIDATED} 
+  icon="check"
+  onClick={() => handleStatusChange(MediaStatus.VALIDATED)} 
+/>
+
+// Example usage - Reject button
+<ButtonStatus 
+  status={MediaStatus.REFUSED_1} 
+  icon="x"
+  onClick={() => handleStatusChange(MediaStatus.REFUSED_1)} 
+/>
+
+// Active state (when media already has this status)
+<ButtonStatus 
+  status={MediaStatus.VALIDATED} 
+  icon="check"
+  isActive={true}
+/>
+
+// Disabled state
+<ButtonStatus 
+  status={MediaStatus.VALIDATED} 
+  icon="check"
+  disabled={true}
+/>
+```
+
+The ButtonStatus component has three states:
+- Default: White background with status-colored icon
+- Hover/Active: Status-colored background with white icon
+- Disabled: Grey styling
 
 ## How can I edit this code?
 
