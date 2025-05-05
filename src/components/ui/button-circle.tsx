@@ -1,3 +1,4 @@
+
 import * as React from "react"
 import { cn } from "@/lib/utils"
 import { Button, ButtonProps } from "@/components/ui/button"
@@ -25,6 +26,7 @@ export type AllowedPictogram =
   | "Pencil"
   | "Sort"
   | "Help"
+  | "Logout"
 
 export interface ButtonCircleProps extends Omit<ButtonProps, 'variant' | 'size'> {
   variant?: ButtonVariant
@@ -81,6 +83,15 @@ const CustomHelpIcon = () => (
     <path d="M5.99999 11.76C9.18115 11.76 11.76 9.18115 11.76 5.99999C11.76 2.81883 9.18115 0.23999 5.99999 0.23999C2.81883 0.23999 0.23999 2.81883 0.23999 5.99999C0.23999 9.18115 2.81883 11.76 5.99999 11.76Z" stroke="currentColor" strokeWidth="0.5" strokeMiterlimit="10" strokeLinecap="round"/>
     <path d="M6.00006 8.832C6.18563 8.832 6.33606 8.68157 6.33606 8.496C6.33606 8.31044 6.18563 8.16 6.00006 8.16C5.81449 8.16 5.66406 8.31044 5.66406 8.496C5.66406 8.68157 5.81449 8.832 6.00006 8.832Z" fill="currentColor"/>
     <path d="M4.80005 4.80001C4.80005 4.13761 5.33765 3.60001 6.00005 3.60001C6.66245 3.60001 7.20005 4.13761 7.20005 4.80001C7.20005 5.46241 6.00005 7.20961 6.00005 7.20961" stroke="currentColor" strokeWidth="0.5" strokeMiterlimit="10" strokeLinecap="round"/>
+  </svg>
+);
+
+// Add custom Logout icon with the provided SVG
+const CustomLogoutIcon = () => (
+  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M6.57599 8.40959V9.83999C6.57599 10.896 5.71199 11.76 4.65599 11.76H2.15999C1.10399 11.76 0.23999 10.896 0.23999 9.83999V2.15999C0.23999 1.10399 1.10399 0.23999 2.15999 0.23999H4.65599C5.71199 0.23999 6.57599 1.10399 6.57599 2.15999V3.59039" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M11.76 6H3.40796" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M9.552 8.40961L11.616 6.34561C11.808 6.15361 11.808 5.85601 11.616 5.66401L9.552 3.60001" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
 );
 
@@ -155,6 +166,8 @@ const ButtonCircle = React.forwardRef<HTMLButtonElement, ButtonCircleProps>(
           return <CustomSortIcon />;
         } else if (icon === "Help") {
           return <CustomHelpIcon />;
+        } else if (icon === "Logout") {
+          return <CustomLogoutIcon />;
         } else {
           const IconComponent = LucideIcons[icon] as React.ElementType;
           return <IconComponent size={iconSize} className="max-w-[12px] max-h-[12px]" />;
