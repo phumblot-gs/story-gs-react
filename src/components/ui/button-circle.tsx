@@ -1,4 +1,3 @@
-
 import * as React from "react"
 import { cn } from "@/lib/utils"
 import { Button, ButtonProps } from "@/components/ui/button"
@@ -25,6 +24,7 @@ export type AllowedPictogram =
   | "Tag"
   | "Pencil"
   | "Sort"
+  | "Help"
 
 export interface ButtonCircleProps extends Omit<ButtonProps, 'variant' | 'size'> {
   variant?: ButtonVariant
@@ -72,6 +72,15 @@ const CustomSortIcon = () => (
     <path d="M0.23999 9.56158L2.30399 11.6256C2.49599 11.8176 2.79359 11.8176 2.98559 11.6256L5.04959 9.56158" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
     <path d="M9.35999 0.23999V11.76" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
     <path d="M11.76 2.43839L9.69604 0.38399C9.50404 0.19199 9.20644 0.19199 9.01444 0.38399L6.95044 2.44799" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+// Add custom Help icon with the provided SVG
+const CustomHelpIcon = () => (
+  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M5.99999 11.76C9.18115 11.76 11.76 9.18115 11.76 5.99999C11.76 2.81883 9.18115 0.23999 5.99999 0.23999C2.81883 0.23999 0.23999 2.81883 0.23999 5.99999C0.23999 9.18115 2.81883 11.76 5.99999 11.76Z" stroke="currentColor" strokeWidth="0.5" strokeMiterlimit="10" strokeLinecap="round"/>
+    <path d="M6.00006 8.832C6.18563 8.832 6.33606 8.68157 6.33606 8.496C6.33606 8.31044 6.18563 8.16 6.00006 8.16C5.81449 8.16 5.66406 8.31044 5.66406 8.496C5.66406 8.68157 5.81449 8.832 6.00006 8.832Z" fill="currentColor"/>
+    <path d="M4.80005 4.80001C4.80005 4.13761 5.33765 3.60001 6.00005 3.60001C6.66245 3.60001 7.20005 4.13761 7.20005 4.80001C7.20005 5.46241 6.00005 7.20961 6.00005 7.20961" stroke="currentColor" strokeWidth="0.5" strokeMiterlimit="10" strokeLinecap="round"/>
   </svg>
 );
 
@@ -144,6 +153,8 @@ const ButtonCircle = React.forwardRef<HTMLButtonElement, ButtonCircleProps>(
           return <CustomBellIcon />;
         } else if (icon === "Sort") {
           return <CustomSortIcon />;
+        } else if (icon === "Help") {
+          return <CustomHelpIcon />;
         } else {
           const IconComponent = LucideIcons[icon] as React.ElementType;
           return <IconComponent size={iconSize} className="max-w-[12px] max-h-[12px]" />;
