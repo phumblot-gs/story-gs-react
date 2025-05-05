@@ -35,9 +35,9 @@ export const ButtonStatus: React.FC<ButtonStatusProps> = ({
         // Default state
         `[&_svg]:${statusColorClass}`,
         // Hover state
-        `hover:bg-[var(--status-bg-color)] hover:[&_svg]:fill-white hover:[&_svg]:!opacity-100`,
+        `hover:bg-[var(--status-bg-color)]`,
         // Active state - should match hover state exactly
-        isActive && "bg-[var(--status-bg-color)] [&_svg]:fill-white [&_svg]:!opacity-100",
+        isActive && "bg-[var(--status-bg-color)]",
         className
       )}
       size={size}
