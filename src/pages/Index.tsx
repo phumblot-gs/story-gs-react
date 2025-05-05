@@ -2,6 +2,7 @@
 import React from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import ButtonTextLargeExample from "@/components/examples/button-text-large-example"
+import ButtonVariantsExample from "@/components/examples/button-variants-example"
 
 const Index = () => {
   return (
@@ -17,6 +18,18 @@ const Index = () => {
         </CardHeader>
         <CardContent>
           <ButtonTextLargeExample />
+        </CardContent>
+      </Card>
+
+      <Card className="mb-8">
+        <CardHeader>
+          <CardTitle>Button Variants</CardTitle>
+          <CardDescription>
+            Additional button variants: small text buttons and circular buttons with icons or letters.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <ButtonVariantsExample />
         </CardContent>
       </Card>
     </div>
