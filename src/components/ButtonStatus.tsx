@@ -2,12 +2,13 @@
 import React from "react";
 import { MediaStatus, getMediaStatusColorClass, mediaStatusNames } from "@/utils/mediaStatus";
 import { ButtonCircle } from "@/components/ui/button-circle";
-import { Check, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { AllowedPictogram } from "@/components/ui/button-circle/types";
+import { renderIcon } from "@/components/ui/button-circle/icon-renderer";
 
 export interface ButtonStatusProps {
   status: MediaStatus;
-  icon: "check" | "x";
+  icon: "Check" | "X"; // Changed from lowercase to match AllowedPictogram type
   isActive?: boolean;
   disabled?: boolean;
   onClick?: () => void;
@@ -28,14 +29,6 @@ export const ButtonStatus: React.FC<ButtonStatusProps> = ({
   const statusColorClass = getMediaStatusColorClass(status);
   const statusName = mediaStatusNames[status];
   
-  // Determine icon component
-  const IconComponent = icon === "check" ? Check : X;
-  
-  // CSS variables to control colors based on state
-  // Default state: white background, status color for the icon
-  // Hover/Active state: status color background, white icon
-  // Disabled state: grey background, grey icon
-  
   return (
     <ButtonCircle
       className={cn(
@@ -43,22 +36,21 @@ export const ButtonStatus: React.FC<ButtonStatusProps> = ({
         // Default state
         `[&_svg]:${statusColorClass}`,
         // Hover state
-        `hover:bg-[var(--status-bg-color)] hover:[&_svg]:fill-white`,
-        // Active state
-        isActive && "bg-[var(--status-bg-color)] [&_svg]:fill-white",
+        `hover:bg-[var(--status-bg-color)] hover:[&_svg]:fill-white hover:[&_svg]:!opacity-100`,
+        // Active state - added !opacity-100 to ensure full opacity
+        isActive && "bg-[var(--status-bg-color)] [&_svg]:fill-white [&_svg]:!opacity-100",
         className
       )}
       size={size}
       disabled={disabled}
       onClick={onClick}
-      aria-label={`${icon === "check" ? "Approve" : "Reject"} - ${statusName}`}
+      aria-label={`${icon === "Check" ? "Approve" : "Reject"} - ${statusName}`}
       style={{
         // Set CSS variables for dynamic colors
         "--status-bg-color": `var(--${statusColorClass}-color)`,
       } as React.CSSProperties}
-    >
-      <IconComponent className="w-3 h-3" />
-    </ButtonCircle>
+      icon={icon as AllowedPictogram} // Use the icon directly since it now matches AllowedPictogram type
+    />
   );
 };
 

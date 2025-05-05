@@ -1,4 +1,3 @@
-
 import React from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import ButtonTextLargeExample from "@/components/examples/button-text-large-example"
@@ -58,37 +57,37 @@ const Index = () => {
         <CardContent>
           <div className="flex flex-wrap gap-4 p-4">
             <div className="flex flex-col items-center gap-2">
-              <ButtonStatus status={MediaStatus.VALIDATED} icon="check" />
+              <ButtonStatus status={MediaStatus.VALIDATED} icon="Check" />
               <span className="text-xs">Validate (Default)</span>
             </div>
             
             <div className="flex flex-col items-center gap-2">
-              <ButtonStatus status={MediaStatus.VALIDATED} icon="check" isActive={true} />
+              <ButtonStatus status={MediaStatus.VALIDATED} icon="Check" isActive={true} />
               <span className="text-xs">Validate (Active)</span>
             </div>
             
             <div className="flex flex-col items-center gap-2">
-              <ButtonStatus status={MediaStatus.VALIDATED} icon="check" disabled={true} />
+              <ButtonStatus status={MediaStatus.VALIDATED} icon="Check" disabled={true} />
               <span className="text-xs">Validate (Disabled)</span>
             </div>
             
             <div className="flex flex-col items-center gap-2">
-              <ButtonStatus status={MediaStatus.REFUSED_1} icon="x" />
+              <ButtonStatus status={MediaStatus.REFUSED_1} icon="X" />
               <span className="text-xs">Refuse (Default)</span>
             </div>
             
             <div className="flex flex-col items-center gap-2">
-              <ButtonStatus status={MediaStatus.REFUSED_1} icon="x" isActive={true} />
+              <ButtonStatus status={MediaStatus.REFUSED_1} icon="X" isActive={true} />
               <span className="text-xs">Refuse (Active)</span>
             </div>
             
             <div className="flex flex-col items-center gap-2">
-              <ButtonStatus status={MediaStatus.SUBMITTED_FOR_APPROVAL} icon="check" />
+              <ButtonStatus status={MediaStatus.SUBMITTED_FOR_APPROVAL} icon="Check" />
               <span className="text-xs">Submit (Default)</span>
             </div>
             
             <div className="flex flex-col items-center gap-2">
-              <ButtonStatus status={MediaStatus.ERROR_DURING_BROADCAST} icon="x" />
+              <ButtonStatus status={MediaStatus.ERROR_DURING_BROADCAST} icon="X" />
               <span className="text-xs">Error (Default)</span>
             </div>
           </div>
