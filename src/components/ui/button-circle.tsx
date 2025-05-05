@@ -1,4 +1,3 @@
-
 import * as React from "react"
 import { cn } from "@/lib/utils"
 import { Button, ButtonProps } from "@/components/ui/button"
@@ -27,6 +26,7 @@ export type AllowedPictogram =
   | "Sort"
   | "Help"
   | "Logout"
+  | "Filter"
 
 export interface ButtonCircleProps extends Omit<ButtonProps, 'variant' | 'size'> {
   variant?: ButtonVariant
@@ -92,6 +92,21 @@ const CustomLogoutIcon = () => (
     <path d="M6.57599 8.40959V9.83999C6.57599 10.896 5.71199 11.76 4.65599 11.76H2.15999C1.10399 11.76 0.23999 10.896 0.23999 9.83999V2.15999C0.23999 1.10399 1.10399 0.23999 2.15999 0.23999H4.65599C5.71199 0.23999 6.57599 1.10399 6.57599 2.15999V3.59039" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
     <path d="M11.76 6H3.40796" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
     <path d="M9.552 8.40961L11.616 6.34561C11.808 6.15361 11.808 5.85601 11.616 5.66401L9.552 3.60001" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+// Add custom Filter icon with the provided SVG
+const CustomFilterIcon = () => (
+  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M9.83997 6H11.76" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M4.07996 1.68041L11.76 1.67041" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M6.47998 10.32H11.76" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M8.39996 7.44C9.19525 7.44 9.83996 6.79529 9.83996 6C9.83996 5.20471 9.19525 4.56 8.39996 4.56C7.60467 4.56 6.95996 5.20471 6.95996 6C6.95996 6.79529 7.60467 7.44 8.39996 7.44Z" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M5.03998 11.76C5.83527 11.76 6.47998 11.1153 6.47998 10.32C6.47998 9.52471 5.83527 8.88 5.03998 8.88C4.24469 8.88 3.59998 9.52471 3.59998 10.32C3.59998 11.1153 4.24469 11.76 5.03998 11.76Z" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M2.63995 3.11999C3.43524 3.11999 4.07995 2.47528 4.07995 1.67999C4.07995 0.8847 3.43524 0.23999 2.63995 0.23999C1.84466 0.23999 1.19995 0.8847 1.19995 1.67999C1.19995 2.47528 1.84466 3.11999 2.63995 3.11999Z" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M0.23999 1.67999H1.19999" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M0.23999 6H6.95999" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M0.23999 10.32H3.59999" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
 );
 
@@ -168,6 +183,8 @@ const ButtonCircle = React.forwardRef<HTMLButtonElement, ButtonCircleProps>(
           return <CustomHelpIcon />;
         } else if (icon === "Logout") {
           return <CustomLogoutIcon />;
+        } else if (icon === "Filter") {
+          return <CustomFilterIcon />;
         } else {
           const IconComponent = LucideIcons[icon] as React.ElementType;
           return <IconComponent size={iconSize} className="max-w-[12px] max-h-[12px]" />;
