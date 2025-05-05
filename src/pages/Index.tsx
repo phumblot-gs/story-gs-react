@@ -3,6 +3,7 @@ import React from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import ButtonTextLargeExample from "@/components/examples/button-text-large-example"
 import ButtonVariantsExample from "@/components/examples/button-variants-example"
+import ButtonCircleIconsExample from "@/components/examples/button-circle-icons-example"
 
 const Index = () => {
   return (
@@ -30,6 +31,18 @@ const Index = () => {
         </CardHeader>
         <CardContent>
           <ButtonVariantsExample />
+        </CardContent>
+      </Card>
+
+      <Card className="mb-8">
+        <CardHeader>
+          <CardTitle>ButtonCircle Icons</CardTitle>
+          <CardDescription>
+            All available pictogram icons for ButtonCircle component.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <ButtonCircleIconsExample />
         </CardContent>
       </Card>
     </div>
