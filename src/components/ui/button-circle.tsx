@@ -1,3 +1,4 @@
+
 import * as React from "react"
 import { cn } from "@/lib/utils"
 import { Button, ButtonProps } from "@/components/ui/button"
@@ -34,6 +35,14 @@ export interface ButtonCircleProps extends Omit<ButtonProps, 'variant' | 'size'>
   icon?: keyof typeof LucideIcons | AllowedPictogram
   letter?: string
 }
+
+// Custom SVG components for the icons provided by the user
+const CustomPencilIcon = () => (
+  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M10.7434 2.56069L2.61283 10.6444L1.18394 10.9946C1.07325 11.0246 0.982691 10.9245 1.00282 10.8145L1.35501 9.39384L9.49564 1.32012C9.83777 0.979963 10.4013 0.979963 10.7434 1.32012C11.0855 1.66028 11.0855 2.22053 10.7434 2.56069Z" stroke="currentColor" strokeWidth="0.5" strokeMiterlimit="10"/>
+    <path d="M7.05043 1L3.93103 4.10143" stroke="currentColor" strokeWidth="0.5" strokeMiterlimit="10" strokeLinecap="round"/>
+  </svg>
+);
 
 const ButtonCircle = React.forwardRef<HTMLButtonElement, ButtonCircleProps>(
   ({ className, variant, background, indicator, disabled, featured = false, size = "large", icon, letter, children, ...props }, ref) => {
@@ -95,8 +104,13 @@ const ButtonCircle = React.forwardRef<HTMLButtonElement, ButtonCircleProps>(
     // Render the content based on what's provided (icon, letter, or children)
     const renderContent = () => {
       if (icon) {
-        const IconComponent = LucideIcons[icon] as React.ElementType;
-        return <IconComponent size={iconSize} className="max-w-[12px] max-h-[12px]" />;
+        // Check if it's a custom icon first
+        if (icon === "Pencil") {
+          return <CustomPencilIcon />;
+        } else {
+          const IconComponent = LucideIcons[icon] as React.ElementType;
+          return <IconComponent size={iconSize} className="max-w-[12px] max-h-[12px]" />;
+        }
       } else if (letter) {
         return <span className="text-sm leading-none">{letter.charAt(0)}</span>;
       } else {
