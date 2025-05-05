@@ -1,229 +1,101 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Définition des polices personnalisées */
 @layer base {
-  @font-face {
-    font-family: 'AvenirNextLTPro';
-    src: url('/fonts/AvenirNextLTPro-Regular.woff') format('woff'),
-         url('/fonts/AvenirNextLTPro-Regular.ttf') format('truetype');
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
-  }
-  
-  @font-face {
-    font-family: 'AvenirNextLTPro';
-    src: url('/fonts/AvenirNextLTPro-Medium.woff') format('woff'),
-         url('/fonts/AvenirNextLTPro-Medium.ttf') format('truetype');
-    font-weight: 500;
-    font-style: normal;
-    font-display: swap;
-  }
-
-  @font-face {
-    font-family: 'AvenirNextLTPro';
-    src: url('/fonts/AvenirNextLTPro-Bold.woff') format('woff'),
-         url('/fonts/AvenirNextLTPro-Bold.ttf') format('truetype');
-    font-weight: 700;
-    font-style: normal;
-    font-display: swap;
-  }
-
-  @font-face {
-    font-family: 'AvenirNextLTPro';
-    src: url('/fonts/AvenirNextLTPro-Italics.woff') format('woff'),
-         url('/fonts/AvenirNextLTPro-Italics.ttf') format('truetype');
-    font-weight: 400;
-    font-style: italic;
-    font-display: swap;
-  }
-
-  @font-face {
-    font-family: 'AvenirNextLTPro';
-    src: url('/fonts/AvenirNextLTPro-BoldIt.woff') format('woff');
-    font-weight: 700;
-    font-style: italic;
-    font-display: swap;
-  }
-
-  @font-face {
-    font-family: 'AvenirNextLTPro';
-    src: url('/fonts/AvenirNextLTPro-UltLt.woff') format('woff'),
-         url('/fonts/AvenirNextLTPro-UltLt.ttf') format('truetype');
-    font-weight: 200;
-    font-style: normal;
-    font-display: swap;
-  }
-
-  @font-face {
-    font-family: 'AvenirNextLTPro';
-    src: url('/fonts/AvenirNextLTPro-HeavyIt.ttf') format('truetype');
-    font-weight: 900;
-    font-style: italic;
-    font-display: swap;
-  }
-
   :root {
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
-
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
-
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-
-    --primary: 222.2 47.4% 11.2%;
+    --primary: 221.2 83.2% 53.3%;
     --primary-foreground: 210 40% 98%;
-
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
-
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
-
     --accent: 210 40% 96.1%;
     --accent-foreground: 222.2 47.4% 11.2%;
-
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
-
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-
+    --ring: 221.2 83.2% 53.3%;
     --radius: 0.5rem;
-
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
-
-    /* Figma Design Tokens */
-    /* Fonts */
-    --font-size-xs: 7px;
-    --font-size-sm: 11px;
-    --font-size-base: 11px;
-    --font-size-lg: 16px;
-    --font-size-xl: 18px;
-
-    /* Padding */
-    --padding-small: 5px;
-    --padding-medium: 10px;
-    --padding-large: 20px;
-    --padding-xlarge: 30px;
-    --padding-xxlarge: 40px;
-    --padding-xxxlarge: 50px;
-
-    /* Semantic colors from tokens */
-    --token-canvas: #EAEAEA;
-    --token-codeview: rgba(41, 40, 40, 0.2);
-    --token-active: #FFF8D0;
-    --token-alert: #DD3733;
-    --token-urgent: #FF9900;
-    --token-star: #FFD331;
-
-    /* States */
-    --token-state-ignored: #EAEAEA;
-    --token-state-selected: #74D4DA;
-    --token-state-reshoot: #A44C9F;
-    --token-state-for-approval: #FFD331;
-    --token-state-refused: #595959;
-    --token-state-validated: #89CC52;
-    --token-state-to-publish: #B7BB28;
-    --token-state-published: #B88029;
-    --token-state-error: #DD3733;
-
-    /* Grades */
-    --token-grade-A: #89CC52;
-    --token-grade-B: #74D4DA;
-    --token-grade-C: #FFD331;
-    --token-grade-D: #DD3733;
-    --token-grade-E: #595959;
-
-    /* Flags */
-    --token-flag-yellow: #FFD331;
-    --token-flag-orange: #FF9900;
-    --token-flag-red: #DD3733;
-    --token-flag-pink: #AAAD4D;
-    --token-flag-purple: #A44C9F;
-    --token-flag-blue: #74D4DA;
-    --token-flag-green: #89CC52;
-
-    /* Header */
-    --header-height: 50px;
-    --header-fs-title: 15px;
-    --header-color-background: #FFFFFF;
-    --header-pd-main-h: 20px;
-    --header-pd-main-v: 10px;
-    --header-pd-bloc-h: 20px;
-
-    /* Buttons */
-    --button-header-size: 12px;
-    --button-pd-header: 9px;
-    --button-fs-header: 11px;
-    --button-radius-header: 30px;
-    --token-button-color-header-bg-primary: #FFFFFF;
-    --token-button-color-header-bg-secondary: #EFEFEFEF;
-    --token-button-color-step-bg-active: #292828;
-    --token-button-color-step-fg-active: #FFFFFF;
-    --token-button-color-step-bg-inactive: #FFFFFF;
-    --token-button-color-step-fg-inactive: #292828;
   }
 
   .dark {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
-
     --card: 222.2 84% 4.9%;
     --card-foreground: 210 40% 98%;
-
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
+    --primary: 217.2 91.2% 59.8%;
     --primary-foreground: 222.2 47.4% 11.2%;
-
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
-
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
-
     --accent: 217.2 32.6% 17.5%;
     --accent-foreground: 210 40% 98%;
-
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
-
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --ring: 224.3 76.3% 48%;
   }
 }
 
 @layer base {
   * {
-    @apply border-border font-normal text-sm;
+    @apply border-border;
   }
-
   body {
     @apply bg-background text-foreground;
-    font-size: var(--font-size-base);
-    font-family: 'AvenirNextLTPro', sans-serif;
   }
+}
+
+/* Status icon colors */
+.status-purple {
+  fill: #A44C9F;
+}
+
+.status-yellow {
+  fill: #FFD331;
+}
+
+.status-green {
+  fill: #89CC52;
+  opacity: 0.8;
+}
+
+/* Button hover state - adjust status icon colors */
+button:hover .status-purple {
+  fill: currentColor;
+}
+
+button:hover .status-yellow {
+  fill: currentColor;
+}
+
+button:hover .status-green {
+  fill: currentColor;
+}
+
+/* Button active/pressed state */
+button:active .status-purple,
+button:active .status-yellow,
+button:active .status-green {
+  fill: #CDEDFF; /* blue-primary color for active state */
+}
+
+/* Button disabled state */
+button:disabled .status-purple,
+button:disabled .status-yellow,
+button:disabled .status-green {
+  fill: #C1C1C1; /* grey-stronger color for disabled state */
 }
