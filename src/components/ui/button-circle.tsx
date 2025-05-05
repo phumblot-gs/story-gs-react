@@ -1,4 +1,3 @@
-
 import * as React from "react"
 import { cn } from "@/lib/utils"
 import { Button, ButtonProps } from "@/components/ui/button"
@@ -23,6 +22,7 @@ export type AllowedPictogram =
   | "Calendar" 
   | "Clock"
   | "Tag"
+  | "Pencil"
 
 export interface ButtonCircleProps extends Omit<ButtonProps, 'variant' | 'size'> {
   variant?: ButtonVariant
