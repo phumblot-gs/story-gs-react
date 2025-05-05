@@ -6,6 +6,8 @@ import {
   CustomPencilIcon,
   CustomTagIcon,
   CustomBellIcon,
+  CustomCheckIcon,
+  CustomPlusIcon,
   CustomSortIcon,
   CustomHelpIcon,
   CustomLogoutIcon,
@@ -22,8 +24,7 @@ import {
   CustomArrowLeftIcon,
   CustomArrowUpIcon,
   CustomArrowDownIcon,
-  CustomXIcon,
-  CustomCheckIcon
+  CustomXIcon
 } from "./custom-icons"
 
 /**
@@ -42,6 +43,8 @@ export const renderIcon = (
     return <CustomBellIcon />;
   } else if (icon === "Check") {
     return <CustomCheckIcon />;
+  } else if (icon === "Plus") {
+    return <CustomPlusIcon />;
   } else if (icon === "Sort") {
     return <CustomSortIcon />;
   } else if (icon === "Help") {

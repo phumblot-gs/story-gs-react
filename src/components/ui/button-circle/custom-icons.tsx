@@ -39,6 +39,20 @@ export const CustomCheckIcon = () => (
   </svg>
 )
 
+export const CustomPlusIcon = () => (
+  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g clipPath="url(#clip0_337_13190)">
+      <path d="M11.7692 6H0.230774" stroke="currentColor" strokeWidth="0.5" strokeMiterlimit="10" strokeLinecap="round"/>
+      <path d="M6 0.230774V11.7692" stroke="currentColor" strokeWidth="0.5" strokeMiterlimit="10" strokeLinecap="round"/>
+    </g>
+    <defs>
+      <clipPath id="clip0_337_13190">
+        <rect width="12" height="12" fill="white"/>
+      </clipPath>
+    </defs>
+  </svg>
+)
+
 export const CustomSortIcon = () => (
   <svg width="12" height="13" viewBox="0 0 12 13" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M2.64001 11.76V0.23999" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
