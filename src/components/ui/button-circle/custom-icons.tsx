@@ -119,3 +119,23 @@ export const CustomCommentIcon = () => (
     <path d="M0.772172 9.4833C0.852248 9.01428 0.840809 8.53383 0.669217 8.09913C-0.131546 6.04002 0.303154 3.61486 1.95044 1.95613C4.18113 -0.274562 7.81888 -0.274562 10.0496 1.95613C12.2803 4.18683 12.2803 7.82458 10.0496 10.0553C8.39086 11.714 5.96569 12.1373 3.90659 11.3365C3.47189 11.1649 2.97999 11.1535 2.52241 11.245L1.36702 11.4509C0.898006 11.531 0.486185 11.1306 0.577701 10.6616L0.783611 9.50618L0.772172 9.4833Z" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
 )
+
+export const CustomAlertIcon = () => (
+  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g clipPath="url(#clip0_303_6884)">
+      <path d="M6 2.41464V0.878052" stroke="currentColor" strokeWidth="0.5" strokeMiterlimit="10" strokeLinecap="round"/>
+      <path d="M1.90243 6.51221H0.365845" stroke="currentColor" strokeWidth="0.5" strokeMiterlimit="10" strokeLinecap="round"/>
+      <path d="M11.6341 6.51221H10.0975" stroke="currentColor" strokeWidth="0.5" strokeMiterlimit="10" strokeLinecap="round"/>
+      <path d="M3.10246 3.61463L2.01953 2.53171" stroke="currentColor" strokeWidth="0.5" strokeMiterlimit="10" strokeLinecap="round"/>
+      <path d="M9.98051 2.53171L8.89758 3.61463" stroke="currentColor" strokeWidth="0.5" strokeMiterlimit="10" strokeLinecap="round"/>
+      <path d="M3.43903 11.122V6.67318C3.43903 5.1805 4.59512 3.95123 6 3.95123C7.40488 3.95123 8.56098 5.1805 8.56098 6.67318V11.122H3.43903Z" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M6 11.122V8.0488" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M5.99998 9.07318C6.56573 9.07318 7.02437 8.61454 7.02437 8.04879C7.02437 7.48303 6.56573 7.0244 5.99998 7.0244C5.43422 7.0244 4.97559 7.48303 4.97559 8.04879C4.97559 8.61454 5.43422 9.07318 5.99998 9.07318Z" stroke="currentColor" strokeWidth="0.5" strokeMiterlimit="10"/>
+    </g>
+    <defs>
+      <clipPath id="clip0_303_6884">
+        <rect width="12" height="10.9756" fill="white" transform="translate(0 0.512207)"/>
+      </clipPath>
+    </defs>
+  </svg>
+)
