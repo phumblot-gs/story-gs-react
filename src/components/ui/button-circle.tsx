@@ -28,6 +28,7 @@ export type AllowedPictogram =
   | "Logout"
   | "Filter"
   | "Settings"
+  | "User"
 
 export interface ButtonCircleProps extends Omit<ButtonProps, 'variant' | 'size'> {
   variant?: ButtonVariant
@@ -127,6 +128,14 @@ const CustomSettingsIcon = () => (
   </svg>
 );
 
+// Add custom User icon with the provided SVG
+const CustomUserIcon = () => (
+  <svg width="12" height="14" viewBox="0 0 12 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M6.00005 6C7.38032 6 8.49925 4.88071 8.49925 3.5C8.49925 2.11929 7.38032 1 6.00005 1C4.61978 1 3.50085 2.11929 3.50085 3.5C3.50085 4.88071 4.61978 6 6.00005 6Z" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M1.04163 13C1.04163 10.5 3.26092 8 6.00004 8C8.73916 8 10.9585 10.5 10.9585 13" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
 const ButtonCircle = React.forwardRef<HTMLButtonElement, ButtonCircleProps>(
   ({ className, variant, background, indicator, disabled, featured = false, size = "large", icon, letter, children, ...props }, ref) => {
     // Determine automatic variant based on background if variant is not explicitly provided
@@ -204,6 +213,8 @@ const ButtonCircle = React.forwardRef<HTMLButtonElement, ButtonCircleProps>(
           return <CustomFilterIcon />;
         } else if (icon === "Settings") {
           return <CustomSettingsIcon />;
+        } else if (icon === "User") {
+          return <CustomUserIcon />;
         } else {
           const IconComponent = LucideIcons[icon] as React.ElementType;
           return <IconComponent size={iconSize} className="max-w-[12px] max-h-[12px]" />;
