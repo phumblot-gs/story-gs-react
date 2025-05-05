@@ -1,3 +1,4 @@
+
 import React from "react"
 
 export const CustomPencilIcon = () => (
@@ -94,9 +95,9 @@ export const CustomStarIcon = () => (
 )
 
 export const CustomStatusIcon = () => (
-  <svg width="12" height="11.65" viewBox="0 0 12 11.65" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect className="status-yellow" x="0" y="4.3" width="12" height="3"/>
-    <rect className="status-purple" x="0" y="0" width="12" height="3"/>
-    <rect className="status-green" x="0" y="8.65" width="12" height="3"/>
+  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M12 5.36425H0V6.66425H12V5.36425Z" className="status-yellow" />
+    <path d="M12 3.51855H0V4.81855H12V3.51855Z" className="status-purple" />
+    <path d="M12 7.22266H0V8.52266H12V7.22266Z" className="status-green" />
   </svg>
 )

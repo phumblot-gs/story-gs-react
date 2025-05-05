@@ -27,8 +27,8 @@ const ButtonCircle = React.forwardRef<HTMLButtonElement, ButtonCircleProps>(
     // Determine size based on prop
     const sizeClasses = getSizeClasses(size)
     
-    // Maximum icon size is 14px to ensure pictograms never exceed 14x14px
-    const iconSize = 14
+    // Maximum icon size is 12px regardless of button size to ensure pictograms never exceed 12x12px
+    const iconSize = 12
 
     // Render the content based on what's provided (icon, letter, or children)
     const renderContent = () => {
