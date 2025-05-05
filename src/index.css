@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -35,20 +36,84 @@
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Figma Design Tokens */
+    /* Fonts */
+    --font-size-xs: 7px;
+    --font-size-sm: 11px;
+    --font-size-base: 13px;
+    --font-size-lg: 16px;
+    --font-size-xl: 18px;
+
+    /* Padding */
+    --padding-small: 5px;
+    --padding-medium: 10px;
+    --padding-large: 20px;
+    --padding-xlarge: 30px;
+    --padding-xxlarge: 40px;
+    --padding-xxxlarge: 50px;
+
+    /* Semantic colors from tokens */
+    --token-canvas: #EAEAEA;
+    --token-codeview: rgba(41, 40, 40, 0.2);
+    --token-active: #FFF8D0;
+    --token-alert: #DD3733;
+    --token-urgent: #FF9900;
+    --token-star: #FFD331;
+
+    /* States */
+    --token-state-ignored: #EAEAEA;
+    --token-state-selected: #74D4DA;
+    --token-state-reshoot: #A44C9F;
+    --token-state-for-approval: #FFD331;
+    --token-state-refused: #595959;
+    --token-state-validated: #89CC52;
+    --token-state-to-publish: #B7BB28;
+    --token-state-published: #B88029;
+    --token-state-error: #DD3733;
+
+    /* Grades */
+    --token-grade-A: #89CC52;
+    --token-grade-B: #74D4DA;
+    --token-grade-C: #FFD331;
+    --token-grade-D: #DD3733;
+    --token-grade-E: #595959;
+
+    /* Flags */
+    --token-flag-yellow: #FFD331;
+    --token-flag-orange: #FF9900;
+    --token-flag-red: #DD3733;
+    --token-flag-pink: #AAAD4D;
+    --token-flag-purple: #A44C9F;
+    --token-flag-blue: #74D4DA;
+    --token-flag-green: #89CC52;
+
+    /* Header */
+    --header-height: 50px;
+    --header-fs-title: 15px;
+    --header-color-background: #FFFFFF;
+    --header-pd-main-h: 20px;
+    --header-pd-main-v: 10px;
+    --header-pd-bloc-h: 20px;
+
+    /* Buttons */
+    --button-header-size: 12px;
+    --button-pd-header: 9px;
+    --button-fs-header: 11px;
+    --button-radius-header: 30px;
+    --token-button-color-header-bg-primary: #FFFFFF;
+    --token-button-color-header-bg-secondary: #EFEFEFEF;
+    --token-button-color-step-bg-active: #292828;
+    --token-button-color-step-fg-active: #FFFFFF;
+    --token-button-color-step-bg-inactive: #FFFFFF;
+    --token-button-color-step-fg-inactive: #292828;
   }
 
   .dark {
@@ -97,5 +162,6 @@
 
   body {
     @apply bg-background text-foreground;
+    font-size: var(--font-size-base);
   }
 }
