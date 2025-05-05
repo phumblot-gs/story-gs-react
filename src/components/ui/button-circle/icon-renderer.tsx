@@ -21,7 +21,8 @@ import {
   CustomArrowRightIcon,
   CustomArrowLeftIcon,
   CustomArrowUpIcon,
-  CustomArrowDownIcon
+  CustomArrowDownIcon,
+  CustomXIcon
 } from "./custom-icons"
 
 /**
@@ -70,6 +71,8 @@ export const renderIcon = (
     return <CustomArrowUpIcon />;
   } else if (icon === "ArrowDown") {
     return <CustomArrowDownIcon />;
+  } else if (icon === "X") {
+    return <CustomXIcon />;
   } else {
     // It's a Lucide icon
     const IconComponent = LucideIcons[icon] as React.ElementType;

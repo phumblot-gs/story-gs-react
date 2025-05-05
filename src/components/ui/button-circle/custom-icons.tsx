@@ -1,4 +1,3 @@
-
 import React from "react"
 
 export const CustomPencilIcon = () => (
@@ -162,5 +161,13 @@ export const CustomArrowUpIcon = () => (
 export const CustomArrowDownIcon = () => (
   <svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M0.784424 0.832489L4.99429 5.04235L9.21552 0.832489" stroke="currentColor" strokeWidth="0.5" strokeMiterlimit="10" strokeLinecap="round"/>
+  </svg>
+)
+
+// Adding a custom X icon to the collection
+export const CustomXIcon = () => (
+  <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M9.25911 0.740906L0.740906 9.25911" stroke="currentColor" strokeWidth="0.5" strokeMiterlimit="10" strokeLinecap="round"/>
+    <path d="M0.740906 0.740906L9.25911 9.25911" stroke="currentColor" strokeWidth="0.5" strokeMiterlimit="10" strokeLinecap="round"/>
   </svg>
 )
