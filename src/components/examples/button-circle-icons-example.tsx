@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card"
 
 const ButtonCircleIconsExample = () => {
   // Liste des pictogrammes fournis par l'utilisateur, à afficher en premier
-  const userProvidedIcons = ["Tag", "Bell", "Check", "Plus", "Minus", "X", "Mail", "Heart", "Star", "Info", "AlertCircle", "Calendar", "Clock", "Pencil", "Sort", "Help", "Logout", "Filter", "Settings", "User", "Status", "Urgent", "Vedette", "Comment", "Alert", "ArrowRight"]
+  const userProvidedIcons = ["Tag", "Bell", "Check", "Plus", "Minus", "X", "Mail", "Heart", "Star", "Info", "AlertCircle", "Calendar", "Clock", "Pencil", "Sort", "Help", "Logout", "Filter", "Settings", "User", "Status", "Urgent", "Vedette", "Comment", "Alert", "ArrowRight", "ArrowLeft"]
   
   return (
     <div className="p-8">

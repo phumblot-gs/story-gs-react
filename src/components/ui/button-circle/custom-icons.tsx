@@ -146,3 +146,9 @@ export const CustomArrowRightIcon = () => (
     <path d="M2.83247 0.784454L7.05371 4.99432L2.83247 9.21555" stroke="currentColor" strokeWidth="0.5" strokeMiterlimit="10" strokeLinecap="round"/>
   </svg>
 )
+
+export const CustomArrowLeftIcon = () => (
+  <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M7.16753 0.784454L2.94629 4.99432L7.16753 9.21555" stroke="currentColor" strokeWidth="0.5" strokeMiterlimit="10" strokeLinecap="round"/>
+  </svg>
+)

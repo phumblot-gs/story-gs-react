@@ -18,7 +18,8 @@ import {
   CustomVedetteIcon,
   CustomCommentIcon,
   CustomAlertIcon,
-  CustomArrowRightIcon
+  CustomArrowRightIcon,
+  CustomArrowLeftIcon
 } from "./custom-icons"
 
 /**
@@ -61,6 +62,8 @@ export const renderIcon = (
     return <CustomAlertIcon />;
   } else if (icon === "ArrowRight") {
     return <CustomArrowRightIcon />;
+  } else if (icon === "ArrowLeft") {
+    return <CustomArrowLeftIcon />;
   } else {
     // It's a Lucide icon
     const IconComponent = LucideIcons[icon] as React.ElementType;
