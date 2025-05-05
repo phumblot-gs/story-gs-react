@@ -1,3 +1,4 @@
+
 import React from "react"
 
 export const CustomPencilIcon = () => (
@@ -137,5 +138,11 @@ export const CustomAlertIcon = () => (
         <rect width="12" height="10.9756" fill="white" transform="translate(0 0.512207)"/>
       </clipPath>
     </defs>
+  </svg>
+)
+
+export const CustomArrowRightIcon = () => (
+  <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M2.83247 0.784454L7.05371 4.99432L2.83247 9.21555" stroke="currentColor" strokeWidth="0.5" strokeMiterlimit="10" strokeLinecap="round"/>
   </svg>
 )
