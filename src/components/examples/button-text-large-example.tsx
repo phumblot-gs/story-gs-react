@@ -85,6 +85,7 @@ const ButtonTextLargeExample = () => {
             <div className="flex gap-4">
               <ButtonTextLarge background="white">Simple button</ButtonTextLarge>
               <ButtonTextLarge background="white" indicator={true}>Simple button</ButtonTextLarge>
+              <ButtonTextLarge background="white" featured={true}>Featured button</ButtonTextLarge>
             </div>
           </div>
           
@@ -93,6 +94,7 @@ const ButtonTextLargeExample = () => {
             <div className="flex gap-4">
               <ButtonTextLarge background="black">Simple button</ButtonTextLarge>
               <ButtonTextLarge background="black" indicator={true}>Simple button</ButtonTextLarge>
+              <ButtonTextLarge background="black" featured={true}>Featured button</ButtonTextLarge>
             </div>
           </div>
           
@@ -101,7 +103,28 @@ const ButtonTextLargeExample = () => {
             <div className="flex gap-4">
               <ButtonTextLarge background="grey">Simple button</ButtonTextLarge>
               <ButtonTextLarge background="grey" indicator={true}>Simple button</ButtonTextLarge>
+              <ButtonTextLarge background="grey" featured={true}>Featured button</ButtonTextLarge>
             </div>
+          </div>
+        </div>
+      </div>
+      
+      <div>
+        <h3 className="text-xl font-bold mb-4">Featured Buttons</h3>
+        <div className="grid grid-cols-3 gap-8">
+          <div className="flex flex-col items-center gap-2 bg-white p-4 rounded-lg">
+            <span className="text-sm text-muted-foreground">White Background</span>
+            <ButtonTextLarge background="white" featured={true}>Featured button</ButtonTextLarge>
+          </div>
+          
+          <div className="flex flex-col items-center gap-2 bg-black p-4 rounded-lg">
+            <span className="text-sm text-white">Black Background</span>
+            <ButtonTextLarge background="black" featured={true}>Featured button</ButtonTextLarge>
+          </div>
+          
+          <div className="flex flex-col items-center gap-2 bg-grey p-4 rounded-lg">
+            <span className="text-sm text-muted-foreground">Grey Background</span>
+            <ButtonTextLarge background="grey" featured={true}>Featured button</ButtonTextLarge>
           </div>
         </div>
       </div>

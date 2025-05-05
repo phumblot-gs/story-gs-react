@@ -11,10 +11,11 @@ export interface ButtonTextLargeProps extends Omit<ButtonProps, 'variant'> {
   background?: ButtonBackground
   indicator?: boolean
   disabled?: boolean
+  featured?: boolean
 }
 
 const ButtonTextLarge = React.forwardRef<HTMLButtonElement, ButtonTextLargeProps>(
-  ({ className, variant, background, indicator, disabled, children, ...props }, ref) => {
+  ({ className, variant, background, indicator, disabled, featured = false, children, ...props }, ref) => {
     // Determine automatic variant based on background if variant is not explicitly provided
     const effectiveVariant = variant || (background ? 
       (background === "white" ? "primary" : 
@@ -33,6 +34,22 @@ const ButtonTextLarge = React.forwardRef<HTMLButtonElement, ButtonTextLargeProps
         }
       }
 
+      // For featured buttons, apply special background based on context
+      if (featured) {
+        switch (background) {
+          case "white":
+            return "bg-grey-lighter text-black hover:bg-black hover:text-white active:bg-black active:text-blue-primary"
+          case "black":
+            return "bg-grey-strongest text-white hover:bg-white hover:text-black active:bg-black active:text-blue-primary"
+          case "grey":
+            return "bg-white text-black hover:bg-black hover:text-white active:bg-black active:text-blue-primary"
+          default:
+            // Default to white background behavior if background is not specified
+            return "bg-grey-lighter text-black hover:bg-black hover:text-white active:bg-black active:text-blue-primary"
+        }
+      }
+
+      // Default styles (non-featured)
       switch (background || effectiveVariant) {
         case "white":
         case "primary":
