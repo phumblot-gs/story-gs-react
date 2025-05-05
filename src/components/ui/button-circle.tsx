@@ -80,7 +80,7 @@ const ButtonCircle = React.forwardRef<HTMLButtonElement, ButtonCircleProps>(
         const IconComponent = LucideIcons[icon] as React.ElementType;
         return <IconComponent size={iconSize} />;
       } else if (letter) {
-        return <span className={size === "small" ? "text-xs" : "text-sm"}>{letter.charAt(0)}</span>;
+        return <span className="text-[0.8125rem]">{letter.charAt(0)}</span>;
       } else {
         return children;
       }
