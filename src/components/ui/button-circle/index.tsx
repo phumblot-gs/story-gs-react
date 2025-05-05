@@ -35,7 +35,7 @@ const ButtonCircle = React.forwardRef<HTMLButtonElement, ButtonCircleProps>(
       if (icon) {
         return renderIcon(icon, iconSize)
       } else if (letter) {
-        return <span className="text-sm leading-none">{letter.charAt(0)}</span>
+        return <span className="text-sm leading-none font-light">{letter.charAt(0)}</span>
       } else {
         return children
       }
@@ -46,7 +46,7 @@ const ButtonCircle = React.forwardRef<HTMLButtonElement, ButtonCircleProps>(
         <Button
           ref={ref}
           className={cn(
-            `relative rounded-full flex items-center justify-center font-custom transition-colors duration-200 p-0 [&_svg]:w-[12px] [&_svg]:h-[12px] ${sizeClasses}`,
+            `relative rounded-full flex items-center justify-center font-light transition-colors duration-200 p-0 [&_svg]:w-[12px] [&_svg]:h-[12px] ${sizeClasses}`,
             buttonStyles,
             className
           )}
