@@ -192,6 +192,13 @@ export const CustomArrowDownIcon = () => (
 )
 
 // Adding a custom X icon to the collection
+export const CustomEyeIcon = () => (
+  <svg width="12" height="8" viewBox="0 0 14 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M12.8182 4.00001C12.8182 5.12728 9.98182 7.63637 7.00001 7.63637C4.01819 7.63637 1.18182 5.12728 1.18182 4.00001C1.18182 2.87274 4.01819 0.363647 7.00001 0.363647C9.98182 0.363647 12.8182 2.87274 12.8182 4.00001Z" stroke="currentColor" strokeWidth="0.5" strokeMiterlimit="10"/>
+    <path d="M7.00001 5.81819C8.00416 5.81819 8.81819 5.00416 8.81819 4.00001C8.81819 2.99585 8.00416 2.18182 7.00001 2.18182C5.99585 2.18182 5.18182 2.99585 5.18182 4.00001C5.18182 5.00416 5.99585 5.81819 7.00001 5.81819Z" stroke="currentColor" strokeWidth="0.5" strokeMiterlimit="10"/>
+  </svg>
+)
+
 export const CustomXIcon = () => (
   <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M9.25911 0.740906L0.740906 9.25911" stroke="currentColor" strokeWidth="0.5" strokeMiterlimit="10" strokeLinecap="round"/>
