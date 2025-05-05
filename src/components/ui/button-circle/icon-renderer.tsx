@@ -22,7 +22,8 @@ import {
   CustomArrowLeftIcon,
   CustomArrowUpIcon,
   CustomArrowDownIcon,
-  CustomXIcon
+  CustomXIcon,
+  CustomCheckIcon
 } from "./custom-icons"
 
 /**
@@ -39,6 +40,8 @@ export const renderIcon = (
     return <CustomTagIcon />;
   } else if (icon === "Bell") {
     return <CustomBellIcon />;
+  } else if (icon === "Check") {
+    return <CustomCheckIcon />;
   } else if (icon === "Sort") {
     return <CustomSortIcon />;
   } else if (icon === "Help") {

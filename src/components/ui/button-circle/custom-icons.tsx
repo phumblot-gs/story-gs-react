@@ -26,6 +26,19 @@ export const CustomBellIcon = () => (
   </svg>
 )
 
+export const CustomCheckIcon = () => (
+  <svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g clipPath="url(#clip0_303_5348)">
+      <path d="M9.19999 0.449982L4.09999 5.54998L0.799988 2.23798" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
+    </g>
+    <defs>
+      <clipPath id="clip0_303_5348">
+        <rect width="9" height="5.7" fill="white" transform="translate(0.5 0.149994)"/>
+      </clipPath>
+    </defs>
+  </svg>
+)
+
 export const CustomSortIcon = () => (
   <svg width="12" height="13" viewBox="0 0 12 13" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M2.64001 11.76V0.23999" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
