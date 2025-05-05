@@ -22,6 +22,7 @@ export type AllowedPictogram =
   | "AlertCircle" 
   | "Calendar" 
   | "Clock"
+  | "Tag"
 
 export interface ButtonCircleProps extends Omit<ButtonProps, 'variant' | 'size'> {
   variant?: ButtonVariant
