@@ -46,7 +46,7 @@ const ButtonTextLarge = React.forwardRef<HTMLButtonElement, ButtonTextLargeProps
         <Button
           ref={ref}
           className={cn(
-            "relative rounded-full text-[0.8125rem] py-[10px] px-[20px] font-normal h-[30px] flex items-center justify-center font-custom",
+            "relative rounded-full text-[0.8125rem] py-[10px] px-[15px] font-normal h-[30px] flex items-center justify-center font-custom",
             getBgColor(),
             className
           )}
@@ -57,7 +57,7 @@ const ButtonTextLarge = React.forwardRef<HTMLButtonElement, ButtonTextLargeProps
         </Button>
         
         {indicator && (
-          <div className="absolute -bottom-1 -right-1 w-[7px] h-[7px] rounded-full bg-yellow"></div>
+          <div className="absolute bottom-0 right-0 w-[7px] h-[7px] rounded-full bg-yellow"></div>
         )}
       </div>
     )
