@@ -66,5 +66,20 @@ export const getStatusDotClass = (status: MediaStatus): string => {
   return getMediaStatusColorClass(status);
 };
 
+// Determine if the icon should be white or black based on status background color
+export const shouldUseWhiteIcon = (status: MediaStatus): boolean => {
+  // Dark backgrounds that need white icons for better contrast
+  const darkBackgrounds = [
+    MediaStatus.TO_RESHOOT,      // Purple
+    MediaStatus.REFUSED_1,       // Grey strongest
+    MediaStatus.REFUSED_2,       // Grey strongest
+    MediaStatus.BROADCAST,       // Braun
+    MediaStatus.ARCHIVED,        // Braun
+    MediaStatus.ERROR_DURING_BROADCAST // Error (red)
+  ];
+  
+  return darkBackgrounds.includes(status);
+};
+
 // Usage example for component:
 // <div className={`w-3 h-3 rounded-full ${getStatusDotClass(mediaStatus)}`}></div>

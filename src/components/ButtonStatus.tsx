@@ -1,6 +1,6 @@
 
 import React from "react";
-import { MediaStatus, getMediaStatusColorClass, mediaStatusNames } from "@/utils/mediaStatus";
+import { MediaStatus, getMediaStatusColorClass, mediaStatusNames, shouldUseWhiteIcon } from "@/utils/mediaStatus";
 import { ButtonCircle } from "@/components/ui/button-circle";
 import { cn } from "@/lib/utils";
 import { AllowedPictogram } from "@/components/ui/button-circle/types";
@@ -27,6 +27,7 @@ export const ButtonStatus: React.FC<ButtonStatusProps> = ({
   // Get the status color class from the utility function
   const statusColorClass = getMediaStatusColorClass(status);
   const statusName = mediaStatusNames[status];
+  const useWhiteIcon = shouldUseWhiteIcon(status);
   
   return (
     <ButtonCircle
@@ -38,6 +39,15 @@ export const ButtonStatus: React.FC<ButtonStatusProps> = ({
         `hover:bg-[var(--status-bg-color)]`,
         // Active state - should match hover state exactly
         isActive && "bg-[var(--status-bg-color)]",
+        // Apply white or black icon color for active and hover states
+        "hover:[&_svg]:fill-current",
+        isActive && "[&_svg]:fill-current",
+        // Determine icon color based on status background
+        useWhiteIcon ? 
+          "hover:[&_svg]:text-white active:[&_svg]:text-white" : 
+          "hover:[&_svg]:text-black active:[&_svg]:text-black",
+        useWhiteIcon && isActive ? "[&_svg]:text-white" : "",
+        !useWhiteIcon && isActive ? "[&_svg]:text-black" : "",
         className
       )}
       size={size}
