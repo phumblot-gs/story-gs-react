@@ -25,6 +25,34 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 221.2 83.2% 53.3%;
     --radius: 0.5rem;
+
+    /* Font size variables */
+    --font-size-xs: 0.75rem;
+    --font-size-sm: 0.875rem;
+    --font-size-base: 1rem;
+    --font-size-lg: 1.125rem;
+    --font-size-xl: 1.25rem;
+
+    /* Header variables */
+    --header-fs-title: 1.5rem;
+    --header-height: 60px;
+    --header-pd-main-h: 1.5rem;
+    --header-pd-main-v: 0.75rem;
+    --header-pd-bloc-h: 1rem;
+
+    /* Button variables */
+    --button-fs-header: 0.875rem;
+    --button-header-size: 36px;
+    --button-pd-header: 0.5rem;
+    --button-radius-header: 0.25rem;
+
+    /* Padding variables */
+    --padding-small: 0.5rem;
+    --padding-medium: 1rem;
+    --padding-large: 1.5rem;
+    --padding-xlarge: 2rem;
+    --padding-xxlarge: 3rem;
+    --padding-xxxlarge: 4rem;
   }
 
   .dark {
