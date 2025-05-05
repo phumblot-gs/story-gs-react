@@ -46,7 +46,7 @@ const ButtonCircle = React.forwardRef<HTMLButtonElement, ButtonCircleProps>(
         <Button
           ref={ref}
           className={cn(
-            `relative rounded-full flex items-center justify-center font-custom transition-colors duration-200 p-0 ${sizeClasses}`,
+            `relative rounded-full flex items-center justify-center font-custom transition-colors duration-200 p-0 [&_svg]:w-[14px] [&_svg]:h-[14px] ${sizeClasses}`,
             buttonStyles,
             className
           )}

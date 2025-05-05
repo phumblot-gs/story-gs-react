@@ -76,6 +76,6 @@ export const renderIcon = (
   } else {
     // It's a Lucide icon
     const IconComponent = LucideIcons[icon] as React.ElementType;
-    return <IconComponent size={iconSize} className="max-w-[12px] max-h-[12px]" />;
+    return <IconComponent size={iconSize} className="max-w-[14px] max-h-[14px]" />;
   }
 }
