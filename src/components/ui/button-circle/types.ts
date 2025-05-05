@@ -30,6 +30,7 @@ export type AllowedPictogram =
   | "User"
   | "Status"
   | "Urgent"
+  | "Vedette"
 
 export interface ButtonCircleProps extends Omit<ButtonProps, 'variant' | 'size'> {
   variant?: ButtonVariant

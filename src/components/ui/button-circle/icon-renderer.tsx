@@ -14,7 +14,8 @@ import {
   CustomUserIcon,
   CustomStarIcon,
   CustomStatusIcon,
-  CustomUrgentIcon
+  CustomUrgentIcon,
+  CustomVedetteIcon
 } from "./custom-icons"
 
 /**
@@ -49,6 +50,8 @@ export const renderIcon = (
     return <CustomStatusIcon />;
   } else if (icon === "Urgent") {
     return <CustomUrgentIcon />;
+  } else if (icon === "Vedette") {
+    return <CustomVedetteIcon />;
   } else {
     // It's a Lucide icon
     const IconComponent = LucideIcons[icon] as React.ElementType;
