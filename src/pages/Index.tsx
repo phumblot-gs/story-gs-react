@@ -1,7 +1,7 @@
 
 import React from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import ButtonTextLargeExample from "@/components/examples/button-text-large-example"
+import ButtonExample from "@/components/examples/button-example"
 import ButtonVariantsExample from "@/components/examples/button-variants-example"
 import ButtonCircleIconsExample from "@/components/examples/button-circle-icons-example"
 import { MediaStatus } from "@/utils/mediaStatus"
@@ -14,13 +14,13 @@ const Index = () => {
       
       <Card className="mb-8">
         <CardHeader>
-          <CardTitle>ButtonTextLarge Component</CardTitle>
+          <CardTitle>Button Component</CardTitle>
           <CardDescription>
             A circular button component with text and optional indicator, available in multiple variants.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <ButtonTextLargeExample />
+          <ButtonExample />
         </CardContent>
       </Card>
 
@@ -28,7 +28,7 @@ const Index = () => {
         <CardHeader>
           <CardTitle>Button Variants</CardTitle>
           <CardDescription>
-            Additional button variants: small text buttons and circular buttons with icons or letters.
+            Additional button variants: small buttons and circular buttons with icons or letters.
           </CardDescription>
         </CardHeader>
         <CardContent>

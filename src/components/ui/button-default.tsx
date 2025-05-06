@@ -1,12 +1,12 @@
 
 import * as React from "react"
 import { cn } from "@/lib/utils"
-import { Button, ButtonProps } from "@/components/ui/button"
+import { Button as ButtonBase, ButtonProps as ButtonBaseProps } from "@/components/ui/button"
 
 export type ButtonVariant = "primary" | "secondary" | "black" | "blue" | "grey" | "disabled"
 export type ButtonBackground = "white" | "black" | "grey"
 
-export interface ButtonTextSmallProps extends Omit<ButtonProps, 'variant'> {
+export interface ButtonProps extends Omit<ButtonBaseProps, 'variant'> {
   variant?: ButtonVariant
   background?: ButtonBackground
   indicator?: boolean
@@ -14,7 +14,7 @@ export interface ButtonTextSmallProps extends Omit<ButtonProps, 'variant'> {
   featured?: boolean
 }
 
-const ButtonTextSmall = React.forwardRef<HTMLButtonElement, ButtonTextSmallProps>(
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, background, indicator, disabled, featured = false, children, ...props }, ref) => {
     // Determine automatic variant based on background if variant is not explicitly provided
     const effectiveVariant = variant || (background ? 
@@ -67,10 +67,10 @@ const ButtonTextSmall = React.forwardRef<HTMLButtonElement, ButtonTextSmallProps
 
     return (
       <div className="relative">
-        <Button
+        <ButtonBase
           ref={ref}
           className={cn(
-            "relative rounded-full text-sm py-[6px] px-[10px] font-light h-[20px] flex items-center leading-none justify-center font-custom transition-colors duration-200",
+            "relative rounded-full text-sm py-[10px] px-[15px] font-light h-[30px] flex items-center leading-none justify-center font-custom transition-colors duration-200",
             getButtonStyles(),
             className
           )}
@@ -78,7 +78,7 @@ const ButtonTextSmall = React.forwardRef<HTMLButtonElement, ButtonTextSmallProps
           {...props}
         >
           {children}
-        </Button>
+        </ButtonBase>
         
         {indicator && (
           <div className="absolute bottom-0 right-0 w-[7px] h-[7px] rounded-full bg-yellow"></div>
@@ -88,6 +88,6 @@ const ButtonTextSmall = React.forwardRef<HTMLButtonElement, ButtonTextSmallProps
   }
 )
 
-ButtonTextSmall.displayName = "ButtonTextSmall"
+Button.displayName = "Button"
 
-export { ButtonTextSmall }
+export { Button }

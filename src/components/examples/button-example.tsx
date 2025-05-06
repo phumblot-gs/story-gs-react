@@ -1,43 +1,43 @@
 
 import React from "react"
-import { ButtonTextLarge } from "@/components/ui/button-text-large"
+import { Button } from "@/components/ui/button-default"
 
-const ButtonTextLargeExample = () => {
+const ButtonExample = () => {
   return (
     <div className="p-8 space-y-8">
-      <h2 className="text-2xl font-bold mb-4">Button Text Large Component</h2>
+      <h2 className="text-2xl font-bold mb-4">Button Component</h2>
       
       <div>
         <h3 className="text-xl font-bold mb-4">Variants</h3>
         <div className="grid grid-cols-6 gap-8">
           <div className="flex flex-col items-center gap-2">
             <span className="text-sm text-muted-foreground">Primary</span>
-            <ButtonTextLarge variant="primary">Simple button</ButtonTextLarge>
+            <Button variant="primary">Simple button</Button>
           </div>
           
           <div className="flex flex-col items-center gap-2">
             <span className="text-sm text-muted-foreground">Black</span>
-            <ButtonTextLarge variant="black">Simple button</ButtonTextLarge>
+            <Button variant="black">Simple button</Button>
           </div>
           
           <div className="flex flex-col items-center gap-2">
             <span className="text-sm text-muted-foreground">Blue</span>
-            <ButtonTextLarge variant="blue">Simple button</ButtonTextLarge>
+            <Button variant="blue">Simple button</Button>
           </div>
           
           <div className="flex flex-col items-center gap-2">
             <span className="text-sm text-muted-foreground">Grey</span>
-            <ButtonTextLarge variant="grey">Simple button</ButtonTextLarge>
+            <Button variant="grey">Simple button</Button>
           </div>
           
           <div className="flex flex-col items-center gap-2">
             <span className="text-sm text-muted-foreground">Secondary</span>
-            <ButtonTextLarge variant="secondary">Simple button</ButtonTextLarge>
+            <Button variant="secondary">Simple button</Button>
           </div>
           
           <div className="flex flex-col items-center gap-2">
             <span className="text-sm text-muted-foreground">Disabled</span>
-            <ButtonTextLarge disabled>Simple button</ButtonTextLarge>
+            <Button disabled>Simple button</Button>
           </div>
         </div>
       </div>
@@ -47,32 +47,32 @@ const ButtonTextLargeExample = () => {
         <div className="grid grid-cols-6 gap-8">
           <div className="flex flex-col items-center gap-2">
             <span className="text-sm text-muted-foreground">Primary</span>
-            <ButtonTextLarge variant="primary" indicator={true}>Simple button</ButtonTextLarge>
+            <Button variant="primary" indicator={true}>Simple button</Button>
           </div>
           
           <div className="flex flex-col items-center gap-2">
             <span className="text-sm text-muted-foreground">Black</span>
-            <ButtonTextLarge variant="black" indicator={true}>Simple button</ButtonTextLarge>
+            <Button variant="black" indicator={true}>Simple button</Button>
           </div>
           
           <div className="flex flex-col items-center gap-2">
             <span className="text-sm text-muted-foreground">Blue</span>
-            <ButtonTextLarge variant="blue" indicator={true}>Simple button</ButtonTextLarge>
+            <Button variant="blue" indicator={true}>Simple button</Button>
           </div>
           
           <div className="flex flex-col items-center gap-2">
             <span className="text-sm text-muted-foreground">Grey</span>
-            <ButtonTextLarge variant="grey" indicator={true}>Simple button</ButtonTextLarge>
+            <Button variant="grey" indicator={true}>Simple button</Button>
           </div>
           
           <div className="flex flex-col items-center gap-2">
             <span className="text-sm text-muted-foreground">Secondary</span>
-            <ButtonTextLarge variant="secondary" indicator={true}>Simple button</ButtonTextLarge>
+            <Button variant="secondary" indicator={true}>Simple button</Button>
           </div>
           
           <div className="flex flex-col items-center gap-2">
             <span className="text-sm text-muted-foreground">Disabled</span>
-            <ButtonTextLarge disabled indicator={true}>Simple button</ButtonTextLarge>
+            <Button disabled indicator={true}>Simple button</Button>
           </div>
         </div>
       </div>
@@ -83,27 +83,27 @@ const ButtonTextLargeExample = () => {
           <div className="bg-white p-4 rounded-lg">
             <h4 className="text-lg font-medium mb-4">White Background</h4>
             <div className="flex gap-4">
-              <ButtonTextLarge background="white">Simple button</ButtonTextLarge>
-              <ButtonTextLarge background="white" indicator={true}>Simple button</ButtonTextLarge>
-              <ButtonTextLarge background="white" featured={true}>Featured button</ButtonTextLarge>
+              <Button background="white">Simple button</Button>
+              <Button background="white" indicator={true}>Simple button</Button>
+              <Button background="white" featured={true}>Featured button</Button>
             </div>
           </div>
           
           <div className="bg-black p-4 rounded-lg">
             <h4 className="text-lg font-medium mb-4 text-white">Black Background</h4>
             <div className="flex gap-4">
-              <ButtonTextLarge background="black">Simple button</ButtonTextLarge>
-              <ButtonTextLarge background="black" indicator={true}>Simple button</ButtonTextLarge>
-              <ButtonTextLarge background="black" featured={true}>Featured button</ButtonTextLarge>
+              <Button background="black">Simple button</Button>
+              <Button background="black" indicator={true}>Simple button</Button>
+              <Button background="black" featured={true}>Featured button</Button>
             </div>
           </div>
           
           <div className="bg-grey p-4 rounded-lg">
             <h4 className="text-lg font-medium mb-4">Grey Background</h4>
             <div className="flex gap-4">
-              <ButtonTextLarge background="grey">Simple button</ButtonTextLarge>
-              <ButtonTextLarge background="grey" indicator={true}>Simple button</ButtonTextLarge>
-              <ButtonTextLarge background="grey" featured={true}>Featured button</ButtonTextLarge>
+              <Button background="grey">Simple button</Button>
+              <Button background="grey" indicator={true}>Simple button</Button>
+              <Button background="grey" featured={true}>Featured button</Button>
             </div>
           </div>
         </div>
@@ -114,17 +114,17 @@ const ButtonTextLargeExample = () => {
         <div className="grid grid-cols-3 gap-8">
           <div className="flex flex-col items-center gap-2 bg-white p-4 rounded-lg">
             <span className="text-sm text-muted-foreground">White Background</span>
-            <ButtonTextLarge background="white" featured={true}>Featured button</ButtonTextLarge>
+            <Button background="white" featured={true}>Featured button</Button>
           </div>
           
           <div className="flex flex-col items-center gap-2 bg-black p-4 rounded-lg">
             <span className="text-sm text-white">Black Background</span>
-            <ButtonTextLarge background="black" featured={true}>Featured button</ButtonTextLarge>
+            <Button background="black" featured={true}>Featured button</Button>
           </div>
           
           <div className="flex flex-col items-center gap-2 bg-grey p-4 rounded-lg">
             <span className="text-sm text-muted-foreground">Grey Background</span>
-            <ButtonTextLarge background="grey" featured={true}>Featured button</ButtonTextLarge>
+            <Button background="grey" featured={true}>Featured button</Button>
           </div>
         </div>
       </div>
@@ -132,4 +132,4 @@ const ButtonTextLargeExample = () => {
   )
 }
 
-export default ButtonTextLargeExample
+export default ButtonExample

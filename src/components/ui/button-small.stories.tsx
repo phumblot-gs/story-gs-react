@@ -1,10 +1,10 @@
 
 import type { Meta, StoryObj } from "@storybook/react";
-import { ButtonTextSmall } from "./button-text-small";
+import { ButtonSmall } from "./button-small";
 
-const meta: Meta<typeof ButtonTextSmall> = {
-  title: "UI/ButtonTextSmall",
-  component: ButtonTextSmall,
+const meta: Meta<typeof ButtonSmall> = {
+  title: "UI/ButtonSmall",
+  component: ButtonSmall,
   parameters: {
     layout: "centered",
   },
@@ -31,11 +31,11 @@ const meta: Meta<typeof ButtonTextSmall> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof ButtonTextSmall>;
+type Story = StoryObj<typeof ButtonSmall>;
 
 export const Default: Story = {
   args: {
-    children: "Button Text Small",
+    children: "Button Small",
     variant: "primary",
   },
 };
@@ -99,12 +99,12 @@ export const Disabled: Story = {
 export const ButtonVariations: Story = {
   render: () => (
     <div className="flex flex-wrap gap-4">
-      <ButtonTextSmall variant="primary">Primary</ButtonTextSmall>
-      <ButtonTextSmall variant="secondary">Secondary</ButtonTextSmall>
-      <ButtonTextSmall variant="black">Black</ButtonTextSmall>
-      <ButtonTextSmall variant="blue">Blue</ButtonTextSmall>
-      <ButtonTextSmall variant="grey">Grey</ButtonTextSmall>
-      <ButtonTextSmall disabled>Disabled</ButtonTextSmall>
+      <ButtonSmall variant="primary">Primary</ButtonSmall>
+      <ButtonSmall variant="secondary">Secondary</ButtonSmall>
+      <ButtonSmall variant="black">Black</ButtonSmall>
+      <ButtonSmall variant="blue">Blue</ButtonSmall>
+      <ButtonSmall variant="grey">Grey</ButtonSmall>
+      <ButtonSmall disabled>Disabled</ButtonSmall>
     </div>
   ),
 };

@@ -16,7 +16,7 @@ npm install gs-components-library
 ## Usage
 
 ```jsx
-import { Button, ButtonCircle, ButtonTextSmall, ButtonTextLarge, ButtonStatus } from 'gs-components-library';
+import { Button, ButtonSmall, ButtonCircle, ButtonStatus } from 'gs-components-library';
 import 'gs-components-library/dist/style.css';
 
 function App() {
@@ -24,8 +24,8 @@ function App() {
     <div>
       <Button>Regular Button</Button>
       <ButtonCircle icon="Plus" />
-      <ButtonTextSmall>Small Text Button</ButtonTextSmall>
-      <ButtonTextLarge>Large Text Button</ButtonTextLarge>
+      <ButtonSmall>Small Button</ButtonSmall>
+      <ButtonStatus status="FOR_APPROVAL" icon="Check" />
     </div>
   );
 }
@@ -37,8 +37,7 @@ This library includes the following components:
 
 - **Button**: Standard button component with various styling options
 - **ButtonCircle**: Circular button with icon or letter
-- **ButtonTextSmall**: Small text button
-- **ButtonTextLarge**: Large text button
+- **ButtonSmall**: Small text button
 - **ButtonStatus**: Status-specific button with appropriate colors
 - **StatusIndicator**: Simple indicator for different status states
 

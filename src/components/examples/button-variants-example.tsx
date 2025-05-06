@@ -1,7 +1,7 @@
 
 import React from "react"
-import { ButtonTextLarge } from "@/components/ui/button-text-large"
-import { ButtonTextSmall } from "@/components/ui/button-text-small"
+import { Button } from "@/components/ui/button-default"
+import { ButtonSmall } from "@/components/ui/button-small"
 import { ButtonCircle } from "@/components/ui/button-circle"
 
 const ButtonVariantsExample = () => {
@@ -10,21 +10,21 @@ const ButtonVariantsExample = () => {
       <h2 className="text-2xl font-bold mb-4">Button Variants</h2>
       
       <div>
-        <h3 className="text-xl font-bold mb-4">Button Text Small</h3>
+        <h3 className="text-xl font-bold mb-4">Button Small</h3>
         <div className="grid grid-cols-3 gap-8">
           <div className="flex flex-col items-center gap-2 bg-white p-4 rounded-lg">
             <span className="text-sm text-muted-foreground">White Background</span>
-            <ButtonTextSmall background="white">Small button</ButtonTextSmall>
+            <ButtonSmall background="white">Small button</ButtonSmall>
           </div>
           
           <div className="flex flex-col items-center gap-2 bg-black p-4 rounded-lg">
             <span className="text-sm text-white">Black Background</span>
-            <ButtonTextSmall background="black">Small button</ButtonTextSmall>
+            <ButtonSmall background="black">Small button</ButtonSmall>
           </div>
           
           <div className="flex flex-col items-center gap-2 bg-grey p-4 rounded-lg">
             <span className="text-sm text-muted-foreground">Grey Background</span>
-            <ButtonTextSmall background="grey">Small button</ButtonTextSmall>
+            <ButtonSmall background="grey">Small button</ButtonSmall>
           </div>
         </div>
       </div>
@@ -126,7 +126,7 @@ const ButtonVariantsExample = () => {
         <h3 className="text-xl font-bold mb-4">Buttons with Indicators</h3>
         <div className="grid grid-cols-3 gap-8">
           <div className="flex flex-col items-center gap-2">
-            <ButtonTextSmall indicator={true}>Small button</ButtonTextSmall>
+            <ButtonSmall indicator={true}>Small button</ButtonSmall>
           </div>
           
           <div className="flex flex-col items-center gap-2">

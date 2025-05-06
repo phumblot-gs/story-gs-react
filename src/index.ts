@@ -1,15 +1,22 @@
 
 // Export UI components
-export { Button, buttonVariants } from "./components/ui/button";
+export { Button as ButtonBase, buttonVariants } from "./components/ui/button";
 
-// Export button text components with explicit type exports
-export { ButtonTextSmall } from "./components/ui/button-text-small";
-export { ButtonTextLarge } from "./components/ui/button-text-large";
+// Export default button component (previously ButtonTextLarge)
+export { Button } from "./components/ui/button-default";
 export type { 
-  ButtonVariant as TextButtonVariant,
-  ButtonBackground as TextButtonBackground,
-  ButtonTextSmallProps
-} from "./components/ui/button-text-small";
+  ButtonVariant,
+  ButtonBackground,
+  ButtonProps
+} from "./components/ui/button-default";
+
+// Export button small component (previously ButtonTextSmall)
+export { ButtonSmall } from "./components/ui/button-small";
+export type { 
+  ButtonVariant as ButtonSmallVariant,
+  ButtonBackground as ButtonSmallBackground,
+  ButtonSmallProps
+} from "./components/ui/button-small";
 
 // Export ButtonCircle and its types separately to avoid conflicts
 export { ButtonCircle } from "./components/ui/button-circle";

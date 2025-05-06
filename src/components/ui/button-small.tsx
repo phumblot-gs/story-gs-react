@@ -1,12 +1,12 @@
 
 import * as React from "react"
 import { cn } from "@/lib/utils"
-import { Button, ButtonProps } from "@/components/ui/button"
+import { Button as ButtonBase, ButtonProps as ButtonBaseProps } from "@/components/ui/button"
 
 export type ButtonVariant = "primary" | "secondary" | "black" | "blue" | "grey" | "disabled"
 export type ButtonBackground = "white" | "black" | "grey"
 
-export interface ButtonTextLargeProps extends Omit<ButtonProps, 'variant'> {
+export interface ButtonSmallProps extends Omit<ButtonBaseProps, 'variant'> {
   variant?: ButtonVariant
   background?: ButtonBackground
   indicator?: boolean
@@ -14,7 +14,7 @@ export interface ButtonTextLargeProps extends Omit<ButtonProps, 'variant'> {
   featured?: boolean
 }
 
-const ButtonTextLarge = React.forwardRef<HTMLButtonElement, ButtonTextLargeProps>(
+const ButtonSmall = React.forwardRef<HTMLButtonElement, ButtonSmallProps>(
   ({ className, variant, background, indicator, disabled, featured = false, children, ...props }, ref) => {
     // Determine automatic variant based on background if variant is not explicitly provided
     const effectiveVariant = variant || (background ? 
@@ -67,10 +67,10 @@ const ButtonTextLarge = React.forwardRef<HTMLButtonElement, ButtonTextLargeProps
 
     return (
       <div className="relative">
-        <Button
+        <ButtonBase
           ref={ref}
           className={cn(
-            "relative rounded-full text-sm py-[10px] px-[15px] font-light h-[30px] flex items-center leading-none justify-center font-custom transition-colors duration-200",
+            "relative rounded-full text-sm py-[6px] px-[10px] font-light h-[20px] flex items-center leading-none justify-center font-custom transition-colors duration-200",
             getButtonStyles(),
             className
           )}
@@ -78,7 +78,7 @@ const ButtonTextLarge = React.forwardRef<HTMLButtonElement, ButtonTextLargeProps
           {...props}
         >
           {children}
-        </Button>
+        </ButtonBase>
         
         {indicator && (
           <div className="absolute bottom-0 right-0 w-[7px] h-[7px] rounded-full bg-yellow"></div>
@@ -88,6 +88,6 @@ const ButtonTextLarge = React.forwardRef<HTMLButtonElement, ButtonTextLargeProps
   }
 )
 
-ButtonTextLarge.displayName = "ButtonTextLarge"
+ButtonSmall.displayName = "ButtonSmall"
 
-export { ButtonTextLarge }
+export { ButtonSmall }
