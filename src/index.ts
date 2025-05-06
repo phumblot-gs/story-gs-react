@@ -30,16 +30,13 @@ export type {
   ButtonSize
 };
 
-// Create ButtonSmall as a wrapper around Button with size="small"
-const ButtonSmall = React.forwardRef<HTMLButtonElement, Omit<React.ComponentPropsWithRef<typeof Button>, "size">>(
-  (props, ref) => {
-    return <Button {...props} size="small" ref={ref} />;
-  }
-);
-ButtonSmall.displayName = "ButtonSmall";
+// For backward compatibility, export ButtonSmall as a type alias
+// and create a simple function that returns Button with size="small"
+export const ButtonSmall: React.FC<Omit<ButtonProps, "size">> = (props) => {
+  return <Button {...props} size="small" />;
+};
 
-export { ButtonSmall };
-export type ButtonSmallProps = Omit<React.ComponentPropsWithRef<typeof Button>, "size">;
+export type ButtonSmallProps = Omit<ButtonProps, "size">;
 
 // Export status components
 export * from "./components/ButtonStatus";

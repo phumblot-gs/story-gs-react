@@ -39,6 +39,7 @@ const meta: Meta<typeof Button> = {
 export default meta;
 type Story = StoryObj<typeof Button>;
 
+// Standard button stories
 export const Default: Story = {
   args: {
     children: "Button",
@@ -131,4 +132,50 @@ export const ButtonSizes: Story = {
       <Button size="large">Large Button</Button>
     </div>
   ),
+};
+
+// Stories from previously separate ButtonSmall component
+export const SmallButtonVariations: Story = {
+  render: () => (
+    <div className="flex flex-wrap gap-4">
+      <Button size="small" variant="primary">Primary</Button>
+      <Button size="small" variant="secondary">Secondary</Button>
+      <Button size="small" variant="black">Black</Button>
+      <Button size="small" variant="blue">Blue</Button>
+      <Button size="small" variant="grey">Grey</Button>
+      <Button size="small" disabled>Disabled</Button>
+    </div>
+  ),
+};
+
+export const SmallWithIndicator: Story = {
+  args: {
+    children: "Small With Indicator",
+    size: "small",
+    indicator: true,
+  },
+};
+
+export const SmallFeatured: Story = {
+  args: {
+    children: "Small Featured",
+    size: "small",
+    featured: true,
+  },
+};
+
+export const SmallBlackBackground: Story = {
+  args: {
+    children: "Small Black Background",
+    size: "small",
+    background: "black",
+  },
+};
+
+export const SmallGrayBackground: Story = {
+  args: {
+    children: "Small Gray Background",
+    size: "small",
+    background: "grey",
+  },
 };
