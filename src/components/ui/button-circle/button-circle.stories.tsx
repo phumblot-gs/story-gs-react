@@ -1,4 +1,3 @@
-
 import type { Meta, StoryObj } from "@storybook/react";
 import { ButtonCircle } from "./index";
 import { AllowedPictogram } from "./types";
@@ -8,6 +7,11 @@ const meta: Meta<typeof ButtonCircle> = {
   component: ButtonCircle,
   parameters: {
     layout: "centered",
+    docs: {
+      argTypes: {
+        sort: 'alpha'
+      }
+    }
   },
   tags: ["autodocs"],
   argTypes: {

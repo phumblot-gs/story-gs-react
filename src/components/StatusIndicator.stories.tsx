@@ -1,4 +1,3 @@
-
 import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { StatusIndicator } from "./StatusIndicator";
@@ -9,6 +8,11 @@ const meta: Meta<typeof StatusIndicator> = {
   component: StatusIndicator,
   parameters: {
     layout: "centered",
+    docs: {
+      argTypes: {
+        sort: 'alpha'
+      }
+    }
   },
   tags: ["autodocs"],
   argTypes: {
