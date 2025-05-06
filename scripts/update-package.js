@@ -15,11 +15,11 @@ const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
 // Add library-specific configurations
 const updatedPackageJson = {
   ...packageJson,
-  name: "ui-components-library", // Change to your desired package name
+  name: "gs-components-library", // Change to your desired package name
   version: "0.1.0",
   description: "A modern UI component library",
-  main: "dist/ui-components.umd.js",
-  module: "dist/ui-components.es.js",
+  main: "dist/gs-components.umd.js",
+  module: "dist/gs-components.es.js",
   types: "dist/index.d.ts",
   files: [
     "dist"

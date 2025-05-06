@@ -44,6 +44,6 @@ try {
 console.log('🎉 All done! Your component library and documentation are ready.');
 console.log('\nTo use the component library in another project:');
 console.log('1. Run: npm pack');
-console.log('2. In your project: npm install /path/to/ui-components-library-0.1.0.tgz');
+console.log('2. In your project: npm install /path/to/gs-components-library-0.1.0.tgz');
 console.log('\nTo view Storybook documentation:');
 console.log('- Run: npx serve storybook-static');

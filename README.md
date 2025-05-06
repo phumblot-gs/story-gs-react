@@ -13,14 +13,14 @@ A modern, responsive UI component library built with React, Tailwind CSS, and Ty
 ## Installation
 
 ```bash
-npm install ui-components-library
+npm install gs-components-library
 ```
 
 ## Usage
 
 ```jsx
-import { Button, ButtonCircle, ButtonTextSmall, ButtonTextLarge } from 'ui-components-library';
-import 'ui-components-library/dist/style.css';
+import { Button, ButtonCircle, ButtonTextSmall, ButtonTextLarge } from 'gs-components-library';
+import 'gs-components-library/dist/style.css';
 
 function App() {
   return (
