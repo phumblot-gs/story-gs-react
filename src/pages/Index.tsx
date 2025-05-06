@@ -4,7 +4,8 @@ import { ThemeCustomizer } from '@/components/ThemeCustomizer';
 import { useThemeValues } from '@/hooks/useThemeValues';
 import ButtonStatus from '@/components/ButtonStatus';
 import { MediaStatus } from '@/utils/mediaStatus';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/button-default';
+import { ButtonCircle } from '@/components/ui/button-circle';
 
 const Index = () => {
   const { brandName, cssVars, isDarkMode } = useThemeValues();
@@ -30,11 +31,41 @@ const Index = () => {
           
           <section className="space-y-4">
             <h2 className="text-xl font-semibold">Example Components</h2>
-            <div className="flex flex-wrap gap-4">
-              <Button variant="default">Primary Button</Button>
-              <Button variant="secondary">Secondary Button</Button>
-              <Button variant="outline">Outline Button</Button>
-              <Button variant="destructive">Destructive Button</Button>
+            <div className="grid grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium">Button Component</h3>
+                <div className="flex flex-wrap gap-4">
+                  <Button background="white">White Button</Button>
+                  <Button background="black">Black Button</Button>
+                  <Button background="grey">Grey Button</Button>
+                  <Button background="white" featured={true}>Featured Button</Button>
+                </div>
+              </div>
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium">ButtonCircle Component</h3>
+                <div className="flex flex-wrap gap-4">
+                  <ButtonCircle icon="Plus" />
+                  <ButtonCircle icon="Check" />
+                  <ButtonCircle icon="Bell" />
+                  <ButtonCircle background="black" icon="Tag" />
+                </div>
+              </div>
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium">Size Variations</h3>
+                <div className="flex flex-wrap gap-4 items-center">
+                  <Button size="small" background="white">Small Button</Button>
+                  <Button background="white">Default Button</Button>
+                  <ButtonCircle size="small" icon="Plus" />
+                  <ButtonCircle icon="Plus" />
+                </div>
+              </div>
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium">With Indicators</h3>
+                <div className="flex flex-wrap gap-4">
+                  <Button indicator={true} background="white">Button with Indicator</Button>
+                  <ButtonCircle indicator={true} icon="Bell" />
+                </div>
+              </div>
             </div>
           </section>
           
