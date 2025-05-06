@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useCustomTheme } from '@/contexts/ThemeContext';
 import { hexToHSLString } from '@/utils/colorUtils';
 import { Sun, Moon, Palette } from 'lucide-react';
@@ -14,126 +14,168 @@ interface ThemeCustomizerProps {
   className?: string;
 }
 
+// Default theme colors to pre-populate inputs
+const defaultThemeColors = {
+  // Background colors
+  bgWhite: '#FFFFFF',
+  bgBlack: '#000000',
+  bgGrey: '#8E9196',
+  bgGreyLighter: '#E5E7EB',
+  bgGreyStrongest: '#1A1F2C',
+  
+  // Text colors
+  textGreyStronger: '#4B5563',
+  textBlack: '#000000',
+  textWhite: '#FFFFFF',
+  textBluePrimary: '#1EAEDB',
+  textBlue: '#3B82F6',
+  
+  // Status colors
+  statusIgnored: '#8E9196',
+  statusReshoot: '#F59E0B',
+  statusNotSelected: '#6B7280',
+  statusSelected: '#10B981',
+  statusRefused: '#EF4444',
+  statusForApproval: '#9b87f5',
+  statusValidated: '#34D399',
+  statusToPublish: '#3B82F6',
+  statusError: '#ea384c',
+  statusPublished: '#8B5CF6',
+};
+
 export const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({
   className
 }) => {
   const { theme, setTheme, customization, updateCustomization, resetCustomization } = useCustomTheme();
   const [isOpen, setIsOpen] = useState(false);
   
-  // Local state for form inputs
-  const [brandName, setBrandName] = useState(customization.text.brandName || '');
+  // Local state for form inputs using lazy initialization to prevent unnecessary rerenders
+  const [formValues, setFormValues] = useState(() => ({
+    // Brand name
+    brandName: customization.text.brandName || 'GS Components',
+    
+    // Background colors
+    bgWhite: customization.colors.bgWhite || defaultThemeColors.bgWhite,
+    bgBlack: customization.colors.bgBlack || defaultThemeColors.bgBlack,
+    bgGrey: customization.colors.bgGrey || defaultThemeColors.bgGrey,
+    bgGreyLighter: customization.colors.bgGreyLighter || defaultThemeColors.bgGreyLighter,
+    bgGreyStrongest: customization.colors.bgGreyStrongest || defaultThemeColors.bgGreyStrongest,
+    
+    // Text colors
+    textGreyStronger: customization.colors.textGreyStronger || defaultThemeColors.textGreyStronger,
+    textBlack: customization.colors.textBlack || defaultThemeColors.textBlack,
+    textWhite: customization.colors.textWhite || defaultThemeColors.textWhite,
+    textBluePrimary: customization.colors.textBluePrimary || defaultThemeColors.textBluePrimary,
+    textBlue: customization.colors.textBlue || defaultThemeColors.textBlue,
+    
+    // Status colors
+    statusIgnored: customization.colors.statusIgnored || defaultThemeColors.statusIgnored,
+    statusReshoot: customization.colors.statusReshoot || defaultThemeColors.statusReshoot,
+    statusNotSelected: customization.colors.statusNotSelected || defaultThemeColors.statusNotSelected,
+    statusSelected: customization.colors.statusSelected || defaultThemeColors.statusSelected,
+    statusRefused: customization.colors.statusRefused || defaultThemeColors.statusRefused,
+    statusForApproval: customization.colors.statusForApproval || defaultThemeColors.statusForApproval,
+    statusValidated: customization.colors.statusValidated || defaultThemeColors.statusValidated,
+    statusToPublish: customization.colors.statusToPublish || defaultThemeColors.statusToPublish,
+    statusError: customization.colors.statusError || defaultThemeColors.statusError,
+    statusPublished: customization.colors.statusPublished || defaultThemeColors.statusPublished,
+  }));
   
-  // Background colors
-  const [bgWhite, setBgWhite] = useState(customization.colors.bgWhite || '');
-  const [bgBlack, setBgBlack] = useState(customization.colors.bgBlack || '');
-  const [bgGrey, setBgGrey] = useState(customization.colors.bgGrey || '');
-  const [bgGreyLighter, setBgGreyLighter] = useState(customization.colors.bgGreyLighter || '');
-  const [bgGreyStrongest, setBgGreyStrongest] = useState(customization.colors.bgGreyStrongest || '');
-  
-  // Text colors
-  const [textGreyStronger, setTextGreyStronger] = useState(customization.colors.textGreyStronger || '');
-  const [textBlack, setTextBlack] = useState(customization.colors.textBlack || '');
-  const [textWhite, setTextWhite] = useState(customization.colors.textWhite || '');
-  const [textBluePrimary, setTextBluePrimary] = useState(customization.colors.textBluePrimary || '');
-  const [textBlue, setTextBlue] = useState(customization.colors.textBlue || '');
-  
-  // Status colors
-  const [statusIgnored, setStatusIgnored] = useState(customization.colors.statusIgnored || '');
-  const [statusReshoot, setStatusReshoot] = useState(customization.colors.statusReshoot || '');
-  const [statusNotSelected, setStatusNotSelected] = useState(customization.colors.statusNotSelected || '');
-  const [statusSelected, setStatusSelected] = useState(customization.colors.statusSelected || '');
-  const [statusRefused, setStatusRefused] = useState(customization.colors.statusRefused || '');
-  const [statusForApproval, setStatusForApproval] = useState(customization.colors.statusForApproval || '');
-  const [statusValidated, setStatusValidated] = useState(customization.colors.statusValidated || '');
-  const [statusToPublish, setStatusToPublish] = useState(customization.colors.statusToPublish || '');
-  const [statusError, setStatusError] = useState(customization.colors.statusError || '');
-  const [statusPublished, setStatusPublished] = useState(customization.colors.statusPublished || '');
+  // Handle input change without losing focus
+  const handleInputChange = (key: keyof typeof formValues, value: string) => {
+    setFormValues(prev => ({
+      ...prev,
+      [key]: value
+    }));
+  };
   
   // Apply changes from local state to theme context
   const applyChanges = () => {
     updateCustomization({
       colors: {
         // Background colors
-        bgWhite: bgWhite || undefined,
-        bgBlack: bgBlack || undefined,
-        bgGrey: bgGrey || undefined,
-        bgGreyLighter: bgGreyLighter || undefined,
-        bgGreyStrongest: bgGreyStrongest || undefined,
+        bgWhite: formValues.bgWhite || undefined,
+        bgBlack: formValues.bgBlack || undefined,
+        bgGrey: formValues.bgGrey || undefined,
+        bgGreyLighter: formValues.bgGreyLighter || undefined,
+        bgGreyStrongest: formValues.bgGreyStrongest || undefined,
         
         // Text colors
-        textGreyStronger: textGreyStronger || undefined,
-        textBlack: textBlack || undefined,
-        textWhite: textWhite || undefined,
-        textBluePrimary: textBluePrimary || undefined,
-        textBlue: textBlue || undefined,
+        textGreyStronger: formValues.textGreyStronger || undefined,
+        textBlack: formValues.textBlack || undefined,
+        textWhite: formValues.textWhite || undefined,
+        textBluePrimary: formValues.textBluePrimary || undefined,
+        textBlue: formValues.textBlue || undefined,
         
         // Status colors
-        statusIgnored: statusIgnored || undefined,
-        statusReshoot: statusReshoot || undefined,
-        statusNotSelected: statusNotSelected || undefined,
-        statusSelected: statusSelected || undefined,
-        statusRefused: statusRefused || undefined,
-        statusForApproval: statusForApproval || undefined,
-        statusValidated: statusValidated || undefined,
-        statusToPublish: statusToPublish || undefined,
-        statusError: statusError || undefined,
-        statusPublished: statusPublished || undefined,
+        statusIgnored: formValues.statusIgnored || undefined,
+        statusReshoot: formValues.statusReshoot || undefined,
+        statusNotSelected: formValues.statusNotSelected || undefined,
+        statusSelected: formValues.statusSelected || undefined,
+        statusRefused: formValues.statusRefused || undefined,
+        statusForApproval: formValues.statusForApproval || undefined,
+        statusValidated: formValues.statusValidated || undefined,
+        statusToPublish: formValues.statusToPublish || undefined,
+        statusError: formValues.statusError || undefined,
+        statusPublished: formValues.statusPublished || undefined,
       },
       text: {
-        brandName: brandName || undefined,
+        brandName: formValues.brandName || undefined,
       }
     });
     setIsOpen(false);
   };
   
   // Reset local state when popover opens
-  React.useEffect(() => {
+  useEffect(() => {
     if (isOpen) {
-      // Brand name
-      setBrandName(customization.text.brandName || '');
-      
-      // Background colors
-      setBgWhite(customization.colors.bgWhite || '');
-      setBgBlack(customization.colors.bgBlack || '');
-      setBgGrey(customization.colors.bgGrey || '');
-      setBgGreyLighter(customization.colors.bgGreyLighter || '');
-      setBgGreyStrongest(customization.colors.bgGreyStrongest || '');
-      
-      // Text colors
-      setTextGreyStronger(customization.colors.textGreyStronger || '');
-      setTextBlack(customization.colors.textBlack || '');
-      setTextWhite(customization.colors.textWhite || '');
-      setTextBluePrimary(customization.colors.textBluePrimary || '');
-      setTextBlue(customization.colors.textBlue || '');
-      
-      // Status colors
-      setStatusIgnored(customization.colors.statusIgnored || '');
-      setStatusReshoot(customization.colors.statusReshoot || '');
-      setStatusNotSelected(customization.colors.statusNotSelected || '');
-      setStatusSelected(customization.colors.statusSelected || '');
-      setStatusRefused(customization.colors.statusRefused || '');
-      setStatusForApproval(customization.colors.statusForApproval || '');
-      setStatusValidated(customization.colors.statusValidated || '');
-      setStatusToPublish(customization.colors.statusToPublish || '');
-      setStatusError(customization.colors.statusError || '');
-      setStatusPublished(customization.colors.statusPublished || '');
+      setFormValues({
+        // Brand name
+        brandName: customization.text.brandName || 'GS Components',
+        
+        // Background colors
+        bgWhite: customization.colors.bgWhite || defaultThemeColors.bgWhite,
+        bgBlack: customization.colors.bgBlack || defaultThemeColors.bgBlack,
+        bgGrey: customization.colors.bgGrey || defaultThemeColors.bgGrey,
+        bgGreyLighter: customization.colors.bgGreyLighter || defaultThemeColors.bgGreyLighter,
+        bgGreyStrongest: customization.colors.bgGreyStrongest || defaultThemeColors.bgGreyStrongest,
+        
+        // Text colors
+        textGreyStronger: customization.colors.textGreyStronger || defaultThemeColors.textGreyStronger,
+        textBlack: customization.colors.textBlack || defaultThemeColors.textBlack,
+        textWhite: customization.colors.textWhite || defaultThemeColors.textWhite,
+        textBluePrimary: customization.colors.textBluePrimary || defaultThemeColors.textBluePrimary,
+        textBlue: customization.colors.textBlue || defaultThemeColors.textBlue,
+        
+        // Status colors
+        statusIgnored: customization.colors.statusIgnored || defaultThemeColors.statusIgnored,
+        statusReshoot: customization.colors.statusReshoot || defaultThemeColors.statusReshoot,
+        statusNotSelected: customization.colors.statusNotSelected || defaultThemeColors.statusNotSelected,
+        statusSelected: customization.colors.statusSelected || defaultThemeColors.statusSelected,
+        statusRefused: customization.colors.statusRefused || defaultThemeColors.statusRefused,
+        statusForApproval: customization.colors.statusForApproval || defaultThemeColors.statusForApproval,
+        statusValidated: customization.colors.statusValidated || defaultThemeColors.statusValidated,
+        statusToPublish: customization.colors.statusToPublish || defaultThemeColors.statusToPublish,
+        statusError: customization.colors.statusError || defaultThemeColors.statusError,
+        statusPublished: customization.colors.statusPublished || defaultThemeColors.statusPublished,
+      });
     }
   }, [isOpen, customization]);
   
   // Color input component to reduce repetition
-  const ColorInput = ({ label, value, onChange }: { label: string; value: string; onChange: (value: string) => void }) => (
+  const ColorInput = ({ label, colorKey }: { label: string; colorKey: keyof typeof formValues }) => (
     <div className="space-y-1">
       <Label className="text-xs">{label}</Label>
       <div className="flex gap-2">
         <div 
           className="w-6 h-6 rounded border"
-          style={{ backgroundColor: value || 'transparent' }}
+          style={{ backgroundColor: formValues[colorKey] || 'transparent' }}
         />
         <Input
           type="text"
           placeholder="#000000"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
+          value={formValues[colorKey]}
+          onChange={(e) => handleInputChange(colorKey, e.target.value)}
           className="h-6 text-xs"
         />
       </div>
@@ -169,8 +211,8 @@ export const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({
                 id="brand-name"
                 type="text"
                 placeholder="GS Components"
-                value={brandName}
-                onChange={(e) => setBrandName(e.target.value)}
+                value={formValues.brandName}
+                onChange={(e) => handleInputChange('brandName', e.target.value)}
               />
             </div>
             
@@ -182,32 +224,32 @@ export const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({
               </TabsList>
               
               <TabsContent value="background" className="space-y-3">
-                <ColorInput label="bg-white" value={bgWhite} onChange={setBgWhite} />
-                <ColorInput label="bg-black" value={bgBlack} onChange={setBgBlack} />
-                <ColorInput label="bg-grey" value={bgGrey} onChange={setBgGrey} />
-                <ColorInput label="bg-grey-lighter" value={bgGreyLighter} onChange={setBgGreyLighter} />
-                <ColorInput label="bg-grey-strongest" value={bgGreyStrongest} onChange={setBgGreyStrongest} />
+                <ColorInput label="bg-white" colorKey="bgWhite" />
+                <ColorInput label="bg-black" colorKey="bgBlack" />
+                <ColorInput label="bg-grey" colorKey="bgGrey" />
+                <ColorInput label="bg-grey-lighter" colorKey="bgGreyLighter" />
+                <ColorInput label="bg-grey-strongest" colorKey="bgGreyStrongest" />
               </TabsContent>
               
               <TabsContent value="text" className="space-y-3">
-                <ColorInput label="text-grey-stronger" value={textGreyStronger} onChange={setTextGreyStronger} />
-                <ColorInput label="text-black" value={textBlack} onChange={setTextBlack} />
-                <ColorInput label="text-white" value={textWhite} onChange={setTextWhite} />
-                <ColorInput label="text-blue-primary" value={textBluePrimary} onChange={setTextBluePrimary} />
-                <ColorInput label="text-blue" value={textBlue} onChange={setTextBlue} />
+                <ColorInput label="text-grey-stronger" colorKey="textGreyStronger" />
+                <ColorInput label="text-black" colorKey="textBlack" />
+                <ColorInput label="text-white" colorKey="textWhite" />
+                <ColorInput label="text-blue-primary" colorKey="textBluePrimary" />
+                <ColorInput label="text-blue" colorKey="textBlue" />
               </TabsContent>
               
               <TabsContent value="status" className="space-y-3">
-                <ColorInput label="status-ignored" value={statusIgnored} onChange={setStatusIgnored} />
-                <ColorInput label="status-reshoot" value={statusReshoot} onChange={setStatusReshoot} />
-                <ColorInput label="status-not-selected" value={statusNotSelected} onChange={setStatusNotSelected} />
-                <ColorInput label="status-selected" value={statusSelected} onChange={setStatusSelected} />
-                <ColorInput label="status-refused" value={statusRefused} onChange={setStatusRefused} />
-                <ColorInput label="status-for-approval" value={statusForApproval} onChange={setStatusForApproval} />
-                <ColorInput label="status-validated" value={statusValidated} onChange={setStatusValidated} />
-                <ColorInput label="status-to-publish" value={statusToPublish} onChange={setStatusToPublish} />
-                <ColorInput label="status-error" value={statusError} onChange={setStatusError} />
-                <ColorInput label="status-published" value={statusPublished} onChange={setStatusPublished} />
+                <ColorInput label="status-ignored" colorKey="statusIgnored" />
+                <ColorInput label="status-reshoot" colorKey="statusReshoot" />
+                <ColorInput label="status-not-selected" colorKey="statusNotSelected" />
+                <ColorInput label="status-selected" colorKey="statusSelected" />
+                <ColorInput label="status-refused" colorKey="statusRefused" />
+                <ColorInput label="status-for-approval" colorKey="statusForApproval" />
+                <ColorInput label="status-validated" colorKey="statusValidated" />
+                <ColorInput label="status-to-publish" colorKey="statusToPublish" />
+                <ColorInput label="status-error" colorKey="statusError" />
+                <ColorInput label="status-published" colorKey="statusPublished" />
               </TabsContent>
             </Tabs>
             
