@@ -1,38 +1,45 @@
 
-// Export UI components - only export buttonVariants, not the Button component itself
-export { buttonVariants } from "./components/ui/button";
+// Import all components first
+import * as React from "react";
+import { buttonVariants } from "./components/ui/button";
+import { Button } from "./components/ui/button-default";
+import { ButtonCircle } from "./components/ui/button-circle";
 
-// Export default button component with size property
-export { Button } from "./components/ui/button-default";
-export type { 
+// Import types for re-export
+import type { 
   ButtonBackground,
   ButtonProps,
   ButtonSize
 } from "./components/ui/button-default";
 
-// Export ButtonSmall as an alias of Button with size="small" for backward compatibility
-import { Button as BaseButton } from "./components/ui/button-default";
-import * as React from "react";
+import type {
+  AllowedPictogram,
+  ButtonCircleProps,
+  ButtonSize as ButtonCircleSize
+} from "./components/ui/button-circle/types";
+
+// Export UI components
+export { buttonVariants };
+export { Button };
+export { ButtonCircle };
+
+// Export types
+export type { 
+  ButtonBackground,
+  ButtonProps,
+  ButtonSize
+};
 
 // Create ButtonSmall as a wrapper around Button with size="small"
-const ButtonSmall = React.forwardRef<
-  HTMLButtonElement, 
-  Omit<React.ComponentPropsWithRef<typeof BaseButton>, "size">
->((props, ref) => {
-  return <BaseButton {...props} size="small" ref={ref} />;
-});
+const ButtonSmall = React.forwardRef<HTMLButtonElement, Omit<React.ComponentPropsWithRef<typeof Button>, "size">>(
+  (props, ref) => {
+    return <Button {...props} size="small" ref={ref} />;
+  }
+);
 ButtonSmall.displayName = "ButtonSmall";
 
 export { ButtonSmall };
-export type ButtonSmallProps = Omit<React.ComponentPropsWithRef<typeof BaseButton>, "size">;
-
-// Export ButtonCircle and its types separately to avoid conflicts
-export { ButtonCircle } from "./components/ui/button-circle";
-export type { 
-  AllowedPictogram,
-  ButtonSize as ButtonCircleSize,
-  ButtonCircleProps 
-} from "./components/ui/button-circle/types";
+export type ButtonSmallProps = Omit<React.ComponentPropsWithRef<typeof Button>, "size">;
 
 // Export status components
 export * from "./components/ButtonStatus";
