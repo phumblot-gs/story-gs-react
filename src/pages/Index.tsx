@@ -1,145 +1,74 @@
 
-import React from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import ButtonExample from "@/components/examples/button-example"
-import ButtonVariantsExample from "@/components/examples/button-variants-example"
-import ButtonCircleIconsExample from "@/components/examples/button-circle-icons-example"
-import { MediaStatus } from "@/utils/mediaStatus"
-import ButtonStatus from "@/components/ButtonStatus"
+import React from 'react';
+import { ThemeCustomizer } from '@/components/ThemeCustomizer';
+import { useThemeValues } from '@/hooks/useThemeValues';
+import ButtonStatus from '@/components/ButtonStatus';
+import { MediaStatus } from '@/utils/mediaStatus';
+import { Button } from '@/components/ui/button';
 
 const Index = () => {
+  const { brandName, cssVars, isDarkMode } = useThemeValues();
+  
   return (
-    <div className="container mx-auto py-10">
-      <h1 className="text-4xl font-bold mb-8">Component Library</h1>
+    <div 
+      className="min-h-screen flex flex-col" 
+      style={cssVars as React.CSSProperties}
+    >
+      <header className="bg-background border-b p-4 flex justify-between items-center">
+        <h1 className="text-2xl font-bold">{brandName}</h1>
+        <ThemeCustomizer />
+      </header>
       
-      <Card className="mb-8">
-        <CardHeader>
-          <CardTitle>Button Component</CardTitle>
-          <CardDescription>
-            A circular button component with text and optional indicator, available in multiple variants.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <ButtonExample />
-        </CardContent>
-      </Card>
-
-      <Card className="mb-8">
-        <CardHeader>
-          <CardTitle>Button Variants</CardTitle>
-          <CardDescription>
-            Additional button variants: small buttons and circular buttons with icons or letters.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <ButtonVariantsExample />
-        </CardContent>
-      </Card>
-
-      <Card className="mb-8">
-        <CardHeader>
-          <CardTitle>ButtonCircle Icons</CardTitle>
-          <CardDescription>
-            All available pictogram icons for ButtonCircle component.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <ButtonCircleIconsExample />
-        </CardContent>
-      </Card>
+      <main className="flex-1 p-8">
+        <div className="max-w-3xl mx-auto space-y-8">
+          <section className="space-y-4">
+            <h2 className="text-xl font-semibold">Theme Customization Demo</h2>
+            <p className="text-muted-foreground">
+              This page demonstrates the theme provider functionality. Use the customizer in the header to change colors and settings.
+            </p>
+          </section>
+          
+          <section className="space-y-4">
+            <h2 className="text-xl font-semibold">Example Components</h2>
+            <div className="flex flex-wrap gap-4">
+              <Button variant="default">Primary Button</Button>
+              <Button variant="secondary">Secondary Button</Button>
+              <Button variant="outline">Outline Button</Button>
+              <Button variant="destructive">Destructive Button</Button>
+            </div>
+          </section>
+          
+          <section className="space-y-4">
+            <h2 className="text-xl font-semibold">Status Buttons</h2>
+            <div className="flex flex-wrap gap-4">
+              <ButtonStatus status={MediaStatus.yellow} icon="Check" />
+              <ButtonStatus status={MediaStatus.green} icon="Check" />
+              <ButtonStatus status={MediaStatus.blue} icon="Check" />
+              <ButtonStatus status={MediaStatus.red} icon="X" />
+            </div>
+          </section>
+          
+          <section className="p-4 rounded-md bg-card border">
+            <h3 className="text-lg font-medium mb-2">Current Theme Settings</h3>
+            <div className="text-sm">
+              <p><strong>Mode:</strong> {isDarkMode ? 'Dark' : 'Light'}</p>
+              <p><strong>Brand Name:</strong> {brandName}</p>
+              <div className="mt-2">
+                <p><strong>Custom Colors:</strong></p>
+                <pre className="bg-muted p-2 mt-1 rounded text-xs overflow-auto">
+                  {JSON.stringify(cssVars, null, 2)}
+                </pre>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
       
-      <Card className="mb-8">
-        <CardHeader>
-          <CardTitle>ButtonStatus Component</CardTitle>
-          <CardDescription>
-            Status buttons for media approval workflow with status-based coloring.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-wrap gap-4 p-4">
-            {/* Display all available media statuses for Check icon */}
-            <div className="grid grid-cols-3 gap-8 w-full">
-              <div className="space-y-6">
-                <h3 className="text-lg font-medium">Default State</h3>
-                {Object.values(MediaStatus).filter(value => typeof value === 'number').map((status) => (
-                  <div key={`check-${status}`} className="flex flex-col items-center gap-2">
-                    <ButtonStatus status={status as MediaStatus} icon="Check" />
-                    <span className="text-xs">{status}</span>
-                  </div>
-                ))}
-              </div>
-              
-              <div className="space-y-6">
-                <h3 className="text-lg font-medium">Active State</h3>
-                {Object.values(MediaStatus).filter(value => typeof value === 'number').map((status) => (
-                  <div key={`check-active-${status}`} className="flex flex-col items-center gap-2">
-                    <ButtonStatus status={status as MediaStatus} icon="Check" isActive={true} />
-                    <span className="text-xs">{status} (Active)</span>
-                  </div>
-                ))}
-              </div>
-              
-              <div className="space-y-6">
-                <h3 className="text-lg font-medium">Disabled State</h3>
-                {Object.values(MediaStatus).filter(value => typeof value === 'number').map((status) => (
-                  <div key={`check-disabled-${status}`} className="flex flex-col items-center gap-2">
-                    <ButtonStatus status={status as MediaStatus} icon="Check" disabled={true} />
-                    <span className="text-xs">{status} (Disabled)</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-            
-            {/* Display all available media statuses for X icon */}
-            <div className="grid grid-cols-3 gap-8 w-full mt-8">
-              <div className="space-y-6">
-                <h3 className="text-lg font-medium">Default State (Reject)</h3>
-                {Object.values(MediaStatus).filter(value => typeof value === 'number').map((status) => (
-                  <div key={`x-${status}`} className="flex flex-col items-center gap-2">
-                    <ButtonStatus status={status as MediaStatus} icon="X" />
-                    <span className="text-xs">{status}</span>
-                  </div>
-                ))}
-              </div>
-              
-              <div className="space-y-6">
-                <h3 className="text-lg font-medium">Active State (Reject)</h3>
-                {Object.values(MediaStatus).filter(value => typeof value === 'number').map((status) => (
-                  <div key={`x-active-${status}`} className="flex flex-col items-center gap-2">
-                    <ButtonStatus status={status as MediaStatus} icon="X" isActive={true} />
-                    <span className="text-xs">{status} (Active)</span>
-                  </div>
-                ))}
-              </div>
-              
-              <div className="space-y-6">
-                <h3 className="text-lg font-medium">Disabled State (Reject)</h3>
-                {Object.values(MediaStatus).filter(value => typeof value === 'number').map((status) => (
-                  <div key={`x-disabled-${status}`} className="flex flex-col items-center gap-2">
-                    <ButtonStatus status={status as MediaStatus} icon="X" disabled={true} />
-                    <span className="text-xs">{status} (Disabled)</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-            
-            {/* Small size examples */}
-            <div className="w-full mt-8">
-              <h3 className="text-lg font-medium mb-4">Small Size Examples</h3>
-              <div className="flex flex-wrap gap-4">
-                {Object.values(MediaStatus).filter(value => typeof value === 'number').slice(0, 5).map((status) => (
-                  <div key={`small-${status}`} className="flex flex-col items-center gap-2">
-                    <ButtonStatus status={status as MediaStatus} icon="Check" size="small" />
-                    <span className="text-xs">{status} (Small)</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      <footer className="bg-muted p-4 text-center text-sm text-muted-foreground">
+        {brandName} Theme Provider Demo &copy; {new Date().getFullYear()}
+      </footer>
     </div>
-  )
-}
+  );
+};
 
-export default Index
+export default Index;
