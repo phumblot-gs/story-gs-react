@@ -5,6 +5,7 @@ import { Button as ButtonBase, ButtonProps as ButtonBaseProps } from "@/componen
 
 export type ButtonVariant = "primary" | "secondary" | "black" | "blue" | "grey" | "disabled"
 export type ButtonBackground = "white" | "black" | "grey"
+export type ButtonSize = "small" | "large"
 
 export interface ButtonProps extends Omit<ButtonBaseProps, 'variant'> {
   variant?: ButtonVariant
@@ -12,15 +13,27 @@ export interface ButtonProps extends Omit<ButtonBaseProps, 'variant'> {
   indicator?: boolean
   disabled?: boolean
   featured?: boolean
+  size?: ButtonSize
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, background, indicator, disabled, featured = false, children, ...props }, ref) => {
+  ({ className, variant, background, indicator, disabled, featured = false, size = "large", children, ...props }, ref) => {
     // Determine automatic variant based on background if variant is not explicitly provided
     const effectiveVariant = variant || (background ? 
       (background === "white" ? "primary" : 
        background === "black" ? "black" : 
        "grey") : "primary")
+    
+    // Get size-specific classes
+    const getSizeClasses = () => {
+      switch (size) {
+        case "small":
+          return "text-xs py-[8px] px-[12px] h-[24px]"
+        case "large":
+        default:
+          return "text-sm py-[10px] px-[15px] h-[30px]"
+      }
+    }
     
     // Determine button styling based on background, variant and states
     const getButtonStyles = () => {
@@ -70,7 +83,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         <ButtonBase
           ref={ref}
           className={cn(
-            "relative rounded-full text-sm py-[10px] px-[15px] font-light h-[30px] flex items-center leading-none justify-center font-custom transition-colors duration-200",
+            "relative rounded-full font-light flex items-center leading-none justify-center font-custom transition-colors duration-200",
+            getSizeClasses(),
             getButtonStyles(),
             className
           )}

@@ -27,6 +27,12 @@ const meta: Meta<typeof Button> = {
     featured: {
       control: "boolean",
     },
+    size: {
+      options: ["small", "large"],
+      control: { type: "radio" },
+      description: "Size of the button (small or large)",
+      defaultValue: "large",
+    },
   },
 };
 
@@ -37,6 +43,15 @@ export const Default: Story = {
   args: {
     children: "Button",
     variant: "primary",
+    size: "large",
+  },
+};
+
+export const Small: Story = {
+  args: {
+    children: "Small Button",
+    variant: "primary",
+    size: "small",
   },
 };
 
@@ -105,6 +120,15 @@ export const ButtonVariations: Story = {
       <Button variant="blue">Blue</Button>
       <Button variant="grey">Grey</Button>
       <Button disabled>Disabled</Button>
+    </div>
+  ),
+};
+
+export const ButtonSizes: Story = {
+  render: () => (
+    <div className="flex flex-wrap gap-4 items-center">
+      <Button size="small">Small Button</Button>
+      <Button size="large">Large Button</Button>
     </div>
   ),
 };
