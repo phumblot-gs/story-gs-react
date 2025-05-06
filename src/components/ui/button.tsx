@@ -38,6 +38,7 @@ export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean
+  className?: string // Explicitly adding className prop for clarity, even though it's already included in ButtonHTMLAttributes
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
