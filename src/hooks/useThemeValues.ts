@@ -6,9 +6,9 @@ import { useTheme } from "next-themes";
 /**
  * Normalize color value for consistent comparison
  */
-const normalizeColorValue = (color?: string): string => {
+export const normalizeColorValue = (color?: string): string => {
   if (!color) return '';
-  return color.toLowerCase();
+  return color.toLowerCase().trim();
 };
 
 /**
