@@ -51,4 +51,4 @@ export * from "./lib/utils";
 export * from "./components/ui/button-circle/custom-icons";
 export * from "./components/ui/button-circle/icon-renderer";
 export * from "./components/ui/button-circle/types";
-export * from "./components/ui/button-circle/icon-provider";
+export * from "./components/ui/icon-provider"; // Fixed path to icon-provider
