@@ -12,6 +12,21 @@ const preview: Preview = {
       },
       sort: 'alpha',
     },
+    // Ensure proper environment for theming
+    backgrounds: {
+      default: 'light',
+      values: [
+        { name: 'light', value: '#ffffff' },
+        { name: 'dark', value: '#333333' },
+      ],
+    },
+    themes: {
+      clearable: false,
+      list: [
+        { name: 'Light', class: 'light', color: '#FFFFFF' },
+        { name: 'Dark', class: 'dark', color: '#222222' },
+      ]
+    }
   },
 };
 
