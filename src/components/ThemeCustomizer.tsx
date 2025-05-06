@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState, useEffect, useRef } from 'react';
 import { useCustomTheme } from '@/contexts/ThemeContext';
 import { useThemeValues } from '@/hooks/useThemeValues';
 import { Sun, Moon, Palette } from 'lucide-react';
@@ -49,8 +50,8 @@ export const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({
   const { defaultColors } = useThemeValues();
   const [isOpen, setIsOpen] = useState(false);
   
-  // Local state for form inputs using lazy initialization to prevent unnecessary rerenders
-  const [formValues, setFormValues] = useState(() => ({
+  // Use a ref object to store form values, preventing re-renders on every keystroke
+  const formValuesRef = useRef({
     // Brand name
     brandName: customization.text.brandName || 'GS Components',
     
@@ -79,28 +80,34 @@ export const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({
     statusToPublish: customization.colors.statusToPublish || defaultColors.statusToPublish,
     statusError: customization.colors.statusError || defaultColors.statusError,
     statusPublished: customization.colors.statusPublished || defaultColors.statusPublished,
-  }));
+  });
   
-  // Handle input change without losing focus
-  const handleInputChange = (key: keyof typeof formValues, value: string) => {
-    setFormValues(prev => ({
-      ...prev,
+  // Local state for UI rendering - we'll update this less frequently
+  const [formValues, setFormValues] = useState(formValuesRef.current);
+  
+  // Handle input change without losing focus by updating the ref without triggering re-render
+  const handleInputChange = (key: string, value: string) => {
+    // Update the ref immediately (no re-render)
+    formValuesRef.current = {
+      ...formValuesRef.current,
       [key]: value
-    }));
+    };
   };
   
-  // Apply changes from local state to theme context
-  // Only pass non-default values to avoid redundancy
+  // Apply changes from ref state to theme context
   const applyChanges = () => {
+    // First, update the local state for UI rendering
+    setFormValues({...formValuesRef.current});
+    
     const updates = {
       colors: {} as any,
       text: {
-        brandName: formValues.brandName !== 'GS Components' ? formValues.brandName : undefined,
+        brandName: formValuesRef.current.brandName !== 'GS Components' ? formValuesRef.current.brandName : undefined,
       }
     };
     
     // Add only color values that differ from defaults
-    Object.entries(formValues).forEach(([key, value]) => {
+    Object.entries(formValuesRef.current).forEach(([key, value]) => {
       if (key === 'brandName') return; // Skip brandName, it's handled separately
       
       const defaultValue = defaultColors[key as keyof typeof defaultColors];
@@ -116,7 +123,7 @@ export const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({
   // Reset local state when popover opens to match current theme
   useEffect(() => {
     if (isOpen) {
-      setFormValues({
+      const newValues = {
         // Brand name
         brandName: customization.text.brandName || 'GS Components',
         
@@ -145,13 +152,16 @@ export const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({
         statusToPublish: customization.colors.statusToPublish || defaultColors.statusToPublish,
         statusError: customization.colors.statusError || defaultColors.statusError,
         statusPublished: customization.colors.statusPublished || defaultColors.statusPublished,
-      });
+      };
+      formValuesRef.current = newValues;
+      setFormValues(newValues);
     }
   }, [isOpen, customization, defaultColors]);
   
   // Color input component to reduce repetition
-  const ColorInput = ({ label, colorKey }: { label: string; colorKey: keyof typeof formValues }) => {
+  const ColorInput = ({ label, colorKey }: { label: string; colorKey: string }) => {
     const defaultValue = defaultColors[colorKey as keyof typeof defaultColors] || '';
+    const inputRef = useRef<HTMLInputElement>(null);
     
     return (
       <div className="space-y-1">
@@ -159,21 +169,28 @@ export const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({
         <div className="flex gap-2 items-center">
           <div 
             className="w-6 h-6 rounded border"
-            style={{ backgroundColor: formValues[colorKey] || defaultValue }}
+            style={{ backgroundColor: formValuesRef.current[colorKey as keyof typeof formValuesRef.current] || defaultValue }}
           />
           <Input
+            ref={inputRef}
             type="text"
             placeholder={defaultValue}
-            value={formValues[colorKey]}
+            defaultValue={formValuesRef.current[colorKey as keyof typeof formValuesRef.current]}
             onChange={(e) => handleInputChange(colorKey, e.target.value)}
             className="h-6 text-xs"
           />
-          {formValues[colorKey] !== defaultValue && formValues[colorKey] !== '' && (
+          {formValuesRef.current[colorKey as keyof typeof formValuesRef.current] !== defaultValue && 
+           formValuesRef.current[colorKey as keyof typeof formValuesRef.current] !== '' && (
             <Button 
               variant="ghost" 
               size="icon" 
               className="h-5 w-5 p-0" 
-              onClick={() => handleInputChange(colorKey, '')}
+              onClick={() => {
+                handleInputChange(colorKey, '');
+                if (inputRef.current) {
+                  inputRef.current.value = '';
+                }
+              }}
               title="Reset to default"
             >
               ×
@@ -212,8 +229,7 @@ export const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({
               <Input
                 id="brand-name"
                 type="text"
-                placeholder="GS Components"
-                value={formValues.brandName}
+                defaultValue={formValuesRef.current.brandName}
                 onChange={(e) => handleInputChange('brandName', e.target.value)}
               />
             </div>

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { ThemeCustomizer } from '@/components/ThemeCustomizer';
 import { useThemeValues } from '@/hooks/useThemeValues';
@@ -58,15 +57,25 @@ const Index = () => {
   Object.entries(cssVars).forEach(([key, value]) => {
     // Extract color key from CSS variable name
     const colorKey = key.replace('--', '').replace('-color', '').replace(/-/g, '');
-    const defaultKey = key.replace('--', '').replace('-color', '');
     
     // Check if this is a status color and transform the key accordingly
     const isStatusColor = key.includes('status-') && key.includes('-color');
     
+    // Transform the key to match default color keys
+    let defaultKey;
+    if (isStatusColor) {
+      // For status colors, convert e.g. "--status-ignored-color" to "statusIgnored"
+      defaultKey = 'status' + colorKey.charAt(0).toUpperCase() + colorKey.slice(1);
+    } else {
+      // For other colors, convert e.g. "--bg-white" to "bgWhite"
+      let parts = key.replace('--', '').split('-');
+      defaultKey = parts[0] + parts.slice(1).map(part => 
+        part.charAt(0).toUpperCase() + part.slice(1)
+      ).join('');
+    }
+    
     // Get the corresponding default color
-    const defaultValue = isStatusColor 
-      ? defaultColors[`status${colorKey.charAt(0).toUpperCase() + colorKey.slice(1)}` as keyof typeof defaultColors]
-      : defaultColors[colorKey as keyof typeof defaultColors];
+    const defaultValue = defaultColors[defaultKey as keyof typeof defaultColors];
     
     // Only include the variable if it differs from the default
     if (value !== defaultValue) {

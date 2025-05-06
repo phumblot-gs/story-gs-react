@@ -44,9 +44,7 @@ export function useThemeValues() {
   const getCssVars = () => {
     const cssVars: Record<string, string> = {};
     
-    // Only add CSS variables for colors that differ from the defaults
-    
-    // Process background colors - only if they differ from defaults
+    // Process background colors - only add if they differ from defaults
     if (customization.colors.bgWhite && customization.colors.bgWhite !== defaultColors.bgWhite) {
       cssVars["--bg-white"] = customization.colors.bgWhite;
     }
@@ -63,7 +61,7 @@ export function useThemeValues() {
       cssVars["--bg-grey-strongest"] = customization.colors.bgGreyStrongest;
     }
     
-    // Process text colors - only if they differ from defaults
+    // Process text colors - only add if they differ from defaults
     if (customization.colors.textGreyStronger && customization.colors.textGreyStronger !== defaultColors.textGreyStronger) {
       cssVars["--text-grey-stronger"] = customization.colors.textGreyStronger;
     }
@@ -80,7 +78,7 @@ export function useThemeValues() {
       cssVars["--text-blue"] = customization.colors.textBlue;
     }
     
-    // Process status colors - only if they differ from defaults
+    // Process status colors - only add if they differ from defaults
     if (customization.colors.statusIgnored && customization.colors.statusIgnored !== defaultColors.statusIgnored) {
       cssVars["--status-ignored-color"] = customization.colors.statusIgnored;
     }
