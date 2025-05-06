@@ -1,4 +1,5 @@
 
+import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { ButtonStatus } from "./ButtonStatus";
 import { MediaStatus } from "../utils/mediaStatus";
@@ -41,21 +42,21 @@ type Story = StoryObj<typeof ButtonStatus>;
 
 export const Default: Story = {
   args: {
-    status: MediaStatus.FOR_APPROVAL,
+    status: MediaStatus.SUBMITTED_FOR_APPROVAL,
     icon: "Check",
   },
 };
 
 export const Approve: Story = {
   args: {
-    status: MediaStatus.FOR_APPROVAL,
+    status: MediaStatus.SUBMITTED_FOR_APPROVAL,
     icon: "Check",
   },
 };
 
 export const Reject: Story = {
   args: {
-    status: MediaStatus.FOR_APPROVAL,
+    status: MediaStatus.SUBMITTED_FOR_APPROVAL,
     icon: "X",
   },
 };
@@ -78,7 +79,7 @@ export const Disabled: Story = {
 
 export const SmallSize: Story = {
   args: {
-    status: MediaStatus.FOR_APPROVAL,
+    status: MediaStatus.SUBMITTED_FOR_APPROVAL,
     icon: "Check",
     size: "small",
   },

@@ -1,4 +1,5 @@
 
+import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { StatusIndicator } from "./StatusIndicator";
 import { MediaStatus } from "../utils/mediaStatus";
@@ -28,27 +29,27 @@ type Story = StoryObj<typeof StatusIndicator>;
 
 export const Default: Story = {
   args: {
-    status: MediaStatus.FOR_APPROVAL,
+    status: MediaStatus.SUBMITTED_FOR_APPROVAL,
   },
 };
 
 export const Small: Story = {
   args: {
-    status: MediaStatus.FOR_APPROVAL,
+    status: MediaStatus.SUBMITTED_FOR_APPROVAL,
     size: "sm",
   },
 };
 
 export const Medium: Story = {
   args: {
-    status: MediaStatus.FOR_APPROVAL,
+    status: MediaStatus.SUBMITTED_FOR_APPROVAL,
     size: "md",
   },
 };
 
 export const Large: Story = {
   args: {
-    status: MediaStatus.FOR_APPROVAL,
+    status: MediaStatus.SUBMITTED_FOR_APPROVAL,
     size: "lg",
   },
 };
