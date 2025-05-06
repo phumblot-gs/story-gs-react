@@ -3,12 +3,10 @@ import * as React from "react"
 import { cn } from "@/lib/utils"
 import { Button as ButtonBase, ButtonProps as ButtonBaseProps } from "@/components/ui/button"
 
-export type ButtonVariant = "primary" | "secondary" | "black" | "blue" | "grey" | "disabled"
 export type ButtonBackground = "white" | "black" | "grey"
 export type ButtonSize = "small" | "large"
 
 export interface ButtonProps extends Omit<ButtonBaseProps, 'variant' | 'size'> {
-  variant?: ButtonVariant
   background?: ButtonBackground
   indicator?: boolean
   disabled?: boolean
@@ -17,13 +15,7 @@ export interface ButtonProps extends Omit<ButtonBaseProps, 'variant' | 'size'> {
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, background, indicator, disabled, featured = false, size = "large", children, ...props }, ref) => {
-    // Determine automatic variant based on background if variant is not explicitly provided
-    const effectiveVariant = variant || (background ? 
-      (background === "white" ? "primary" : 
-       background === "black" ? "black" : 
-       "grey") : "primary")
-    
+  ({ className, background = "white", indicator, disabled, featured = false, size = "large", children, ...props }, ref) => {
     // Get size-specific classes
     const getSizeClasses = () => {
       switch (size) {
@@ -35,12 +27,12 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       }
     }
     
-    // Determine button styling based on background, variant and states
+    // Determine button styling based on background and states
     const getButtonStyles = () => {
       if (disabled) {
-        if (background === "white" || effectiveVariant === "primary" || effectiveVariant === "secondary") {
+        if (background === "white") {
           return "bg-white text-grey-stronger"
-        } else if (background === "black" || effectiveVariant === "black" || effectiveVariant === "blue") {
+        } else if (background === "black") {
           return "bg-black text-grey-stronger"
         } else {
           return "bg-grey text-grey-stronger"
@@ -57,19 +49,16 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           case "grey":
             return "bg-white text-black hover:bg-black hover:text-white active:bg-black active:text-blue-primary"
           default:
-            // Default to white background behavior if background is not specified
+            // Default to white background behavior
             return "bg-grey-lighter text-black hover:bg-black hover:text-white active:bg-black active:text-blue-primary"
         }
       }
 
       // Default styles (non-featured)
-      switch (background || effectiveVariant) {
+      switch (background) {
         case "white":
-        case "primary":
-        case "secondary":
           return "bg-white text-black hover:bg-black hover:text-white active:bg-black active:text-blue-primary"
         case "black":
-        case "blue":
           return "bg-black text-white hover:bg-white hover:text-black active:bg-black active:text-blue-primary"
         case "grey":
           return "bg-grey text-black hover:bg-black hover:text-white active:bg-black active:text-blue-primary"

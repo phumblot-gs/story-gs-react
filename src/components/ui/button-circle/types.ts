@@ -2,8 +2,7 @@
 import { ButtonProps } from "@/components/ui/button"
 import * as LucideIcons from "lucide-react"
 
-// These types are still needed internally but won't be exported in index.ts
-export type ButtonVariant = "primary" | "secondary" | "black" | "blue" | "grey" | "disabled"
+// These types are still needed internally but for background only
 export type ButtonBackground = "white" | "black" | "grey" 
 export type ButtonSize = "small" | "large"
 
@@ -41,7 +40,6 @@ export type AllowedPictogram =
   | "Eye"
 
 export interface ButtonCircleProps extends Omit<ButtonProps, 'variant' | 'size'> {
-  variant?: ButtonVariant
   background?: ButtonBackground
   indicator?: boolean
   disabled?: boolean

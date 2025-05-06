@@ -9,8 +9,7 @@ import { renderIcon } from "./icon-renderer"
 const ButtonCircle = React.forwardRef<HTMLButtonElement, ButtonCircleProps>(
   ({ 
     className, 
-    variant, 
-    background, 
+    background = "white", 
     indicator, 
     disabled, 
     featured = false, 
@@ -21,8 +20,8 @@ const ButtonCircle = React.forwardRef<HTMLButtonElement, ButtonCircleProps>(
     ...props 
   }, ref) => {
     
-    // Determine button styling based on background, variant and states
-    const buttonStyles = getButtonStyles(variant, background, disabled, featured)
+    // Determine button styling based on background and states
+    const buttonStyles = getButtonStyles(background, disabled, featured)
     
     // Determine size based on prop
     const sizeClasses = getSizeClasses(size)

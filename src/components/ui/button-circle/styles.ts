@@ -1,25 +1,18 @@
 
-import { ButtonBackground, ButtonVariant } from "./types"
+import { ButtonBackground } from "./types"
 
 /**
- * Returns the appropriate button styles based on variant, background and state
+ * Returns the appropriate button styles based on background and state
  */
 export const getButtonStyles = (
-  variant: ButtonVariant | undefined, 
   background: ButtonBackground | undefined, 
   disabled: boolean | undefined, 
   featured: boolean
 ) => {
-  // Determine effective variant based on background if variant is not explicitly provided
-  const effectiveVariant = variant || (background ? 
-    (background === "white" ? "primary" : 
-     background === "black" ? "black" : 
-     "grey") : "primary")
-  
   if (disabled) {
-    if (background === "white" || effectiveVariant === "primary" || effectiveVariant === "secondary") {
+    if (background === "white") {
       return "bg-white text-grey-stronger"
-    } else if (background === "black" || effectiveVariant === "black" || effectiveVariant === "blue") {
+    } else if (background === "black") {
       return "bg-black text-grey-stronger"
     } else {
       return "bg-grey text-grey-stronger"
@@ -42,13 +35,10 @@ export const getButtonStyles = (
   }
 
   // Default styles (non-featured)
-  switch (background || effectiveVariant) {
+  switch (background) {
     case "white":
-    case "primary":
-    case "secondary":
       return "bg-white text-black hover:bg-black hover:text-white active:bg-black active:text-blue-primary"
     case "black":
-    case "blue":
       return "bg-black text-white hover:bg-white hover:text-black active:bg-black active:text-blue-primary"
     case "grey":
       return "bg-grey text-black hover:bg-black hover:text-white active:bg-black active:text-blue-primary"

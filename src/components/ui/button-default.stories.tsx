@@ -10,10 +10,6 @@ const meta: Meta<typeof Button> = {
   },
   tags: ["autodocs"],
   argTypes: {
-    variant: {
-      options: ["primary", "secondary", "black", "blue", "grey", "disabled"],
-      control: { type: "select" },
-    },
     background: {
       options: ["white", "black", "grey"],
       control: { type: "radio" },
@@ -43,7 +39,7 @@ type Story = StoryObj<typeof Button>;
 export const Default: Story = {
   args: {
     children: "Button",
-    variant: "primary",
+    background: "white",
     size: "large",
   },
 };
@@ -51,29 +47,22 @@ export const Default: Story = {
 export const Small: Story = {
   args: {
     children: "Small Button",
-    variant: "primary",
+    background: "white",
     size: "small",
-  },
-};
-
-export const Secondary: Story = {
-  args: {
-    children: "Secondary",
-    variant: "secondary",
   },
 };
 
 export const Black: Story = {
   args: {
     children: "Black",
-    variant: "black",
+    background: "black",
   },
 };
 
-export const Blue: Story = {
+export const Grey: Story = {
   args: {
-    children: "Blue",
-    variant: "blue",
+    children: "Grey",
+    background: "grey",
   },
 };
 
@@ -115,11 +104,9 @@ export const Disabled: Story = {
 export const ButtonVariations: Story = {
   render: () => (
     <div className="flex flex-wrap gap-4">
-      <Button variant="primary">Primary</Button>
-      <Button variant="secondary">Secondary</Button>
-      <Button variant="black">Black</Button>
-      <Button variant="blue">Blue</Button>
-      <Button variant="grey">Grey</Button>
+      <Button background="white">White</Button>
+      <Button background="black">Black</Button>
+      <Button background="grey">Grey</Button>
       <Button disabled>Disabled</Button>
     </div>
   ),
@@ -134,15 +121,13 @@ export const ButtonSizes: Story = {
   ),
 };
 
-// Stories from previously separate ButtonSmall component
+// Stories for small buttons
 export const SmallButtonVariations: Story = {
   render: () => (
     <div className="flex flex-wrap gap-4">
-      <Button size="small" variant="primary">Primary</Button>
-      <Button size="small" variant="secondary">Secondary</Button>
-      <Button size="small" variant="black">Black</Button>
-      <Button size="small" variant="blue">Blue</Button>
-      <Button size="small" variant="grey">Grey</Button>
+      <Button size="small" background="white">White</Button>
+      <Button size="small" background="black">Black</Button>
+      <Button size="small" background="grey">Grey</Button>
       <Button size="small" disabled>Disabled</Button>
     </div>
   ),

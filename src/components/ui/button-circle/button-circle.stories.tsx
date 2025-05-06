@@ -11,10 +11,6 @@ const meta: Meta<typeof ButtonCircle> = {
   },
   tags: ["autodocs"],
   argTypes: {
-    variant: {
-      options: ["primary", "secondary", "black", "blue", "grey", "disabled"],
-      control: { type: "select" },
-    },
     background: {
       options: ["white", "black", "grey"],
       control: { type: "radio" },
