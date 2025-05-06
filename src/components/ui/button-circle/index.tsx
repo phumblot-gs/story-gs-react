@@ -3,8 +3,9 @@ import React from "react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { ButtonCircleProps } from "./types"
-import { getButtonStyles, getSizeClasses } from "./styles"
+import { getButtonStyles } from "./styles"
 import { renderIcon } from "./icon-renderer"
+import { sizeVariants } from "./variants"
 
 const ButtonCircle = React.forwardRef<HTMLButtonElement, ButtonCircleProps>(
   ({ 
@@ -22,8 +23,8 @@ const ButtonCircle = React.forwardRef<HTMLButtonElement, ButtonCircleProps>(
     // Determine button styling based on background and states
     const buttonStyles = getButtonStyles(background, disabled, featured)
     
-    // Determine size based on prop
-    const sizeClasses = getSizeClasses(size)
+    // Get size classes using CVA
+    const sizeClasses = sizeVariants({ size })
     
     // Maximum icon size is 12px regardless of button size to ensure pictograms never exceed 12x12px
     const iconSize = 12
@@ -42,7 +43,8 @@ const ButtonCircle = React.forwardRef<HTMLButtonElement, ButtonCircleProps>(
         <Button
           ref={ref}
           className={cn(
-            `relative rounded-full flex items-center justify-center font-light transition-colors duration-200 p-0 [&_svg]:w-[12px] [&_svg]:h-[12px] ${sizeClasses}`,
+            `relative rounded-full flex items-center justify-center font-light transition-colors duration-200 p-0 [&_svg]:w-[12px] [&_svg]:h-[12px]`,
+            sizeClasses,
             buttonStyles,
             className
           )}

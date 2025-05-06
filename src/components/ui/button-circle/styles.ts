@@ -46,10 +46,3 @@ export const getButtonStyles = (
       return "bg-white text-black hover:bg-black hover:text-white"
   }
 }
-
-/**
- * Returns the size classes for the button
- */
-export const getSizeClasses = (size: "small" | "large" = "large") => {
-  return size === "small" ? "w-[20px] h-[20px]" : "w-[30px] h-[30px]";
-}

@@ -1,6 +1,8 @@
 
 import { ButtonProps } from "@/components/ui/button"
 import * as LucideIcons from "lucide-react"
+import { VariantProps } from "class-variance-authority"
+import { sizeVariants } from "./variants"
 
 // These types are still needed internally but for background only
 export type ButtonBackground = "white" | "black" | "grey" 
@@ -39,11 +41,10 @@ export type AllowedPictogram =
   | "ArrowDown"
   | "Eye"
 
-export interface ButtonCircleProps extends Omit<ButtonProps, 'variant' | 'size'> {
+export interface ButtonCircleProps extends Omit<ButtonProps, 'variant' | 'size'>, VariantProps<typeof sizeVariants> {
   background?: ButtonBackground
   disabled?: boolean
   featured?: boolean
   icon?: keyof typeof LucideIcons | AllowedPictogram
   indicator?: boolean
-  size?: ButtonSize
 }
