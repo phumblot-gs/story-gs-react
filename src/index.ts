@@ -15,7 +15,10 @@ import { Button as BaseButton } from "./components/ui/button-default";
 import * as React from "react";
 
 // Create ButtonSmall as a wrapper around Button with size="small"
-const ButtonSmall = React.forwardRef<HTMLButtonElement, Omit<React.ComponentPropsWithRef<typeof BaseButton>, "size">>((props, ref) => {
+const ButtonSmall = React.forwardRef<
+  HTMLButtonElement, 
+  Omit<React.ComponentPropsWithRef<typeof BaseButton>, "size">
+>((props, ref) => {
   return <BaseButton {...props} size="small" ref={ref} />;
 });
 ButtonSmall.displayName = "ButtonSmall";
