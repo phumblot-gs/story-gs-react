@@ -1,7 +1,6 @@
-
 import React, { useState, useEffect } from 'react';
 import { useCustomTheme } from '@/contexts/ThemeContext';
-import { hexToHSLString } from '@/utils/colorUtils';
+import { useThemeValues } from '@/hooks/useThemeValues';
 import { Sun, Moon, Palette } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -47,6 +46,7 @@ export const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({
   className
 }) => {
   const { theme, setTheme, customization, updateCustomization, resetCustomization } = useCustomTheme();
+  const { defaultColors } = useThemeValues();
   const [isOpen, setIsOpen] = useState(false);
   
   // Local state for form inputs using lazy initialization to prevent unnecessary rerenders
@@ -55,30 +55,30 @@ export const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({
     brandName: customization.text.brandName || 'GS Components',
     
     // Background colors
-    bgWhite: customization.colors.bgWhite || defaultThemeColors.bgWhite,
-    bgBlack: customization.colors.bgBlack || defaultThemeColors.bgBlack,
-    bgGrey: customization.colors.bgGrey || defaultThemeColors.bgGrey,
-    bgGreyLighter: customization.colors.bgGreyLighter || defaultThemeColors.bgGreyLighter,
-    bgGreyStrongest: customization.colors.bgGreyStrongest || defaultThemeColors.bgGreyStrongest,
+    bgWhite: customization.colors.bgWhite || defaultColors.bgWhite,
+    bgBlack: customization.colors.bgBlack || defaultColors.bgBlack,
+    bgGrey: customization.colors.bgGrey || defaultColors.bgGrey,
+    bgGreyLighter: customization.colors.bgGreyLighter || defaultColors.bgGreyLighter,
+    bgGreyStrongest: customization.colors.bgGreyStrongest || defaultColors.bgGreyStrongest,
     
     // Text colors
-    textGreyStronger: customization.colors.textGreyStronger || defaultThemeColors.textGreyStronger,
-    textBlack: customization.colors.textBlack || defaultThemeColors.textBlack,
-    textWhite: customization.colors.textWhite || defaultThemeColors.textWhite,
-    textBluePrimary: customization.colors.textBluePrimary || defaultThemeColors.textBluePrimary,
-    textBlue: customization.colors.textBlue || defaultThemeColors.textBlue,
+    textGreyStronger: customization.colors.textGreyStronger || defaultColors.textGreyStronger,
+    textBlack: customization.colors.textBlack || defaultColors.textBlack,
+    textWhite: customization.colors.textWhite || defaultColors.textWhite,
+    textBluePrimary: customization.colors.textBluePrimary || defaultColors.textBluePrimary,
+    textBlue: customization.colors.textBlue || defaultColors.textBlue,
     
     // Status colors
-    statusIgnored: customization.colors.statusIgnored || defaultThemeColors.statusIgnored,
-    statusReshoot: customization.colors.statusReshoot || defaultThemeColors.statusReshoot,
-    statusNotSelected: customization.colors.statusNotSelected || defaultThemeColors.statusNotSelected,
-    statusSelected: customization.colors.statusSelected || defaultThemeColors.statusSelected,
-    statusRefused: customization.colors.statusRefused || defaultThemeColors.statusRefused,
-    statusForApproval: customization.colors.statusForApproval || defaultThemeColors.statusForApproval,
-    statusValidated: customization.colors.statusValidated || defaultThemeColors.statusValidated,
-    statusToPublish: customization.colors.statusToPublish || defaultThemeColors.statusToPublish,
-    statusError: customization.colors.statusError || defaultThemeColors.statusError,
-    statusPublished: customization.colors.statusPublished || defaultThemeColors.statusPublished,
+    statusIgnored: customization.colors.statusIgnored || defaultColors.statusIgnored,
+    statusReshoot: customization.colors.statusReshoot || defaultColors.statusReshoot,
+    statusNotSelected: customization.colors.statusNotSelected || defaultColors.statusNotSelected,
+    statusSelected: customization.colors.statusSelected || defaultColors.statusSelected,
+    statusRefused: customization.colors.statusRefused || defaultColors.statusRefused,
+    statusForApproval: customization.colors.statusForApproval || defaultColors.statusForApproval,
+    statusValidated: customization.colors.statusValidated || defaultColors.statusValidated,
+    statusToPublish: customization.colors.statusToPublish || defaultColors.statusToPublish,
+    statusError: customization.colors.statusError || defaultColors.statusError,
+    statusPublished: customization.colors.statusPublished || defaultColors.statusPublished,
   }));
   
   // Handle input change without losing focus
@@ -90,6 +90,7 @@ export const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({
   };
   
   // Apply changes from local state to theme context
+  // If a value is empty, pass undefined so the default value will be used
   const applyChanges = () => {
     updateCustomization({
       colors: {
@@ -126,7 +127,7 @@ export const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({
     setIsOpen(false);
   };
   
-  // Reset local state when popover opens
+  // Reset local state when popover opens to match current theme
   useEffect(() => {
     if (isOpen) {
       setFormValues({
@@ -134,53 +135,68 @@ export const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({
         brandName: customization.text.brandName || 'GS Components',
         
         // Background colors
-        bgWhite: customization.colors.bgWhite || defaultThemeColors.bgWhite,
-        bgBlack: customization.colors.bgBlack || defaultThemeColors.bgBlack,
-        bgGrey: customization.colors.bgGrey || defaultThemeColors.bgGrey,
-        bgGreyLighter: customization.colors.bgGreyLighter || defaultThemeColors.bgGreyLighter,
-        bgGreyStrongest: customization.colors.bgGreyStrongest || defaultThemeColors.bgGreyStrongest,
+        bgWhite: customization.colors.bgWhite || defaultColors.bgWhite,
+        bgBlack: customization.colors.bgBlack || defaultColors.bgBlack,
+        bgGrey: customization.colors.bgGrey || defaultColors.bgGrey,
+        bgGreyLighter: customization.colors.bgGreyLighter || defaultColors.bgGreyLighter,
+        bgGreyStrongest: customization.colors.bgGreyStrongest || defaultColors.bgGreyStrongest,
         
         // Text colors
-        textGreyStronger: customization.colors.textGreyStronger || defaultThemeColors.textGreyStronger,
-        textBlack: customization.colors.textBlack || defaultThemeColors.textBlack,
-        textWhite: customization.colors.textWhite || defaultThemeColors.textWhite,
-        textBluePrimary: customization.colors.textBluePrimary || defaultThemeColors.textBluePrimary,
-        textBlue: customization.colors.textBlue || defaultThemeColors.textBlue,
+        textGreyStronger: customization.colors.textGreyStronger || defaultColors.textGreyStronger,
+        textBlack: customization.colors.textBlack || defaultColors.textBlack,
+        textWhite: customization.colors.textWhite || defaultColors.textWhite,
+        textBluePrimary: customization.colors.textBluePrimary || defaultColors.textBluePrimary,
+        textBlue: customization.colors.textBlue || defaultColors.textBlue,
         
         // Status colors
-        statusIgnored: customization.colors.statusIgnored || defaultThemeColors.statusIgnored,
-        statusReshoot: customization.colors.statusReshoot || defaultThemeColors.statusReshoot,
-        statusNotSelected: customization.colors.statusNotSelected || defaultThemeColors.statusNotSelected,
-        statusSelected: customization.colors.statusSelected || defaultThemeColors.statusSelected,
-        statusRefused: customization.colors.statusRefused || defaultThemeColors.statusRefused,
-        statusForApproval: customization.colors.statusForApproval || defaultThemeColors.statusForApproval,
-        statusValidated: customization.colors.statusValidated || defaultThemeColors.statusValidated,
-        statusToPublish: customization.colors.statusToPublish || defaultThemeColors.statusToPublish,
-        statusError: customization.colors.statusError || defaultThemeColors.statusError,
-        statusPublished: customization.colors.statusPublished || defaultThemeColors.statusPublished,
+        statusIgnored: customization.colors.statusIgnored || defaultColors.statusIgnored,
+        statusReshoot: customization.colors.statusReshoot || defaultColors.statusReshoot,
+        statusNotSelected: customization.colors.statusNotSelected || defaultColors.statusNotSelected,
+        statusSelected: customization.colors.statusSelected || defaultColors.statusSelected,
+        statusRefused: customization.colors.statusRefused || defaultColors.statusRefused,
+        statusForApproval: customization.colors.statusForApproval || defaultColors.statusForApproval,
+        statusValidated: customization.colors.statusValidated || defaultColors.statusValidated,
+        statusToPublish: customization.colors.statusToPublish || defaultColors.statusToPublish,
+        statusError: customization.colors.statusError || defaultColors.statusError,
+        statusPublished: customization.colors.statusPublished || defaultColors.statusPublished,
       });
     }
-  }, [isOpen, customization]);
+  }, [isOpen, customization, defaultColors]);
   
   // Color input component to reduce repetition
-  const ColorInput = ({ label, colorKey }: { label: string; colorKey: keyof typeof formValues }) => (
-    <div className="space-y-1">
-      <Label className="text-xs">{label}</Label>
-      <div className="flex gap-2">
-        <div 
-          className="w-6 h-6 rounded border"
-          style={{ backgroundColor: formValues[colorKey] || 'transparent' }}
-        />
-        <Input
-          type="text"
-          placeholder="#000000"
-          value={formValues[colorKey]}
-          onChange={(e) => handleInputChange(colorKey, e.target.value)}
-          className="h-6 text-xs"
-        />
+  const ColorInput = ({ label, colorKey }: { label: string; colorKey: keyof typeof formValues }) => {
+    const defaultValue = defaultColors[colorKey as keyof typeof defaultColors] || '';
+    
+    return (
+      <div className="space-y-1">
+        <Label className="text-xs">{label}</Label>
+        <div className="flex gap-2 items-center">
+          <div 
+            className="w-6 h-6 rounded border"
+            style={{ backgroundColor: formValues[colorKey] || defaultValue }}
+          />
+          <Input
+            type="text"
+            placeholder={defaultValue}
+            value={formValues[colorKey]}
+            onChange={(e) => handleInputChange(colorKey, e.target.value)}
+            className="h-6 text-xs"
+          />
+          {formValues[colorKey] !== defaultValue && formValues[colorKey] !== '' && (
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="h-5 w-5 p-0" 
+              onClick={() => handleInputChange(colorKey, '')}
+              title="Reset to default"
+            >
+              ×
+            </Button>
+          )}
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
   
   return (
     <div className={cn("flex items-center gap-2", className)}>
