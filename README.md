@@ -1,13 +1,15 @@
 
 # UI Component Library
 
-A modern, responsive UI component library built with React, Tailwind CSS, and TypeScript.
+A modern, responsive UI component library built with React, Tailwind CSS, and TypeScript, providing accessible and customizable UI components with consistent design language.
 
 ## Features
 
 - **Comprehensive Button Collection**: Various button styles including standard, circular, small, and status-specific buttons
+- **Status Indicators**: Visual elements for representing different states in workflows
 - **TypeScript Support**: Full type definitions for all components
 - **Tailwind Integration**: Seamless integration with Tailwind CSS
+- **Accessibility**: Built on top of Radix UI primitives
 - **Storybook Documentation**: Interactive component documentation
 
 ## Installation
@@ -19,19 +21,104 @@ npm install gs-components-library
 ## Usage
 
 ```jsx
-import { Button, ButtonCircle, ButtonSmall } from 'gs-components-library';
+import { Button, ButtonCircle, ButtonSmall, ButtonStatus, StatusIndicator } from 'gs-components-library';
 import 'gs-components-library/dist/style.css';
 
 function App() {
   return (
-    <div>
+    <div className="space-y-4">
       <Button>Standard Button</Button>
-      <ButtonCircle icon="Plus" />
       <ButtonSmall>Small Button</ButtonSmall>
+      <ButtonCircle icon="Plus" />
+      <ButtonCircle letter="A" />
+      <ButtonStatus status={MediaStatus.FOR_APPROVAL} icon="Check" />
+      <StatusIndicator status={MediaStatus.VALIDATED} size="md" />
     </div>
   );
 }
 ```
+
+## Component API
+
+### Button
+
+Standard button component with various styling options:
+
+```jsx
+<Button 
+  background="white" // 'white' | 'black' | 'grey'
+  indicator={false} // boolean - shows indicator dot
+  disabled={false} // boolean
+  featured={false} // boolean - gives more prominence
+>
+  Button Text
+</Button>
+```
+
+### ButtonSmall
+
+Compact button for secondary actions:
+
+```jsx
+<ButtonSmall 
+  background="white" // 'white' | 'black' | 'grey'
+  indicator={false} // boolean - shows indicator dot
+  disabled={false} // boolean
+  featured={false} // boolean - gives more prominence
+>
+  Small Button
+</ButtonSmall>
+```
+
+### ButtonCircle
+
+Circular button with icon or letter:
+
+```jsx
+<ButtonCircle
+  icon="Plus" // Use any of the allowed pictograms
+  // OR
+  letter="A" // Single letter
+  size="large" // 'small' | 'large'
+  background="white" // 'white' | 'black' | 'grey'
+  indicator={false} // boolean - shows indicator dot
+  disabled={false} // boolean
+  featured={false} // boolean - gives more prominence
+/>
+```
+
+### ButtonStatus
+
+Status-specific button:
+
+```jsx
+<ButtonStatus
+  status={MediaStatus.FOR_APPROVAL} // MediaStatus enum
+  icon="Check" // 'Check' | 'X'
+  isActive={false} // boolean
+  disabled={false} // boolean
+  size="large" // 'small' | 'large'
+/>
+```
+
+### StatusIndicator
+
+Visual indicator for different status states:
+
+```jsx
+<StatusIndicator
+  status={MediaStatus.VALIDATED} // MediaStatus enum
+  size="md" // 'sm' | 'md' | 'lg'
+/>
+```
+
+## Available Icons
+
+ButtonCircle supports a wide range of icons including:
+- Action icons: Check, X, Plus, Minus, etc.
+- Navigation icons: ArrowUp, ArrowDown, ArrowLeft, ArrowRight
+- Status icons: Alert, Status, Urgent, etc.
+- Utility icons: Settings, Filter, Help, etc.
 
 ## Development
 
@@ -45,41 +132,6 @@ function App() {
 
 - Build the library: `npm run build:lib`
 - Build Storybook: `npm run build-storybook`
-
-## Components
-
-### Button
-
-Standard button component with various styling options:
-
-```jsx
-<Button variant="primary">Click Me</Button>
-```
-
-### ButtonCircle
-
-Circular button with icon or letter:
-
-```jsx
-<ButtonCircle icon="Plus" />
-<ButtonCircle letter="A" />
-```
-
-### ButtonSmall
-
-Small button:
-
-```jsx
-<ButtonSmall variant="primary">Small Button</ButtonSmall>
-```
-
-### ButtonStatus
-
-Status-specific button:
-
-```jsx
-<ButtonStatus status={MediaStatus.FOR_APPROVAL} icon="Check" />
-```
 
 ## License
 

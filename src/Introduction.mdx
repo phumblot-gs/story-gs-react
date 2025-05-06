@@ -5,7 +5,7 @@ import { Meta } from '@storybook/blocks';
 
 # UI Component Library
 
-This is a modern, responsive UI component library built with React, Tailwind CSS, and TypeScript.
+This is a modern, responsive UI component library built with React, Tailwind CSS, and TypeScript, focusing on accessible and customizable UI components with consistent design language.
 
 ## Installation
 
@@ -16,16 +16,18 @@ npm install gs-components-library
 ## Usage
 
 ```jsx
-import { Button, ButtonSmall, ButtonCircle, ButtonStatus } from 'gs-components-library';
+import { Button, ButtonSmall, ButtonCircle, ButtonStatus, StatusIndicator } from 'gs-components-library';
 import 'gs-components-library/dist/style.css';
 
 function App() {
   return (
-    <div>
+    <div className="space-y-4">
       <Button>Regular Button</Button>
-      <ButtonCircle icon="Plus" />
       <ButtonSmall>Small Button</ButtonSmall>
+      <ButtonCircle icon="Plus" />
+      <ButtonCircle letter="A" />
       <ButtonStatus status="FOR_APPROVAL" icon="Check" />
+      <StatusIndicator status="VALIDATED" size="md" />
     </div>
   );
 }
@@ -35,20 +37,76 @@ function App() {
 
 This library includes the following components:
 
-- **Button**: Standard button component with various styling options
+### Button Components
+
+- **Button**: Standard button component for primary actions
+- **ButtonSmall**: Compact button for secondary or tertiary actions
 - **ButtonCircle**: Circular button with icon or letter
-- **ButtonSmall**: Small text button
-- **ButtonStatus**: Status-specific button with appropriate colors
-- **StatusIndicator**: Simple indicator for different status states
+- **ButtonStatus**: Status-specific button with appropriate colors for approval workflows
+
+### Status Components
+
+- **StatusIndicator**: Visual indicator for different status states
 
 ## Features
 
-- Fully typed TypeScript components
-- Tailwind CSS styling
-- Responsive design
-- Accessible components
-- Customizable themes
-- Consistent design language
+- **Fully typed components** with TypeScript support
+- **Accessible components** built on Radix UI primitives
+- **Responsive design** with mobile-first approach
+- **Consistent styling** using Tailwind CSS
+- **Flexible theming** with customizable properties
+- **Icon system** integrated with Lucide React
+
+## Component Properties
+
+### Button & ButtonSmall
+
+```jsx
+<Button 
+  background="white" // 'white' | 'black' | 'grey'
+  indicator={false} // boolean - shows indicator dot
+  disabled={false} // boolean
+  featured={false} // boolean - gives more prominence
+>
+  Button Text
+</Button>
+```
+
+### ButtonCircle
+
+```jsx
+<ButtonCircle
+  icon="Plus" // Use any of the allowed pictograms
+  // OR
+  letter="A" // Single letter
+  size="large" // 'small' | 'large'
+  background="white" // 'white' | 'black' | 'grey'
+  indicator={false} // boolean - shows indicator dot
+  disabled={false} // boolean
+  featured={false} // boolean - gives more prominence
+/>
+```
+
+### ButtonStatus
+
+```jsx
+<ButtonStatus
+  status={MediaStatus.FOR_APPROVAL} // MediaStatus enum
+  icon="Check" // 'Check' | 'X'
+  isActive={false} // boolean
+  disabled={false} // boolean
+  size="large" // 'small' | 'large'
+/>
+```
+
+### StatusIndicator
+
+```jsx
+<StatusIndicator
+  status={MediaStatus.VALIDATED} // MediaStatus enum
+  size="md" // 'sm' | 'md' | 'lg'
+/>
+```
 
 ## Requirements
 
