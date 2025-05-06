@@ -14,33 +14,11 @@ interface ThemeCustomizerProps {
   className?: string;
 }
 
-// Default theme colors to pre-populate inputs
-const defaultThemeColors = {
-  // Background colors
-  bgWhite: '#FFFFFF',
-  bgBlack: '#000000',
-  bgGrey: '#8E9196',
-  bgGreyLighter: '#E5E7EB',
-  bgGreyStrongest: '#1A1F2C',
-  
-  // Text colors
-  textGreyStronger: '#4B5563',
-  textBlack: '#000000',
-  textWhite: '#FFFFFF',
-  textBluePrimary: '#1EAEDB',
-  textBlue: '#3B82F6',
-  
-  // Status colors
-  statusIgnored: '#8E9196',
-  statusReshoot: '#F59E0B',
-  statusNotSelected: '#6B7280',
-  statusSelected: '#10B981',
-  statusRefused: '#EF4444',
-  statusForApproval: '#9b87f5',
-  statusValidated: '#34D399',
-  statusToPublish: '#3B82F6',
-  statusError: '#ea384c',
-  statusPublished: '#8B5CF6',
+// Helper function to normalize color values for comparison
+const normalizeColorValue = (color?: string): string => {
+  if (!color) return '';
+  // Convert color to lowercase to ensure case-insensitive comparison
+  return color.toLowerCase();
 };
 
 export const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({
@@ -99,12 +77,15 @@ export const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({
       }
     };
     
-    // Add only color values that differ from defaults
+    // Add only color values that differ from defaults using normalized comparison
     Object.entries(formValuesRef.current).forEach(([key, value]) => {
       if (key === 'brandName') return; // Skip brandName, it's handled separately
       
       const defaultValue = defaultColors[key as keyof typeof defaultColors];
-      if (value !== defaultValue && value !== '') {
+      const normalizedValue = normalizeColorValue(value);
+      const normalizedDefault = normalizeColorValue(defaultValue);
+      
+      if (normalizedValue !== normalizedDefault && normalizedValue !== '') {
         updates.colors[key] = value;
       }
     });
@@ -128,6 +109,10 @@ export const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({
     // Create a stable unique key that includes the initial value but doesn't change during typing
     const inputKey = `${colorKey}-${isOpen ? 'open' : 'closed'}`;
     
+    // Normalize color values for comparison
+    const normalizedCurrentValue = normalizeColorValue(currentValue);
+    const normalizedDefaultValue = normalizeColorValue(defaultValue);
+    
     return (
       <div className="space-y-1">
         <Label className="text-xs">{label}</Label>
@@ -144,7 +129,7 @@ export const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({
             onChange={(e) => handleInputChange(colorKey, e.target.value)}
             className="h-6 text-xs"
           />
-          {currentValue !== defaultValue && currentValue !== '' && (
+          {normalizedCurrentValue !== normalizedDefaultValue && normalizedCurrentValue !== '' && (
             <Button 
               variant="ghost" 
               size="icon" 

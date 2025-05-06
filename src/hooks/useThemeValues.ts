@@ -4,6 +4,14 @@ import { hexToHSLString } from "@/utils/colorUtils";
 import { useTheme } from "next-themes";
 
 /**
+ * Normalize color value for consistent comparison
+ */
+const normalizeColorValue = (color?: string): string => {
+  if (!color) return '';
+  return color.toLowerCase();
+};
+
+/**
  * Hook to get theme values that can be applied directly to components
  * including CSS variable overrides
  */
@@ -44,71 +52,42 @@ export function useThemeValues() {
   const getCssVars = () => {
     const cssVars: Record<string, string> = {};
     
-    // Process background colors - only add if they differ from defaults
-    if (customization.colors.bgWhite && customization.colors.bgWhite !== defaultColors.bgWhite) {
-      cssVars["--bg-white"] = customization.colors.bgWhite;
-    }
-    if (customization.colors.bgBlack && customization.colors.bgBlack !== defaultColors.bgBlack) {
-      cssVars["--bg-black"] = customization.colors.bgBlack;
-    }
-    if (customization.colors.bgGrey && customization.colors.bgGrey !== defaultColors.bgGrey) {
-      cssVars["--bg-grey"] = customization.colors.bgGrey;
-    }
-    if (customization.colors.bgGreyLighter && customization.colors.bgGreyLighter !== defaultColors.bgGreyLighter) {
-      cssVars["--bg-grey-lighter"] = customization.colors.bgGreyLighter;
-    }
-    if (customization.colors.bgGreyStrongest && customization.colors.bgGreyStrongest !== defaultColors.bgGreyStrongest) {
-      cssVars["--bg-grey-strongest"] = customization.colors.bgGreyStrongest;
-    }
+    // Process all colors using a more consistent approach with normalized values
+    const processColor = (key: string, cssVarName: string, defaultColorKey: keyof typeof defaultColors) => {
+      const customColor = customization.colors[defaultColorKey as keyof typeof customization.colors];
+      const defaultColor = defaultColors[defaultColorKey];
+      
+      // Only add if custom color is defined and different from default (using normalized comparison)
+      if (customColor && normalizeColorValue(customColor) !== normalizeColorValue(defaultColor)) {
+        cssVars[cssVarName] = customColor;
+      }
+    };
     
-    // Process text colors - only add if they differ from defaults
-    if (customization.colors.textGreyStronger && customization.colors.textGreyStronger !== defaultColors.textGreyStronger) {
-      cssVars["--text-grey-stronger"] = customization.colors.textGreyStronger;
-    }
-    if (customization.colors.textBlack && customization.colors.textBlack !== defaultColors.textBlack) {
-      cssVars["--text-black"] = customization.colors.textBlack;
-    }
-    if (customization.colors.textWhite && customization.colors.textWhite !== defaultColors.textWhite) {
-      cssVars["--text-white"] = customization.colors.textWhite;
-    }
-    if (customization.colors.textBluePrimary && customization.colors.textBluePrimary !== defaultColors.textBluePrimary) {
-      cssVars["--text-blue-primary"] = customization.colors.textBluePrimary;
-    }
-    if (customization.colors.textBlue && customization.colors.textBlue !== defaultColors.textBlue) {
-      cssVars["--text-blue"] = customization.colors.textBlue;
-    }
+    // Process background colors
+    processColor("bgWhite", "--bg-white", "bgWhite");
+    processColor("bgBlack", "--bg-black", "bgBlack");
+    processColor("bgGrey", "--bg-grey", "bgGrey");
+    processColor("bgGreyLighter", "--bg-grey-lighter", "bgGreyLighter");
+    processColor("bgGreyStrongest", "--bg-grey-strongest", "bgGreyStrongest");
     
-    // Process status colors - only add if they differ from defaults
-    if (customization.colors.statusIgnored && customization.colors.statusIgnored !== defaultColors.statusIgnored) {
-      cssVars["--status-ignored-color"] = customization.colors.statusIgnored;
-    }
-    if (customization.colors.statusReshoot && customization.colors.statusReshoot !== defaultColors.statusReshoot) {
-      cssVars["--status-reshoot-color"] = customization.colors.statusReshoot;
-    }
-    if (customization.colors.statusNotSelected && customization.colors.statusNotSelected !== defaultColors.statusNotSelected) {
-      cssVars["--status-not-selected-color"] = customization.colors.statusNotSelected;
-    }
-    if (customization.colors.statusSelected && customization.colors.statusSelected !== defaultColors.statusSelected) {
-      cssVars["--status-selected-color"] = customization.colors.statusSelected;
-    }
-    if (customization.colors.statusRefused && customization.colors.statusRefused !== defaultColors.statusRefused) {
-      cssVars["--status-refused-color"] = customization.colors.statusRefused;
-    }
-    if (customization.colors.statusForApproval && customization.colors.statusForApproval !== defaultColors.statusForApproval) {
-      cssVars["--status-for-approval-color"] = customization.colors.statusForApproval;
-    }
-    if (customization.colors.statusValidated && customization.colors.statusValidated !== defaultColors.statusValidated) {
-      cssVars["--status-validated-color"] = customization.colors.statusValidated;
-    }
-    if (customization.colors.statusToPublish && customization.colors.statusToPublish !== defaultColors.statusToPublish) {
-      cssVars["--status-to-publish-color"] = customization.colors.statusToPublish;
-    }
-    if (customization.colors.statusError && customization.colors.statusError !== defaultColors.statusError) {
-      cssVars["--status-error-color"] = customization.colors.statusError;
-    }
-    if (customization.colors.statusPublished && customization.colors.statusPublished !== defaultColors.statusPublished) {
-      cssVars["--status-published-color"] = customization.colors.statusPublished;
-    }
+    // Process text colors
+    processColor("textGreyStronger", "--text-grey-stronger", "textGreyStronger");
+    processColor("textBlack", "--text-black", "textBlack");
+    processColor("textWhite", "--text-white", "textWhite");
+    processColor("textBluePrimary", "--text-blue-primary", "textBluePrimary");
+    processColor("textBlue", "--text-blue", "textBlue");
+    
+    // Process status colors
+    processColor("statusIgnored", "--status-ignored-color", "statusIgnored");
+    processColor("statusReshoot", "--status-reshoot-color", "statusReshoot");
+    processColor("statusNotSelected", "--status-not-selected-color", "statusNotSelected");
+    processColor("statusSelected", "--status-selected-color", "statusSelected");
+    processColor("statusRefused", "--status-refused-color", "statusRefused");
+    processColor("statusForApproval", "--status-for-approval-color", "statusForApproval");
+    processColor("statusValidated", "--status-validated-color", "statusValidated");
+    processColor("statusToPublish", "--status-to-publish-color", "statusToPublish");
+    processColor("statusError", "--status-error-color", "statusError");
+    processColor("statusPublished", "--status-published-color", "statusPublished");
     
     return cssVars;
   };
