@@ -8,15 +8,14 @@ import { renderIcon } from "./icon-renderer"
 
 const ButtonCircle = React.forwardRef<HTMLButtonElement, ButtonCircleProps>(
   ({ 
-    className, 
     background = "white", 
-    indicator, 
+    children,
+    className, 
     disabled, 
     featured = false, 
+    icon,
+    indicator, 
     size = "large", 
-    icon, 
-    letter, 
-    children, 
     ...props 
   }, ref) => {
     
@@ -29,12 +28,10 @@ const ButtonCircle = React.forwardRef<HTMLButtonElement, ButtonCircleProps>(
     // Maximum icon size is 12px regardless of button size to ensure pictograms never exceed 12x12px
     const iconSize = 12
 
-    // Render the content based on what's provided (icon, letter, or children)
+    // Render the content based on what's provided (icon or children)
     const renderContent = () => {
       if (icon) {
         return renderIcon(icon, iconSize)
-      } else if (letter) {
-        return <span className="text-sm leading-none font-light">{letter.charAt(0)}</span>
       } else {
         return children
       }

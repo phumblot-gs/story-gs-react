@@ -41,10 +41,9 @@ export type AllowedPictogram =
 
 export interface ButtonCircleProps extends Omit<ButtonProps, 'variant' | 'size'> {
   background?: ButtonBackground
-  indicator?: boolean
   disabled?: boolean
   featured?: boolean
-  size?: ButtonSize
   icon?: keyof typeof LucideIcons | AllowedPictogram
-  letter?: string
+  indicator?: boolean
+  size?: ButtonSize
 }
