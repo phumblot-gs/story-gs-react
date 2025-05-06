@@ -7,8 +7,51 @@ import { MediaStatus } from '@/utils/mediaStatus';
 import { Button } from '@/components/ui/button-default';
 import { ButtonCircle } from '@/components/ui/button-circle';
 
+const ColorSwatch = ({ color, name, value }: { color: string; name: string; value: string }) => {
+  return (
+    <div className="flex flex-col items-center">
+      <div 
+        className="color-swatch" 
+        style={{ backgroundColor: value }}
+        title={`${name}: ${value}`}
+      />
+      <span className="color-swatch-label">{name}</span>
+    </div>
+  );
+};
+
 const Index = () => {
   const { brandName, cssVars, isDarkMode } = useThemeValues();
+  
+  // Group colors by categories for display
+  const backgroundColors = [
+    { name: 'bg-white', value: 'var(--bg-white)' },
+    { name: 'bg-black', value: 'var(--bg-black)' },
+    { name: 'bg-grey', value: 'var(--bg-grey)' },
+    { name: 'bg-grey-lighter', value: 'var(--bg-grey-lighter)' },
+    { name: 'bg-grey-strongest', value: 'var(--bg-grey-strongest)' },
+  ];
+  
+  const textColors = [
+    { name: 'text-grey-stronger', value: 'var(--text-grey-stronger)' },
+    { name: 'text-black', value: 'var(--text-black)' },
+    { name: 'text-white', value: 'var(--text-white)' },
+    { name: 'text-blue-primary', value: 'var(--text-blue-primary)' },
+    { name: 'text-blue', value: 'var(--text-blue)' },
+  ];
+  
+  const statusColors = [
+    { name: 'status-ignored', value: 'var(--status-ignored-color)' },
+    { name: 'status-reshoot', value: 'var(--status-reshoot-color)' },
+    { name: 'status-not-selected', value: 'var(--status-not-selected-color)' },
+    { name: 'status-selected', value: 'var(--status-selected-color)' },
+    { name: 'status-refused', value: 'var(--status-refused-color)' },
+    { name: 'status-for-approval', value: 'var(--status-for-approval-color)' },
+    { name: 'status-validated', value: 'var(--status-validated-color)' },
+    { name: 'status-to-publish', value: 'var(--status-to-publish-color)' },
+    { name: 'status-error', value: 'var(--status-error-color)' },
+    { name: 'status-published', value: 'var(--status-published-color)' },
+  ];
   
   return (
     <div 
@@ -79,16 +122,62 @@ const Index = () => {
             </div>
           </section>
           
-          <section className="p-4 rounded-md bg-card border">
-            <h3 className="text-lg font-medium mb-2">Current Theme Settings</h3>
-            <div className="text-sm">
-              <p><strong>Mode:</strong> {isDarkMode ? 'Dark' : 'Light'}</p>
-              <p><strong>Brand Name:</strong> {brandName}</p>
-              <div className="mt-2">
-                <p><strong>Custom Colors:</strong></p>
-                <pre className="bg-muted p-2 mt-1 rounded text-xs overflow-auto">
-                  {JSON.stringify(cssVars, null, 2)}
-                </pre>
+          <section className="space-y-6 p-6 rounded-md bg-card border">
+            <h2 className="text-xl font-semibold">Theme Colors Preview</h2>
+            
+            <div className="space-y-4">
+              <h3 className="text-lg font-medium">Background Colors</h3>
+              <div className="theme-colors-grid">
+                {backgroundColors.map((color) => (
+                  <ColorSwatch 
+                    key={color.name} 
+                    color={color.name} 
+                    name={color.name} 
+                    value={color.value}
+                  />
+                ))}
+              </div>
+            </div>
+            
+            <div className="space-y-4">
+              <h3 className="text-lg font-medium">Text Colors</h3>
+              <div className="theme-colors-grid">
+                {textColors.map((color) => (
+                  <ColorSwatch 
+                    key={color.name} 
+                    color={color.name} 
+                    name={color.name} 
+                    value={color.value}
+                  />
+                ))}
+              </div>
+            </div>
+            
+            <div className="space-y-4">
+              <h3 className="text-lg font-medium">Status Colors</h3>
+              <div className="theme-colors-grid">
+                {statusColors.map((color) => (
+                  <ColorSwatch 
+                    key={color.name} 
+                    color={color.name} 
+                    name={color.name} 
+                    value={color.value}
+                  />
+                ))}
+              </div>
+            </div>
+            
+            <div className="pt-4 border-t">
+              <h3 className="text-lg font-medium mb-2">Current Theme Settings</h3>
+              <div className="text-sm">
+                <p><strong>Mode:</strong> {isDarkMode ? 'Dark' : 'Light'}</p>
+                <p><strong>Brand Name:</strong> {brandName}</p>
+                <div className="mt-2">
+                  <p><strong>Custom CSS Variables:</strong></p>
+                  <pre className="bg-muted p-2 mt-1 rounded text-xs overflow-auto">
+                    {JSON.stringify(cssVars, null, 2)}
+                  </pre>
+                </div>
               </div>
             </div>
           </section>

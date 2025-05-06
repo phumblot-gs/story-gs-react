@@ -83,12 +83,8 @@ export function useThemeValues() {
     
     return cssVars;
   };
-  
-  // Return value includes:
-  // - CSS variables for custom colors
-  // - Brand text values
-  // - Current theme mode
-  // - Other custom theme values
+
+  // Return computed CSS variables and other theme values
   return {
     cssVars: getCssVars(),
     brandName: customization.text.brandName || "GS Components",

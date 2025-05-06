@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -66,29 +67,29 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// Figma custom colors
-				'black': '#292828',
-				'black-secondary': '#3A3A3A',
-				'grey-light': '#EFEFEFEF',
-				'grey-lighter': '#F3F3F3',
-				'grey': '#EAEAEA',
-				'grey-strong': '#D9D7D7',
-				'grey-stronger': '#C1C1C1',
-				'grey-strongest': '#595959',
-				'white': '#FFFFFF',
-				'blue-primary': '#CDEDFF',
-				'blue': '#74D4DA',
-				'green-primary': '#9EDEDAB',
-				'green': '#89CC52',
-				'pastel-yellow': '#EBED8C',
-				'pastel-yellow-secondary': '#FFF8D0',
-				'yellow': '#FFD331',
-				'khaki': '#B7BB28',
-				'orange': '#FF9900',
-				'red-strong': '#DD3733',
-				'pink': '#AAAD4D',
-				'purple': '#A44C9F',
-				'braun': '#B88029',
+				// Figma custom colors - updated to use CSS variables with fallbacks
+				'black': 'var(--bg-black, #292828)',
+				'black-secondary': 'var(--bg-black-secondary, #3A3A3A)',
+				'grey-light': 'var(--bg-grey-light, #EFEFEFEF)',
+				'grey-lighter': 'var(--bg-grey-lighter, #F3F3F3)',
+				'grey': 'var(--bg-grey, #EAEAEA)',
+				'grey-strong': 'var(--bg-grey-strong, #D9D7D7)',
+				'grey-stronger': 'var(--bg-grey-stronger, #C1C1C1)',
+				'grey-strongest': 'var(--bg-grey-strongest, #595959)',
+				'white': 'var(--bg-white, #FFFFFF)',
+				'blue-primary': 'var(--text-blue-primary, #CDEDFF)',
+				'blue': 'var(--text-blue, #74D4DA)',
+				'green-primary': 'var(--text-green-primary, #9EDEDAB)',
+				'green': 'var(--text-green, #89CC52)',
+				'pastel-yellow': 'var(--text-pastel-yellow, #EBED8C)',
+				'pastel-yellow-secondary': 'var(--text-pastel-yellow-secondary, #FFF8D0)',
+				'yellow': 'var(--text-yellow, #FFD331)',
+				'khaki': 'var(--text-khaki, #B7BB28)',
+				'orange': 'var(--text-orange, #FF9900)',
+				'red-strong': 'var(--text-red-strong, #DD3733)',
+				'pink': 'var(--text-pink, #AAAD4D)',
+				'purple': 'var(--text-purple, #A44C9F)',
+				'braun': 'var(--text-braun, #B88029)',
 				
 				// Token semantic colors
 				'token': {
