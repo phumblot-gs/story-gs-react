@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { ThemeCustomizer } from '@/components/ThemeCustomizer';
 import { useThemeValues } from '@/hooks/useThemeValues';
@@ -56,7 +57,7 @@ const Index = () => {
   const filteredCssVars: Record<string, string> = {};
   Object.entries(cssVars).forEach(([key, value]) => {
     // Extract color key from CSS variable name
-    const colorKey = key.replace('--', '').replace('-color', '').replaceAll('-', '');
+    const colorKey = key.replace('--', '').replace('-color', '').replace(/-/g, '');
     const defaultKey = key.replace('--', '').replace('-color', '');
     
     // Check if this is a status color and transform the key accordingly
