@@ -41,10 +41,10 @@ const Index = () => {
           <section className="space-y-4">
             <h2 className="text-xl font-semibold">Status Buttons</h2>
             <div className="flex flex-wrap gap-4">
-              <ButtonStatus status={MediaStatus.yellow} icon="Check" />
-              <ButtonStatus status={MediaStatus.green} icon="Check" />
-              <ButtonStatus status={MediaStatus.blue} icon="Check" />
-              <ButtonStatus status={MediaStatus.red} icon="X" />
+              <ButtonStatus status={MediaStatus.SUBMITTED_FOR_APPROVAL} icon="Check" />
+              <ButtonStatus status={MediaStatus.VALIDATED} icon="Check" />
+              <ButtonStatus status={MediaStatus.SELECTED} icon="Check" />
+              <ButtonStatus status={MediaStatus.ERROR_DURING_BROADCAST} icon="X" />
             </div>
           </section>
           
