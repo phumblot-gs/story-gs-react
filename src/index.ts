@@ -1,6 +1,6 @@
 
-// Export UI components
-export { Button as ButtonBase, buttonVariants } from "./components/ui/button";
+// Export UI components - only export buttonVariants, not the Button component itself
+export { buttonVariants } from "./components/ui/button";
 
 // Export default button component (previously ButtonTextLarge)
 export { Button } from "./components/ui/button-default";
