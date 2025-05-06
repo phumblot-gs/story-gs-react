@@ -30,7 +30,7 @@ function App() {
       <Button>Standard Button</Button>
       <ButtonSmall>Small Button</ButtonSmall>
       <ButtonCircle icon="Plus" />
-      <ButtonCircle letter="A" />
+      <ButtonCircle>A</ButtonCircle>
       <ButtonStatus status={MediaStatus.FOR_APPROVAL} icon="Check" />
       <StatusIndicator status={MediaStatus.VALIDATED} size="md" />
     </div>
@@ -47,9 +47,9 @@ Standard button component with various styling options:
 ```jsx
 <Button 
   background="white" // 'white' | 'black' | 'grey'
-  indicator={false} // boolean - shows indicator dot
   disabled={false} // boolean
   featured={false} // boolean - gives more prominence
+  indicator={false} // boolean - shows indicator dot
 >
   Button Text
 </Button>
@@ -62,9 +62,9 @@ Compact button for secondary actions:
 ```jsx
 <ButtonSmall 
   background="white" // 'white' | 'black' | 'grey'
-  indicator={false} // boolean - shows indicator dot
   disabled={false} // boolean
   featured={false} // boolean - gives more prominence
+  indicator={false} // boolean - shows indicator dot
 >
   Small Button
 </ButtonSmall>
@@ -76,15 +76,15 @@ Circular button with icon or letter:
 
 ```jsx
 <ButtonCircle
-  icon="Plus" // Use any of the allowed pictograms
-  // OR
-  letter="A" // Single letter
-  size="large" // 'small' | 'large'
   background="white" // 'white' | 'black' | 'grey'
-  indicator={false} // boolean - shows indicator dot
   disabled={false} // boolean
   featured={false} // boolean - gives more prominence
-/>
+  icon="Plus" // Use any of the allowed pictograms (optional)
+  indicator={false} // boolean - shows indicator dot
+  size="large" // 'small' | 'large'
+>
+  A {/* Optional single letter (not needed when using icon) */}
+</ButtonCircle>
 ```
 
 ### ButtonStatus
@@ -93,11 +93,11 @@ Status-specific button:
 
 ```jsx
 <ButtonStatus
-  status={MediaStatus.FOR_APPROVAL} // MediaStatus enum
+  disabled={false} // boolean
   icon="Check" // 'Check' | 'X'
   isActive={false} // boolean
-  disabled={false} // boolean
   size="large" // 'small' | 'large'
+  status={MediaStatus.FOR_APPROVAL} // MediaStatus enum
 />
 ```
 
@@ -107,8 +107,8 @@ Visual indicator for different status states:
 
 ```jsx
 <StatusIndicator
-  status={MediaStatus.VALIDATED} // MediaStatus enum
   size="md" // 'sm' | 'md' | 'lg'
+  status={MediaStatus.VALIDATED} // MediaStatus enum
 />
 ```
 

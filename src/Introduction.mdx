@@ -25,7 +25,7 @@ function App() {
       <Button>Regular Button</Button>
       <ButtonSmall>Small Button</ButtonSmall>
       <ButtonCircle icon="Plus" />
-      <ButtonCircle letter="A" />
+      <ButtonCircle>A</ButtonCircle>
       <ButtonStatus status="FOR_APPROVAL" icon="Check" />
       <StatusIndicator status="VALIDATED" size="md" />
     </div>
@@ -76,26 +76,26 @@ This library includes the following components:
 
 ```jsx
 <ButtonCircle
-  icon="Plus" // Use any of the allowed pictograms
-  // OR
-  letter="A" // Single letter
-  size="large" // 'small' | 'large'
   background="white" // 'white' | 'black' | 'grey'
-  indicator={false} // boolean - shows indicator dot
   disabled={false} // boolean
   featured={false} // boolean - gives more prominence
-/>
+  icon="Plus" // Use any of the allowed pictograms
+  indicator={false} // boolean - shows indicator dot
+  size="large" // 'small' | 'large'
+>
+  A {/* Single letter (optional, not needed when using icon) */}
+</ButtonCircle>
 ```
 
 ### ButtonStatus
 
 ```jsx
 <ButtonStatus
-  status={MediaStatus.FOR_APPROVAL} // MediaStatus enum
+  disabled={false} // boolean
   icon="Check" // 'Check' | 'X'
   isActive={false} // boolean
-  disabled={false} // boolean
   size="large" // 'small' | 'large'
+  status={MediaStatus.FOR_APPROVAL} // MediaStatus enum
 />
 ```
 
@@ -103,8 +103,8 @@ This library includes the following components:
 
 ```jsx
 <StatusIndicator
-  status={MediaStatus.VALIDATED} // MediaStatus enum
   size="md" // 'sm' | 'md' | 'lg'
+  status={MediaStatus.VALIDATED} // MediaStatus enum
 />
 ```
 

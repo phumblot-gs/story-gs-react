@@ -67,27 +67,27 @@ const ButtonVariantsExample = () => {
           <div className="flex flex-col items-center gap-2 bg-white p-4 rounded-lg">
             <span className="text-sm text-muted-foreground">White Background</span>
             <div className="flex gap-4">
-              <ButtonCircle background="white" letter="A" />
-              <ButtonCircle background="white" letter="B" />
-              <ButtonCircle background="white" letter="C" />
+              <ButtonCircle background="white">A</ButtonCircle>
+              <ButtonCircle background="white">B</ButtonCircle>
+              <ButtonCircle background="white">C</ButtonCircle>
             </div>
           </div>
           
           <div className="flex flex-col items-center gap-2 bg-black p-4 rounded-lg">
             <span className="text-sm text-white">Black Background</span>
             <div className="flex gap-4">
-              <ButtonCircle background="black" letter="A" />
-              <ButtonCircle background="black" letter="B" />
-              <ButtonCircle background="black" letter="C" />
+              <ButtonCircle background="black">A</ButtonCircle>
+              <ButtonCircle background="black">B</ButtonCircle>
+              <ButtonCircle background="black">C</ButtonCircle>
             </div>
           </div>
           
           <div className="flex flex-col items-center gap-2 bg-grey p-4 rounded-lg">
             <span className="text-sm text-muted-foreground">Grey Background</span>
             <div className="flex gap-4">
-              <ButtonCircle background="grey" letter="A" />
-              <ButtonCircle background="grey" letter="B" />
-              <ButtonCircle background="grey" letter="C" />
+              <ButtonCircle background="grey">A</ButtonCircle>
+              <ButtonCircle background="grey">B</ButtonCircle>
+              <ButtonCircle background="grey">C</ButtonCircle>
             </div>
           </div>
         </div>
@@ -100,7 +100,7 @@ const ButtonVariantsExample = () => {
             <span className="text-sm text-muted-foreground">White Background</span>
             <div className="flex gap-4">
               <ButtonCircle background="white" size="small" icon="Plus" />
-              <ButtonCircle background="white" size="small" letter="A" />
+              <ButtonCircle background="white" size="small">A</ButtonCircle>
             </div>
           </div>
           
@@ -108,7 +108,7 @@ const ButtonVariantsExample = () => {
             <span className="text-sm text-white">Black Background</span>
             <div className="flex gap-4">
               <ButtonCircle background="black" size="small" icon="Plus" />
-              <ButtonCircle background="black" size="small" letter="A" />
+              <ButtonCircle background="black" size="small">A</ButtonCircle>
             </div>
           </div>
           
@@ -116,7 +116,7 @@ const ButtonVariantsExample = () => {
             <span className="text-sm text-muted-foreground">Grey Background</span>
             <div className="flex gap-4">
               <ButtonCircle background="grey" size="small" icon="Plus" />
-              <ButtonCircle background="grey" size="small" letter="A" />
+              <ButtonCircle background="grey" size="small">A</ButtonCircle>
             </div>
           </div>
         </div>
@@ -134,7 +134,7 @@ const ButtonVariantsExample = () => {
           </div>
           
           <div className="flex flex-col items-center gap-2">
-            <ButtonCircle letter="N" indicator={true} />
+            <ButtonCircle indicator={true}>N</ButtonCircle>
           </div>
         </div>
       </div>
