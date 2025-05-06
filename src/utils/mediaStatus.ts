@@ -31,33 +31,33 @@ export const mediaStatusNames: Record<MediaStatus, string> = {
   [MediaStatus.ARCHIVED]: "Archived"
 };
 
-// Map media status codes to CSS color classes
+// Map media status codes to CSS status classes (renamed from colors to status names)
 export const getMediaStatusColorClass = (status: MediaStatus): string => {
   switch (status) {
     case MediaStatus.IGNORED:
-      return "status-grey";
+      return "status-ignored";
     case MediaStatus.TO_RESHOOT:
-      return "status-purple";
+      return "status-reshoot";
     case MediaStatus.NOT_SELECTED:
-      return "status-transparent";
+      return "status-not-selected";
     case MediaStatus.SELECTED:
-      return "status-blue";
+      return "status-selected";
     case MediaStatus.REFUSED_1:
     case MediaStatus.REFUSED_2:
-      return "status-grey-strongest";
+      return "status-refused";
     case MediaStatus.SUBMITTED_FOR_APPROVAL:
-      return "status-yellow";
+      return "status-for-approval";
     case MediaStatus.VALIDATED:
       return "status-validated";
     case MediaStatus.READY_TO_BROADCAST:
-      return "status-khaki";
+      return "status-to-publish";
     case MediaStatus.ERROR_DURING_BROADCAST:
       return "status-error";
     case MediaStatus.BROADCAST:
     case MediaStatus.ARCHIVED:
-      return "status-braun";
+      return "status-published";
     default:
-      return "status-transparent";
+      return "status-not-selected";
   }
 };
 

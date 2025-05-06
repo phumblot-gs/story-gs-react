@@ -61,7 +61,7 @@
     --padding-xxlarge: 3rem;
     --padding-xxxlarge: 4rem;
     
-    /* Status color variables */
+    /* Status color variables - renamed based on status not color */
     --status-purple-color: #A44C9F;
     --status-yellow-color: #FFD331;
     --status-green-color: #89CC52;
@@ -115,109 +115,86 @@
   }
 }
 
-/* Status icon colors */
-.status-purple {
+/* Status icon classes - renamed to match status names instead of colors */
+.status-reshoot {
   fill: var(--status-purple-color);
 }
 
-.status-yellow {
+.status-for-approval {
   fill: var(--status-yellow-color);
 }
 
-.status-green {
+.status-validated {
   fill: var(--status-green-color);
   opacity: 0.8;
 }
 
-.status-blue {
+.status-selected {
   fill: var(--status-blue-color);
 }
 
-.status-khaki {
+.status-to-publish {
   fill: var(--status-khaki-color);
 }
 
-.status-orange {
-  fill: var(--status-orange-color);
-}
-
-.status-red {
-  fill: var(--status-red-color);
-}
-
-.status-grey {
+.status-ignored {
   fill: var(--status-grey-color);
 }
 
-.status-grey-strongest {
+.status-refused {
   fill: var(--status-grey-strongest-color);
 }
 
-/* New status colors */
-.status-validated {
-  fill: var(--status-validated-color); /* Using the same color as status-green for validation */
-  opacity: 0.8;
+.status-published {
+  fill: var(--status-braun-color);
 }
 
-.status-braun {
-  fill: var(--status-braun-color); /* Standard brown color */
-}
-
-.status-transparent {
+.status-not-selected {
   fill: transparent;
 }
 
 .status-error {
-  fill: var(--status-error-color); /* Using the same color as status-red for error */
+  fill: var(--status-red-color);
 }
 
-/* Button hover state - adjust status icon colors */
-button:hover .status-purple,
-button:hover .status-yellow,
-button:hover .status-green,
-button:hover .status-blue,
-button:hover .status-khaki,
-button:hover .status-orange,
-button:hover .status-red,
-button:hover .status-grey,
-button:hover .status-grey-strongest,
+/* Button hover state - adjust status icon classes */
+button:hover .status-reshoot,
+button:hover .status-for-approval,
 button:hover .status-validated,
-button:hover .status-braun,
-button:hover .status-transparent,
+button:hover .status-selected,
+button:hover .status-to-publish,
+button:hover .status-ignored,
+button:hover .status-refused,
+button:hover .status-published,
+button:hover .status-not-selected,
 button:hover .status-error {
   fill: currentColor;
 }
 
 /* Button active/pressed state */
-button:active .status-purple,
-button:active .status-yellow,
-button:active .status-green,
-button:active .status-blue,
-button:active .status-khaki,
-button:active .status-orange,
-button:active .status-red,
-button:active .status-grey,
-button:active .status-grey-strongest,
+button:active .status-reshoot,
+button:active .status-for-approval,
 button:active .status-validated,
-button:active .status-braun,
-button:active .status-transparent,
+button:active .status-selected,
+button:active .status-to-publish,
+button:active .status-ignored,
+button:active .status-refused,
+button:active .status-published,
+button:active .status-not-selected,
 button:active .status-error {
   fill: #CDEDFF; /* blue-primary color for active state */
 }
 
 /* Button disabled state */
-button:disabled .status-purple,
-button:disabled .status-yellow,
-button:disabled .status-green,
-button:disabled .status-blue,
-button:disabled .status-khaki,
-button:disabled .status-orange,
-button:disabled .status-red,
-button:disabled .status-grey,
-button:disabled .status-grey-strongest,
+button:disabled .status-reshoot,
+button:disabled .status-for-approval,
 button:disabled .status-validated,
-button:disabled .status-braun,
-button:disabled .status-transparent,
+button:disabled .status-selected,
+button:disabled .status-to-publish,
+button:disabled .status-ignored,
+button:disabled .status-refused,
+button:disabled .status-published,
+button:disabled .status-not-selected,
 button:disabled .status-error {
   fill: #C1C1C1; /* grey-stronger color for disabled state */
 }
