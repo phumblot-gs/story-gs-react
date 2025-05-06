@@ -10,7 +10,7 @@ export interface ButtonStatusProps {
   icon: "Check" | "X"; // Using capitalized names to match AllowedPictogram type
   isActive?: boolean;
   disabled?: boolean;
-  onClick?: () => void;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
   onFocus?: React.FocusEventHandler<HTMLButtonElement>;
   onBlur?: React.FocusEventHandler<HTMLButtonElement>;
   className?: string;

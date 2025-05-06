@@ -25,6 +25,7 @@ export interface ButtonProps extends Omit<ButtonBaseProps, 'variant' | 'size'>, 
   disabled?: boolean
   featured?: boolean
   debug?: boolean
+  onClick?: React.MouseEventHandler<HTMLButtonElement>
   onFocus?: React.FocusEventHandler<HTMLButtonElement>
   onBlur?: React.FocusEventHandler<HTMLButtonElement>
 }

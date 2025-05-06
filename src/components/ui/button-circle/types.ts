@@ -48,6 +48,7 @@ export interface ButtonCircleProps extends Omit<ButtonProps, 'variant' | 'size'>
   icon?: keyof typeof LucideIcons | AllowedPictogram
   indicator?: boolean
   debug?: boolean
+  onClick?: React.MouseEventHandler<HTMLButtonElement>
   onFocus?: React.FocusEventHandler<HTMLButtonElement>
   onBlur?: React.FocusEventHandler<HTMLButtonElement>
 }
