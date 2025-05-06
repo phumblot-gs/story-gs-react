@@ -2,8 +2,9 @@
 import { ButtonProps } from "@/components/ui/button"
 import * as LucideIcons from "lucide-react"
 
+// These types are still needed internally but won't be exported in index.ts
 export type ButtonVariant = "primary" | "secondary" | "black" | "blue" | "grey" | "disabled"
-export type ButtonBackground = "white" | "black" | "grey"
+export type ButtonBackground = "white" | "black" | "grey" 
 export type ButtonSize = "small" | "large"
 
 // Define a list of approved pictogram icons to be used
