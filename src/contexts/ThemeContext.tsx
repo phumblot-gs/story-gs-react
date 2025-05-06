@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useTheme as useNextTheme } from "next-themes";
 
@@ -176,14 +175,43 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
   // Update customization with partial updates
   const updateCustomization = (updates: Partial<ThemeCustomization>) => {
     setCustomization(prev => {
-      const newCustomization = {
-        ...prev,
-        ...updates,
-        // Ensure nested objects are properly merged
-        colors: { ...prev.colors, ...(updates.colors || {}) },
-        assets: { ...prev.assets, ...(updates.assets || {}) },
-        text: { ...prev.text, ...(updates.text || {}) },
-      };
+      // Deep clone the previous state to avoid modifying it
+      const newCustomization = JSON.parse(JSON.stringify(prev)) as ThemeCustomization;
+      
+      // Update colors, removing any that are explicitly set to undefined
+      if (updates.colors) {
+        Object.entries(updates.colors).forEach(([key, value]) => {
+          if (value === undefined) {
+            // If a color is set to undefined, delete it from the customization
+            delete newCustomization.colors[key as keyof ThemeCustomization['colors']];
+          } else {
+            // Otherwise set it to the new value
+            newCustomization.colors[key as keyof ThemeCustomization['colors']] = value;
+          }
+        });
+      }
+      
+      // Update assets
+      if (updates.assets) {
+        Object.entries(updates.assets).forEach(([key, value]) => {
+          if (value === undefined) {
+            delete newCustomization.assets[key as keyof ThemeCustomization['assets']];
+          } else {
+            newCustomization.assets[key as keyof ThemeCustomization['assets']] = value;
+          }
+        });
+      }
+      
+      // Update text properties
+      if (updates.text) {
+        Object.entries(updates.text).forEach(([key, value]) => {
+          if (value === undefined) {
+            delete newCustomization.text[key as keyof ThemeCustomization['text']];
+          } else {
+            newCustomization.text[key as keyof ThemeCustomization['text']] = value;
+          }
+        });
+      }
       
       return newCustomization;
     });
@@ -197,6 +225,31 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
   // Apply CSS variables for theme colors
   useEffect(() => {
     if (typeof window !== "undefined" && document.documentElement) {
+      // First reset all CSS variables to their defaults by clearing them
+      document.documentElement.style.removeProperty('--bg-white');
+      document.documentElement.style.removeProperty('--bg-black');
+      document.documentElement.style.removeProperty('--bg-grey');
+      document.documentElement.style.removeProperty('--bg-grey-lighter');
+      document.documentElement.style.removeProperty('--bg-grey-strongest');
+      
+      document.documentElement.style.removeProperty('--text-grey-stronger');
+      document.documentElement.style.removeProperty('--text-black');
+      document.documentElement.style.removeProperty('--text-white');
+      document.documentElement.style.removeProperty('--text-blue-primary');
+      document.documentElement.style.removeProperty('--text-blue');
+      
+      document.documentElement.style.removeProperty('--status-ignored-color');
+      document.documentElement.style.removeProperty('--status-reshoot-color');
+      document.documentElement.style.removeProperty('--status-not-selected-color');
+      document.documentElement.style.removeProperty('--status-selected-color');
+      document.documentElement.style.removeProperty('--status-refused-color');
+      document.documentElement.style.removeProperty('--status-for-approval-color');
+      document.documentElement.style.removeProperty('--status-validated-color');
+      document.documentElement.style.removeProperty('--status-to-publish-color');
+      document.documentElement.style.removeProperty('--status-error-color');
+      document.documentElement.style.removeProperty('--status-published-color');
+      
+      // Now apply only the custom colors that are defined
       // Apply background colors
       if (customization.colors.bgWhite) {
         document.documentElement.style.setProperty('--bg-white', customization.colors.bgWhite);

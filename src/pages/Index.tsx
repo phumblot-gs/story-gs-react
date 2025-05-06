@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { ThemeCustomizer } from '@/components/ThemeCustomizer';
 import { useThemeValues } from '@/hooks/useThemeValues';
@@ -21,7 +20,7 @@ const ColorSwatch = ({ color, name, value }: { color: string; name: string; valu
 };
 
 const Index = () => {
-  const { brandName, cssVars, isDarkMode } = useThemeValues();
+  const { brandName, cssVars, isDarkMode, defaultColors } = useThemeValues();
   
   // Group colors by categories for display
   const backgroundColors = [
@@ -52,6 +51,27 @@ const Index = () => {
     { name: 'status-error', value: 'var(--status-error-color)' },
     { name: 'status-published', value: 'var(--status-published-color)' },
   ];
+  
+  // Filter cssVars to only show those that differ from defaults
+  const filteredCssVars: Record<string, string> = {};
+  Object.entries(cssVars).forEach(([key, value]) => {
+    // Extract color key from CSS variable name
+    const colorKey = key.replace('--', '').replace('-color', '').replaceAll('-', '');
+    const defaultKey = key.replace('--', '').replace('-color', '');
+    
+    // Check if this is a status color and transform the key accordingly
+    const isStatusColor = key.includes('status-') && key.includes('-color');
+    
+    // Get the corresponding default color
+    const defaultValue = isStatusColor 
+      ? defaultColors[`status${colorKey.charAt(0).toUpperCase() + colorKey.slice(1)}` as keyof typeof defaultColors]
+      : defaultColors[colorKey as keyof typeof defaultColors];
+    
+    // Only include the variable if it differs from the default
+    if (value !== defaultValue) {
+      filteredCssVars[key] = value;
+    }
+  });
   
   return (
     <div 
@@ -173,10 +193,12 @@ const Index = () => {
                 <p><strong>Mode:</strong> {isDarkMode ? 'Dark' : 'Light'}</p>
                 <p><strong>Brand Name:</strong> {brandName}</p>
                 <div className="mt-2">
-                  <p><strong>Custom CSS Variables:</strong></p>
-                  <pre className="bg-muted p-2 mt-1 rounded text-xs overflow-auto">
-                    {JSON.stringify(cssVars, null, 2)}
-                  </pre>
+                  <p><strong>Custom CSS Variables:</strong> {Object.keys(filteredCssVars).length === 0 && 'None (using defaults)'}</p>
+                  {Object.keys(filteredCssVars).length > 0 && (
+                    <pre className="bg-muted p-2 mt-1 rounded text-xs overflow-auto">
+                      {JSON.stringify(filteredCssVars, null, 2)}
+                    </pre>
+                  )}
                 </div>
               </div>
             </div>

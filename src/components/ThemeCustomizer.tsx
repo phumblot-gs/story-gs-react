@@ -90,40 +90,26 @@ export const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({
   };
   
   // Apply changes from local state to theme context
-  // If a value is empty, pass undefined so the default value will be used
+  // Only pass non-default values to avoid redundancy
   const applyChanges = () => {
-    updateCustomization({
-      colors: {
-        // Background colors
-        bgWhite: formValues.bgWhite || undefined,
-        bgBlack: formValues.bgBlack || undefined,
-        bgGrey: formValues.bgGrey || undefined,
-        bgGreyLighter: formValues.bgGreyLighter || undefined,
-        bgGreyStrongest: formValues.bgGreyStrongest || undefined,
-        
-        // Text colors
-        textGreyStronger: formValues.textGreyStronger || undefined,
-        textBlack: formValues.textBlack || undefined,
-        textWhite: formValues.textWhite || undefined,
-        textBluePrimary: formValues.textBluePrimary || undefined,
-        textBlue: formValues.textBlue || undefined,
-        
-        // Status colors
-        statusIgnored: formValues.statusIgnored || undefined,
-        statusReshoot: formValues.statusReshoot || undefined,
-        statusNotSelected: formValues.statusNotSelected || undefined,
-        statusSelected: formValues.statusSelected || undefined,
-        statusRefused: formValues.statusRefused || undefined,
-        statusForApproval: formValues.statusForApproval || undefined,
-        statusValidated: formValues.statusValidated || undefined,
-        statusToPublish: formValues.statusToPublish || undefined,
-        statusError: formValues.statusError || undefined,
-        statusPublished: formValues.statusPublished || undefined,
-      },
+    const updates = {
+      colors: {} as any,
       text: {
-        brandName: formValues.brandName || undefined,
+        brandName: formValues.brandName !== 'GS Components' ? formValues.brandName : undefined,
+      }
+    };
+    
+    // Add only color values that differ from defaults
+    Object.entries(formValues).forEach(([key, value]) => {
+      if (key === 'brandName') return; // Skip brandName, it's handled separately
+      
+      const defaultValue = defaultColors[key as keyof typeof defaultColors];
+      if (value !== defaultValue && value !== '') {
+        updates.colors[key] = value;
       }
     });
+    
+    updateCustomization(updates);
     setIsOpen(false);
   };
   
