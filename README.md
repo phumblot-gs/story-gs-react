@@ -1,134 +1,95 @@
 
-# Welcome to your Lovable project
+# UI Component Library
 
-## Project info
+A modern, responsive UI component library built with React, Tailwind CSS, and TypeScript.
 
-**URL**: https://lovable.dev/projects/b47d4709-f8a9-430e-9c62-c4333e7b5f50
+## Features
+
+- **Comprehensive Button Collection**: Various button styles including standard, circular, small text, large text, and status-specific buttons
+- **TypeScript Support**: Full type definitions for all components
+- **Tailwind Integration**: Seamless integration with Tailwind CSS
+- **Storybook Documentation**: Interactive component documentation
+
+## Installation
+
+```bash
+npm install ui-components-library
+```
+
+## Usage
+
+```jsx
+import { Button, ButtonCircle, ButtonTextSmall, ButtonTextLarge } from 'ui-components-library';
+import 'ui-components-library/dist/style.css';
+
+function App() {
+  return (
+    <div>
+      <Button>Standard Button</Button>
+      <ButtonCircle icon="Plus" />
+      <ButtonTextSmall>Small Text Button</ButtonTextSmall>
+      <ButtonTextLarge>Large Text Button</ButtonTextLarge>
+    </div>
+  );
+}
+```
+
+## Development
+
+### Setup
+
+1. Clone the repository
+2. Install dependencies: `npm install`
+3. Start Storybook: `npm run storybook`
+
+### Building
+
+- Build the library: `npm run build:lib`
+- Build Storybook: `npm run build-storybook`
 
 ## Components
 
-### Media Status Components
+### Button
 
-The project includes components for handling media statuses:
-
-#### StatusIndicator
-
-A visual indicator that shows the status of a media item using color-coded dots:
+Standard button component with various styling options:
 
 ```jsx
-import StatusIndicator from "@/components/StatusIndicator";
-import { MediaStatus } from "@/utils/mediaStatus";
-
-// Example usage
-<StatusIndicator status={MediaStatus.VALIDATED} size="md" />
+<Button variant="default" size="default">Click Me</Button>
 ```
 
-#### ButtonStatus
+### ButtonCircle
 
-Buttons that allow changing the status of a media item, with appropriate color coding and icons:
+Circular button with icon or letter:
 
 ```jsx
-import ButtonStatus from "@/components/ButtonStatus";
-import { MediaStatus } from "@/utils/mediaStatus";
-
-// Example usage - Approve button
-<ButtonStatus 
-  status={MediaStatus.VALIDATED} 
-  icon="check"
-  onClick={() => handleStatusChange(MediaStatus.VALIDATED)} 
-/>
-
-// Example usage - Reject button
-<ButtonStatus 
-  status={MediaStatus.REFUSED_1} 
-  icon="x"
-  onClick={() => handleStatusChange(MediaStatus.REFUSED_1)} 
-/>
-
-// Active state (when media already has this status)
-<ButtonStatus 
-  status={MediaStatus.VALIDATED} 
-  icon="check"
-  isActive={true}
-/>
-
-// Disabled state
-<ButtonStatus 
-  status={MediaStatus.VALIDATED} 
-  icon="check"
-  disabled={true}
-/>
+<ButtonCircle icon="Plus" />
+<ButtonCircle letter="A" />
 ```
 
-The ButtonStatus component has three states:
-- Default: White background with status-colored icon
-- Hover/Active: Status-colored background with white icon
-- Disabled: Grey styling
+### ButtonTextSmall
 
-## How can I edit this code?
+Small text button:
 
-There are several ways of editing your application.
-
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/b47d4709-f8a9-430e-9c62-c4333e7b5f50) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+```jsx
+<ButtonTextSmall variant="primary">Small Button</ButtonTextSmall>
 ```
 
-**Edit a file directly in GitHub**
+### ButtonTextLarge
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+Large text button:
 
-**Use GitHub Codespaces**
+```jsx
+<ButtonTextLarge variant="primary">Large Button</ButtonTextLarge>
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### ButtonStatus
 
-## What technologies are used for this project?
+Status-specific button:
 
-This project is built with:
+```jsx
+<ButtonStatus status={MediaStatus.FOR_APPROVAL} icon="Check" />
+```
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## License
 
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/b47d4709-f8a9-430e-9c62-c4333e7b5f50) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+MIT
