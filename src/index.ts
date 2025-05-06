@@ -32,8 +32,9 @@ export type {
 
 // For backward compatibility, export ButtonSmall as a type alias
 // and create a simple function that returns Button with size="small"
-export const ButtonSmall: React.FC<Omit<ButtonProps, "size">> = (props) => {
-  return <Button {...props} size="small" />;
+// Avoid using JSX in .ts file by using createElement instead
+export const ButtonSmall = (props: Omit<ButtonProps, "size">) => {
+  return React.createElement(Button, { ...props, size: "small" });
 };
 
 export type ButtonSmallProps = Omit<ButtonProps, "size">;
