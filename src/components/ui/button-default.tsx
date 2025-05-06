@@ -7,7 +7,7 @@ export type ButtonVariant = "primary" | "secondary" | "black" | "blue" | "grey" 
 export type ButtonBackground = "white" | "black" | "grey"
 export type ButtonSize = "small" | "large"
 
-export interface ButtonProps extends Omit<ButtonBaseProps, 'variant'> {
+export interface ButtonProps extends Omit<ButtonBaseProps, 'variant' | 'size'> {
   variant?: ButtonVariant
   background?: ButtonBackground
   indicator?: boolean
