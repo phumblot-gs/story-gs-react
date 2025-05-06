@@ -94,17 +94,18 @@ export default {
 				'token': {
 					'canvas': 'var(--token-canvas)',
 					'codeview': 'var(--token-codeview)',
-					// States
+					// States - updated to use the new status-based variable names
 					'state': {
-						'ignored': 'var(--token-state-ignored)',
-						'selected': 'var(--token-state-selected)',
-						'reshoot': 'var(--token-state-reshoot)',
-						'for-approval': 'var(--token-state-for-approval)',
-						'refused': 'var(--token-state-refused)',
-						'validated': 'var(--token-state-validated)',
-						'to-publish': 'var(--token-state-to-publish)',
-						'published': 'var(--token-state-published)',
-						'error': 'var(--token-state-error)'
+						'ignored': 'var(--status-ignored-color)',
+						'selected': 'var(--status-selected-color)',
+						'reshoot': 'var(--status-reshoot-color)',
+						'for-approval': 'var(--status-for-approval-color)',
+						'refused': 'var(--status-refused-color)',
+						'validated': 'var(--status-validated-color)',
+						'to-publish': 'var(--status-to-publish-color)',
+						'published': 'var(--status-published-color)',
+						'error': 'var(--status-error-color)',
+						'not-selected': 'var(--status-not-selected-color)'
 					},
 					// Grades
 					'grade': {

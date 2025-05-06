@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -61,19 +60,16 @@
     --padding-xxlarge: 3rem;
     --padding-xxxlarge: 4rem;
     
-    /* Status color variables - renamed based on status not color */
-    --status-purple-color: #A44C9F;
-    --status-yellow-color: #FFD331;
-    --status-green-color: #89CC52;
-    --status-blue-color: #74D4DA;
-    --status-khaki-color: #B7BB28;
-    --status-orange-color: #FF9900;
-    --status-red-color: #DD3733;
-    --status-grey-color: #EAEAEA;
-    --status-grey-strongest-color: #595959;
+    /* Status color variables - renamed to match status names */
+    --status-reshoot-color: #A44C9F;
+    --status-for-approval-color: #FFD331;
     --status-validated-color: #89CC52;
-    --status-braun-color: #8B4513;
-    --status-transparent-color: transparent;
+    --status-selected-color: #74D4DA;
+    --status-to-publish-color: #B7BB28;
+    --status-ignored-color: #EAEAEA;
+    --status-refused-color: #595959;
+    --status-published-color: #8B4513;
+    --status-not-selected-color: transparent;
     --status-error-color: #DD3733;
   }
 
@@ -117,36 +113,36 @@
 
 /* Status icon classes - renamed to match status names instead of colors */
 .status-reshoot {
-  fill: var(--status-purple-color);
+  fill: var(--status-reshoot-color);
 }
 
 .status-for-approval {
-  fill: var(--status-yellow-color);
+  fill: var(--status-for-approval-color);
 }
 
 .status-validated {
-  fill: var(--status-green-color);
+  fill: var(--status-validated-color);
   opacity: 0.8;
 }
 
 .status-selected {
-  fill: var(--status-blue-color);
+  fill: var(--status-selected-color);
 }
 
 .status-to-publish {
-  fill: var(--status-khaki-color);
+  fill: var(--status-to-publish-color);
 }
 
 .status-ignored {
-  fill: var(--status-grey-color);
+  fill: var(--status-ignored-color);
 }
 
 .status-refused {
-  fill: var(--status-grey-strongest-color);
+  fill: var(--status-refused-color);
 }
 
 .status-published {
-  fill: var(--status-braun-color);
+  fill: var(--status-published-color);
 }
 
 .status-not-selected {
@@ -154,7 +150,7 @@
 }
 
 .status-error {
-  fill: var(--status-red-color);
+  fill: var(--status-error-color);
 }
 
 /* Button hover state - adjust status icon classes */
