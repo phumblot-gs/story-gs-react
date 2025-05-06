@@ -12,27 +12,27 @@ const ButtonExample = () => {
         <div className="grid grid-cols-6 gap-8">
           <div className="flex flex-col items-center gap-2">
             <span className="text-sm text-muted-foreground">Primary</span>
-            <Button variant="primary">Simple button</Button>
+            <Button background="white">Simple button</Button>
           </div>
           
           <div className="flex flex-col items-center gap-2">
             <span className="text-sm text-muted-foreground">Black</span>
-            <Button variant="black">Simple button</Button>
+            <Button background="black">Simple button</Button>
           </div>
           
           <div className="flex flex-col items-center gap-2">
             <span className="text-sm text-muted-foreground">Blue</span>
-            <Button variant="blue">Simple button</Button>
+            <Button background="white" featured={true}>Simple button</Button>
           </div>
           
           <div className="flex flex-col items-center gap-2">
             <span className="text-sm text-muted-foreground">Grey</span>
-            <Button variant="grey">Simple button</Button>
+            <Button background="grey">Simple button</Button>
           </div>
           
           <div className="flex flex-col items-center gap-2">
             <span className="text-sm text-muted-foreground">Secondary</span>
-            <Button variant="secondary">Simple button</Button>
+            <Button background="white" featured={true}>Simple button</Button>
           </div>
           
           <div className="flex flex-col items-center gap-2">
@@ -47,27 +47,27 @@ const ButtonExample = () => {
         <div className="grid grid-cols-6 gap-8">
           <div className="flex flex-col items-center gap-2">
             <span className="text-sm text-muted-foreground">Primary</span>
-            <Button variant="primary" indicator={true}>Simple button</Button>
+            <Button background="white" indicator={true}>Simple button</Button>
           </div>
           
           <div className="flex flex-col items-center gap-2">
             <span className="text-sm text-muted-foreground">Black</span>
-            <Button variant="black" indicator={true}>Simple button</Button>
+            <Button background="black" indicator={true}>Simple button</Button>
           </div>
           
           <div className="flex flex-col items-center gap-2">
             <span className="text-sm text-muted-foreground">Blue</span>
-            <Button variant="blue" indicator={true}>Simple button</Button>
+            <Button background="white" featured={true} indicator={true}>Simple button</Button>
           </div>
           
           <div className="flex flex-col items-center gap-2">
             <span className="text-sm text-muted-foreground">Grey</span>
-            <Button variant="grey" indicator={true}>Simple button</Button>
+            <Button background="grey" indicator={true}>Simple button</Button>
           </div>
           
           <div className="flex flex-col items-center gap-2">
             <span className="text-sm text-muted-foreground">Secondary</span>
-            <Button variant="secondary" indicator={true}>Simple button</Button>
+            <Button background="white" featured={true} indicator={true}>Simple button</Button>
           </div>
           
           <div className="flex flex-col items-center gap-2">
