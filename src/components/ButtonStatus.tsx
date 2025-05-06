@@ -36,9 +36,9 @@ export const ButtonStatus: React.FC<ButtonStatusProps> = ({
   const useWhiteIcon = shouldUseWhiteIcon(status);
   
   // Handle events with debug mode
-  const handleClick = () => {
+  const handleClick: React.MouseEventHandler<HTMLButtonElement> = (e) => {
     if (debug) console.log(`ButtonStatus (${statusName}): onClick triggered`);
-    onClick?.();
+    onClick?.(e);
   };
 
   const handleFocus: React.FocusEventHandler<HTMLButtonElement> = (e) => {
