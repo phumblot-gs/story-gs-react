@@ -21,6 +21,16 @@ if (!fs.existsSync(netlifyTomlPath)) {
   console.log('✅ netlify.toml created successfully');
 }
 
+// Update package.json
+console.log('📦 Updating package.json with Storybook scripts...');
+try {
+  execSync('node scripts/update-package.js', { stdio: 'inherit' });
+  console.log('✅ Package.json updated successfully');
+} catch (error) {
+  console.error('❌ Failed to update package.json:', error);
+  process.exit(1);
+}
+
 // Build Storybook
 console.log('📚 Building Storybook documentation...');
 try {
