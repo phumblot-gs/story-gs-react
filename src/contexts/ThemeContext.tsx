@@ -4,12 +4,39 @@ import { useTheme as useNextTheme } from "next-themes";
 
 // Define the theme customization options
 export interface ThemeCustomization {
-  // Brand colors (can be extended based on needs)
+  // Brand colors (extended to support the requested colors)
   colors: {
+    // Old options - removed
     primary?: string;
     secondary?: string;
     accent?: string;
     background?: string;
+
+    // Background colors
+    bgWhite?: string;
+    bgBlack?: string;
+    bgGrey?: string;
+    bgGreyLighter?: string;
+    bgGreyStrongest?: string;
+    
+    // Text colors
+    textGreyStronger?: string;
+    textBlack?: string;
+    textWhite?: string;
+    textBluePrimary?: string;
+    textBlue?: string;
+    
+    // Status colors
+    statusIgnored?: string;
+    statusReshoot?: string;
+    statusNotSelected?: string;
+    statusSelected?: string;
+    statusRefused?: string;
+    statusForApproval?: string;
+    statusValidated?: string;
+    statusToPublish?: string;
+    statusError?: string;
+    statusPublished?: string;
   };
   // Brand assets
   assets: {
@@ -34,11 +61,37 @@ interface ThemeContextType {
 // Default customization values
 const defaultCustomization: ThemeCustomization = {
   colors: {
-    // Use existing theme colors as defaults
+    // Old options - removed
     primary: undefined,
     secondary: undefined,
     accent: undefined,
     background: undefined,
+
+    // Background colors
+    bgWhite: undefined,
+    bgBlack: undefined,
+    bgGrey: undefined,
+    bgGreyLighter: undefined,
+    bgGreyStrongest: undefined,
+    
+    // Text colors
+    textGreyStronger: undefined,
+    textBlack: undefined,
+    textWhite: undefined,
+    textBluePrimary: undefined,
+    textBlue: undefined,
+    
+    // Status colors
+    statusIgnored: undefined,
+    statusReshoot: undefined,
+    statusNotSelected: undefined,
+    statusSelected: undefined,
+    statusRefused: undefined,
+    statusForApproval: undefined,
+    statusValidated: undefined,
+    statusToPublish: undefined,
+    statusError: undefined,
+    statusPublished: undefined,
   },
   assets: {
     logo: undefined,
@@ -144,14 +197,71 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
   // Apply CSS variables for theme colors
   useEffect(() => {
     if (typeof window !== "undefined" && document.documentElement) {
-      // Apply custom colors as CSS variables if defined
-      Object.entries(customization.colors).forEach(([key, value]) => {
-        if (value) {
-          document.documentElement.style.setProperty(`--custom-${key}`, value);
-        } else {
-          document.documentElement.style.removeProperty(`--custom-${key}`);
-        }
-      });
+      // Apply background colors
+      if (customization.colors.bgWhite) {
+        document.documentElement.style.setProperty('--bg-white', customization.colors.bgWhite);
+      }
+      if (customization.colors.bgBlack) {
+        document.documentElement.style.setProperty('--bg-black', customization.colors.bgBlack);
+      }
+      if (customization.colors.bgGrey) {
+        document.documentElement.style.setProperty('--bg-grey', customization.colors.bgGrey);
+      }
+      if (customization.colors.bgGreyLighter) {
+        document.documentElement.style.setProperty('--bg-grey-lighter', customization.colors.bgGreyLighter);
+      }
+      if (customization.colors.bgGreyStrongest) {
+        document.documentElement.style.setProperty('--bg-grey-strongest', customization.colors.bgGreyStrongest);
+      }
+      
+      // Apply text colors
+      if (customization.colors.textGreyStronger) {
+        document.documentElement.style.setProperty('--text-grey-stronger', customization.colors.textGreyStronger);
+      }
+      if (customization.colors.textBlack) {
+        document.documentElement.style.setProperty('--text-black', customization.colors.textBlack);
+      }
+      if (customization.colors.textWhite) {
+        document.documentElement.style.setProperty('--text-white', customization.colors.textWhite);
+      }
+      if (customization.colors.textBluePrimary) {
+        document.documentElement.style.setProperty('--text-blue-primary', customization.colors.textBluePrimary);
+      }
+      if (customization.colors.textBlue) {
+        document.documentElement.style.setProperty('--text-blue', customization.colors.textBlue);
+      }
+      
+      // Apply status colors
+      if (customization.colors.statusIgnored) {
+        document.documentElement.style.setProperty('--status-ignored-color', customization.colors.statusIgnored);
+      }
+      if (customization.colors.statusReshoot) {
+        document.documentElement.style.setProperty('--status-reshoot-color', customization.colors.statusReshoot);
+      }
+      if (customization.colors.statusNotSelected) {
+        document.documentElement.style.setProperty('--status-not-selected-color', customization.colors.statusNotSelected);
+      }
+      if (customization.colors.statusSelected) {
+        document.documentElement.style.setProperty('--status-selected-color', customization.colors.statusSelected);
+      }
+      if (customization.colors.statusRefused) {
+        document.documentElement.style.setProperty('--status-refused-color', customization.colors.statusRefused);
+      }
+      if (customization.colors.statusForApproval) {
+        document.documentElement.style.setProperty('--status-for-approval-color', customization.colors.statusForApproval);
+      }
+      if (customization.colors.statusValidated) {
+        document.documentElement.style.setProperty('--status-validated-color', customization.colors.statusValidated);
+      }
+      if (customization.colors.statusToPublish) {
+        document.documentElement.style.setProperty('--status-to-publish-color', customization.colors.statusToPublish);
+      }
+      if (customization.colors.statusError) {
+        document.documentElement.style.setProperty('--status-error-color', customization.colors.statusError);
+      }
+      if (customization.colors.statusPublished) {
+        document.documentElement.style.setProperty('--status-published-color', customization.colors.statusPublished);
+      }
     }
   }, [customization.colors]);
 
