@@ -31,6 +31,11 @@ const meta: Meta<typeof ButtonCircle> = {
         "Help", "Settings", "User", "Pencil", "Sort", "Filter", "Eye", "Logout"
       ],
       control: { type: "select" },
+      description: "Icon to display (optional if letter or children are provided)"
+    },
+    letter: {
+      control: "text",
+      description: "Single letter to display (optional if icon or children are provided)"
     },
     indicator: {
       control: "boolean",
@@ -41,6 +46,9 @@ const meta: Meta<typeof ButtonCircle> = {
     featured: {
       control: "boolean",
     },
+    children: {
+      description: "Content to display (optional if icon or letter are provided)"
+    }
   },
 };
 
@@ -48,6 +56,13 @@ export default meta;
 type Story = StoryObj<typeof ButtonCircle>;
 
 export const Default: Story = {
+  args: {
+    size: "large",
+    children: "BC"
+  },
+};
+
+export const WithIcon: Story = {
   args: {
     icon: "Plus" as AllowedPictogram,
     size: "large",
@@ -65,6 +80,13 @@ export const WithLetter: Story = {
   args: {
     letter: "A",
     size: "large",
+  },
+};
+
+export const NoIconNoLetter: Story = {
+  args: {
+    children: "Button",
+    size: "large"
   },
 };
 
