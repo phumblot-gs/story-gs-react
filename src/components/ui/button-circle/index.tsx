@@ -17,6 +17,10 @@ const ButtonCircle = React.forwardRef<HTMLButtonElement, ButtonCircleProps>(
     icon,
     indicator, 
     size = "large", 
+    debug = false,
+    onClick,
+    onFocus,
+    onBlur,
     ...props 
   }, ref) => {
     
@@ -28,6 +32,22 @@ const ButtonCircle = React.forwardRef<HTMLButtonElement, ButtonCircleProps>(
     
     // Maximum icon size is 12px regardless of button size to ensure pictograms never exceed 12x12px
     const iconSize = 12
+
+    // Event handlers with debug mode
+    const handleClick: React.MouseEventHandler<HTMLButtonElement> = (e) => {
+      if (debug) console.log("ButtonCircle: onClick triggered");
+      onClick?.(e);
+    };
+
+    const handleFocus: React.FocusEventHandler<HTMLButtonElement> = (e) => {
+      if (debug) console.log("ButtonCircle: onFocus triggered");
+      onFocus?.(e);
+    };
+
+    const handleBlur: React.FocusEventHandler<HTMLButtonElement> = (e) => {
+      if (debug) console.log("ButtonCircle: onBlur triggered");
+      onBlur?.(e);
+    };
 
     // Render the content based on what's provided (icon or children)
     const renderContent = () => {
@@ -49,6 +69,9 @@ const ButtonCircle = React.forwardRef<HTMLButtonElement, ButtonCircleProps>(
             className
           )}
           disabled={disabled}
+          onClick={handleClick}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
           {...props}
         >
           {renderContent()}

@@ -24,10 +24,26 @@ export interface ButtonProps extends Omit<ButtonBaseProps, 'variant' | 'size'>, 
   indicator?: boolean
   disabled?: boolean
   featured?: boolean
+  debug?: boolean
+  onFocus?: React.FocusEventHandler<HTMLButtonElement>
+  onBlur?: React.FocusEventHandler<HTMLButtonElement>
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, background = "white", indicator, disabled, featured = false, size, children, ...props }, ref) => {
+  ({ 
+    className, 
+    background = "white", 
+    indicator, 
+    disabled, 
+    featured = false, 
+    size, 
+    children, 
+    debug = false,
+    onClick,
+    onFocus,
+    onBlur,
+    ...props 
+  }, ref) => {
     // Get size-specific classes using CVA
     const sizeClasses = sizeVariants({ size });
     
@@ -71,6 +87,22 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       }
     }
 
+    // Event handlers with debug mode
+    const handleClick: React.MouseEventHandler<HTMLButtonElement> = (e) => {
+      if (debug) console.log("Button: onClick triggered");
+      onClick?.(e);
+    };
+
+    const handleFocus: React.FocusEventHandler<HTMLButtonElement> = (e) => {
+      if (debug) console.log("Button: onFocus triggered");
+      onFocus?.(e);
+    };
+
+    const handleBlur: React.FocusEventHandler<HTMLButtonElement> = (e) => {
+      if (debug) console.log("Button: onBlur triggered");
+      onBlur?.(e);
+    };
+
     return (
       <div className="relative">
         <ButtonBase
@@ -82,6 +114,9 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             className
           )}
           disabled={disabled}
+          onClick={handleClick}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
           {...props}
         >
           {children}

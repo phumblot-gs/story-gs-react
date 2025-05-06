@@ -1,3 +1,4 @@
+
 import type { Meta, StoryObj } from "@storybook/react";
 import { ButtonCircle } from "./index";
 import { AllowedPictogram } from "./types";
@@ -45,7 +46,20 @@ const meta: Meta<typeof ButtonCircle> = {
     size: {
       options: ["small", "large"],
       control: { type: "radio" },
-    }
+    },
+    debug: {
+      control: "boolean",
+      description: "Enable debug mode to log events to console",
+    },
+    onClick: {
+      action: "clicked",
+    },
+    onFocus: {
+      action: "focused",
+    },
+    onBlur: {
+      action: "blurred",
+    },
   },
 };
 

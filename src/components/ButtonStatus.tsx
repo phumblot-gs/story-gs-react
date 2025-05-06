@@ -11,8 +11,11 @@ export interface ButtonStatusProps {
   isActive?: boolean;
   disabled?: boolean;
   onClick?: () => void;
+  onFocus?: React.FocusEventHandler<HTMLButtonElement>;
+  onBlur?: React.FocusEventHandler<HTMLButtonElement>;
   className?: string;
   size?: "small" | "large";
+  debug?: boolean;
 }
 
 export const ButtonStatus: React.FC<ButtonStatusProps> = ({
@@ -21,13 +24,32 @@ export const ButtonStatus: React.FC<ButtonStatusProps> = ({
   isActive = false,
   disabled = false,
   onClick,
+  onFocus,
+  onBlur,
   className = "",
   size = "large",
+  debug = false,
 }) => {
   // Get the status color class from the utility function
   const statusColorClass = getMediaStatusColorClass(status);
   const statusName = mediaStatusNames[status];
   const useWhiteIcon = shouldUseWhiteIcon(status);
+  
+  // Handle events with debug mode
+  const handleClick = () => {
+    if (debug) console.log(`ButtonStatus (${statusName}): onClick triggered`);
+    onClick?.();
+  };
+
+  const handleFocus: React.FocusEventHandler<HTMLButtonElement> = (e) => {
+    if (debug) console.log(`ButtonStatus (${statusName}): onFocus triggered`);
+    onFocus?.(e);
+  };
+
+  const handleBlur: React.FocusEventHandler<HTMLButtonElement> = (e) => {
+    if (debug) console.log(`ButtonStatus (${statusName}): onBlur triggered`);
+    onBlur?.(e);
+  };
   
   return (
     <ButtonCircle
@@ -49,7 +71,10 @@ export const ButtonStatus: React.FC<ButtonStatusProps> = ({
       )}
       size={size}
       disabled={disabled}
-      onClick={onClick}
+      onClick={handleClick}
+      onFocus={handleFocus}
+      onBlur={handleBlur}
+      debug={debug}
       aria-label={`${icon === "Check" ? "Approve" : "Reject"} - ${statusName}`}
       style={{
         // Set CSS variables for dynamic colors

@@ -1,3 +1,4 @@
+
 import type { Meta, StoryObj } from "@storybook/react";
 import { Button } from "./button-default";
 
@@ -32,6 +33,19 @@ const meta: Meta<typeof Button> = {
       control: { type: "radio" },
       description: "Size of the button (small or large)",
       defaultValue: "large",
+    },
+    debug: {
+      control: "boolean",
+      description: "Enable debug mode to log events to console",
+    },
+    onClick: {
+      action: "clicked",
+    },
+    onFocus: {
+      action: "focused",
+    },
+    onBlur: {
+      action: "blurred",
     },
   },
 };
