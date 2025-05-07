@@ -2,6 +2,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { ButtonCircle } from "./index";
 import { IconName } from "../icons/types";
+import { AVAILABLE_ICONS } from "../icons/constants";
 
 const meta: Meta<typeof ButtonCircle> = {
   title: "UI/ButtonCircle",
@@ -28,13 +29,7 @@ const meta: Meta<typeof ButtonCircle> = {
       control: "boolean",
     },
     icon: {
-      options: [
-        "Alert", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowUp",
-        "Bell", "Check", "Comment", "Eye", "Filter",
-        "Help", "Logout", "Pencil", "Plus", "Settings", 
-        "Sort", "Star", "Status", "Tag", "Urgent",
-        "User", "Vedette", "X"
-      ],
+      options: AVAILABLE_ICONS,
       control: { type: "select" },
       description: "Icon to display (optional if children is provided)"
     },
@@ -123,12 +118,7 @@ export const DisabledState: Story = {
 export const IconGrid: Story = {
   render: () => (
     <div className="grid grid-cols-5 gap-4">
-      {[
-        "Alert", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowUp",
-        "Bell", "Check", "Comment", "Eye", "Filter", 
-        "Help", "Logout", "Pencil", "Plus", "Settings", 
-        "Sort", "Star", "Status", "Tag", "User"
-      ].map((icon) => (
+      {AVAILABLE_ICONS.map((icon) => (
         <div key={icon} className="flex flex-col items-center gap-2">
           <ButtonCircle icon={icon as IconName} />
           <span className="text-xs">{icon}</span>
