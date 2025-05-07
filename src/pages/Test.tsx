@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -186,11 +187,12 @@ const PageHeaderTestSection: React.FC = () => {
           <div className="border rounded-lg p-6 bg-gray-50">
             <Workflow
               steps={[
-                { id: "1", label: "LIVE", onClick: () => console.log("LIVE clicked") },
-                { id: "2", label: "PHASE 1", onClick: () => console.log("PHASE 1 clicked") },
-                { id: "3", label: "EXPORTS", onClick: () => console.log("EXPORTS clicked") },
-                { id: "4", label: "VALIDATION", isActive: true },
+                { bench_id: "1", label: "LIVE", onClick: () => console.log("LIVE clicked") },
+                { bench_id: "2", label: "PHASE 1", onClick: () => console.log("PHASE 1 clicked") },
+                { bench_id: "3", label: "EXPORTS", onClick: () => console.log("EXPORTS clicked") },
+                { bench_id: "4", label: "VALIDATION", isActive: true },
               ]}
+              bench_root_id={1001}
             />
           </div>
         </div>

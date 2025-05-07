@@ -1,3 +1,4 @@
+
 import type { Meta, StoryObj } from "@storybook/react";
 import PageHeader from "./index";
 import { ButtonCircle } from "@/components/ui/button-circle";
@@ -198,11 +199,12 @@ export const Complete: Story = {
         centerContent={
           <Workflow
             steps={[
-              { id: "1", label: "LIVE", onClick: () => console.log("LIVE clicked") },
-              { id: "2", label: "PHASE 1", onClick: () => console.log("PHASE 1 clicked") },
-              { id: "3", label: "EXPORTS", onClick: () => console.log("EXPORTS clicked") },
-              { id: "4", label: "VALIDATION", isActive: true },
+              { bench_id: "1", label: "LIVE", onClick: () => console.log("LIVE clicked") },
+              { bench_id: "2", label: "PHASE 1", onClick: () => console.log("PHASE 1 clicked") },
+              { bench_id: "3", label: "EXPORTS", onClick: () => console.log("EXPORTS clicked") },
+              { bench_id: "4", label: "VALIDATION", isActive: true },
             ]}
+            bench_root_id={1001}
           />
         }
         rightContent={<RightSideButtons />}
@@ -221,11 +223,12 @@ export const NoTitleButton: Story = {
         centerContent={
           <Workflow
             steps={[
-              { id: "1", label: "LIVE", onClick: () => console.log("LIVE clicked") },
-              { id: "2", label: "PHASE 1", onClick: () => console.log("PHASE 1 clicked") },
-              { id: "3", label: "EXPORTS", onClick: () => console.log("EXPORTS clicked") },
-              { id: "4", label: "VALIDATION", isActive: true },
+              { bench_id: "1", label: "LIVE", onClick: () => console.log("LIVE clicked") },
+              { bench_id: "2", label: "PHASE 1", onClick: () => console.log("PHASE 1 clicked") },
+              { bench_id: "3", label: "EXPORTS", onClick: () => console.log("EXPORTS clicked") },
+              { bench_id: "4", label: "VALIDATION", isActive: true },
             ]}
+            bench_root_id={1002}
           />
         }
         rightContent={<RightSideButtons />}
@@ -245,11 +248,12 @@ export const CustomTitleButton: Story = {
         centerContent={
           <Workflow
             steps={[
-              { id: "1", label: "LIVE", onClick: () => console.log("LIVE clicked") },
-              { id: "2", label: "PHASE 1", onClick: () => console.log("PHASE 1 clicked") },
-              { id: "3", label: "EXPORTS", onClick: () => console.log("EXPORTS clicked") },
-              { id: "4", label: "VALIDATION", isActive: true },
+              { bench_id: "1", label: "LIVE", onClick: () => console.log("LIVE clicked") },
+              { bench_id: "2", label: "PHASE 1", onClick: () => console.log("PHASE 1 clicked") },
+              { bench_id: "3", label: "EXPORTS", onClick: () => console.log("EXPORTS clicked") },
+              { bench_id: "4", label: "VALIDATION", isActive: true },
             ]}
+            bench_root_id={1003}
           />
         }
         rightContent={<RightSideButtons />}
@@ -282,11 +286,12 @@ export const WithActivityAnimation: Story = {
             showTitleButton={true}
             centerContent={<Workflow
               steps={[
-                { id: "1", label: "LIVE", onClick: () => console.log("LIVE clicked") },
-                { id: "2", label: "PHASE 1", onClick: () => console.log("PHASE 1 clicked") },
-                { id: "3", label: "EXPORTS", onClick: () => console.log("EXPORTS clicked") },
-                { id: "4", label: "VALIDATION", isActive: true },
+                { bench_id: "1", label: "LIVE", onClick: () => console.log("LIVE clicked") },
+                { bench_id: "2", label: "PHASE 1", onClick: () => console.log("PHASE 1 clicked") },
+                { bench_id: "3", label: "EXPORTS", onClick: () => console.log("EXPORTS clicked") },
+                { bench_id: "4", label: "VALIDATION", isActive: true },
               ]}
+              bench_root_id={1004}
             />}
             rightContent={<RightSideButtons />}
             isIdle={isIdle}
@@ -320,11 +325,12 @@ export const WithThemeLogo: Story = {
           showTitleButton={true}
           centerContent={<Workflow
             steps={[
-              { id: "1", label: "LIVE", onClick: () => console.log("LIVE clicked") },
-              { id: "2", label: "PHASE 1", onClick: () => console.log("PHASE 1 clicked") },
-              { id: "3", label: "EXPORTS", onClick: () => console.log("EXPORTS clicked") },
-              { id: "4", label: "VALIDATION", isActive: true },
+              { bench_id: "1", label: "LIVE", onClick: () => console.log("LIVE clicked") },
+              { bench_id: "2", label: "PHASE 1", onClick: () => console.log("PHASE 1 clicked") },
+              { bench_id: "3", label: "EXPORTS", onClick: () => console.log("EXPORTS clicked") },
+              { bench_id: "4", label: "VALIDATION", isActive: true },
             ]}
+            bench_root_id={1005}
           />}
           rightContent={<RightSideButtons />}
         />
@@ -360,11 +366,12 @@ export const WithCustomThemeLogo: Story = {
           showTitleButton={true}
           centerContent={<Workflow
             steps={[
-              { id: "1", label: "LIVE", onClick: () => console.log("LIVE clicked") },
-              { id: "2", label: "PHASE 1", onClick: () => console.log("PHASE 1 clicked") },
-              { id: "3", label: "EXPORTS", onClick: () => console.log("EXPORTS clicked") },
-              { id: "4", label: "VALIDATION", isActive: true },
+              { bench_id: "1", label: "LIVE", onClick: () => console.log("LIVE clicked") },
+              { bench_id: "2", label: "PHASE 1", onClick: () => console.log("PHASE 1 clicked") },
+              { bench_id: "3", label: "EXPORTS", onClick: () => console.log("EXPORTS clicked") },
+              { bench_id: "4", label: "VALIDATION", isActive: true },
             ]}
+            bench_root_id={1006}
           />}
           rightContent={<RightSideButtons />}
         />
