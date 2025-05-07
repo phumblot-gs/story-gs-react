@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -13,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Check, X } from "lucide-react";
+import PageHeader from "@/components/PageHeader";
 
 const Test: React.FC = () => {
   return (
@@ -24,12 +24,17 @@ const Test: React.FC = () => {
         </Link>
       </div>
 
-      <Tabs defaultValue="buttons" className="w-full">
+      <Tabs defaultValue="page-header" className="w-full">
         <TabsList className="mb-4">
+          <TabsTrigger value="page-header">Page Header</TabsTrigger>
           <TabsTrigger value="buttons">Buttons</TabsTrigger>
           <TabsTrigger value="status">Status Components</TabsTrigger>
           <TabsTrigger value="nested">Nested Components</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="page-header" className="space-y-8">
+          <PageHeaderTestSection />
+        </TabsContent>
 
         <TabsContent value="buttons" className="space-y-8">
           <ButtonTestSection />
@@ -44,6 +49,135 @@ const Test: React.FC = () => {
         </TabsContent>
       </Tabs>
     </div>
+  );
+};
+
+const PageHeaderTestSection: React.FC = () => {
+  const [title, setTitle] = useState("Collection Femme Printemps 2025");
+  const [showTitleButton, setShowTitleButton] = useState(true);
+  const [titleButtonIcon, setTitleButtonIcon] = useState<"Pencil" | "Plus" | "Edit" | "Settings">("Pencil");
+  const [showLogo, setShowLogo] = useState(true);
+  const [showCenterContent, setShowCenterContent] = useState(false);
+  const [showRightContent, setShowRightContent] = useState(false);
+
+  // Custom logo component
+  const GsLogo = () => (
+    <div className="flex items-center justify-center font-bold text-black text-lg">
+      <span>GS</span>
+    </div>
+  );
+
+  // Center content component
+  const WorkflowTabs = () => (
+    <div className="flex items-center gap-4">
+      <div className="px-3 py-1">LIVE</div>
+      <div className="px-3 py-1">PHASE 1</div>
+      <div className="px-3 py-1">EXPORTS</div>
+      <div className="px-3 py-1 bg-black text-white rounded-full">VALIDATION</div>
+    </div>
+  );
+
+  // Right side buttons component
+  const RightSideButtons = () => (
+    <>
+      <span className="text-sm font-medium">FR</span>
+      <ButtonCircle icon="User" />
+      <ButtonCircle icon="Settings" />
+      <ButtonCircle icon="Help" />
+      <ButtonCircle icon="Bell" indicator={true} />
+      <ButtonCircle icon="Logout" />
+    </>
+  );
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Page Header Component</CardTitle>
+        <CardDescription>Test the page header component with different configurations</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="header-title">Title</Label>
+              <Input 
+                id="header-title" 
+                value={title} 
+                onChange={(e) => setTitle(e.target.value)} 
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="title-button-icon">Title Button Icon</Label>
+              <Select 
+                value={titleButtonIcon} 
+                onValueChange={(value) => setTitleButtonIcon(value as any)}>
+                <SelectTrigger id="title-button-icon">
+                  <SelectValue placeholder="Select icon" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Pencil">Pencil</SelectItem>
+                  <SelectItem value="Plus">Plus</SelectItem>
+                  <SelectItem value="Edit">Edit</SelectItem>
+                  <SelectItem value="Settings">Settings</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="show-title-button"
+                checked={showTitleButton}
+                onCheckedChange={(checked) => setShowTitleButton(!!checked)}
+              />
+              <Label htmlFor="show-title-button">Show Title Button</Label>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="show-logo"
+                checked={showLogo}
+                onCheckedChange={(checked) => setShowLogo(!!checked)}
+              />
+              <Label htmlFor="show-logo">Show Logo</Label>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="show-center-content"
+                checked={showCenterContent}
+                onCheckedChange={(checked) => setShowCenterContent(!!checked)}
+              />
+              <Label htmlFor="show-center-content">Show Center Content</Label>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="show-right-content"
+                checked={showRightContent}
+                onCheckedChange={(checked) => setShowRightContent(!!checked)}
+              />
+              <Label htmlFor="show-right-content">Show Right Content</Label>
+            </div>
+          </div>
+
+          <div className="flex flex-col space-y-4">
+            <h3 className="text-lg font-medium">Preview</h3>
+            <div className="border rounded-lg overflow-hidden">
+              <PageHeader 
+                logo={showLogo ? <GsLogo /> : undefined}
+                title={title}
+                showTitleButton={showTitleButton}
+                titleButtonIcon={titleButtonIcon}
+                centerContent={showCenterContent ? <WorkflowTabs /> : undefined}
+                rightContent={showRightContent ? <RightSideButtons /> : undefined}
+              />
+            </div>
+            <div className="text-sm text-gray-500 italic">Note: The header is designed for wider screens (min-width: 1280px)</div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 

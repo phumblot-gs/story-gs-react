@@ -3,27 +3,33 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import PageHeader from "@/components/PageHeader";
 
 const Index = () => {
   return (
-    <div className="container mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-8">GS Components Library</h1>
+    <div>
+      <PageHeader 
+        title="GS Components Library Demo"
+        showTitleButton={false}
+      />
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Components Test</CardTitle>
-            <CardDescription>Test and preview components with various settings</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p>Use this page to test components with different parameters and see how they behave when nested.</p>
-          </CardContent>
-          <CardFooter>
-            <Link to="/test">
-              <Button>Go to Test Page</Button>
-            </Link>
-          </CardFooter>
-        </Card>
+      <div className="container mx-auto p-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Components Test</CardTitle>
+              <CardDescription>Test and preview components with various settings</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p>Use this page to test components with different parameters and see how they behave when nested.</p>
+            </CardContent>
+            <CardFooter>
+              <Link to="/test">
+                <Button>Go to Test Page</Button>
+              </Link>
+            </CardFooter>
+          </Card>
+        </div>
       </div>
     </div>
   );
