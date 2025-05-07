@@ -19,6 +19,7 @@ import { LanguageSwitcherExample } from "@/pages/examples/language-switcher-exam
 import { toast } from "@/components/ui/sonner";
 import { ToastSuccessIcon, ToastErrorIcon } from "@/components/ui/button-circle/custom-icons";
 import { IconProvider } from "@/components/ui/icon-provider";
+import PageHeaderExample from "@/pages/examples/page-header-example";
 
 const Test: React.FC = () => {
   return (
@@ -65,6 +66,32 @@ const Test: React.FC = () => {
 };
 
 const PageHeaderTestSection: React.FC = () => {
+  return (
+    <>
+      <Card className="mb-8">
+        <CardHeader>
+          <CardTitle>Interactive Page Header Demo</CardTitle>
+          <CardDescription>Configure and test the Page Header component with different options</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <PageHeaderConfigDemo />
+        </CardContent>
+      </Card>
+      
+      <Card>
+        <CardHeader>
+          <CardTitle>Page Header Examples</CardTitle>
+          <CardDescription>Pre-configured examples of the Page Header component in different scenarios</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <PageHeaderExample />
+        </CardContent>
+      </Card>
+    </>
+  );
+};
+
+const PageHeaderConfigDemo: React.FC = () => {
   const [title, setTitle] = useState("Collection Femme Printemps 2025");
   const [showTitleButton, setShowTitleButton] = useState(true);
   const [titleButtonIcon, setTitleButtonIcon] = useState<"Pencil" | "Plus" | "Settings">("Pencil");
@@ -105,104 +132,96 @@ const PageHeaderTestSection: React.FC = () => {
   );
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Page Header Component</CardTitle>
-        <CardDescription>Test the page header component with different configurations</CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        {/* Preview now displayed above the form */}
-        <div className="border rounded-lg overflow-hidden mb-4">
-          <PageHeader 
-            logo={showLogo ? <GsLogo /> : undefined}
-            title={title}
-            showTitleButton={showTitleButton}
-            titleButtonIcon={titleButtonIcon}
-            centerContent={showCenterContent ? <WorkflowTabs /> : undefined}
-            rightContent={showRightContent ? <RightSideButtons /> : undefined}
-          />
-        </div>
-        <div className="text-sm text-gray-500 italic">Note: The header is designed for wider screens (min-width: 1280px)</div>
+    <>
+      {/* Preview now displayed above the form */}
+      <div className="border rounded-lg overflow-hidden mb-4">
+        <PageHeader 
+          logo={showLogo ? <GsLogo /> : undefined}
+          title={title}
+          showTitleButton={showTitleButton}
+          titleButtonIcon={titleButtonIcon}
+          centerContent={showCenterContent ? <WorkflowTabs /> : undefined}
+          rightContent={showRightContent ? <RightSideButtons /> : undefined}
+        />
+      </div>
+      <div className="text-sm text-gray-500 italic">Note: The header is designed for wider screens (min-width: 1280px)</div>
 
-        {/* Form controls now displayed in a 2-column layout below the preview */}
-        <div className="grid grid-cols-2 gap-6">
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="header-title">Title</Label>
-              <Input 
-                id="header-title" 
-                value={title} 
-                onChange={(e) => setTitle(e.target.value)} 
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="title-button-icon">Title Button Icon</Label>
-              <Select 
-                value={titleButtonIcon} 
-                onValueChange={(value) => setTitleButtonIcon(value as any)}>
-                <SelectTrigger id="title-button-icon">
-                  <SelectValue placeholder="Select icon" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Pencil">Pencil</SelectItem>
-                  <SelectItem value="Plus">Plus</SelectItem>
-                  <SelectItem value="Settings">Settings</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="show-title-button"
-                checked={showTitleButton}
-                onCheckedChange={(checked) => setShowTitleButton(!!checked)}
-              />
-              <Label htmlFor="show-title-button">Show Title Button</Label>
-            </div>
+      {/* Form controls now displayed in a 2-column layout below the preview */}
+      <div className="grid grid-cols-2 gap-6 mt-6">
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="header-title">Title</Label>
+            <Input 
+              id="header-title" 
+              value={title} 
+              onChange={(e) => setTitle(e.target.value)} 
+            />
           </div>
           
-          <div className="space-y-4">
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="show-logo"
-                checked={showLogo}
-                onCheckedChange={(checked) => setShowLogo(!!checked)}
-              />
-              <Label htmlFor="show-logo">Show Logo</Label>
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="title-button-icon">Title Button Icon</Label>
+            <Select 
+              value={titleButtonIcon} 
+              onValueChange={(value) => setTitleButtonIcon(value as any)}>
+              <SelectTrigger id="title-button-icon">
+                <SelectValue placeholder="Select icon" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Pencil">Pencil</SelectItem>
+                <SelectItem value="Plus">Plus</SelectItem>
+                <SelectItem value="Settings">Settings</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="show-center-content"
-                checked={showCenterContent}
-                onCheckedChange={(checked) => setShowCenterContent(!!checked)}
-              />
-              <Label htmlFor="show-center-content">Show Workflow in Center</Label>
-            </div>
-
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="show-right-content"
-                checked={showRightContent}
-                onCheckedChange={(checked) => setShowRightContent(!!checked)}
-              />
-              <Label htmlFor="show-right-content">Show Right Content</Label>
-            </div>
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="show-title-button"
+              checked={showTitleButton}
+              onCheckedChange={(checked) => setShowTitleButton(!!checked)}
+            />
+            <Label htmlFor="show-title-button">Show Title Button</Label>
           </div>
         </div>
-
-        {/* Removed the separate Workflow section as it's now integrated in the header */}
         
-        {/* Language Switcher component section */}
-        <div className="mt-8">
-          <h3 className="text-lg font-medium mb-4">Language Switcher Component</h3>
-          <div className="border rounded-lg p-6 bg-gray-50">
-            <LanguageSwitcherExample />
+        <div className="space-y-4">
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="show-logo"
+              checked={showLogo}
+              onCheckedChange={(checked) => setShowLogo(!!checked)}
+            />
+            <Label htmlFor="show-logo">Show Logo</Label>
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="show-center-content"
+              checked={showCenterContent}
+              onCheckedChange={(checked) => setShowCenterContent(!!checked)}
+            />
+            <Label htmlFor="show-center-content">Show Workflow in Center</Label>
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="show-right-content"
+              checked={showRightContent}
+              onCheckedChange={(checked) => setShowRightContent(!!checked)}
+            />
+            <Label htmlFor="show-right-content">Show Right Content</Label>
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+
+      {/* Language Switcher component section */}
+      <div className="mt-8">
+        <h3 className="text-lg font-medium mb-4">Language Switcher Component</h3>
+        <div className="border rounded-lg p-6 bg-gray-50">
+          <LanguageSwitcherExample />
+        </div>
+      </div>
+    </>
   );
 };
 
