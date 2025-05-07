@@ -49,7 +49,6 @@ const ThemeDemo = () => {
           <div>
             <h3 className="text-lg font-medium mb-2">Color Samples</h3>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {/* Background colors */}
               <div className="space-y-2">
                 <div className="w-full h-12 rounded" style={{ backgroundColor: "var(--bg-white)" }}></div>
                 <p className="text-xs text-center">bg-white</p>
@@ -63,7 +62,6 @@ const ThemeDemo = () => {
                 <p className="text-xs text-center">bg-grey</p>
               </div>
               
-              {/* Status colors */}
               <div className="space-y-2">
                 <div className="w-full h-12 rounded" style={{ backgroundColor: "var(--status-validated-color)" }}></div>
                 <p className="text-xs text-center">status-validated</p>
@@ -131,7 +129,7 @@ const ThemeProviderWrapper = ({
  *   return (
  *     <NextThemeProvider attribute="class" defaultTheme="system" enableSystem>
  *       <ThemeProvider>
- *         {/* Le reste de votre application */}
+ *         // Le reste de votre application
  *       </ThemeProvider>
  *     </NextThemeProvider>
  *   );
@@ -153,7 +151,7 @@ const ThemeProviderWrapper = ({
  *     }
  *   }}
  * >
- *   {/* Le reste de votre application */}
+ *   // Le reste de votre application
  * </ThemeProvider>
  * ```
  * 
@@ -182,7 +180,7 @@ const ThemeProviderWrapper = ({
  * 
  *   return (
  *     <div style={cssVars as React.CSSProperties}>
- *       {/* Votre contenu ici bénéficiera des variables CSS personnalisées */}
+ *       // Votre contenu ici bénéficiera des variables CSS personnalisées
  *       <h1>{brandName}</h1>
  *       <p>Mode actuel: {isDarkMode ? 'Sombre' : 'Clair'}</p>
  *     </div>
