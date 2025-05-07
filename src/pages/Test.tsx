@@ -119,8 +119,8 @@ const NotificationsTestSection: React.FC = () => {
       <ButtonCircle icon="User" size="large" background="white" />
       <ButtonCircle icon="Settings" size="large" background="white" />
       <ButtonCircle icon="Help" size="large" background="white" />
-      <ButtonNotifications />
       <ButtonCircle icon="Logout" size="large" background="white" />
+      <ButtonNotifications />
     </>
   );
 

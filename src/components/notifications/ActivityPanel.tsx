@@ -42,7 +42,7 @@ const ActivityPanel: React.FC<ActivityPanelProps> = ({
     <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <SheetContent 
         side="right" 
-        className="w-[350px] bg-bg-black border-none p-0"
+        className="w-[350px] bg-[#000000e6] border-none p-0"
       >
         <div className="flex flex-col h-full">
           {/* Header */}

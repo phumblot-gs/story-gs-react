@@ -103,6 +103,7 @@ const ButtonNotifications: React.FC<ButtonNotificationsProps> = ({
         size="large" 
         background="white" 
         indicator={unreadCount > 0}
+        featured={true}
         onClick={togglePanel}
         aria-label={`Notifications${unreadCount > 0 ? ` (${unreadCount} non lues)` : ''}`}
       />
