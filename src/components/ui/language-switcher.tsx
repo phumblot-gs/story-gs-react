@@ -1,4 +1,3 @@
-
 import React, { useState } from "react"
 import { ButtonCircle } from "@/components/ui/button-circle"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
@@ -54,7 +53,7 @@ export const LanguageSwitcher = ({
                 size={12}
               />
             ) : (
-              <span className="text-xs font-normal">{currentLanguage.code}</span>
+              <span className="text-xs">{currentLanguage.code}</span>
             )}
           </ButtonCircle>
         </div>
@@ -69,7 +68,7 @@ export const LanguageSwitcher = ({
             <button
               key={language.code}
               className={cn(
-                "w-full p-4 text-white text-left hover:bg-white hover:text-black active:bg-blue-primary active:text-black",
+                "w-full p-4 text-white text-left hover:bg-white hover:text-black active:bg-blue-primary active:text-black text-sm",
                 currentLanguage.code === language.code ? "bg-grey-strongest" : "bg-grey-strongest/90"
               )}
               onClick={() => handleSelect(language)}
