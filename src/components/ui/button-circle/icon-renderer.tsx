@@ -1,3 +1,4 @@
+
 import React from "react"
 import * as LucideIcons from "lucide-react"
 import { AllowedPictogram } from "./types"
@@ -79,8 +80,12 @@ export const renderIcon = (
       return <ToastErrorIcon size={size} />;
       
     default:
-      // It's a Lucide icon
-      const IconComponent = LucideIcons[icon] as React.ElementType;
-      return <IconComponent size={size} className="max-w-[12px] max-h-[12px]" />;
+      // For other icons, check if they're in Lucide icons and return them
+      if (LucideIcons[icon as keyof typeof LucideIcons]) {
+        const IconComponent = LucideIcons[icon as keyof typeof LucideIcons] as React.ElementType;
+        return <IconComponent size={size} className="max-w-[12px] max-h-[12px]" />;
+      }
+      // Fallback for unknown icons
+      return null;
   }
 }

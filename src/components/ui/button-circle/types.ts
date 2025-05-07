@@ -47,7 +47,7 @@ export interface ButtonCircleProps extends Omit<ButtonProps, 'variant' | 'size'>
   background?: ButtonBackground
   disabled?: boolean
   featured?: boolean
-  icon?: keyof typeof LucideIcons | AllowedPictogram
+  icon?: AllowedPictogram
   indicator?: boolean
   debug?: boolean
   className?: string
