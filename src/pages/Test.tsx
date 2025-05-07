@@ -99,6 +99,20 @@ const PageHeaderConfigDemo: React.FC = () => {
   const [showCenterContent, setShowCenterContent] = useState(true);
   const [showRightContent, setShowRightContent] = useState(false);
 
+  // Sample languages for the LanguageSwitcher component
+  const languages = [
+    { code: "FR", name: "Français" },
+    { code: "EN", name: "English" },
+    { code: "ES", name: "Español" },
+  ];
+  const [currentLanguage, setCurrentLanguage] = useState(languages[0]);
+
+  // Handler for language change
+  const handleLanguageChange = (language: Language) => {
+    setCurrentLanguage(language);
+    console.log(`Language changed to: ${language.code} - ${language.name}`);
+  };
+
   // Custom logo component
   const GsLogo = () => (
     <div className="flex items-center justify-center font-bold text-black text-lg">
@@ -119,10 +133,14 @@ const PageHeaderConfigDemo: React.FC = () => {
     />
   );
 
-  // Right side buttons component
+  // Right side buttons component - Updated to use LanguageSwitcher
   const RightSideButtons = () => (
     <>
-      <span className="text-sm font-medium">FR</span>
+      <LanguageSwitcher 
+        languages={languages} 
+        currentLanguage={currentLanguage} 
+        onLanguageChange={handleLanguageChange} 
+      />
       <ButtonCircle icon="User" />
       <ButtonCircle icon="Settings" />
       <ButtonCircle icon="Help" />
