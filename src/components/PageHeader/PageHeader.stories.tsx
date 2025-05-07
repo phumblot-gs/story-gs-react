@@ -3,6 +3,7 @@ import PageHeader from "./index";
 import { ButtonCircle } from "@/components/ui/button-circle";
 import { useState, useEffect } from "react";
 import { ThemeProvider } from "@/contexts/ThemeContext";
+import { Workflow } from "@/components/ui/workflow";
 
 const meta: Meta<typeof PageHeader> = {
   title: "Components/PageHeader",
@@ -194,7 +195,16 @@ export const Complete: Story = {
         logo={<GsLogo />}
         title="Collection Femme Printemps 2025"
         showTitleButton={true}
-        centerContent={<WorkflowTabs />}
+        centerContent={
+          <Workflow
+            steps={[
+              { id: "1", label: "LIVE", onClick: () => console.log("LIVE clicked") },
+              { id: "2", label: "PHASE 1", onClick: () => console.log("PHASE 1 clicked") },
+              { id: "3", label: "EXPORTS", onClick: () => console.log("EXPORTS clicked") },
+              { id: "4", label: "VALIDATION", isActive: true },
+            ]}
+          />
+        }
         rightContent={<RightSideButtons />}
       />
     </ThemeProvider>
@@ -208,7 +218,16 @@ export const NoTitleButton: Story = {
         logo={<GsLogo />}
         title="Collection Femme Printemps 2025"
         showTitleButton={false}
-        centerContent={<WorkflowTabs />}
+        centerContent={
+          <Workflow
+            steps={[
+              { id: "1", label: "LIVE", onClick: () => console.log("LIVE clicked") },
+              { id: "2", label: "PHASE 1", onClick: () => console.log("PHASE 1 clicked") },
+              { id: "3", label: "EXPORTS", onClick: () => console.log("EXPORTS clicked") },
+              { id: "4", label: "VALIDATION", isActive: true },
+            ]}
+          />
+        }
         rightContent={<RightSideButtons />}
       />
     </ThemeProvider>
@@ -223,7 +242,16 @@ export const CustomTitleButton: Story = {
         title="Collection Femme Printemps 2025"
         showTitleButton={true}
         titleButtonIcon="Plus"
-        centerContent={<WorkflowTabs />}
+        centerContent={
+          <Workflow
+            steps={[
+              { id: "1", label: "LIVE", onClick: () => console.log("LIVE clicked") },
+              { id: "2", label: "PHASE 1", onClick: () => console.log("PHASE 1 clicked") },
+              { id: "3", label: "EXPORTS", onClick: () => console.log("EXPORTS clicked") },
+              { id: "4", label: "VALIDATION", isActive: true },
+            ]}
+          />
+        }
         rightContent={<RightSideButtons />}
       />
     </ThemeProvider>
@@ -252,7 +280,14 @@ export const WithActivityAnimation: Story = {
             logo={<GsLogo />}
             title="Loading Status Demonstration"
             showTitleButton={true}
-            centerContent={<WorkflowTabs />}
+            centerContent={<Workflow
+              steps={[
+                { id: "1", label: "LIVE", onClick: () => console.log("LIVE clicked") },
+                { id: "2", label: "PHASE 1", onClick: () => console.log("PHASE 1 clicked") },
+                { id: "3", label: "EXPORTS", onClick: () => console.log("EXPORTS clicked") },
+                { id: "4", label: "VALIDATION", isActive: true },
+              ]}
+            />}
             rightContent={<RightSideButtons />}
             isIdle={isIdle}
           />
@@ -283,7 +318,14 @@ export const WithThemeLogo: Story = {
         <PageHeader 
           title="Using Default Logo from Theme"
           showTitleButton={true}
-          centerContent={<WorkflowTabs />}
+          centerContent={<Workflow
+            steps={[
+              { id: "1", label: "LIVE", onClick: () => console.log("LIVE clicked") },
+              { id: "2", label: "PHASE 1", onClick: () => console.log("PHASE 1 clicked") },
+              { id: "3", label: "EXPORTS", onClick: () => console.log("EXPORTS clicked") },
+              { id: "4", label: "VALIDATION", isActive: true },
+            ]}
+          />}
           rightContent={<RightSideButtons />}
         />
         <div className="p-4">
@@ -316,7 +358,14 @@ export const WithCustomThemeLogo: Story = {
         <PageHeader 
           title="Using Custom Logo from Theme"
           showTitleButton={true}
-          centerContent={<WorkflowTabs />}
+          centerContent={<Workflow
+            steps={[
+              { id: "1", label: "LIVE", onClick: () => console.log("LIVE clicked") },
+              { id: "2", label: "PHASE 1", onClick: () => console.log("PHASE 1 clicked") },
+              { id: "3", label: "EXPORTS", onClick: () => console.log("EXPORTS clicked") },
+              { id: "4", label: "VALIDATION", isActive: true },
+            ]}
+          />}
           rightContent={<RightSideButtons />}
         />
         <div className="p-4">
