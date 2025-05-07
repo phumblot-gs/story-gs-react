@@ -33,8 +33,9 @@ const PageHeader: React.FC<PageHeaderProps> = ({
   
   return (
     <header
+      {/* Removed : min-w-[1280px] */}
       className={cn(
-        "box-border flex flex-row justify-between items-center px-5 py-[10px] pb-[13px] gap-5 w-full min-w-[1280px] h-[53px] bg-white relative",
+        "box-border flex flex-row justify-between items-center px-5 py-[10px] pb-[13px] gap-5 w-full h-[53px] bg-white relative",
         className
       )}
     >
