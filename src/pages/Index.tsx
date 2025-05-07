@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import PageHeader from "@/components/PageHeader";
+import ThemeSwitcher from "@/components/ThemeSwitcher";
 
 const Index = () => {
   return (
@@ -14,7 +15,22 @@ const Index = () => {
       />
       
       <div className="container mx-auto p-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Thème</CardTitle>
+              <CardDescription>Personnaliser les couleurs et les styles du thème</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ThemeSwitcher />
+            </CardContent>
+            <CardFooter>
+              <Link to="/theme-customizer">
+                <Button>Personnaliser le thème</Button>
+              </Link>
+            </CardFooter>
+          </Card>
+
           <Card>
             <CardHeader>
               <CardTitle>Components Test</CardTitle>
