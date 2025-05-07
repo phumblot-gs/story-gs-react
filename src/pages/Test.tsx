@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -16,6 +15,7 @@ import { Check, X } from "lucide-react";
 import PageHeader from "@/components/PageHeader";
 import { Workflow } from "@/components/ui/workflow";
 import { WorkflowExample } from "@/components/examples/workflow-example";
+import { LanguageSwitcherExample } from "@/components/examples/language-switcher-example";
 
 const Test: React.FC = () => {
   return (
@@ -180,7 +180,7 @@ const PageHeaderTestSection: React.FC = () => {
           </div>
         </div>
 
-        {/* Add Workflow component section */}
+        {/* Workflow component section */}
         <div className="mt-8">
           <h3 className="text-lg font-medium mb-4">Workflow Component</h3>
           <div className="border rounded-lg p-6 bg-gray-50">
@@ -192,6 +192,14 @@ const PageHeaderTestSection: React.FC = () => {
                 { id: "4", label: "VALIDATION", isActive: true },
               ]}
             />
+          </div>
+        </div>
+
+        {/* Language Switcher component section */}
+        <div className="mt-8">
+          <h3 className="text-lg font-medium mb-4">Language Switcher Component</h3>
+          <div className="border rounded-lg p-6 bg-gray-50">
+            <LanguageSwitcherExample />
           </div>
         </div>
       </CardContent>
