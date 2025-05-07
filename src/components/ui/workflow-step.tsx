@@ -29,7 +29,7 @@ const WorkflowStep = React.forwardRef<HTMLButtonElement, WorkflowStepProps>(
         ref={ref}
         background={isActive ? "black" : "white"}
         className={cn(
-          "h-[30px] px-5 border border-[#EAEAEA] whitespace-nowrap",
+          "h-[30px] px-5 border border-[#EAEAEA] whitespace-nowrap text-xs",
           isActive && "pointer-events-none",
           className
         )}
