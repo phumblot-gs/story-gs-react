@@ -51,7 +51,7 @@ function App() {
   return (
     <NextThemeProvider attribute="class" defaultTheme="system" enableSystem>
       <ThemeProvider>
-        {/* Your application components */}
+        // Your application components
       </ThemeProvider>
     </NextThemeProvider>
   );
@@ -85,7 +85,7 @@ function App() {
     }
   }}
 >
-  {/* Your application components */}
+  // Your application components
 </ThemeProvider>`}
                   </pre>
                 </div>
@@ -110,7 +110,7 @@ function MyComponent() {
       <h1>{brandName}</h1>
       <p>Current mode: {isDarkMode ? "Dark" : "Light"}</p>
       
-      {/* Elements will now use your theme colors */}
+      // Elements will now use your theme colors
       <div className="bg-background text-foreground">
         Theme-aware content
       </div>
@@ -235,128 +235,7 @@ const ThemeProviderWrapper = ({
   );
 };
 
-/**
- * The ThemeProvider component manages theme state and customization across your application.
- * It handles light/dark mode transitions and allows for customizing colors, brand identity,
- * and other visual elements.
- *
- * ## Key Features
- * 
- * - Light/dark mode management integrated with next-themes
- * - Customizable color palette for backgrounds, text, and status indicators
- * - Brand identity customization (name, logo)
- * - Local storage persistence of user preferences
- * - CSS variable injection for theme-aware components
- * 
- * ## Integration Guide
- * 
- * Follow these steps to integrate ThemeProvider in your application:
- * 
- * ### 1. Set up providers in your main application file
- * 
- * ```tsx
- * // In your main application file (App.tsx)
- * import { ThemeProvider } from "@/contexts/ThemeContext";
- * import { ThemeProvider as NextThemeProvider } from "next-themes";
- * 
- * function App() {
- *   return (
- *     <NextThemeProvider attribute="class" defaultTheme="system" enableSystem>
- *       <ThemeProvider>
- *         {/* Your application components */}
- *       </ThemeProvider>
- *     </NextThemeProvider>
- *   );
- * }
- * ```
- * 
- * ### 2. Customize default theme values (optional)
- * 
- * ```tsx
- * <ThemeProvider
- *   initialCustomization={{
- *     colors: {
- *       bgWhite: "#FFFFFF",
- *       statusValidated: "#89CC52",
- *       statusError: "#DD3733",
- *       headerGradientStart: "#74D2D8",
- *       headerGradientEnd: "#EBED8C",
- *     },
- *     text: {
- *       brandName: "My Application"
- *     }
- *   }}
- * >
- *   {/* Your application components */}
- * </ThemeProvider>
- * ```
- * 
- * ### 3. Create a theme customization interface
- * 
- * ```tsx
- * import { ThemeCustomizer } from "@/components/ThemeCustomizer";
- * 
- * function Header() {
- *   return (
- *     <header className="bg-background p-4 flex justify-between">
- *       <h1>My Application</h1>
- *       <ThemeCustomizer />
- *     </header>
- *   );
- * }
- * ```
- * 
- * ### 4. Access theme values in your components
- * 
- * ```tsx
- * import { useThemeValues } from "@/hooks/useThemeValues";
- * 
- * function MyComponent() {
- *   const { cssVars, brandName, isDarkMode } = useThemeValues();
- * 
- *   return (
- *     <div style={cssVars as React.CSSProperties}>
- *       <h1>{brandName}</h1>
- *       <p>Current mode: {isDarkMode ? "Dark" : "Light"}</p>
- *       
- *       {/* Elements will automatically use your theme colors */}
- *     </div>
- *   );
- * }
- * ```
- * 
- * ### 5. Dynamically update theme at runtime
- * 
- * ```tsx
- * import { useCustomTheme } from "@/contexts/ThemeContext";
- * 
- * function ThemeControls() {
- *   const { theme, setTheme, updateCustomization, resetCustomization } = useCustomTheme();
- *   
- *   const applyCustomColors = () => {
- *     updateCustomization({
- *       colors: {
- *         statusValidated: "#9b87f5",
- *         bgWhite: "#F1F0FB",
- *       },
- *       text: {
- *         brandName: "Custom Theme"
- *       }
- *     });
- *   };
- *   
- *   return (
- *     <div>
- *       <button onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
- *         Toggle Theme
- *       </button>
- *       <button onClick={applyCustomColors}>Apply Custom Colors</button>
- *       <button onClick={resetCustomization}>Reset to Defaults</button>
- *     </div>
- *   );
- * }
- * ```
- */
+
 const meta = {
   title: "Context/ThemeProvider",
   component: ThemeProviderWrapper,
