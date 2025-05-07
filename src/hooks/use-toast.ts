@@ -7,9 +7,10 @@ type ToastProps = {
   id: string;
   title?: string;
   description?: string;
-  type?: ToastType;  // Note: The type is used here instead of variant
+  type?: ToastType;
   duration?: number;
   action?: React.ReactNode;
+  debug?: boolean;
 };
 
 type ToastState = {
@@ -30,7 +31,12 @@ const useToast = () => {
       type: options.type || "default",
       duration: options.duration || 5000,
       action: options.action,
+      debug: options.debug || false,
     };
+
+    if (newToast.debug) {
+      console.log(`[Toast Debug] Creating toast with id: ${id}`, newToast);
+    }
 
     setState((prev) => ({
       toasts: [...prev.toasts, newToast],
@@ -41,9 +47,15 @@ const useToast = () => {
 
   const dismiss = useCallback((toastId?: string) => {
     if (toastId) {
-      setState((prev) => ({
-        toasts: prev.toasts.filter((toast) => toast.id !== toastId),
-      }));
+      setState((prev) => {
+        const toastToRemove = prev.toasts.find(t => t.id === toastId);
+        if (toastToRemove?.debug) {
+          console.log(`[Toast Debug] Dismissing toast with id: ${toastId}`);
+        }
+        return {
+          toasts: prev.toasts.filter((toast) => toast.id !== toastId),
+        };
+      });
     } else {
       setState({ toasts: [] });
     }

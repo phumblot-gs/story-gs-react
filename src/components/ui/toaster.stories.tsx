@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { Toaster, toast } from "./sonner";
 import { Button } from "./button-default";
@@ -33,11 +33,10 @@ const meta: Meta<typeof Toaster> = {
       description: "Position of the toast on the screen",
       defaultValue: "top-center",
     },
-    theme: {
-      options: ["system", "light", "dark"],
-      control: { type: "radio" },
-      description: "Toast theme",
-      defaultValue: "system",
+    debug: {
+      control: "boolean",
+      description: "Enable debug mode to log toast actions in console",
+      defaultValue: false,
     },
   },
 };
@@ -49,17 +48,44 @@ export const Default: Story = {
   args: {
     defaultDuration: 2000,
     position: "top-center",
+    debug: false,
   },
   render: (args) => {
+    const [title, setTitle] = useState("Toast Title");
+    const [description, setDescription] = useState("This is a toast notification");
+    
     return (
       <div className="flex flex-col gap-4 items-center">
         <Toaster {...args} />
+        
+        <div className="w-full max-w-md space-y-4 mb-6">
+          <div>
+            <label className="block text-sm font-medium mb-1">Toast Title</label>
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="w-full rounded border p-2"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">Toast Description</label>
+            <input
+              type="text"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className="w-full rounded border p-2"
+            />
+          </div>
+        </div>
+
         <div className="flex flex-wrap gap-4 max-w-xl">
           <Button
             onClick={() =>
               toast({
-                title: "Default Toast",
-                description: "This is a default toast notification",
+                title,
+                description,
+                debug: args.debug,
               })
             }
           >
@@ -69,9 +95,10 @@ export const Default: Story = {
           <Button
             onClick={() =>
               toast({
-                title: "Success Toast",
-                description: "Your action was completed successfully",
+                title,
+                description,
                 type: "success",
+                debug: args.debug,
               })
             }
           >
@@ -81,9 +108,10 @@ export const Default: Story = {
           <Button
             onClick={() =>
               toast({
-                title: "Error Toast",
-                description: "An error occurred during the process",
+                title,
+                description,
                 type: "error",
+                debug: args.debug,
               })
             }
           >
@@ -93,9 +121,10 @@ export const Default: Story = {
           <Button
             onClick={() =>
               toast({
-                title: "Warning Toast",
-                description: "This action might cause issues",
+                title,
+                description,
                 type: "warning",
+                debug: args.debug,
               })
             }
           >
@@ -105,9 +134,10 @@ export const Default: Story = {
           <Button
             onClick={() =>
               toast({
-                title: "Info Toast",
-                description: "Here's some information you might find useful",
+                title,
+                description,
                 type: "info",
+                debug: args.debug,
               })
             }
           >
@@ -117,9 +147,10 @@ export const Default: Story = {
           <Button
             onClick={() =>
               toast({
-                title: "Custom Duration",
-                description: "This toast will disappear after 5 seconds",
+                title,
+                description,
                 duration: 5000,
+                debug: args.debug,
               })
             }
           >
@@ -129,17 +160,18 @@ export const Default: Story = {
           <Button
             onClick={() =>
               toast({
-                title: "With Action",
-                description: "This toast has an action button",
+                title,
+                description,
                 action: (
                   <Button
                     size="small"
                     background="black"
-                    onClick={() => console.log("Action clicked")}
+                    onClick={() => console.log("Action button clicked")}
                   >
                     Action
                   </Button>
                 ),
+                debug: args.debug,
               })
             }
           >
@@ -158,25 +190,12 @@ toast({
   description: "This is a toast notification",
 });
 
-// Success toast
+// Success toast with debug mode
 toast({
   title: "Success",
   description: "Your action was completed successfully",
-  type: "success",
-});
-
-// Error toast
-toast({
-  title: "Error",
-  description: "An error occurred during the process",
-  type: "error",
-});
-
-// Custom duration
-toast({
-  title: "Custom Duration",
-  description: "This toast will stay for 5 seconds",
-  duration: 5000,
+  type: "success", 
+  debug: true // Logs information to console
 });
 
 // With action button
@@ -192,42 +211,18 @@ toast({
   },
 };
 
-export const ToastPositions: Story = {
-  render: () => {
-    const showToast = (position: string) => {
-      toast({
-        title: `Toast (${position})`,
-        description: `This toast appears at ${position}`,
-      });
-    };
-
-    return (
-      <div className="flex flex-col gap-4">
-        <Toaster position="top-center" />
-        <div className="grid grid-cols-3 gap-4">
-          <Button onClick={() => showToast("top-left")}>Top Left</Button>
-          <Button onClick={() => showToast("top-center")}>Top Center</Button>
-          <Button onClick={() => showToast("top-right")}>Top Right</Button>
-          <Button onClick={() => showToast("bottom-left")}>Bottom Left</Button>
-          <Button onClick={() => showToast("bottom-center")}>Bottom Center</Button>
-          <Button onClick={() => showToast("bottom-right")}>Bottom Right</Button>
-        </div>
-      </div>
-    );
-  },
-};
-
 export const ToastTypes: Story = {
-  render: () => {
+  render: (args) => {
     return (
       <div className="flex flex-col gap-4">
-        <Toaster />
+        <Toaster debug={args.debug} />
         <div className="grid grid-cols-2 gap-4">
           <Button
             onClick={() => 
               toast({
                 title: "Default Toast",
                 description: "Standard notification",
+                debug: args.debug,
               })
             }
           >
@@ -240,6 +235,7 @@ export const ToastTypes: Story = {
                 title: "Success Toast",
                 description: "Action completed successfully",
                 type: "success",
+                debug: args.debug,
               })
             }
           >
@@ -252,6 +248,7 @@ export const ToastTypes: Story = {
                 title: "Error Toast",
                 description: "An error has occurred",
                 type: "error",
+                debug: args.debug,
               })
             }
           >
@@ -264,6 +261,7 @@ export const ToastTypes: Story = {
                 title: "Warning Toast",
                 description: "Proceed with caution",
                 type: "warning",
+                debug: args.debug,
               })
             }
           >
@@ -276,6 +274,7 @@ export const ToastTypes: Story = {
                 title: "Info Toast",
                 description: "For your information",
                 type: "info",
+                debug: args.debug,
               })
             }
           >
@@ -288,6 +287,7 @@ export const ToastTypes: Story = {
                 title: "Loading Toast",
                 description: "Please wait...",
                 type: "loading",
+                debug: args.debug,
               })
             }
           >

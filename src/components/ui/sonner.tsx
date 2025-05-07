@@ -5,9 +5,10 @@ import { IconProvider } from "./icon-provider"
 
 type ToasterProps = React.ComponentProps<typeof Sonner> & {
   defaultDuration?: number
+  debug?: boolean
 }
 
-const Toaster = ({ defaultDuration = 2000, ...props }: ToasterProps) => {
+const Toaster = ({ defaultDuration = 2000, debug = false, ...props }: ToasterProps) => {
   const { theme = "system" } = useTheme()
 
   return (
@@ -43,6 +44,7 @@ interface ToastProps {
   type?: ToastType
   duration?: number
   action?: React.ReactNode
+  debug?: boolean
 }
 
 const toast = ({
@@ -50,7 +52,8 @@ const toast = ({
   description,
   type = "default",
   duration = 3000,
-  action
+  action,
+  debug = false
 }: ToastProps) => {
   // Déterminer quelle icône utiliser en fonction du type de toast
   const getIcon = () => {
@@ -67,6 +70,20 @@ const toast = ({
     }
   };
 
+  // Créer une fonction action qui loggue si le mode debug est activé
+  const actionWithDebug = action && debug ? 
+    <div onClick={() => {
+      console.log(`[Toast Debug] Action clicked for toast: ${title}`);
+      // Si action est un React Element avec un onClick, on l'exécute également
+      const originalOnClick = (action as React.ReactElement)?.props?.onClick;
+      if (typeof originalOnClick === 'function') {
+        originalOnClick();
+      }
+    }}>
+      {action}
+    </div> 
+    : action;
+
   const toastFunction = type === "success" 
     ? sonnerToast.success 
     : type === "error" 
@@ -82,10 +99,14 @@ const toast = ({
   // Passer l'icône personnalisée si disponible
   const icon = getIcon();
   
+  if (debug) {
+    console.log(`[Toast Debug] Creating toast: ${type} - ${title}`);
+  }
+  
   return toastFunction(title, {
     description,
     duration,
-    action,
+    action: actionWithDebug,
     icon
   });
 };
