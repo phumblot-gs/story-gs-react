@@ -13,9 +13,10 @@ const Toaster = ({ ...props }: ToasterProps) => {
       theme={theme as ToasterProps["theme"]}
       className="toaster group"
       position="top-center"
+      closeButton="true"
       toastOptions={{
         classNames: {
-          toast: "group toast group-[.toaster]:border-border group-[.toaster]:shadow-lg px-[30px] py-[20px]",
+          toast: "group toast group-[.toaster]:border-border group-[.toaster]:shadow-lg px-[30px] py-[20px] rounded-xs",
           title: "text-[1rem] italic font-[300]",
           description: "group-[.toast]:text-muted-foreground",
           actionButton: "group-[.toast]:bg-primary group-[.toast]:text-primary-foreground",
@@ -46,7 +47,7 @@ const toast = ({
   title,
   description,
   type = "default",
-  duration = 5000,
+  duration = 3000,
   action
 }: ToastProps) => {
   // Déterminer quelle icône utiliser en fonction du type de toast
