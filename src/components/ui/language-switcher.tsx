@@ -16,6 +16,7 @@ export interface LanguageSwitcherProps {
   onLanguageChange: (language: Language) => void
   className?: string
   disabled?: boolean
+  debug?: boolean
 }
 
 export const LanguageSwitcher = ({
@@ -24,10 +25,14 @@ export const LanguageSwitcher = ({
   onLanguageChange,
   className,
   disabled = false,
+  debug = false,
 }: LanguageSwitcherProps) => {
   const [isOpen, setIsOpen] = useState(false)
 
   const handleSelect = (language: Language) => {
+    if (debug) {
+      console.log(`LanguageSwitcher: Language changed from ${currentLanguage.code} to ${language.code}`);
+    }
     onLanguageChange(language)
     setIsOpen(false)
   }

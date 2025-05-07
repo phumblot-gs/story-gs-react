@@ -1,3 +1,4 @@
+
 import React, { useState } from "react"
 import { LanguageSwitcher, type Language } from "@/components/ui/language-switcher"
 
@@ -22,6 +23,7 @@ export const LanguageSwitcherExample: React.FC = () => {
           languages={languages}
           currentLanguage={currentLanguage}
           onLanguageChange={handleLanguageChange}
+          debug={true}
         />
       </div>
       
