@@ -8,10 +8,18 @@ export interface WorkflowStepProps {
   isActive?: boolean;
   onClick?: () => void;
   className?: string;
+  debug?: boolean;
 }
 
 const WorkflowStep = React.forwardRef<HTMLButtonElement, WorkflowStepProps>(
-  ({ label, isActive = false, onClick, className }, ref) => {
+  ({ label, isActive = false, onClick, className, debug = false }, ref) => {
+    const handleClick = () => {
+      if (debug) {
+        console.log(`WorkflowStep clicked: ${label}${isActive ? ' (active)' : ''}`);
+      }
+      onClick?.();
+    };
+
     return (
       <Button
         ref={ref}
@@ -21,7 +29,7 @@ const WorkflowStep = React.forwardRef<HTMLButtonElement, WorkflowStepProps>(
           isActive && "pointer-events-none",
           className
         )}
-        onClick={isActive ? undefined : onClick}
+        onClick={isActive ? undefined : handleClick}
       >
         {label}
       </Button>

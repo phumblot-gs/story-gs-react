@@ -6,9 +6,10 @@ import { WorkflowStep, WorkflowStepProps } from "./workflow-step";
 export interface WorkflowProps {
   steps: (Omit<WorkflowStepProps, "className"> & { id: string })[];
   className?: string;
+  debug?: boolean;
 }
 
-const Workflow: React.FC<WorkflowProps> = ({ steps, className }) => {
+const Workflow: React.FC<WorkflowProps> = ({ steps, className, debug = false }) => {
   return (
     <div className={cn("flex flex-row items-center bg-white", className)}>
       {steps.map((step, index) => (
@@ -20,6 +21,7 @@ const Workflow: React.FC<WorkflowProps> = ({ steps, className }) => {
             label={step.label}
             isActive={step.isActive}
             onClick={step.onClick}
+            debug={debug}
           />
         </React.Fragment>
       ))}
