@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { useCustomTheme } from '@/contexts/ThemeContext';
 import { useThemeValues, normalizeColorValue } from '@/hooks/useThemeValues';
@@ -66,7 +65,7 @@ export const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({
       toast({
         title: "Invalid file",
         description: "Please upload an image file (JPEG, PNG, SVG)",
-        variant: "destructive"
+        type: "error"  // Changed from variant to type
       });
       return;
     }
@@ -93,7 +92,7 @@ export const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({
       toast({
         title: "Error reading file",
         description: "Failed to process the uploaded image",
-        variant: "destructive"
+        type: "error"  // Changed from variant to type
       });
     };
   };

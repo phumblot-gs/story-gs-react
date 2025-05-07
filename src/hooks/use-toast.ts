@@ -7,7 +7,7 @@ type ToastProps = {
   id: string;
   title?: string;
   description?: string;
-  type?: ToastType;
+  type?: ToastType;  // Note: The type is used here instead of variant
   duration?: number;
   action?: React.ReactNode;
 };

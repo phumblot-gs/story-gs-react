@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useCustomTheme } from '@/contexts/ThemeContext';
@@ -69,6 +68,7 @@ const ThemeCustomizerPage: React.FC = () => {
     toast({
       title: "Theme reset",
       description: "Your theme customization has been reset to defaults.",
+      type: "default"
     });
   };
   
@@ -90,7 +90,7 @@ const ThemeCustomizerPage: React.FC = () => {
       toast({
         title: "Invalid file",
         description: "Please upload an image file (JPEG, PNG, SVG)",
-        variant: "destructive"
+        type: "error"
       });
       return;
     }
@@ -117,7 +117,7 @@ const ThemeCustomizerPage: React.FC = () => {
       toast({
         title: "Error reading file",
         description: "Failed to process the uploaded image",
-        variant: "destructive"
+        type: "error"
       });
     };
   };
@@ -154,6 +154,7 @@ const ThemeCustomizerPage: React.FC = () => {
     toast({
       title: "Theme updated",
       description: "Your theme customization has been applied.",
+      type: "default"
     });
   };
   
