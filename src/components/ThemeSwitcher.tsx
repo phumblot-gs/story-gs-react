@@ -2,7 +2,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { useCustomTheme } from "@/contexts/ThemeContext";
-import { Settings, ColorPicker, Reset } from "lucide-react";
+import { Settings, Palette, RotateCcw } from "lucide-react";
 
 const ThemeSwitcher: React.FC = () => {
   const { resetCustomization } = useCustomTheme();
@@ -11,7 +11,7 @@ const ThemeSwitcher: React.FC = () => {
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <ColorPicker className="h-4 w-4" />
+          <Palette className="h-4 w-4" />
           <span className="text-sm">Personnalisation du thème</span>
         </div>
         <Button
@@ -20,7 +20,7 @@ const ThemeSwitcher: React.FC = () => {
           onClick={() => resetCustomization()}
           title="Réinitialiser le thème"
         >
-          <Reset className="h-4 w-4" />
+          <RotateCcw className="h-4 w-4" />
         </Button>
       </div>
       <div className="grid grid-cols-2 gap-2">
