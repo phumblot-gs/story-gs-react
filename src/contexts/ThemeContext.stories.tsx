@@ -1,3 +1,4 @@
+
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 import { ThemeProvider, ThemeProviderProps, useCustomTheme } from "./ThemeContext";
@@ -12,7 +13,7 @@ const ThemeDemo = () => {
   return (
     <div className="space-y-6 p-6 max-w-3xl mx-auto">
       <Card className="p-6">
-        <h2 className="text-xl font-semibold mb-4">Theme Provider</h2>
+        <h2 className="text-xl font-semibold mb-4">ThemeProvider</h2>
         
         <div className="space-y-6">
           <div>
@@ -21,104 +22,153 @@ const ThemeDemo = () => {
             <p><strong>Brand Name:</strong> {customization.text.brandName}</p>
           </div>
 
-          <div>
-            <p>The ThemeProvider overrides theme-related information:
-              <ul>
-                <li>Application colours</li>
-                <li>System colours (statuses, grades)</li>
-                <li>Brand name and logo</li>
-              </ul>
-            </p>
-          </div>
-
-          <div>
+          <div className="space-y-2">
+            <h3 className="text-lg font-medium mb-2">Overview</h3>
             <p>
-              The ThemeProvider is a context component that manages the state
-              of the theme and customisations in your application. It supports
-              switching between light/dark modes and  customising colours,
-              resources and text.
+              The <code>ThemeProvider</code> manages theme customization throughout your application:
             </p>
-            <p>Note: only light mode is currently implemented</p>
+            <ul className="list-disc pl-6 space-y-1">
+              <li>Application colors (background, text, UI elements)</li>
+              <li>System colors (status indicators, grades)</li>
+              <li>Brand identity (name, logo)</li>
+              <li>Light/dark mode preferences</li>
+            </ul>
           </div>
 
-          <div>
-            <h3 className="text-lg font-medium mb-2">Integration</h3>
-            <p>If you integrate this component library into your application, you must:</p>
-            <p>1. Wrap your application with the necessary providers</p>
-            <div className="bg-muted rounded-md p-4">
-              <pre className="whitespace-pre-wrap text-sm">
-                {`
-// In your main file (e.g. App.tsx)
-import { ThemeProvider } from './contexts/ThemeContext';
-import { ThemeProvider as NextThemeProvider } from 'next-themes';
- 
-function App() {
- return (
- <NextThemeProvider attribute='class' defaultTheme='system' enableSystem>
- <ThemeProvider>
-  // The rest of your application
- </ThemeProvider>
- </NextThemeProvider>
- );
-}
-                `}
-              </pre>
-            </div>
-            <p>2. Customise the default colours (optional)</p>
-            <div className="bg-muted rounded-md p-4">
-              <pre className="whitespace-pre-wrap text-sm">
-                {`
-<ThemeProvider initialCustomization={{
-    colours: {
-    bgWhite: '#FFFFFF',
-    statusValidated: '#89CC52',
-    // Other custom colours...
-  },
-  text: {
-    brandName: 'My Application'
-  }
-}}>
- // The rest of your application
-</ThemeProvider>
-                `}
-              </pre>
-            </div>
-            <p>3. Integrate the ThemeCustomizer component into your application</p>
-            <div className="bg-muted rounded-md p-4">
-              <pre className="whitespace-pre-wrap text-sm">
-                {`
-import { ThemeCustomizer } from "@/components/ThemeCustomizer";
+          <div className="space-y-2">
+            <h3 className="text-lg font-medium">Implementation Guide</h3>
+            
+            <div className="space-y-4 mt-4">
+              <div>
+                <h4 className="text-base font-medium mb-1">1. Set up ThemeProvider</h4>
+                <div className="bg-muted rounded-md p-4 overflow-auto">
+                  <pre className="text-sm">
+{`// In your main application file (App.tsx)
+import { ThemeProvider } from "@/contexts/ThemeContext";
+import { ThemeProvider as NextThemeProvider } from "next-themes";
 
-function Header() {
+function App() {
   return (
-    <header className='bg-background p-4 flex justify-between'>
-      <h1>My Application</h1>
-      <ThemeCustomizer />
-    </header>
+    <NextThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      <ThemeProvider>
+        {/* Your application components */}
+      </ThemeProvider>
+    </NextThemeProvider>
   );
-}
-                `}
-              </pre>
-            </div>
-            <p>4. Use the useThemeValues hook to apply styles</p>
-            <div className="bg-muted rounded-md p-4">
-              <pre className="whitespace-pre-wrap text-sm">
-                {`
-import { useThemeValues } from '@/hooks/useThemeValues';
+}`}
+                  </pre>
+                </div>
+              </div>
+
+              <div>
+                <h4 className="text-base font-medium mb-1">2. Customize theme colors (optional)</h4>
+                <div className="bg-muted rounded-md p-4 overflow-auto">
+                  <pre className="text-sm">
+{`// Provide initial customization
+<ThemeProvider 
+  initialCustomization={{
+    colors: {
+      // Background colors
+      bgWhite: "#FFFFFF",
+      bgBlack: "#222222",
+      
+      // Status colors
+      statusValidated: "#89CC52",
+      statusError: "#DD3733",
+      
+      // Header gradient
+      headerGradientStart: "#74D2D8",
+      headerGradientEnd: "#EBED8C",
+    },
+    text: {
+      brandName: "My Application"
+    }
+  }}
+>
+  {/* Your application components */}
+</ThemeProvider>`}
+                  </pre>
+                </div>
+              </div>
+
+              <div>
+                <h4 className="text-base font-medium mb-1">3. Access theme values in components</h4>
+                <div className="bg-muted rounded-md p-4 overflow-auto">
+                  <pre className="text-sm">
+{`import { useThemeValues } from "@/hooks/useThemeValues";
 
 function MyComponent() {
-  const { cssVars, brandName, isDarkMode } = useThemeValues();
-   
+  const { 
+    cssVars,       // CSS variables as React.CSSProperties
+    brandName,     // Current brand name
+    isDarkMode,    // Boolean indicating dark mode
+    defaultColors  // Default colors object
+  } = useThemeValues();
+  
   return (
     <div style={cssVars as React.CSSProperties}>
-    // Your content here will benefit from custom CSS variables
-    <h1>{brandName}</h1>
-    <p>Current mode: {isDarkMode ? 'Dark' : 'Light'}</p>
+      <h1>{brandName}</h1>
+      <p>Current mode: {isDarkMode ? "Dark" : "Light"}</p>
+      
+      {/* Elements will now use your theme colors */}
+      <div className="bg-background text-foreground">
+        Theme-aware content
+      </div>
     </div>
   );
-}
-                `}
-              </pre>
+}`}
+                  </pre>
+                </div>
+              </div>
+
+              <div>
+                <h4 className="text-base font-medium mb-1">4. Modify theme at runtime</h4>
+                <div className="bg-muted rounded-md p-4 overflow-auto">
+                  <pre className="text-sm">
+{`import { useCustomTheme } from "@/contexts/ThemeContext";
+
+function ThemeControls() {
+  const { 
+    theme,              // Current theme (light/dark/system)
+    setTheme,           // Function to change theme
+    customization,      // Current customization values
+    updateCustomization, // Function to update customization
+    resetCustomization  // Function to reset all customizations
+  } = useCustomTheme();
+  
+  const setCustomColors = () => {
+    updateCustomization({
+      colors: {
+        statusValidated: "#9b87f5",  // Custom purple
+        bgWhite: "#F1F0FB",         // Custom background
+      },
+      text: {
+        brandName: "Custom Theme Example"
+      }
+    });
+  };
+  
+  return (
+    <div className="space-y-4">
+      <div>
+        <button onClick={() => setTheme("light")}>Light Mode</button>
+        <button onClick={() => setTheme("dark")}>Dark Mode</button>
+      </div>
+      
+      <div>
+        <button onClick={setCustomColors}>
+          Apply Custom Colors
+        </button>
+        <button onClick={resetCustomization}>
+          Reset Customizations
+        </button>
+      </div>
+    </div>
+  );
+}`}
+                  </pre>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -186,79 +236,122 @@ const ThemeProviderWrapper = ({
 };
 
 /**
- * Le ThemeProvider est un composant de contexte qui gère l'état du thème et des personnalisations
- * dans votre application. Il prend en charge le basculement entre les modes clair/sombre et 
- * la personnalisation des couleurs, des ressources et du texte.
+ * The ThemeProvider component manages theme state and customization across your application.
+ * It handles light/dark mode transitions and allows for customizing colors, brand identity,
+ * and other visual elements.
+ *
+ * ## Key Features
  * 
- * ## Intégration
+ * - Light/dark mode management integrated with next-themes
+ * - Customizable color palette for backgrounds, text, and status indicators
+ * - Brand identity customization (name, logo)
+ * - Local storage persistence of user preferences
+ * - CSS variable injection for theme-aware components
  * 
- * Si vous intégrez cette librairie de composants à votre application, vous devez :
+ * ## Integration Guide
  * 
- * ### 1. Envelopper votre application avec les providers nécessaires
+ * Follow these steps to integrate ThemeProvider in your application:
  * 
- * ```jsx
- * // Dans votre fichier principal (ex: App.tsx)
- * import { ThemeProvider } from "./contexts/ThemeContext";
+ * ### 1. Set up providers in your main application file
+ * 
+ * ```tsx
+ * // In your main application file (App.tsx)
+ * import { ThemeProvider } from "@/contexts/ThemeContext";
  * import { ThemeProvider as NextThemeProvider } from "next-themes";
  * 
  * function App() {
  *   return (
  *     <NextThemeProvider attribute="class" defaultTheme="system" enableSystem>
  *       <ThemeProvider>
- *         // Le reste de votre application
+ *         {/* Your application components */}
  *       </ThemeProvider>
  *     </NextThemeProvider>
  *   );
  * }
  * ```
  * 
- * ### 2. Personnaliser les couleurs par défaut (optionnel)
+ * ### 2. Customize default theme values (optional)
  * 
- * ```jsx
+ * ```tsx
  * <ThemeProvider
  *   initialCustomization={{
  *     colors: {
  *       bgWhite: "#FFFFFF",
  *       statusValidated: "#89CC52",
- *       // Autres couleurs personnalisées...
+ *       statusError: "#DD3733",
+ *       headerGradientStart: "#74D2D8",
+ *       headerGradientEnd: "#EBED8C",
  *     },
  *     text: {
- *       brandName: "Mon Application"
+ *       brandName: "My Application"
  *     }
  *   }}
  * >
- *   // Le reste de votre application
+ *   {/* Your application components */}
  * </ThemeProvider>
  * ```
  * 
- * ### 3. Intégrer le composant ThemeCustomizer dans votre application
+ * ### 3. Create a theme customization interface
  * 
- * ```jsx
- * import { ThemeCustomizer } from '@/components/ThemeCustomizer';
+ * ```tsx
+ * import { ThemeCustomizer } from "@/components/ThemeCustomizer";
  * 
  * function Header() {
  *   return (
  *     <header className="bg-background p-4 flex justify-between">
- *       <h1>Mon Application</h1>
+ *       <h1>My Application</h1>
  *       <ThemeCustomizer />
  *     </header>
  *   );
  * }
  * ```
  * 
- * ### 4. Utiliser le hook useThemeValues pour appliquer les styles
+ * ### 4. Access theme values in your components
  * 
- * ```jsx
- * import { useThemeValues } from '@/hooks/useThemeValues';
+ * ```tsx
+ * import { useThemeValues } from "@/hooks/useThemeValues";
  * 
  * function MyComponent() {
  *   const { cssVars, brandName, isDarkMode } = useThemeValues();
  * 
  *   return (
  *     <div style={cssVars as React.CSSProperties}>
- *       // Votre contenu ici bénéficiera des variables CSS personnalisées
  *       <h1>{brandName}</h1>
- *       <p>Mode actuel: {isDarkMode ? 'Sombre' : 'Clair'}</p>
+ *       <p>Current mode: {isDarkMode ? "Dark" : "Light"}</p>
+ *       
+ *       {/* Elements will automatically use your theme colors */}
+ *     </div>
+ *   );
+ * }
+ * ```
+ * 
+ * ### 5. Dynamically update theme at runtime
+ * 
+ * ```tsx
+ * import { useCustomTheme } from "@/contexts/ThemeContext";
+ * 
+ * function ThemeControls() {
+ *   const { theme, setTheme, updateCustomization, resetCustomization } = useCustomTheme();
+ *   
+ *   const applyCustomColors = () => {
+ *     updateCustomization({
+ *       colors: {
+ *         statusValidated: "#9b87f5",
+ *         bgWhite: "#F1F0FB",
+ *       },
+ *       text: {
+ *         brandName: "Custom Theme"
+ *       }
+ *     });
+ *   };
+ *   
+ *   return (
+ *     <div>
+ *       <button onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
+ *         Toggle Theme
+ *       </button>
+ *       <button onClick={applyCustomColors}>Apply Custom Colors</button>
+ *       <button onClick={resetCustomization}>Reset to Defaults</button>
  *     </div>
  *   );
  * }
@@ -274,20 +367,20 @@ const meta = {
     },
     docs: {
       description: {
-        component: "ThemeProvider gère l'état du thème et les personnalisations dans votre application."
+        component: "ThemeProvider manages theme state and customization across your application."
       }
     }
   },
   tags: ["autodocs"],
   argTypes: {
     initialTheme: {
-      description: "Le mode de thème initial à utiliser",
+      description: "Initial theme mode to use",
       control: "select",
       options: ["light", "dark", "system"],
       defaultValue: "light"
     },
     initialCustomization: {
-      description: "Options de personnalisation initiales du thème",
+      description: "Initial theme customization options",
       control: "object"
     }
   },
@@ -304,7 +397,9 @@ export default meta;
 type Story = StoryObj<typeof ThemeProviderWrapper>;
 
 /**
- * Configuration par défaut du ThemeProvider sans personnalisations.
+ * Default configuration with no customizations.
+ * 
+ * This example shows the ThemeProvider with its default settings and no additional customization.
  */
 export const Default: Story = {
   render: () => (
@@ -315,7 +410,9 @@ export const Default: Story = {
 };
 
 /**
- * ThemeProvider avec le mode sombre activé par défaut.
+ * ThemeProvider with dark mode activated by default.
+ * 
+ * This example demonstrates how to initialize the ThemeProvider with dark mode enabled.
  */
 export const DarkMode: Story = {
   render: () => (
@@ -326,22 +423,24 @@ export const DarkMode: Story = {
 };
 
 /**
- * ThemeProvider avec des couleurs personnalisées pour le thème.
+ * ThemeProvider with custom color palette.
+ * 
+ * This example shows how to customize the theme colors with a purple-focused color scheme.
  */
 export const CustomColors: Story = {
   render: () => (
     <ThemeProviderWrapper 
       initialCustomization={{
         colors: {
-          statusValidated: "#9b87f5", // Violet personnalisé pour le statut validé
-          statusSelected: "#7E69AB", // Violet secondaire personnalisé pour le statut sélectionné
-          statusError: "#D946EF", // Rose magenta pour le statut d'erreur
-          bgWhite: "#F1F0FB", // Gris doux pour l'arrière-plan
-          bgBlack: "#1A1F2C", // Violet foncé pour l'arrière-plan noir
-          textBlue: "#0EA5E9" // Bleu océan pour le texte
+          statusValidated: "#9b87f5", // Custom purple for validated status
+          statusSelected: "#7E69AB",  // Secondary purple for selected status
+          statusError: "#D946EF",     // Magenta pink for error status
+          bgWhite: "#F1F0FB",         // Soft gray background
+          bgBlack: "#1A1F2C",         // Dark purple-gray background
+          textBlue: "#0EA5E9"         // Ocean blue for text accents
         },
         text: {
-          brandName: "Démo Thème Violet"
+          brandName: "Purple Theme Demo"
         }
       }}
     >
@@ -351,7 +450,9 @@ export const CustomColors: Story = {
 };
 
 /**
- * Exemple montrant une configuration de marque personnalisée.
+ * Example showing a custom brand configuration.
+ * 
+ * This example demonstrates how to customize the application with brand-specific colors and name.
  */
 export const BrandCustomization: Story = {
   render: () => (
@@ -361,11 +462,13 @@ export const BrandCustomization: Story = {
           brandName: "Acme Corporation"
         },
         colors: {
-          statusValidated: "#89CC52",
-          statusError: "#DD3733",
-          statusSelected: "#74D4DA",
-          bgWhite: "#FFFFFF",
-          bgBlack: "#222222"
+          statusValidated: "#89CC52", // Bright green for validated status
+          statusError: "#DD3733",     // Red for error status
+          statusSelected: "#74D4DA",  // Teal for selected status
+          bgWhite: "#FFFFFF",         // Pure white background
+          bgBlack: "#222222",         // Dark gray-black background
+          headerGradientStart: "#3B82F6", // Blue gradient start
+          headerGradientEnd: "#2DD4BF"   // Teal gradient end
         }
       }}
     >

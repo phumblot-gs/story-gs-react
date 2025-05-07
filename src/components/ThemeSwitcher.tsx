@@ -3,7 +3,6 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { useCustomTheme } from "@/contexts/ThemeContext";
 import { Palette, RotateCcw } from "lucide-react";
-import { Link } from "react-router-dom";
 
 const ThemeSwitcher: React.FC = () => {
   const { resetCustomization } = useCustomTheme();
@@ -24,11 +23,6 @@ const ThemeSwitcher: React.FC = () => {
           >
             <RotateCcw className="h-4 w-4" />
           </Button>
-          <Link to="/theme-customizer">
-            <Button variant="outline" size="sm">
-              Configurer
-            </Button>
-          </Link>
         </div>
       </div>
     </div>

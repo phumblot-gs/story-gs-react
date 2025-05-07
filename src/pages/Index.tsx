@@ -40,7 +40,7 @@ const Index = () => {
                 <Button>Personnaliser le thème</Button>
               </Link>
               <Button onClick={simulateRequest} variant="outline">
-                {isIdle ? "Simulation en cours..." : "Simuler une requête (3s)"}
+                {isIdle ? "Simuler une requête (3s)" : "Simulation en cours..."}
               </Button>
             </CardFooter>
           </Card>
