@@ -10,6 +10,7 @@ export interface PageTitleProps {
   buttonIcon?: AllowedPictogram;
   onButtonClick?: () => void;
   className?: string;
+  featured?: boolean;
 }
 
 const PageTitle: React.FC<PageTitleProps> = ({
@@ -18,15 +19,21 @@ const PageTitle: React.FC<PageTitleProps> = ({
   buttonIcon = "Pencil",
   onButtonClick,
   className,
+  featured = false,
 }) => {
   return (
-    <div className={cn("flex items-center gap-2", className)}>
+    <div className={cn(
+      "flex items-center gap-2", 
+      featured && "pl-5 border-l border-[#EAEAEA]", 
+      className
+    )}>
       <h2 className="text-base font-light text-black">{title}</h2>
       {showButton && (
         <ButtonCircle 
           icon={buttonIcon} 
           size="small" 
           onClick={onButtonClick}
+          featured={featured}
         />
       )}
     </div>

@@ -39,7 +39,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
       )}
     >
       {/* Left Side */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-5">
         {logo ? (
           <div className="w-[25px]">{logo}</div>
         ) : (
@@ -50,6 +50,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
           showButton={showTitleButton} 
           buttonIcon={titleButtonIcon}
           onButtonClick={onTitleButtonClick}
+          featured={true}
         />
       </div>
       
