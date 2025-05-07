@@ -191,7 +191,7 @@ const ThemeProviderWrapper = ({
  * ```
  */
 const meta = {
-  title: "Context/ThemeProvider",
+  title: "UI/ThemeProvider",
   component: ThemeProviderWrapper,
   parameters: {
     layout: "centered",
