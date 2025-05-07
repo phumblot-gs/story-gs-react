@@ -2,8 +2,8 @@
 import React, { useState } from "react"
 import { ButtonCircle } from "@/components/ui/button-circle"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { X } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { IconProvider } from "@/components/ui/icon-provider"
 
 export type Language = {
   code: string
@@ -48,12 +48,13 @@ export const LanguageSwitcher = ({
             }}
           >
             {isOpen ? (
-              <X 
-                size={12} 
+              <IconProvider 
+                icon="X" 
                 className="hover:text-blue" 
+                size={12}
               />
             ) : (
-              <span className="text-sm font-normal">{currentLanguage.code}</span>
+              <span style={{ fontSize: '11px' }} className="font-normal">{currentLanguage.code}</span>
             )}
           </ButtonCircle>
         </div>
