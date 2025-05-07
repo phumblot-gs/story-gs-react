@@ -224,6 +224,7 @@ const ButtonTestSection: React.FC = () => {
 };
 
 const StatusComponentsTestSection: React.FC = () => {
+  // Using valid MediaStatus values from the enum
   const [selectedStatus, setSelectedStatus] = useState<MediaStatus>(MediaStatus.VALIDATED);
   const [statusSize, setStatusSize] = useState<"sm" | "md" | "lg">("md");
   const [buttonIcon, setButtonIcon] = useState<"Check" | "X">("Check");
@@ -251,10 +252,10 @@ const StatusComponentsTestSection: React.FC = () => {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value={MediaStatus.VALIDATED.toString()}>Validated</SelectItem>
-                    <SelectItem value={MediaStatus.ERROR.toString()}>Error</SelectItem>
+                    <SelectItem value={MediaStatus.ERROR_DURING_BROADCAST.toString()}>Error</SelectItem>
                     <SelectItem value={MediaStatus.SELECTED.toString()}>Selected</SelectItem>
-                    <SelectItem value={MediaStatus.REJECTED.toString()}>Rejected</SelectItem>
-                    <SelectItem value={MediaStatus.PENDING.toString()}>Pending</SelectItem>
+                    <SelectItem value={MediaStatus.REFUSED_1.toString()}>Refused</SelectItem>
+                    <SelectItem value={MediaStatus.SUBMITTED_FOR_APPROVAL.toString()}>Pending</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -302,10 +303,10 @@ const StatusComponentsTestSection: React.FC = () => {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value={MediaStatus.VALIDATED.toString()}>Validated</SelectItem>
-                    <SelectItem value={MediaStatus.ERROR.toString()}>Error</SelectItem>
+                    <SelectItem value={MediaStatus.ERROR_DURING_BROADCAST.toString()}>Error</SelectItem>
                     <SelectItem value={MediaStatus.SELECTED.toString()}>Selected</SelectItem>
-                    <SelectItem value={MediaStatus.REJECTED.toString()}>Rejected</SelectItem>
-                    <SelectItem value={MediaStatus.PENDING.toString()}>Pending</SelectItem>
+                    <SelectItem value={MediaStatus.REFUSED_1.toString()}>Refused</SelectItem>
+                    <SelectItem value={MediaStatus.SUBMITTED_FOR_APPROVAL.toString()}>Pending</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -460,10 +461,10 @@ const NestedComponentsTestSection: React.FC = () => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value={MediaStatus.VALIDATED.toString()}>Validated</SelectItem>
-                  <SelectItem value={MediaStatus.ERROR.toString()}>Error</SelectItem>
+                  <SelectItem value={MediaStatus.ERROR_DURING_BROADCAST.toString()}>Error</SelectItem>
                   <SelectItem value={MediaStatus.SELECTED.toString()}>Selected</SelectItem>
-                  <SelectItem value={MediaStatus.REJECTED.toString()}>Rejected</SelectItem>
-                  <SelectItem value={MediaStatus.PENDING.toString()}>Pending</SelectItem>
+                  <SelectItem value={MediaStatus.REFUSED_1.toString()}>Refused</SelectItem>
+                  <SelectItem value={MediaStatus.SUBMITTED_FOR_APPROVAL.toString()}>Pending</SelectItem>
                 </SelectContent>
               </Select>
             </div>
