@@ -46,7 +46,8 @@ const ThemeDemo = () => {
             <h3 className="text-lg font-medium mb-2">Integration</h3>
             <p>If you integrate this component library into your application, you must:</p>
             <p>1. Wrap your application with the necessary providers</p>
-```jsx
+            <pre>
+            {
 // In your main file (e.g. App.tsx)
 import { ThemeProvider } from ‘./contexts/ThemeContext’;
 import { ThemeProvider as NextThemeProvider } from ‘next-themes’;
@@ -60,9 +61,11 @@ function App() {
  </NextThemeProvider>
  );
  }
- ```
+            }
+            </pre>
             <p>2. Customise the default colours (optional)</p>
-```jsx
+            <pre>
+{
  <ThemeProvider
  initialCustomization={{
  colours: {
@@ -77,9 +80,11 @@ function App() {
  >
  // The rest of your application
  </ThemeProvider>
- ```
+}
+            </pre>
             <p>3. Integrate the ThemeCustomizer component into your application</p>
-```jsx
+            <pre>
+{
  import { ThemeCustomizer } from “@/components/ThemeCustomizer”;
  
  function Header() {
@@ -90,9 +95,11 @@ function App() {
  </header>
  );
  }
- ```
+}
+            </pre>
             <p>4. Use the useThemeValues hook to apply styles</p>
-```jsx
+            <pre>
+{
  import { useThemeValues } from ‘@/hooks/useThemeValues’;
  
  function MyComponent() {
@@ -106,7 +113,8 @@ function App() {
  </div>
  );
  }
- ```
+}
+            </pre>
           </div>
 
           <div>
