@@ -22,45 +22,47 @@ export const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({
   const { defaultColors } = useThemeValues();
   const [isOpen, setIsOpen] = useState(false);
   
-  // Use a ref object to store form values, preventing re-renders on every keystroke
-  const formValuesRef = useRef<Record<string, string>>({});
+  // Use state instead of ref to track form values and ensure re-renders
+  const [formValues, setFormValues] = useState<Record<string, string>>({});
   
-  // Initialize form values when the popover opens
+  // Initialize form values when component mounts or customization changes
   useEffect(() => {
-    if (isOpen) {
-      // Initialize with current customization values or defaults
-      const initialValues: Record<string, string> = {
-        brandName: customization.text.brandName || 'GS Components',
-      };
-      
-      // Add color values
-      Object.keys(defaultColors).forEach(key => {
-        const typedKey = key as keyof typeof defaultColors;
-        const customValue = customization.colors[typedKey as keyof typeof customization.colors];
-        initialValues[key] = customValue || defaultColors[typedKey] || '';
-      });
-      
-      formValuesRef.current = initialValues;
-    }
-  }, [isOpen, customization, defaultColors]);
+    // Initialize with current customization values or defaults
+    const initialValues: Record<string, string> = {
+      brandName: customization.text.brandName || 'GS Components',
+    };
+    
+    // Add color values
+    Object.keys(defaultColors).forEach(key => {
+      const typedKey = key as keyof typeof defaultColors;
+      // First check if we have a custom color
+      const customValue = customization.colors[typedKey as keyof typeof customization.colors];
+      // Use the custom value if it exists, otherwise use the default
+      initialValues[key] = customValue || defaultColors[typedKey] || '';
+    });
+    
+    setFormValues(initialValues);
+  }, [customization, defaultColors]);
 
-  // Handle input change without triggering re-renders
+  // Handle input change with state update
   const handleInputChange = (key: string, value: string) => {
-    // Update the ref immediately (no re-render)
-    formValuesRef.current[key] = value;
+    setFormValues(prev => ({
+      ...prev,
+      [key]: value
+    }));
   };
   
-  // Apply changes from ref state to theme context
+  // Apply changes from state to theme context
   const applyChanges = () => {
     const updates = {
       colors: {} as any,
       text: {
-        brandName: formValuesRef.current.brandName !== 'GS Components' ? formValuesRef.current.brandName : undefined,
+        brandName: formValues.brandName !== 'GS Components' ? formValues.brandName : undefined,
       }
     };
     
     // Add only color values that differ from defaults using normalized comparison
-    Object.entries(formValuesRef.current).forEach(([key, value]) => {
+    Object.entries(formValues).forEach(([key, value]) => {
       if (key === 'brandName') return; // Skip brandName, it's handled separately
       
       const defaultValue = defaultColors[key as keyof typeof defaultColors];
@@ -77,7 +79,17 @@ export const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({
   // Reset handler
   const handleReset = () => {
     resetCustomization();
-    setIsOpen(false);
+    // Reset form values to defaults
+    const defaultValues: Record<string, string> = {
+      brandName: 'GS Components',
+    };
+    
+    Object.keys(defaultColors).forEach(key => {
+      const typedKey = key as keyof typeof defaultColors;
+      defaultValues[key] = defaultColors[typedKey] || '';
+    });
+    
+    setFormValues(defaultValues);
   };
   
   return (
@@ -108,7 +120,7 @@ export const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({
               <Input
                 id="brand-name"
                 type="text"
-                defaultValue={customization.text.brandName || 'GS Components'}
+                value={formValues.brandName || ''}
                 onChange={(e) => handleInputChange('brandName', e.target.value)}
               />
             </div>
@@ -125,30 +137,35 @@ export const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({
                   label="bg-white" 
                   colorKey="bgWhite" 
                   defaultValue={defaultColors.bgWhite}
+                  value={formValues.bgWhite || ''}
                   onChange={handleInputChange} 
                 />
                 <ColorInput 
                   label="bg-black" 
                   colorKey="bgBlack" 
                   defaultValue={defaultColors.bgBlack}
+                  value={formValues.bgBlack || ''}
                   onChange={handleInputChange} 
                 />
                 <ColorInput 
                   label="bg-grey" 
                   colorKey="bgGrey" 
                   defaultValue={defaultColors.bgGrey}
+                  value={formValues.bgGrey || ''}
                   onChange={handleInputChange} 
                 />
                 <ColorInput 
                   label="bg-grey-lighter" 
                   colorKey="bgGreyLighter" 
                   defaultValue={defaultColors.bgGreyLighter}
+                  value={formValues.bgGreyLighter || ''}
                   onChange={handleInputChange} 
                 />
                 <ColorInput 
                   label="bg-grey-strongest" 
                   colorKey="bgGreyStrongest" 
                   defaultValue={defaultColors.bgGreyStrongest}
+                  value={formValues.bgGreyStrongest || ''}
                   onChange={handleInputChange} 
                 />
               </TabsContent>
@@ -158,30 +175,35 @@ export const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({
                   label="text-grey-stronger" 
                   colorKey="textGreyStronger" 
                   defaultValue={defaultColors.textGreyStronger}
+                  value={formValues.textGreyStronger || ''}
                   onChange={handleInputChange} 
                 />
                 <ColorInput 
                   label="text-black" 
                   colorKey="textBlack" 
                   defaultValue={defaultColors.textBlack}
+                  value={formValues.textBlack || ''}
                   onChange={handleInputChange} 
                 />
                 <ColorInput 
                   label="text-white" 
                   colorKey="textWhite" 
                   defaultValue={defaultColors.textWhite}
+                  value={formValues.textWhite || ''}
                   onChange={handleInputChange} 
                 />
                 <ColorInput 
                   label="text-blue-primary" 
                   colorKey="textBluePrimary" 
                   defaultValue={defaultColors.textBluePrimary}
+                  value={formValues.textBluePrimary || ''}
                   onChange={handleInputChange} 
                 />
                 <ColorInput 
                   label="text-blue" 
                   colorKey="textBlue" 
                   defaultValue={defaultColors.textBlue}
+                  value={formValues.textBlue || ''}
                   onChange={handleInputChange} 
                 />
               </TabsContent>
@@ -191,60 +213,70 @@ export const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({
                   label="status-ignored" 
                   colorKey="statusIgnored" 
                   defaultValue={defaultColors.statusIgnored}
+                  value={formValues.statusIgnored || ''}
                   onChange={handleInputChange} 
                 />
                 <ColorInput 
                   label="status-reshoot" 
                   colorKey="statusReshoot" 
                   defaultValue={defaultColors.statusReshoot}
+                  value={formValues.statusReshoot || ''}
                   onChange={handleInputChange} 
                 />
                 <ColorInput 
                   label="status-not-selected" 
                   colorKey="statusNotSelected" 
                   defaultValue={defaultColors.statusNotSelected}
+                  value={formValues.statusNotSelected || ''}
                   onChange={handleInputChange} 
                 />
                 <ColorInput 
                   label="status-selected" 
                   colorKey="statusSelected" 
                   defaultValue={defaultColors.statusSelected}
+                  value={formValues.statusSelected || ''}
                   onChange={handleInputChange} 
                 />
                 <ColorInput 
                   label="status-refused" 
                   colorKey="statusRefused" 
                   defaultValue={defaultColors.statusRefused}
+                  value={formValues.statusRefused || ''}
                   onChange={handleInputChange} 
                 />
                 <ColorInput 
                   label="status-for-approval" 
                   colorKey="statusForApproval" 
                   defaultValue={defaultColors.statusForApproval}
+                  value={formValues.statusForApproval || ''}
                   onChange={handleInputChange} 
                 />
                 <ColorInput 
                   label="status-validated" 
                   colorKey="statusValidated" 
                   defaultValue={defaultColors.statusValidated}
+                  value={formValues.statusValidated || ''}
                   onChange={handleInputChange} 
                 />
                 <ColorInput 
                   label="status-to-publish" 
                   colorKey="statusToPublish" 
                   defaultValue={defaultColors.statusToPublish}
+                  value={formValues.statusToPublish || ''}
                   onChange={handleInputChange} 
                 />
                 <ColorInput 
                   label="status-error" 
                   colorKey="statusError" 
                   defaultValue={defaultColors.statusError}
+                  value={formValues.statusError || ''}
                   onChange={handleInputChange} 
                 />
                 <ColorInput 
                   label="status-published" 
                   colorKey="statusPublished" 
                   defaultValue={defaultColors.statusPublished}
+                  value={formValues.statusPublished || ''}
                   onChange={handleInputChange} 
                 />
               </TabsContent>
