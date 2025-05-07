@@ -16,7 +16,9 @@ import PageHeader from "@/components/PageHeader";
 import { Workflow } from "@/components/ui/workflow";
 import { WorkflowExample } from "@/components/examples/workflow-example";
 import { LanguageSwitcherExample } from "@/components/examples/language-switcher-example";
-import { useToast, toast } from "@/hooks/use-toast";
+import { toast } from "@/components/ui/sonner";
+import { ToastSuccessIcon, ToastErrorIcon } from "@/components/ui/button-circle/custom-icons";
+import { IconProvider } from "@/components/ui/icon-provider";
 
 const Test: React.FC = () => {
   return (
@@ -387,10 +389,9 @@ const ButtonTestSection: React.FC = () => {
 };
 
 const ToastTestSection: React.FC = () => {
-  const { toast } = useToast();
   const [toastTitle, setToastTitle] = useState("Toast Notification");
   const [toastDescription, setToastDescription] = useState("This is a toast message");
-  const [toastType, setToastType] = useState<"default" | "success" | "error" | "warning" | "info">("default");
+  const [toastType, setToastType] = useState<"default" | "success" | "error" | "warning" | "info" | "loading">("default");
   const [toastDuration, setToastDuration] = useState(5000);
   const [showAction, setShowAction] = useState(false);
 
@@ -399,16 +400,22 @@ const ToastTestSection: React.FC = () => {
     
     if (showAction) {
       toastAction = (
-        <div className="flex items-center gap-2 mt-2">
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={() => console.log("Action clicked")}
-          >
-            Action
-          </Button>
-        </div>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={() => console.log("Action clicked")}
+        >
+          Action
+        </Button>
       );
+    }
+
+    // Pass the custom icon based on toast type
+    let icon;
+    if (toastType === "success") {
+      icon = <IconProvider icon="ToastSuccessIcon" size={21} className="text-white" />;
+    } else if (toastType === "error") {
+      icon = <IconProvider icon="ToastErrorIcon" size={21} className="text-white" />;
     }
 
     toast({
@@ -461,6 +468,7 @@ const ToastTestSection: React.FC = () => {
                   <SelectItem value="error">Error</SelectItem>
                   <SelectItem value="warning">Warning</SelectItem>
                   <SelectItem value="info">Info</SelectItem>
+                  <SelectItem value="loading">Loading</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -496,14 +504,15 @@ const ToastTestSection: React.FC = () => {
             <h3 className="text-lg font-medium">Preview</h3>
             <div className="flex flex-col items-center gap-4">
               <div className={`w-64 p-4 rounded-md border ${
-                toastType === "error" ? "bg-red-100 border-red-300" :
-                toastType === "success" ? "bg-green-100 border-green-300" :
-                toastType === "warning" ? "bg-yellow-100 border-yellow-300" :
-                toastType === "info" ? "bg-blue-100 border-blue-300" :
+                toastType === "error" ? "bg-red-strong text-white" :
+                toastType === "success" ? "bg-green text-white" :
+                toastType === "warning" ? "bg-orange text-white" :
+                toastType === "info" ? "bg-pastel-yellow-secondary text-black" :
+                toastType === "loading" ? "bg-grey text-white" :
                 "bg-white border-gray-300"
               }`}>
                 <div className="font-semibold">{toastTitle}</div>
-                <div className="text-sm text-gray-700">{toastDescription}</div>
+                <div className="text-sm">{toastDescription}</div>
                 {showAction && (
                   <div className="mt-2">
                     <Button variant="outline" size="sm">Action</Button>
