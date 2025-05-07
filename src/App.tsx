@@ -9,7 +9,7 @@ import NotFound from "./pages/NotFound";
 import Test from "./pages/Test";
 import { ThemeProvider as NextThemeProvider } from "next-themes";
 import { ThemeProvider } from "./contexts/ThemeContext";
-import ThemeCustomizer from "./components/ThemeCustomizer";
+import ThemeCustomizerPage from "./pages/ThemeCustomizerPage";
 import { ActivityStatusProvider } from "./contexts/ActivityStatusContext";
 
 const queryClient = new QueryClient();
@@ -26,7 +26,7 @@ const App = () => (
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/test" element={<Test />} />
-                <Route path="/theme-customizer" element={<ThemeCustomizer />} />
+                <Route path="/theme-customizer" element={<ThemeCustomizerPage />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
