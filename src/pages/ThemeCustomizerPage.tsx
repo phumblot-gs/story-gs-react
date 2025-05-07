@@ -7,14 +7,16 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Upload, FileImage } from 'lucide-react';
 import ColorInput from '@/components/ColorInput';
 import PageHeader from '@/components/PageHeader';
 import { toast } from '@/components/ui/use-toast';
+import BrandLogo from '@/components/PageHeader/BrandLogo';
 
 const ThemeCustomizerPage: React.FC = () => {
   const { theme, setTheme, customization, updateCustomization, resetCustomization } = useCustomTheme();
   const { defaultColors } = useThemeValues();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   // Use state to track form values
   const [formValues, setFormValues] = useState<Record<string, string>>({});
@@ -28,6 +30,7 @@ const ThemeCustomizerPage: React.FC = () => {
       // Initialize with current customization values or defaults
       const initialValues: Record<string, string> = {
         brandName: customization.text.brandName || 'GS Components',
+        logo: customization.assets.logo || '',
       };
       
       // Add color values
@@ -53,6 +56,7 @@ const ThemeCustomizerPage: React.FC = () => {
     // Reset form values to defaults
     const defaultValues: Record<string, string> = {
       brandName: 'GS Components',
+      logo: '',
     };
     
     Object.keys(defaultColors).forEach(key => {
@@ -75,6 +79,53 @@ const ThemeCustomizerPage: React.FC = () => {
       [key]: value
     }));
   };
+
+  // Handle logo file upload
+  const handleLogoFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Check if file is a valid image
+    if (!file.type.startsWith('image/')) {
+      toast({
+        title: "Invalid file",
+        description: "Please upload an image file (JPEG, PNG, SVG)",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const reader = new FileReader();
+    
+    if (file.type === 'image/svg+xml') {
+      // Handle SVG files - read as text to get SVG markup
+      reader.readAsText(file);
+      reader.onload = () => {
+        const svgContent = reader.result as string;
+        handleInputChange('logo', svgContent);
+      };
+    } else {
+      // Handle other image types - read as data URL
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        const dataUrl = reader.result as string;
+        handleInputChange('logo', dataUrl);
+      };
+    }
+    
+    reader.onerror = () => {
+      toast({
+        title: "Error reading file",
+        description: "Failed to process the uploaded image",
+        variant: "destructive"
+      });
+    };
+  };
+
+  // Reset logo handler
+  const handleResetLogo = () => {
+    handleInputChange('logo', '');
+  };
   
   // Apply changes from state to theme context
   const applyChanges = () => {
@@ -82,12 +133,15 @@ const ThemeCustomizerPage: React.FC = () => {
       colors: {} as any,
       text: {
         brandName: formValues.brandName !== 'GS Components' ? formValues.brandName : undefined,
+      },
+      assets: {
+        logo: formValues.logo || undefined
       }
     };
     
     // Add only color values that differ from defaults using normalized comparison
     Object.entries(formValues).forEach(([key, value]) => {
-      if (key === 'brandName') return; // Skip brandName, it's handled separately
+      if (key === 'brandName' || key === 'logo') return; // Skip non-color values
       
       const defaultValue = defaultColors[key as keyof typeof defaultColors];
       
@@ -131,6 +185,53 @@ const ThemeCustomizerPage: React.FC = () => {
                 value={formValues.brandName || ''}
                 onChange={(e) => handleInputChange('brandName', e.target.value)}
               />
+            </div>
+
+            {/* Brand Logo Section */}
+            <div className="space-y-3">
+              <Label className="text-base">Brand Logo</Label>
+              <div className="border rounded-md p-6 flex items-center justify-between gap-6">
+                <div className="flex-grow flex flex-col items-center justify-center">
+                  <div className="border rounded-md p-4 mb-4 min-h-20 min-w-40 flex items-center justify-center bg-gray-50">
+                    {formValues.logo ? (
+                      <BrandLogo logo={formValues.logo} width={80} height={45} />
+                    ) : (
+                      <FileImage className="h-10 w-10 text-gray-300" />
+                    )}
+                  </div>
+                  <p className="text-sm text-gray-500">
+                    {formValues.logo ? 'Custom logo uploaded' : 'No custom logo set'}
+                  </p>
+                </div>
+                <div className="flex flex-col gap-3">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => fileInputRef.current?.click()}
+                    className="flex items-center gap-2"
+                  >
+                    <Upload className="h-4 w-4" />
+                    <span>Upload Logo</span>
+                  </Button>
+                  {formValues.logo && (
+                    <Button 
+                      variant="outline" 
+                      onClick={handleResetLogo}
+                    >
+                      Reset Logo
+                    </Button>
+                  )}
+                </div>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/png, image/jpeg, image/svg+xml"
+                  onChange={handleLogoFileChange}
+                  className="hidden"
+                />
+              </div>
+              <p className="text-sm text-gray-500 mt-1">
+                Supported formats: SVG (recommended), PNG, JPEG
+              </p>
             </div>
             
             <Tabs defaultValue="background" className="w-full">

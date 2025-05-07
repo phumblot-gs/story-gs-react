@@ -3,6 +3,8 @@ import React from "react";
 import { cn } from "@/lib/utils";
 import PageTitle from "./PageTitle";
 import { AllowedPictogram } from "@/components/ui/button-circle/types";
+import { useThemeValues } from "@/hooks/useThemeValues";
+import BrandLogo from "./BrandLogo";
 
 export interface PageHeaderProps {
   logo?: React.ReactNode;
@@ -27,6 +29,8 @@ const PageHeader: React.FC<PageHeaderProps> = ({
   className,
   isIdle = false,
 }) => {
+  const { logo: themeLogo } = useThemeValues();
+  
   return (
     <header
       className={cn(
@@ -36,7 +40,11 @@ const PageHeader: React.FC<PageHeaderProps> = ({
     >
       {/* Left Side */}
       <div className="flex items-center gap-4">
-        {logo && <div className="w-[25px]">{logo}</div>}
+        {logo ? (
+          <div className="w-[25px]">{logo}</div>
+        ) : (
+          <BrandLogo logo={themeLogo} width={25} height={14} />
+        )}
         <PageTitle 
           title={title} 
           showButton={showTitleButton} 

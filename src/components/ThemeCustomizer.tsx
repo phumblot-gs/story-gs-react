@@ -1,8 +1,8 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useCustomTheme } from '@/contexts/ThemeContext';
 import { useThemeValues, normalizeColorValue } from '@/hooks/useThemeValues';
-import { Sun, Moon, Palette } from 'lucide-react';
+import { Sun, Moon, Palette, Upload, FileImage } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -10,6 +10,8 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
 import ColorInput from './ColorInput';
+import BrandLogo from './PageHeader/BrandLogo';
+import { toast } from './ui/use-toast';
 
 interface ThemeCustomizerProps {
   className?: string;
@@ -21,6 +23,7 @@ export const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({
   const { theme, setTheme, customization, updateCustomization, resetCustomization } = useCustomTheme();
   const { defaultColors } = useThemeValues();
   const [isOpen, setIsOpen] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   // Use state instead of ref to track form values and ensure re-renders
   const [formValues, setFormValues] = useState<Record<string, string>>({});
@@ -30,6 +33,7 @@ export const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({
     // Initialize with current customization values or defaults
     const initialValues: Record<string, string> = {
       brandName: customization.text.brandName || 'GS Components',
+      logo: customization.assets.logo || '',
     };
     
     // Add color values
@@ -51,6 +55,48 @@ export const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({
       [key]: value
     }));
   };
+
+  // Handle logo file upload
+  const handleLogoFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Check if file is a valid image
+    if (!file.type.startsWith('image/')) {
+      toast({
+        title: "Invalid file",
+        description: "Please upload an image file (JPEG, PNG, SVG)",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const reader = new FileReader();
+    
+    if (file.type === 'image/svg+xml') {
+      // Handle SVG files - read as text to get SVG markup
+      reader.readAsText(file);
+      reader.onload = () => {
+        const svgContent = reader.result as string;
+        handleInputChange('logo', svgContent);
+      };
+    } else {
+      // Handle other image types - read as data URL
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        const dataUrl = reader.result as string;
+        handleInputChange('logo', dataUrl);
+      };
+    }
+    
+    reader.onerror = () => {
+      toast({
+        title: "Error reading file",
+        description: "Failed to process the uploaded image",
+        variant: "destructive"
+      });
+    };
+  };
   
   // Apply changes from state to theme context
   const applyChanges = () => {
@@ -58,12 +104,15 @@ export const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({
       colors: {} as any,
       text: {
         brandName: formValues.brandName !== 'GS Components' ? formValues.brandName : undefined,
+      },
+      assets: {
+        logo: formValues.logo || undefined
       }
     };
     
     // Add only color values that differ from defaults using normalized comparison
     Object.entries(formValues).forEach(([key, value]) => {
-      if (key === 'brandName') return; // Skip brandName, it's handled separately
+      if (key === 'brandName' || key === 'logo') return; // Skip non-color values
       
       const defaultValue = defaultColors[key as keyof typeof defaultColors];
       
@@ -82,6 +131,7 @@ export const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({
     // Reset form values to defaults
     const defaultValues: Record<string, string> = {
       brandName: 'GS Components',
+      logo: '',
     };
     
     Object.keys(defaultColors).forEach(key => {
@@ -90,6 +140,11 @@ export const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({
     });
     
     setFormValues(defaultValues);
+  };
+
+  // Reset logo handler
+  const handleResetLogo = () => {
+    handleInputChange('logo', '');
   };
   
   return (
@@ -123,6 +178,47 @@ export const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({
                 value={formValues.brandName || ''}
                 onChange={(e) => handleInputChange('brandName', e.target.value)}
               />
+            </div>
+
+            {/* Brand Logo Section */}
+            <div className="space-y-2">
+              <Label>Brand Logo</Label>
+              <div className="flex items-center justify-between gap-4">
+                <div className="border rounded-md p-3 flex-grow flex items-center justify-center h-16 bg-gray-50">
+                  {formValues.logo ? (
+                    <BrandLogo logo={formValues.logo} width={50} height={28} />
+                  ) : (
+                    <span className="text-sm text-gray-400">No custom logo</span>
+                  )}
+                </div>
+                <div className="flex flex-col gap-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="flex items-center gap-1"
+                  >
+                    <Upload className="h-4 w-4" />
+                    <span>Upload</span>
+                  </Button>
+                  {formValues.logo && (
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={handleResetLogo}
+                    >
+                      Reset
+                    </Button>
+                  )}
+                </div>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/png, image/jpeg, image/svg+xml"
+                  onChange={handleLogoFileChange}
+                  className="hidden"
+                />
+              </div>
             </div>
             
             <Tabs defaultValue="background">
