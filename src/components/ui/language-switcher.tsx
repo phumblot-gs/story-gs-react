@@ -1,3 +1,4 @@
+
 import React, { useState } from "react"
 import { ButtonCircle } from "@/components/ui/button-circle"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
@@ -49,7 +50,7 @@ export const LanguageSwitcher = ({
             {isOpen ? (
               <IconProvider 
                 icon="X" 
-                className="hover:text-blue" 
+                className="text-black" // Always keep the X icon black
                 size={12}
               />
             ) : (
