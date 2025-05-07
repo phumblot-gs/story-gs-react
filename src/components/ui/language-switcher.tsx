@@ -54,7 +54,7 @@ export const LanguageSwitcher = ({
                 size={12}
               />
             ) : (
-              <span style={{ fontSize: '11px' }} className="font-normal">{currentLanguage.code}</span>
+              <span className="text-xs font-normal">{currentLanguage.code}</span>
             )}
           </ButtonCircle>
         </div>
