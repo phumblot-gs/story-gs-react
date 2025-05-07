@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -55,7 +56,8 @@ const Test: React.FC = () => {
 const PageHeaderTestSection: React.FC = () => {
   const [title, setTitle] = useState("Collection Femme Printemps 2025");
   const [showTitleButton, setShowTitleButton] = useState(true);
-  const [titleButtonIcon, setTitleButtonIcon] = useState<"Pencil" | "Plus" | "Edit" | "Settings">("Pencil");
+  // Updated to only use valid AllowedPictogram values
+  const [titleButtonIcon, setTitleButtonIcon] = useState<"Pencil" | "Plus" | "Settings">("Pencil");
   const [showLogo, setShowLogo] = useState(true);
   const [showCenterContent, setShowCenterContent] = useState(false);
   const [showRightContent, setShowRightContent] = useState(false);
@@ -118,7 +120,6 @@ const PageHeaderTestSection: React.FC = () => {
                 <SelectContent>
                   <SelectItem value="Pencil">Pencil</SelectItem>
                   <SelectItem value="Plus">Plus</SelectItem>
-                  <SelectItem value="Edit">Edit</SelectItem>
                   <SelectItem value="Settings">Settings</SelectItem>
                 </SelectContent>
               </Select>
@@ -667,3 +668,4 @@ const NestedComponentsTestSection: React.FC = () => {
 };
 
 export default Test;
+
