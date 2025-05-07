@@ -1,10 +1,10 @@
 
 import React from "react";
-import { AllowedPictogram } from "@/components/ui/button-circle/types";
-import { renderIcon } from "@/components/ui/button-circle/icon-renderer";
+import { IconName } from "@/components/ui/icons/types";
+import { renderIcon } from "@/components/ui/icons/icon-renderer";
 
 export interface IconProviderProps {
-  icon: AllowedPictogram;
+  icon: IconName;
   className?: string;
   size?: number;
 }

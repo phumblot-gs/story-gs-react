@@ -1,6 +1,7 @@
+
 import type { Meta, StoryObj } from "@storybook/react";
 import { ButtonCircle } from "./index";
-import { AllowedPictogram } from "./types";
+import { IconName } from "../icons/types";
 
 const meta: Meta<typeof ButtonCircle> = {
   title: "UI/ButtonCircle",
@@ -72,14 +73,14 @@ export const Default: Story = {
 
 export const WithIcon: Story = {
   args: {
-    icon: "Plus" as AllowedPictogram,
+    icon: "Plus" as IconName,
     size: "large",
   },
 };
 
 export const WithIndicator: Story = {
   args: {
-    icon: "Bell" as AllowedPictogram,
+    icon: "Bell" as IconName,
     indicator: true,
   },
 };
@@ -94,20 +95,20 @@ export const WithChildren: Story = {
 export const BlackBackground: Story = {
   args: {
     background: "black",
-    icon: "Check" as AllowedPictogram,
+    icon: "Check" as IconName,
   },
 };
 
 export const FeaturedButton: Story = {
   args: {
     featured: true,
-    icon: "Star" as AllowedPictogram,
+    icon: "Star" as IconName,
   },
 };
 
 export const SmallSize: Story = {
   args: {
-    icon: "ArrowRight" as AllowedPictogram,
+    icon: "ArrowRight" as IconName,
     size: "small",
   },
 };
@@ -115,7 +116,7 @@ export const SmallSize: Story = {
 export const DisabledState: Story = {
   args: {
     disabled: true,
-    icon: "Settings" as AllowedPictogram,
+    icon: "Settings" as IconName,
   },
 };
 
@@ -129,7 +130,7 @@ export const IconGrid: Story = {
         "Sort", "Star", "Status", "Tag", "User"
       ].map((icon) => (
         <div key={icon} className="flex flex-col items-center gap-2">
-          <ButtonCircle icon={icon as AllowedPictogram} />
+          <ButtonCircle icon={icon as IconName} />
           <span className="text-xs">{icon}</span>
         </div>
       ))}

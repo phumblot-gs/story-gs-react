@@ -4,8 +4,8 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { ButtonCircleProps } from "./types"
 import { getButtonStyles } from "./styles"
-import { renderIcon } from "./icon-renderer"
 import { sizeVariants } from "./variants"
+import { IconProvider } from "@/components/ui/icon-provider"
 
 const ButtonCircle = React.forwardRef<HTMLButtonElement, ButtonCircleProps>(
   ({ 
@@ -53,9 +53,9 @@ const ButtonCircle = React.forwardRef<HTMLButtonElement, ButtonCircleProps>(
     // Render the content based on what's provided (icon or children)
     const renderContent = () => {
       if (icon) {
-        return renderIcon(icon, iconSize)
+        return <IconProvider icon={icon} size={iconSize} />;
       } else {
-        return children
+        return children;
       }
     }
 

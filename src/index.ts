@@ -14,15 +14,23 @@ import type {
 } from "./components/ui/button-default";
 
 import type {
-  AllowedPictogram,
-  ButtonCircleProps,
-  ButtonSize as ButtonCircleSize
+  ButtonBackground as ButtonCircleBackground,
+  ButtonSize as ButtonCircleSize,
+  ButtonCircleProps
 } from "./components/ui/button-circle/types";
+
+import type {
+  IconName
+} from "./components/ui/icons/types";
 
 import type {
   Language,
   LanguageSwitcherProps
 } from "./components/ui/language-switcher";
+
+// Export icons
+export * from "./components/ui/icons";
+export * from "./components/ui/icon-provider";
 
 // Export UI components
 export { buttonVariants };
@@ -35,6 +43,10 @@ export type {
   ButtonBackground,
   ButtonProps,
   ButtonSize,
+  ButtonCircleBackground,
+  ButtonCircleProps,
+  ButtonCircleSize,
+  IconName,
   Language,
   LanguageSwitcherProps
 };
@@ -55,9 +67,3 @@ export * from "./components/StatusIndicator";
 // Export utilities
 export * from "./utils/mediaStatus";
 export * from "./lib/utils";
-
-// Export icon components
-export * from "./components/ui/button-circle/custom-icons";
-export * from "./components/ui/button-circle/icon-renderer";
-export * from "./components/ui/button-circle/types";
-export * from "./components/ui/icon-provider";

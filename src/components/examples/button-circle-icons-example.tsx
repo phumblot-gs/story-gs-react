@@ -2,6 +2,7 @@
 import React from "react"
 import { ButtonCircle } from "@/components/ui/button-circle"
 import { Card, CardContent } from "@/components/ui/card"
+import { IconName } from "@/components/ui/icons/types"
 
 const ButtonCircleIconsExample = () => {
   // Liste des pictogrammes fournis par l'utilisateur, à afficher en premier
@@ -17,7 +18,7 @@ const ButtonCircleIconsExample = () => {
           <div className="flex flex-wrap gap-4">
             {userProvidedIcons.map((icon) => (
               <div key={icon} className="flex flex-col items-center gap-2">
-                <ButtonCircle icon={icon as any} />
+                <ButtonCircle icon={icon as IconName} />
                 <span className="text-xs text-muted-foreground">{icon}</span>
               </div>
             ))}
@@ -31,7 +32,7 @@ const ButtonCircleIconsExample = () => {
           <div className="flex flex-wrap gap-4">
             {userProvidedIcons.map((icon) => (
               <div key={`large-${icon}`} className="flex flex-col items-center gap-2">
-                <ButtonCircle size="large" icon={icon as any} />
+                <ButtonCircle size="large" icon={icon as IconName} />
                 <span className="text-xs text-muted-foreground">{icon}</span>
               </div>
             ))}
@@ -43,7 +44,7 @@ const ButtonCircleIconsExample = () => {
           <div className="flex flex-wrap gap-4">
             {userProvidedIcons.map((icon) => (
               <div key={`small-${icon}`} className="flex flex-col items-center gap-2">
-                <ButtonCircle size="small" icon={icon as any} />
+                <ButtonCircle size="small" icon={icon as IconName} />
                 <span className="text-xs text-muted-foreground">{icon}</span>
               </div>
             ))}
@@ -55,7 +56,7 @@ const ButtonCircleIconsExample = () => {
           <div className="flex flex-wrap gap-4">
             {userProvidedIcons.slice(0, 6).map((icon) => (
               <div key={`indicator-${icon}`} className="flex flex-col items-center gap-2">
-                <ButtonCircle icon={icon as any} indicator={true} />
+                <ButtonCircle icon={icon as IconName} indicator={true} />
                 <span className="text-xs text-muted-foreground">{icon} + indicator</span>
               </div>
             ))}
@@ -67,7 +68,7 @@ const ButtonCircleIconsExample = () => {
           <div className="bg-black p-6 rounded-md flex flex-wrap gap-4">
             {userProvidedIcons.slice(0, 6).map((icon) => (
               <div key={`black-${icon}`} className="flex flex-col items-center gap-2">
-                <ButtonCircle background="black" icon={icon as any} />
+                <ButtonCircle background="black" icon={icon as IconName} />
                 <span className="text-xs text-white">{icon}</span>
               </div>
             ))}
