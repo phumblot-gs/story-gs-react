@@ -16,7 +16,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
       closeButton="true"
       toastOptions={{
         classNames: {
-          toast: "group toast group-[.toaster]:border-border group-[.toaster]:shadow-lg px-[30px] py-[20px] rounded-xs",
+          toast: "group toast group-[.toaster]:border-border group-[.toaster]:shadow-lg px-[30px] py-[20px] rounded-2",
           title: "text-[1rem] italic font-[300]",
           description: "group-[.toast]:text-muted-foreground",
           actionButton: "group-[.toast]:bg-primary group-[.toast]:text-primary-foreground",
