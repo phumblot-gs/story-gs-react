@@ -48,7 +48,7 @@ const ThemeDemo = () => {
             <p>1. Wrap your application with the necessary providers</p>
             <pre>
             {
-// In your main file (e.g. App.tsx)
+{/* In your main file (e.g. App.tsx) */}
 import { ThemeProvider } from ‘./contexts/ThemeContext’;
 import { ThemeProvider as NextThemeProvider } from ‘next-themes’;
  
@@ -56,7 +56,7 @@ function App() {
  return (
  <NextThemeProvider attribute=‘class’ defaultTheme=‘system’ enableSystem>
  <ThemeProvider>
- // The rest of your application
+  {/* The rest of your application */}
  </ThemeProvider>
  </NextThemeProvider>
  );
@@ -71,14 +71,14 @@ function App() {
  colours: {
  bgWhite: ‘#FFFFFF’,
  statusValidated: ‘#89CC52’,
- // Other custom colours...
+{/* Other custom colours... */}
  },
  text: {
  brandName: ‘My Application’
  }
  }}
  >
- // The rest of your application
+ {/* The rest of your application */}
  </ThemeProvider>
 }
             </pre>
@@ -107,7 +107,7 @@ function App() {
  
  return (
  <div style={cssVars as React.CSSProperties}>
- // Your content here will benefit from custom CSS variables
+ {/* Your content here will benefit from custom CSS variables */}
  <h1>{brandName}</h1>
  <p>Current mode: {isDarkMode ? ‘Dark’ : ‘Light’}</p>
  </div>
