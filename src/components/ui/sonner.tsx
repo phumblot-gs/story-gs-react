@@ -1,6 +1,7 @@
 
 import { useTheme } from "next-themes"
 import { Toaster as Sonner, toast as sonnerToast } from "sonner"
+import { IconProvider } from "./icon-provider"
 
 type ToasterProps = React.ComponentProps<typeof Sonner>
 
@@ -15,6 +16,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
       toastOptions={{
         classNames: {
           toast: "group toast group-[.toaster]:border-border group-[.toaster]:shadow-lg px-[30px] py-[20px]",
+          title: "text-[1rem] italic font-[300]",
           description: "group-[.toast]:text-muted-foreground",
           actionButton: "group-[.toast]:bg-primary group-[.toast]:text-primary-foreground",
           cancelButton: "group-[.toast]:bg-muted group-[.toast]:text-muted-foreground",
@@ -47,6 +49,21 @@ const toast = ({
   duration = 5000,
   action
 }: ToastProps) => {
+  // Déterminer quelle icône utiliser en fonction du type de toast
+  const getIcon = () => {
+    switch (type) {
+      case "success": 
+        return <IconProvider icon="ToastSuccessIcon" className="mr-[20px]" size={16} />;
+      case "error":
+        return <IconProvider icon="ToastErrorIcon" className="mr-[20px]" size={16} />;
+      case "warning":
+      case "info":
+      case "loading":
+      default:
+        return null;
+    }
+  };
+
   const toastFunction = type === "success" 
     ? sonnerToast.success 
     : type === "error" 
@@ -59,10 +76,14 @@ const toast = ({
     ? sonnerToast.loading
     : sonnerToast;
 
+  // Passer l'icône personnalisée si disponible
+  const icon = getIcon();
+  
   return toastFunction(title, {
     description,
     duration,
-    action
+    action,
+    icon
   });
 };
 
