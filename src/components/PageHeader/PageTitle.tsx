@@ -31,7 +31,7 @@ const PageTitle: React.FC<PageTitleProps> = ({
       {showButton && (
         <ButtonCircle 
           icon={buttonIcon} 
-          size="small" 
+          size="large" 
           onClick={onButtonClick}
           featured={featured}
         />
