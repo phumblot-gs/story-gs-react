@@ -46,73 +46,81 @@ const ThemeDemo = () => {
             <h3 className="text-lg font-medium mb-2">Integration</h3>
             <p>If you integrate this component library into your application, you must:</p>
             <p>1. Wrap your application with the necessary providers</p>
-            <pre>
-            {`
-              // In your main file (e.g. App.tsx)
-              import { ThemeProvider } from ‘./contexts/ThemeContext’;
-              import { ThemeProvider as NextThemeProvider } from ‘next-themes’;
-               
-              function App() {
-               return (
-               <NextThemeProvider attribute=‘class’ defaultTheme=‘system’ enableSystem>
-               <ThemeProvider>
-                // The rest of your application
-               </ThemeProvider>
-               </NextThemeProvider>
-               );
-              }
-            `}
-            </pre>
+            <div class="bg-muted rounded-md p-4">
+              <pre class="whitespace-pre-wrap text-sm">
+                {`
+                  // In your main file (e.g. App.tsx)
+                  import { ThemeProvider } from ‘./contexts/ThemeContext’;
+                  import { ThemeProvider as NextThemeProvider } from ‘next-themes’;
+                   
+                  function App() {
+                   return (
+                   <NextThemeProvider attribute=‘class’ defaultTheme=‘system’ enableSystem>
+                   <ThemeProvider>
+                    // The rest of your application
+                   </ThemeProvider>
+                   </NextThemeProvider>
+                   );
+                  }
+                `}
+              </pre>
+            </div>
             <p>2. Customise the default colours (optional)</p>
-            <pre>
-            {`
-             <ThemeProvider initialCustomization={{
-                  colours: {
-                  bgWhite: ‘#FFFFFF’,
-                  statusValidated: ‘#89CC52’,
-                  // Other custom colours...
-                },
-                text: {
-                  brandName: ‘My Application’
-                }
-             }}>
-               // The rest of your application
-             </ThemeProvider>
-            `}
-            </pre>
+            <div class="bg-muted rounded-md p-4">
+              <pre class="whitespace-pre-wrap text-sm">
+                {`
+                 <ThemeProvider initialCustomization={{
+                      colours: {
+                      bgWhite: ‘#FFFFFF’,
+                      statusValidated: ‘#89CC52’,
+                      // Other custom colours...
+                    },
+                    text: {
+                      brandName: ‘My Application’
+                    }
+                 }}>
+                   // The rest of your application
+                 </ThemeProvider>
+                `}
+              </pre>
+            </div>
             <p>3. Integrate the ThemeCustomizer component into your application</p>
-            <pre>
-            {`
-              import { ThemeCustomizer } from “@/components/ThemeCustomizer”;
-              
-              function Header() {
-                return (
-                  <header className=‘bg-background p-4 flex justify-between’>
-                    <h1>My Application</h1>
-                    <ThemeCustomizer />
-                  </header>
-                );
-              }
-            `}
-            </pre>
+            <div class="bg-muted rounded-md p-4">
+              <pre class="whitespace-pre-wrap text-sm">
+                {`
+                  import { ThemeCustomizer } from “@/components/ThemeCustomizer”;
+                  
+                  function Header() {
+                    return (
+                      <header className=‘bg-background p-4 flex justify-between’>
+                        <h1>My Application</h1>
+                        <ThemeCustomizer />
+                      </header>
+                    );
+                  }
+                `}
+              </pre>
+            </div>
             <p>4. Use the useThemeValues hook to apply styles</p>
-            <pre>
-            {`
-              import { useThemeValues } from ‘@/hooks/useThemeValues’;
-              
-              function MyComponent() {
-                const { cssVars, brandName, isDarkMode } = useThemeValues();
-                 
-                return (
-                  <div style={cssVars as React.CSSProperties}>
-                  // Your content here will benefit from custom CSS variables
-                  <h1>{brandName}</h1>
-                  <p>Current mode: {isDarkMode ? ‘Dark’ : ‘Light’}</p>
-                  </div>
-                );
-              }
-            `}
-            </pre>
+            <div class="bg-muted rounded-md p-4">
+              <pre class="whitespace-pre-wrap text-sm">
+                {`
+                  import { useThemeValues } from ‘@/hooks/useThemeValues’;
+                  
+                  function MyComponent() {
+                    const { cssVars, brandName, isDarkMode } = useThemeValues();
+                     
+                    return (
+                      <div style={cssVars as React.CSSProperties}>
+                      // Your content here will benefit from custom CSS variables
+                      <h1>{brandName}</h1>
+                      <p>Current mode: {isDarkMode ? ‘Dark’ : ‘Light’}</p>
+                      </div>
+                    );
+                  }
+                `}
+              </pre>
+            </div>
           </div>
 
           <div>
