@@ -20,6 +20,7 @@ import { toast } from "@/components/ui/sonner";
 import { ToastSuccessIcon, ToastErrorIcon } from "@/components/ui/button-circle/custom-icons";
 import { IconProvider } from "@/components/ui/icon-provider";
 import PageHeaderExample from "@/pages/examples/page-header-example";
+import { LanguageSwitcher, type Language } from "@/components/ui/language-switcher";
 
 const Test: React.FC = () => {
   return (
