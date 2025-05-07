@@ -1,10 +1,11 @@
-import React, { useState, useRef, useEffect, memo } from 'react';
+
+import React, { useState, useEffect, memo } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 
 // Helper function to normalize color values for comparison
-const normalizeColorValue = (color?: string): string => {
+export const normalizeColorValue = (color?: string): string => {
   if (!color) return '';
   // Convert color to lowercase to ensure case-insensitive comparison
   return color.toLowerCase().trim();
@@ -14,7 +15,7 @@ interface ColorInputProps {
   label: string;
   colorKey: string;
   defaultValue: string;
-  value?: string; // Ajout de la propriété value comme optionnelle
+  value?: string;
   onChange: (key: string, value: string) => void;
 }
 
@@ -22,36 +23,37 @@ const ColorInput = memo(({
   label, 
   colorKey, 
   defaultValue, 
-  value: externalValue, // Renommé pour éviter les conflits
+  value: externalValue, 
   onChange 
 }: ColorInputProps) => {
-  // Local state for preview color only
-  const [previewColor, setPreviewColor] = useState<string>(externalValue || defaultValue);
-  // Keep the current value in a ref to avoid re-renders
-  const inputValueRef = useRef<string>(externalValue || defaultValue);
+  // Track the local input value internally
+  const [localValue, setLocalValue] = useState<string>(externalValue || defaultValue);
   
-  // Update local preview whenever defaultValue or externalValue changes
+  // Update local value when external value changes, but only if it's different
   useEffect(() => {
-    const newValue = externalValue !== undefined ? externalValue : defaultValue;
-    inputValueRef.current = newValue;
-    setPreviewColor(newValue);
-  }, [defaultValue, externalValue]);
+    // Only update if external value is significantly different
+    if (externalValue !== undefined && normalizeColorValue(externalValue) !== normalizeColorValue(localValue)) {
+      setLocalValue(externalValue);
+    }
+  }, [externalValue]);
 
-  // Handle local input change without triggering re-renders
+  // Handle input change without notifying parent immediately
   const handleLocalChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    inputValueRef.current = value;
-    setPreviewColor(value); // Only update preview state
+    const newValue = e.target.value;
+    setLocalValue(newValue);
   };
 
-  // Only notify parent component on blur to reduce re-renders
+  // Only notify parent component on blur to reduce state updates
   const handleBlur = () => {
-    onChange(colorKey, inputValueRef.current);
+    // Only update parent if value has actually changed
+    if (normalizeColorValue(localValue) !== normalizeColorValue(externalValue)) {
+      onChange(colorKey, localValue);
+    }
   };
 
   // Check if current value differs from default for reset button
-  const showResetButton = normalizeColorValue(inputValueRef.current) !== normalizeColorValue(defaultValue) && 
-                          normalizeColorValue(inputValueRef.current) !== '';
+  const showResetButton = normalizeColorValue(localValue) !== normalizeColorValue(defaultValue) && 
+                          normalizeColorValue(localValue) !== '';
 
   return (
     <div className="space-y-1">
@@ -59,11 +61,11 @@ const ColorInput = memo(({
       <div className="flex gap-2 items-center">
         <div 
           className="w-6 h-6 rounded border"
-          style={{ backgroundColor: previewColor }}
+          style={{ backgroundColor: localValue || defaultValue }}
         />
         <Input
           type="text"
-          value={inputValueRef.current}
+          value={localValue}
           onChange={handleLocalChange}
           onBlur={handleBlur}
           className="h-6 text-xs"
@@ -74,8 +76,7 @@ const ColorInput = memo(({
             size="icon" 
             className="h-5 w-5 p-0" 
             onClick={() => {
-              inputValueRef.current = '';
-              setPreviewColor('');
+              setLocalValue('');
               onChange(colorKey, '');
             }}
             title="Reset to default"

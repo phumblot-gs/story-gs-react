@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useCustomTheme } from '@/contexts/ThemeContext';
 import { useThemeValues, normalizeColorValue } from '@/hooks/useThemeValues';
@@ -18,27 +18,57 @@ const ThemeCustomizerPage: React.FC = () => {
   
   // Use state to track form values
   const [formValues, setFormValues] = useState<Record<string, string>>({});
+  // Add a flag to track if initial values are loaded
+  const initialValuesLoaded = useRef(false);
   
-  // Initialize form values when component mounts or customization changes
+  // Initialize form values only when component mounts or customization changes intentionally
   useEffect(() => {
-    // Initialize with current customization values or defaults
-    const initialValues: Record<string, string> = {
-      brandName: customization.text.brandName || 'GS Components',
-    };
-    
-    // Add color values
-    Object.keys(defaultColors).forEach(key => {
-      const typedKey = key as keyof typeof defaultColors;
-      // First check if we have a custom color
-      const customValue = customization.colors[typedKey as keyof typeof customization.colors];
-      // Use the custom value if it exists, otherwise use the default
-      initialValues[key] = customValue || defaultColors[typedKey] || '';
-    });
-    
-    setFormValues(initialValues);
+    // Only initialize values if they haven't been loaded yet or if resetCustomization was called
+    if (!initialValuesLoaded.current) {
+      // Initialize with current customization values or defaults
+      const initialValues: Record<string, string> = {
+        brandName: customization.text.brandName || 'GS Components',
+      };
+      
+      // Add color values
+      Object.keys(defaultColors).forEach(key => {
+        const typedKey = key as keyof typeof defaultColors;
+        // First check if we have a custom color
+        const customValue = customization.colors[typedKey as keyof typeof customization.colors];
+        // Use the custom value if it exists, otherwise use the default
+        initialValues[key] = customValue || defaultColors[typedKey] || '';
+      });
+      
+      setFormValues(initialValues);
+      initialValuesLoaded.current = true;
+    }
   }, [customization, defaultColors]);
 
-  // Handle input change
+  // Handler to reset form after reset button is clicked
+  const handleReset = () => {
+    resetCustomization();
+    // Mark that we need to reinitialize values
+    initialValuesLoaded.current = false;
+    
+    // Reset form values to defaults
+    const defaultValues: Record<string, string> = {
+      brandName: 'GS Components',
+    };
+    
+    Object.keys(defaultColors).forEach(key => {
+      const typedKey = key as keyof typeof defaultColors;
+      defaultValues[key] = defaultColors[typedKey] || '';
+    });
+    
+    setFormValues(defaultValues);
+    
+    toast({
+      title: "Theme reset",
+      description: "Your theme customization has been reset to defaults.",
+    });
+  };
+  
+  // Handle input change without triggering reinitializing
   const handleInputChange = (key: string, value: string) => {
     setFormValues(prev => ({
       ...prev,
@@ -70,26 +100,6 @@ const ThemeCustomizerPage: React.FC = () => {
     toast({
       title: "Theme updated",
       description: "Your theme customization has been applied.",
-    });
-  };
-  
-  // Reset handler
-  const handleReset = () => {
-    resetCustomization();
-    // Reset form values to defaults
-    const defaultValues: Record<string, string> = {
-      brandName: 'GS Components',
-    };
-    
-    Object.keys(defaultColors).forEach(key => {
-      const typedKey = key as keyof typeof defaultColors;
-      defaultValues[key] = defaultColors[typedKey] || '';
-    });
-    
-    setFormValues(defaultValues);
-    toast({
-      title: "Theme reset",
-      description: "Your theme customization has been reset to defaults.",
     });
   };
   
