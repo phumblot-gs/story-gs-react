@@ -62,10 +62,9 @@ const Test: React.FC = () => {
 const PageHeaderTestSection: React.FC = () => {
   const [title, setTitle] = useState("Collection Femme Printemps 2025");
   const [showTitleButton, setShowTitleButton] = useState(true);
-  // Updated to only use valid AllowedPictogram values
   const [titleButtonIcon, setTitleButtonIcon] = useState<"Pencil" | "Plus" | "Settings">("Pencil");
   const [showLogo, setShowLogo] = useState(true);
-  const [showCenterContent, setShowCenterContent] = useState(false);
+  const [showCenterContent, setShowCenterContent] = useState(true);
   const [showRightContent, setShowRightContent] = useState(false);
 
   // Custom logo component
@@ -75,14 +74,17 @@ const PageHeaderTestSection: React.FC = () => {
     </div>
   );
 
-  // Center content component
+  // Updated to use Workflow component as center content
   const WorkflowTabs = () => (
-    <div className="flex items-center gap-4">
-      <div className="px-3 py-1">LIVE</div>
-      <div className="px-3 py-1">PHASE 1</div>
-      <div className="px-3 py-1">EXPORTS</div>
-      <div className="px-3 py-1 bg-black text-white rounded-full">VALIDATION</div>
-    </div>
+    <Workflow
+      steps={[
+        { bench_id: "1", label: "LIVE", onClick: () => console.log("LIVE clicked") },
+        { bench_id: "2", label: "PHASE 1", onClick: () => console.log("PHASE 1 clicked") },
+        { bench_id: "3", label: "EXPORTS", onClick: () => console.log("EXPORTS clicked") },
+        { bench_id: "4", label: "VALIDATION", isActive: true },
+      ]}
+      bench_root_id={1001}
+    />
   );
 
   // Right side buttons component
@@ -103,8 +105,22 @@ const PageHeaderTestSection: React.FC = () => {
         <CardTitle>Page Header Component</CardTitle>
         <CardDescription>Test the page header component with different configurations</CardDescription>
       </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <CardContent className="space-y-6">
+        {/* Preview now displayed above the form */}
+        <div className="border rounded-lg overflow-hidden mb-4">
+          <PageHeader 
+            logo={showLogo ? <GsLogo /> : undefined}
+            title={title}
+            showTitleButton={showTitleButton}
+            titleButtonIcon={titleButtonIcon}
+            centerContent={showCenterContent ? <WorkflowTabs /> : undefined}
+            rightContent={showRightContent ? <RightSideButtons /> : undefined}
+          />
+        </div>
+        <div className="text-sm text-gray-500 italic">Note: The header is designed for wider screens (min-width: 1280px)</div>
+
+        {/* Form controls now displayed in a 2-column layout below the preview */}
+        <div className="grid grid-cols-2 gap-6">
           <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="header-title">Title</Label>
@@ -139,7 +155,9 @@ const PageHeaderTestSection: React.FC = () => {
               />
               <Label htmlFor="show-title-button">Show Title Button</Label>
             </div>
-
+          </div>
+          
+          <div className="space-y-4">
             <div className="flex items-center space-x-2">
               <Checkbox
                 id="show-logo"
@@ -155,7 +173,7 @@ const PageHeaderTestSection: React.FC = () => {
                 checked={showCenterContent}
                 onCheckedChange={(checked) => setShowCenterContent(!!checked)}
               />
-              <Label htmlFor="show-center-content">Show Center Content</Label>
+              <Label htmlFor="show-center-content">Show Workflow in Center</Label>
             </div>
 
             <div className="flex items-center space-x-2">
@@ -167,39 +185,10 @@ const PageHeaderTestSection: React.FC = () => {
               <Label htmlFor="show-right-content">Show Right Content</Label>
             </div>
           </div>
-
-          <div className="flex flex-col space-y-4">
-            <h3 className="text-lg font-medium">Preview</h3>
-            <div className="border rounded-lg overflow-hidden">
-              <PageHeader 
-                logo={showLogo ? <GsLogo /> : undefined}
-                title={title}
-                showTitleButton={showTitleButton}
-                titleButtonIcon={titleButtonIcon}
-                centerContent={showCenterContent ? <WorkflowTabs /> : undefined}
-                rightContent={showRightContent ? <RightSideButtons /> : undefined}
-              />
-            </div>
-            <div className="text-sm text-gray-500 italic">Note: The header is designed for wider screens (min-width: 1280px)</div>
-          </div>
         </div>
 
-        {/* Workflow component section */}
-        <div className="mt-8">
-          <h3 className="text-lg font-medium mb-4">Workflow Component</h3>
-          <div className="border rounded-lg p-6 bg-gray-50">
-            <Workflow
-              steps={[
-                { bench_id: "1", label: "LIVE", onClick: () => console.log("LIVE clicked") },
-                { bench_id: "2", label: "PHASE 1", onClick: () => console.log("PHASE 1 clicked") },
-                { bench_id: "3", label: "EXPORTS", onClick: () => console.log("EXPORTS clicked") },
-                { bench_id: "4", label: "VALIDATION", isActive: true },
-              ]}
-              bench_root_id={1001}
-            />
-          </div>
-        </div>
-
+        {/* Removed the separate Workflow section as it's now integrated in the header */}
+        
         {/* Language Switcher component section */}
         <div className="mt-8">
           <h3 className="text-lg font-medium mb-4">Language Switcher Component</h3>
@@ -536,7 +525,6 @@ const ToastTestSection: React.FC = () => {
 };
 
 const StatusComponentsTestSection: React.FC = () => {
-  // Using valid MediaStatus values from the enum
   const [selectedStatus, setSelectedStatus] = useState<MediaStatus>(MediaStatus.VALIDATED);
   const [statusSize, setStatusSize] = useState<"sm" | "md" | "lg">("md");
   const [buttonIcon, setButtonIcon] = useState<"Check" | "X">("Check");
