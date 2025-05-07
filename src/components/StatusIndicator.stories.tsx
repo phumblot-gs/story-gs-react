@@ -1,10 +1,11 @@
+
 import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { StatusIndicator } from "./StatusIndicator";
 import { MediaStatus } from "../utils/mediaStatus";
 
 const meta: Meta<typeof StatusIndicator> = {
-  title: "Components/StatusIndicator",
+  title: "UI/StatusIndicator",
   component: StatusIndicator,
   parameters: {
     layout: "centered",

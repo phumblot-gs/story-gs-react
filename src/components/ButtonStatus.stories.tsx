@@ -1,10 +1,11 @@
+
 import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { ButtonStatus } from "./ButtonStatus";
 import { MediaStatus } from "../utils/mediaStatus";
 
 const meta: Meta<typeof ButtonStatus> = {
-  title: "Components/ButtonStatus",
+  title: "UI/ButtonStatus",
   component: ButtonStatus,
   parameters: {
     layout: "centered",
