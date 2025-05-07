@@ -6,18 +6,22 @@ import { Button } from "@/components/ui/button-default";
 export interface WorkflowStepProps {
   label: string;
   isActive?: boolean;
-  onClick?: () => void;
+  onClick?: (bench_root_id: number, bench_id: string) => void;
+  bench_root_id?: number;
+  bench_id?: string;
   className?: string;
   debug?: boolean;
 }
 
 const WorkflowStep = React.forwardRef<HTMLButtonElement, WorkflowStepProps>(
-  ({ label, isActive = false, onClick, className, debug = false }, ref) => {
+  ({ label, isActive = false, onClick, bench_root_id, bench_id, className, debug = false }, ref) => {
     const handleClick = () => {
       if (debug) {
-        console.log(`WorkflowStep clicked: ${label}${isActive ? ' (active)' : ''}`);
+        console.log(`WorkflowStep clicked: ${label}${isActive ? ' (active)' : ''}, bench_id: ${bench_id}, bench_root_id: ${bench_root_id}`);
       }
-      onClick?.();
+      if (onClick && bench_root_id !== undefined && bench_id !== undefined) {
+        onClick(bench_root_id, bench_id);
+      }
     };
 
     return (
