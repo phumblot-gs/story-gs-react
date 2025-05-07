@@ -33,7 +33,7 @@ export const LanguageSwitcher = ({
   }
 
   return (
-    <Popover open={isOpen} onOpenChange={setIsOpen}>
+    <Popover open={disabled ? false : isOpen} onOpenChange={disabled ? undefined : setIsOpen}>
       <PopoverTrigger asChild>
         <div>
           <ButtonCircle
@@ -41,7 +41,7 @@ export const LanguageSwitcher = ({
             disabled={disabled}
             background="white"
             size="large"
-            onClick={() => setIsOpen(!isOpen)}
+            onClick={() => !disabled && setIsOpen(!isOpen)}
             data-active={isOpen}
             style={{
               backgroundColor: isOpen ? "var(--text-blue-primary, #CDEDFF)" : undefined
@@ -64,7 +64,7 @@ export const LanguageSwitcher = ({
         align="end"
         sideOffset={10}
       >
-        <div className="flex flex-col w-full">
+        <div className="flex flex-col w-full p-[10px] gap-[10px]">
           {languages.map((language) => (
             <button
               key={language.code}
