@@ -21,6 +21,7 @@ const ButtonCircle = React.forwardRef<HTMLButtonElement, ButtonCircleProps>(
     onClick,
     onFocus,
     onBlur,
+    style,
     ...props 
   }, ref) => {
     
@@ -72,6 +73,7 @@ const ButtonCircle = React.forwardRef<HTMLButtonElement, ButtonCircleProps>(
           onClick={handleClick}
           onFocus={handleFocus}
           onBlur={handleBlur}
+          style={style}
           {...props}
         >
           {renderContent()}

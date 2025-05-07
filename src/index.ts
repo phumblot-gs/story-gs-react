@@ -4,6 +4,7 @@ import * as React from "react";
 import { buttonVariants } from "./components/ui/button";
 import { Button } from "./components/ui/button-default";
 import { ButtonCircle } from "./components/ui/button-circle";
+import { LanguageSwitcher } from "./components/ui/language-switcher";
 
 // Import types for re-export
 import type { 
@@ -18,16 +19,24 @@ import type {
   ButtonSize as ButtonCircleSize
 } from "./components/ui/button-circle/types";
 
+import type {
+  Language,
+  LanguageSwitcherProps
+} from "./components/ui/language-switcher";
+
 // Export UI components
 export { buttonVariants };
 export { Button };
 export { ButtonCircle };
+export { LanguageSwitcher };
 
 // Export types
 export type { 
   ButtonBackground,
   ButtonProps,
-  ButtonSize
+  ButtonSize,
+  Language,
+  LanguageSwitcherProps
 };
 
 // For backward compatibility, export ButtonSmall as a type alias
@@ -51,4 +60,4 @@ export * from "./lib/utils";
 export * from "./components/ui/button-circle/custom-icons";
 export * from "./components/ui/button-circle/icon-renderer";
 export * from "./components/ui/button-circle/types";
-export * from "./components/ui/icon-provider"; // Fixed path to icon-provider
+export * from "./components/ui/icon-provider";

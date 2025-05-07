@@ -1,0 +1,79 @@
+
+import React, { useState } from "react"
+import { ButtonCircle } from "@/components/ui/button-circle"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { X } from "lucide-react"
+import { cn } from "@/lib/utils"
+
+export type Language = {
+  code: string
+  name: string
+}
+
+export interface LanguageSwitcherProps {
+  languages: Language[]
+  currentLanguage: Language
+  onLanguageChange: (language: Language) => void
+  className?: string
+  disabled?: boolean
+}
+
+export const LanguageSwitcher = ({
+  languages,
+  currentLanguage,
+  onLanguageChange,
+  className,
+  disabled = false,
+}: LanguageSwitcherProps) => {
+  const [isOpen, setIsOpen] = useState(false)
+
+  const handleSelect = (language: Language) => {
+    onLanguageChange(language)
+    setIsOpen(false)
+  }
+
+  return (
+    <Popover open={isOpen} onOpenChange={setIsOpen}>
+      <PopoverTrigger asChild>
+        <div>
+          <ButtonCircle
+            className={className}
+            disabled={disabled}
+            background="white"
+            onClick={() => setIsOpen(!isOpen)}
+            data-active={isOpen}
+            style={{
+              backgroundColor: isOpen ? "var(--text-blue-primary, #CDEDFF)" : undefined
+            }}
+          >
+            {isOpen ? (
+              <X size={12} />
+            ) : (
+              <span className="text-sm font-normal">{currentLanguage.code}</span>
+            )}
+          </ButtonCircle>
+        </div>
+      </PopoverTrigger>
+      <PopoverContent 
+        className="w-[200px] p-0 bg-black border-0 rounded-md" 
+        align="start"
+        sideOffset={5}
+      >
+        <div className="flex flex-col w-full">
+          {languages.map((language) => (
+            <button
+              key={language.code}
+              className={cn(
+                "w-full p-4 text-white text-left hover:bg-white hover:text-black active:bg-blue-primary active:text-black",
+                currentLanguage.code === language.code ? "bg-grey-strongest" : "bg-grey-strongest/90"
+              )}
+              onClick={() => handleSelect(language)}
+            >
+              {language.code} - {language.name}
+            </button>
+          ))}
+        </div>
+      </PopoverContent>
+    </Popover>
+  )
+}
