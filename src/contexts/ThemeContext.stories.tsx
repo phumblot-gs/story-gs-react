@@ -187,6 +187,9 @@ const meta = {
   component: ThemeProviderWrapper,
   parameters: {
     layout: "centered",
+    controls: {
+      sort: 'alpha'
+    },
     docs: {
       description: {
         component: "ThemeProvider manages theme state and customization across your application."

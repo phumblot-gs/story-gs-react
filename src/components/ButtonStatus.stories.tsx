@@ -8,10 +8,8 @@ const meta: Meta<typeof ButtonStatus> = {
   component: ButtonStatus,
   parameters: {
     layout: "centered",
-    docs: {
-      argTypes: {
-        sort: 'alpha'
-      }
+    controls: {
+      sort: 'alpha'
     }
   },
   tags: ["autodocs"],
