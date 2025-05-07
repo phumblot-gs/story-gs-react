@@ -1,4 +1,3 @@
-
 import type { Meta, StoryObj } from "@storybook/react";
 import PageHeader from "./index";
 import { ButtonCircle } from "@/components/ui/button-circle";
@@ -126,11 +125,9 @@ The PageHeader component can display a logo in one of these ways:
   },
   decorators: [
     (Story) => (
-      <ThemeProvider>
-        <div className="w-full">
-          <Story />
-        </div>
-      </ThemeProvider>
+      <div className="w-full">
+        <Story />
+      </div>
     )
   ]
 };
@@ -168,49 +165,69 @@ const RightSideButtons = () => (
 );
 
 export const Default: Story = {
-  args: {
-    title: "Collection Femme Printemps 2025",
-    showTitleButton: true,
-  },
+  render: () => (
+    <ThemeProvider>
+      <PageHeader
+        title="Collection Femme Printemps 2025"
+        showTitleButton={true}
+      />
+    </ThemeProvider>
+  )
 };
 
 export const WithLogo: Story = {
-  args: {
-    logo: <GsLogo />,
-    title: "Collection Femme Printemps 2025",
-    showTitleButton: true,
-  },
+  render: () => (
+    <ThemeProvider>
+      <PageHeader
+        logo={<GsLogo />}
+        title="Collection Femme Printemps 2025"
+        showTitleButton={true}
+      />
+    </ThemeProvider>
+  )
 };
 
 export const Complete: Story = {
-  args: {
-    logo: <GsLogo />,
-    title: "Collection Femme Printemps 2025",
-    showTitleButton: true,
-    centerContent: <WorkflowTabs />,
-    rightContent: <RightSideButtons />,
-  },
+  render: () => (
+    <ThemeProvider>
+      <PageHeader
+        logo={<GsLogo />}
+        title="Collection Femme Printemps 2025"
+        showTitleButton={true}
+        centerContent={<WorkflowTabs />}
+        rightContent={<RightSideButtons />}
+      />
+    </ThemeProvider>
+  )
 };
 
 export const NoTitleButton: Story = {
-  args: {
-    logo: <GsLogo />,
-    title: "Collection Femme Printemps 2025",
-    showTitleButton: false,
-    centerContent: <WorkflowTabs />,
-    rightContent: <RightSideButtons />,
-  },
+  render: () => (
+    <ThemeProvider>
+      <PageHeader
+        logo={<GsLogo />}
+        title="Collection Femme Printemps 2025"
+        showTitleButton={false}
+        centerContent={<WorkflowTabs />}
+        rightContent={<RightSideButtons />}
+      />
+    </ThemeProvider>
+  )
 };
 
 export const CustomTitleButton: Story = {
-  args: {
-    logo: <GsLogo />,
-    title: "Collection Femme Printemps 2025",
-    showTitleButton: true,
-    titleButtonIcon: "Plus",
-    centerContent: <WorkflowTabs />,
-    rightContent: <RightSideButtons />,
-  },
+  render: () => (
+    <ThemeProvider>
+      <PageHeader
+        logo={<GsLogo />}
+        title="Collection Femme Printemps 2025"
+        showTitleButton={true}
+        titleButtonIcon="Plus"
+        centerContent={<WorkflowTabs />}
+        rightContent={<RightSideButtons />}
+      />
+    </ThemeProvider>
+  )
 };
 
 // Add a story with active loading animation
@@ -229,23 +246,25 @@ export const WithActivityAnimation: Story = {
     }, []);
     
     return (
-      <div>
-        <PageHeader 
-          logo={<GsLogo />}
-          title="Loading Status Demonstration"
-          showTitleButton={true}
-          centerContent={<WorkflowTabs />}
-          rightContent={<RightSideButtons />}
-          isIdle={isIdle}
-        />
-        <div className="p-4">
-          <p className="mb-2 text-center">
-            {isIdle 
-              ? "Activity in progress - notice the animated gradient border at the bottom" 
-              : "Idle state - border gradient is static"}
-          </p>
+      <ThemeProvider>
+        <div>
+          <PageHeader 
+            logo={<GsLogo />}
+            title="Loading Status Demonstration"
+            showTitleButton={true}
+            centerContent={<WorkflowTabs />}
+            rightContent={<RightSideButtons />}
+            isIdle={isIdle}
+          />
+          <div className="p-4">
+            <p className="mb-2 text-center">
+              {isIdle 
+                ? "Activity in progress - notice the animated gradient border at the bottom" 
+                : "Idle state - border gradient is static"}
+            </p>
+          </div>
         </div>
-      </div>
+      </ThemeProvider>
     );
   },
 };
