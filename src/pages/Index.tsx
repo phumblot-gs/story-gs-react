@@ -5,13 +5,24 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import PageHeader from "@/components/PageHeader";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
+import { useActivityStatusContext } from "@/contexts/ActivityStatusContext";
 
 const Index = () => {
+  const { isIdle, startRequest, endRequest } = useActivityStatusContext();
+
+  const simulateRequest = () => {
+    startRequest();
+    setTimeout(() => {
+      endRequest();
+    }, 3000); // Simule une requête de 3 secondes
+  };
+
   return (
     <div>
       <PageHeader 
         title="GS Components Library Demo"
         showTitleButton={false}
+        isIdle={isIdle}
       />
       
       <div className="container mx-auto p-6">
@@ -24,10 +35,13 @@ const Index = () => {
             <CardContent>
               <ThemeSwitcher />
             </CardContent>
-            <CardFooter>
+            <CardFooter className="flex justify-between">
               <Link to="/theme-customizer">
                 <Button>Personnaliser le thème</Button>
               </Link>
+              <Button onClick={simulateRequest} variant="outline">
+                {isIdle ? "Simulation en cours..." : "Simuler une requête (3s)"}
+              </Button>
             </CardFooter>
           </Card>
 

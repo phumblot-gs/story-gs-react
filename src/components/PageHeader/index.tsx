@@ -13,6 +13,7 @@ export interface PageHeaderProps {
   centerContent?: React.ReactNode;
   rightContent?: React.ReactNode;
   className?: string;
+  isIdle?: boolean;
 }
 
 const PageHeader: React.FC<PageHeaderProps> = ({
@@ -24,6 +25,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
   centerContent,
   rightContent,
   className,
+  isIdle = false,
 }) => {
   return (
     <header
@@ -58,7 +60,10 @@ const PageHeader: React.FC<PageHeaderProps> = ({
       )}
 
       {/* Gradient border at bottom */}
-      <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-gradient-to-r from-[#74D2D8] to-[#EBED8C]"></div>
+      <div className={cn(
+        "absolute bottom-0 left-0 right-0 h-[3px] bg-gradient-to-r from-[#74D2D8] to-[#EBED8C]",
+        isIdle && "bg-size-200 animate-gradient-flow"
+      )}></div>
     </header>
   );
 };
