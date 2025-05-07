@@ -47,8 +47,8 @@ const ThemeDemo = () => {
             <p>If you integrate this component library into your application, you must:</p>
             <p>1. Wrap your application with the necessary providers</p>
             <pre>
-            {
-              {/* In your main file (e.g. App.tsx) */}
+            {`
+              // In your main file (e.g. App.tsx)
               import { ThemeProvider } from ‘./contexts/ThemeContext’;
               import { ThemeProvider as NextThemeProvider } from ‘next-themes’;
                
@@ -56,33 +56,33 @@ const ThemeDemo = () => {
                return (
                <NextThemeProvider attribute=‘class’ defaultTheme=‘system’ enableSystem>
                <ThemeProvider>
-                {/* The rest of your application */}
+                // The rest of your application
                </ThemeProvider>
                </NextThemeProvider>
                );
               }
-            }
+            `}
             </pre>
             <p>2. Customise the default colours (optional)</p>
             <pre>
-            {
+            {`
              <ThemeProvider initialCustomization={{
                   colours: {
                   bgWhite: ‘#FFFFFF’,
                   statusValidated: ‘#89CC52’,
-                  {/* Other custom colours... */}
+                  // Other custom colours...
                 },
                 text: {
                   brandName: ‘My Application’
                 }
              }}>
-               {/* The rest of your application */}
+               // The rest of your application
              </ThemeProvider>
-            }
+            `}
             </pre>
             <p>3. Integrate the ThemeCustomizer component into your application</p>
             <pre>
-            {
+            {`
               import { ThemeCustomizer } from “@/components/ThemeCustomizer”;
               
               function Header() {
@@ -93,11 +93,11 @@ const ThemeDemo = () => {
                   </header>
                 );
               }
-            }
+            `}
             </pre>
             <p>4. Use the useThemeValues hook to apply styles</p>
             <pre>
-            {
+            {`
               import { useThemeValues } from ‘@/hooks/useThemeValues’;
               
               function MyComponent() {
@@ -105,13 +105,13 @@ const ThemeDemo = () => {
                  
                 return (
                   <div style={cssVars as React.CSSProperties}>
-                  {/* Your content here will benefit from custom CSS variables */}
+                  // Your content here will benefit from custom CSS variables
                   <h1>{brandName}</h1>
                   <p>Current mode: {isDarkMode ? ‘Dark’ : ‘Light’}</p>
                   </div>
                 );
               }
-            }
+            `}
             </pre>
           </div>
 
