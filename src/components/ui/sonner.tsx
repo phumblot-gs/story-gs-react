@@ -3,9 +3,11 @@ import { useTheme } from "next-themes"
 import { Toaster as Sonner, toast as sonnerToast } from "sonner"
 import { IconProvider } from "./icon-provider"
 
-type ToasterProps = React.ComponentProps<typeof Sonner>
+type ToasterProps = React.ComponentProps<typeof Sonner> & {
+  defaultDuration?: number
+}
 
-const Toaster = ({ ...props }: ToasterProps) => {
+const Toaster = ({ defaultDuration = 2000, ...props }: ToasterProps) => {
   const { theme = "system" } = useTheme()
 
   return (
@@ -14,9 +16,9 @@ const Toaster = ({ ...props }: ToasterProps) => {
       className="toaster group"
       position="top-center"
       toastOptions={{
-        duration: 2000,
+        duration: defaultDuration,
         classNames: {
-          toast: "group toast group-[.toaster]:shadow-lg rounded-sm px-[30px] py-[20px]",
+          toast: "group toast group-[.toaster]:shadow-lg rounded-2 px-[30px] py-[20px]",
           title: "text-[1rem] italic font-[300]",
           description: "font-[300]",
           actionButton: "group-[.toast]:bg-primary group-[.toast]:text-primary-foreground",
