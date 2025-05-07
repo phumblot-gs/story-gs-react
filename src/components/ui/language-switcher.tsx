@@ -40,6 +40,7 @@ export const LanguageSwitcher = ({
             className={className}
             disabled={disabled}
             background="white"
+            size="large"
             onClick={() => setIsOpen(!isOpen)}
             data-active={isOpen}
             style={{
@@ -47,7 +48,10 @@ export const LanguageSwitcher = ({
             }}
           >
             {isOpen ? (
-              <X size={12} />
+              <X 
+                size={12} 
+                className="hover:text-blue" 
+              />
             ) : (
               <span className="text-sm font-normal">{currentLanguage.code}</span>
             )}
@@ -55,9 +59,9 @@ export const LanguageSwitcher = ({
         </div>
       </PopoverTrigger>
       <PopoverContent 
-        className="w-[200px] p-0 bg-black border-0 rounded-md" 
-        align="start"
-        sideOffset={5}
+        className="w-[136px] p-0 bg-[#292828] border-0 rounded-[2px]" 
+        align="end"
+        sideOffset={10}
       >
         <div className="flex flex-col w-full">
           {languages.map((language) => (
