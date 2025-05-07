@@ -3,6 +3,7 @@ import React from "react";
 import PageHeader from "@/components/PageHeader";
 import { ButtonCircle } from "@/components/ui/button-circle";
 import { ThemeProvider } from "@/contexts/ThemeContext";
+import { LanguageSwitcher } from "@/components/ui/language-switcher";
 
 // Custom logo component
 const GsLogo = () => (
@@ -22,16 +23,30 @@ const WorkflowTabs = () => (
 );
 
 // Right side content with buttons
-const RightSideButtons = () => (
-  <>
-    <span className="text-sm font-medium">FR</span>
-    <ButtonCircle icon="User" />
-    <ButtonCircle icon="Settings" />
-    <ButtonCircle icon="Help" />
-    <ButtonCircle icon="Bell" indicator={true} />
-    <ButtonCircle icon="Logout" />
-  </>
-);
+const RightSideButtons = () => {
+  // Sample languages for the LanguageSwitcher component
+  const languages = [
+    { code: "FR", name: "Français" },
+    { code: "EN", name: "English" },
+    { code: "ES", name: "Español" },
+  ];
+  const [currentLanguage, setCurrentLanguage] = React.useState(languages[0]);
+
+  return (
+    <>
+      <LanguageSwitcher 
+        languages={languages} 
+        currentLanguage={currentLanguage} 
+        onLanguageChange={setCurrentLanguage} 
+      />
+      <ButtonCircle icon="User" size="large" background="white" />
+      <ButtonCircle icon="Settings" size="large" background="white" />
+      <ButtonCircle icon="Help" size="large" background="white" />
+      <ButtonCircle icon="Bell" indicator={true} size="large" background="white" />
+      <ButtonCircle icon="Logout" size="large" background="white" />
+    </>
+  );
+};
 
 export const PageHeaderExample = () => {
   return (
