@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useCustomTheme } from '@/contexts/ThemeContext';
 import { useThemeValues, normalizeColorValue } from '@/hooks/useThemeValues';
 import { Sun, Moon, Palette } from 'lucide-react';
@@ -126,10 +126,11 @@ export const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({
             </div>
             
             <Tabs defaultValue="background">
-              <TabsList className="grid grid-cols-3 mb-2">
+              <TabsList className="grid grid-cols-4 mb-2">
                 <TabsTrigger value="background">Background</TabsTrigger>
                 <TabsTrigger value="text">Text</TabsTrigger>
                 <TabsTrigger value="status">Status</TabsTrigger>
+                <TabsTrigger value="header">Header</TabsTrigger>
               </TabsList>
               
               <TabsContent value="background" className="space-y-3">
@@ -279,6 +280,33 @@ export const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({
                   value={formValues.statusPublished || ''}
                   onChange={handleInputChange} 
                 />
+              </TabsContent>
+              
+              <TabsContent value="header" className="space-y-3">
+                <ColorInput 
+                  label="Header Gradient Start" 
+                  colorKey="headerGradientStart" 
+                  defaultValue={defaultColors.headerGradientStart}
+                  value={formValues.headerGradientStart || ''}
+                  onChange={handleInputChange} 
+                />
+                <ColorInput 
+                  label="Header Gradient End" 
+                  colorKey="headerGradientEnd" 
+                  defaultValue={defaultColors.headerGradientEnd}
+                  value={formValues.headerGradientEnd || ''}
+                  onChange={handleInputChange} 
+                />
+                {/* Preview of the gradient */}
+                <div className="mt-4">
+                  <Label className="mb-2 block">Gradient Preview</Label>
+                  <div 
+                    className="h-8 w-full rounded-md"
+                    style={{ 
+                      background: `linear-gradient(to right, ${formValues.headerGradientStart || defaultColors.headerGradientStart}, ${formValues.headerGradientEnd || defaultColors.headerGradientEnd})` 
+                    }}
+                  ></div>
+                </div>
               </TabsContent>
             </Tabs>
             

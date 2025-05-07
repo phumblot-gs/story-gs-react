@@ -67,6 +67,8 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
+				'header-gradient-start': 'var(--header-gradient-start, #74D2D8)',
+				'header-gradient-end': 'var(--header-gradient-end, #EBED8C)',
 				// Figma custom colors - updated to use CSS variables with fallbacks
 				'black': 'var(--bg-black, #292828)',
 				'black-secondary': 'var(--bg-black-secondary, #3A3A3A)',

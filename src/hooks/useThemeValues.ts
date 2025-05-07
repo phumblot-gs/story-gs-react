@@ -46,6 +46,10 @@ export function useThemeValues() {
     statusToPublish: "#B7BB28",
     statusError: "#DD3733",
     statusPublished: "#8B4513",
+    
+    // Header gradient colors
+    headerGradientStart: "#74D2D8",
+    headerGradientEnd: "#EBED8C",
   };
   
   // Convert custom colors to CSS variable format if available, otherwise use defaults
@@ -88,6 +92,10 @@ export function useThemeValues() {
     processColor("statusToPublish", "--status-to-publish-color", "statusToPublish");
     processColor("statusError", "--status-error-color", "statusError");
     processColor("statusPublished", "--status-published-color", "statusPublished");
+    
+    // Process header gradient colors
+    processColor("headerGradientStart", "--header-gradient-start", "headerGradientStart");
+    processColor("headerGradientEnd", "--header-gradient-end", "headerGradientEnd");
     
     return cssVars;
   };

@@ -59,9 +59,9 @@ const PageHeader: React.FC<PageHeaderProps> = ({
         </div>
       )}
 
-      {/* Gradient border at bottom */}
+      {/* Gradient border at bottom using CSS variables for customization */}
       <div className={cn(
-        "absolute bottom-0 left-0 right-0 h-[3px] bg-gradient-to-r from-[#74D2D8] to-[#EBED8C]",
+        "absolute bottom-0 left-0 right-0 h-[3px] bg-gradient-to-r from-header-gradient-start to-header-gradient-end",
         isIdle && "bg-size-200 animate-gradient-flow"
       )}></div>
     </header>

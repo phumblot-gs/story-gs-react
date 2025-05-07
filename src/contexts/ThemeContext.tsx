@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useTheme as useNextTheme } from "next-themes";
 
@@ -36,6 +37,10 @@ export interface ThemeCustomization {
     statusToPublish?: string;
     statusError?: string;
     statusPublished?: string;
+
+    // Header colors
+    headerGradientStart?: string;
+    headerGradientEnd?: string;
   };
   // Brand assets
   assets: {
@@ -91,6 +96,10 @@ const defaultCustomization: ThemeCustomization = {
     statusToPublish: undefined,
     statusError: undefined,
     statusPublished: undefined,
+
+    // Header colors
+    headerGradientStart: undefined,
+    headerGradientEnd: undefined,
   },
   assets: {
     logo: undefined,
@@ -249,6 +258,10 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
       document.documentElement.style.removeProperty('--status-error-color');
       document.documentElement.style.removeProperty('--status-published-color');
       
+      // Add header gradient colors
+      document.documentElement.style.removeProperty('--header-gradient-start');
+      document.documentElement.style.removeProperty('--header-gradient-end');
+      
       // Now apply only the custom colors that are defined
       // Apply background colors
       if (customization.colors.bgWhite) {
@@ -314,6 +327,14 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
       }
       if (customization.colors.statusPublished) {
         document.documentElement.style.setProperty('--status-published-color', customization.colors.statusPublished);
+      }
+      
+      // Apply header gradient colors
+      if (customization.colors.headerGradientStart) {
+        document.documentElement.style.setProperty('--header-gradient-start', customization.colors.headerGradientStart);
+      }
+      if (customization.colors.headerGradientEnd) {
+        document.documentElement.style.setProperty('--header-gradient-end', customization.colors.headerGradientEnd);
       }
     }
   }, [customization.colors]);
