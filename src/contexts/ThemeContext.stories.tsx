@@ -112,71 +112,79 @@ const ThemeProviderWrapper = ({
 };
 
 /**
- * The ThemeProvider component is a context provider that manages theme state and customization
- * throughout your application. It provides support for light/dark mode switching and
- * customizing colors, assets, and text.
+ * Le ThemeProvider est un composant de contexte qui gère l'état du thème et des personnalisations
+ * dans votre application. Il prend en charge le basculement entre les modes clair/sombre et 
+ * la personnalisation des couleurs, des ressources et du texte.
  * 
- * ## Key Features
+ * ## Intégration
  * 
- * - Light/dark mode support with system preference detection
- * - Theme customization including colors, assets and text properties
- * - Persistent theme settings using localStorage
- * - Automatic CSS variable application
+ * Si vous intégrez cette librairie de composants à votre application, vous devez :
  * 
- * ## Usage
+ * ### 1. Envelopper votre application avec les providers nécessaires
  * 
- * Wrap your application with the ThemeProvider at the root level:
- * 
- * ```tsx
+ * ```jsx
+ * // Dans votre fichier principal (ex: App.tsx)
  * import { ThemeProvider } from "./contexts/ThemeContext";
+ * import { ThemeProvider as NextThemeProvider } from "next-themes";
  * 
- * const App = () => {
+ * function App() {
  *   return (
- *     <ThemeProvider>
- *       <YourApplication />
- *     </ThemeProvider>
+ *     <NextThemeProvider attribute="class" defaultTheme="system" enableSystem>
+ *       <ThemeProvider>
+ *         {/* Le reste de votre application */}
+ *       </ThemeProvider>
+ *     </NextThemeProvider>
  *   );
  * }
  * ```
  * 
- * ## Customization
+ * ### 2. Personnaliser les couleurs par défaut (optionnel)
  * 
- * You can provide initial customization options:
- * 
- * ```tsx
+ * ```jsx
  * <ThemeProvider
- *   defaultTheme="dark"
  *   initialCustomization={{
  *     colors: {
- *       statusValidated: "#00FF00",
- *       bgWhite: "#F8F8F8"
+ *       bgWhite: "#FFFFFF",
+ *       statusValidated: "#89CC52",
+ *       // Autres couleurs personnalisées...
  *     },
  *     text: {
- *       brandName: "My Brand"
+ *       brandName: "Mon Application"
  *     }
  *   }}
  * >
- *   <YourApplication />
+ *   {/* Le reste de votre application */}
  * </ThemeProvider>
  * ```
  * 
- * ## Accessing Theme Values
+ * ### 3. Intégrer le composant ThemeCustomizer dans votre application
  * 
- * You can access theme values in your components using the `useCustomTheme` hook:
+ * ```jsx
+ * import { ThemeCustomizer } from '@/components/ThemeCustomizer';
  * 
- * ```tsx
- * import { useCustomTheme } from "./contexts/ThemeContext";
- * 
- * const MyComponent = () => {
- *   const { theme, setTheme, customization } = useCustomTheme();
- *   
+ * function Header() {
  *   return (
- *     <div>
- *       <p>Current theme: {theme}</p>
- *       <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
- *         Toggle Theme
- *       </button>
- *       <p>Brand name: {customization.text.brandName}</p>
+ *     <header className="bg-background p-4 flex justify-between">
+ *       <h1>Mon Application</h1>
+ *       <ThemeCustomizer />
+ *     </header>
+ *   );
+ * }
+ * ```
+ * 
+ * ### 4. Utiliser le hook useThemeValues pour appliquer les styles
+ * 
+ * ```jsx
+ * import { useThemeValues } from '@/hooks/useThemeValues';
+ * 
+ * function MyComponent() {
+ *   const { cssVars, brandName, isDarkMode } = useThemeValues();
+ * 
+ *   return (
+ *     <div style={cssVars as React.CSSProperties}>
+ *       {/* Votre contenu ici bénéficiera des variables CSS personnalisées */}
+ *       <h1>{brandName}</h1>
+ *       <p>Mode actuel: {isDarkMode ? 'Sombre' : 'Clair'}</p>
  *     </div>
  *   );
  * }
@@ -192,20 +200,20 @@ const meta = {
     },
     docs: {
       description: {
-        component: "ThemeProvider manages theme state and customization across your application."
+        component: "ThemeProvider gère l'état du thème et les personnalisations dans votre application."
       }
     }
   },
   tags: ["autodocs"],
   argTypes: {
     initialTheme: {
-      description: "The initial theme mode to use",
+      description: "Le mode de thème initial à utiliser",
       control: "select",
       options: ["light", "dark", "system"],
       defaultValue: "light"
     },
     initialCustomization: {
-      description: "Initial theme customization options",
+      description: "Options de personnalisation initiales du thème",
       control: "object"
     }
   },
@@ -222,7 +230,7 @@ export default meta;
 type Story = StoryObj<typeof ThemeProviderWrapper>;
 
 /**
- * Default configuration of the ThemeProvider with no customizations.
+ * Configuration par défaut du ThemeProvider sans personnalisations.
  */
 export const Default: Story = {
   render: () => (
@@ -233,7 +241,7 @@ export const Default: Story = {
 };
 
 /**
- * ThemeProvider with dark mode enabled by default.
+ * ThemeProvider avec le mode sombre activé par défaut.
  */
 export const DarkMode: Story = {
   render: () => (
@@ -244,22 +252,22 @@ export const DarkMode: Story = {
 };
 
 /**
- * ThemeProvider with custom branded colors for the theme.
+ * ThemeProvider avec des couleurs personnalisées pour le thème.
  */
 export const CustomColors: Story = {
   render: () => (
     <ThemeProviderWrapper 
       initialCustomization={{
         colors: {
-          statusValidated: "#9b87f5", // Custom purple for validated status
-          statusSelected: "#7E69AB", // Custom secondary purple for selected status
-          statusError: "#D946EF", // Magenta pink for error status
-          bgWhite: "#F1F0FB", // Soft gray for background
-          bgBlack: "#1A1F2C", // Dark purple for black background
-          textBlue: "#0EA5E9" // Ocean blue for text
+          statusValidated: "#9b87f5", // Violet personnalisé pour le statut validé
+          statusSelected: "#7E69AB", // Violet secondaire personnalisé pour le statut sélectionné
+          statusError: "#D946EF", // Rose magenta pour le statut d'erreur
+          bgWhite: "#F1F0FB", // Gris doux pour l'arrière-plan
+          bgBlack: "#1A1F2C", // Violet foncé pour l'arrière-plan noir
+          textBlue: "#0EA5E9" // Bleu océan pour le texte
         },
         text: {
-          brandName: "Purple Theme Demo"
+          brandName: "Démo Thème Violet"
         }
       }}
     >
@@ -269,7 +277,7 @@ export const CustomColors: Story = {
 };
 
 /**
- * Example showing a custom brand configuration.
+ * Exemple montrant une configuration de marque personnalisée.
  */
 export const BrandCustomization: Story = {
   render: () => (
