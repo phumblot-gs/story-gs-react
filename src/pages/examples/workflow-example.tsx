@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { Workflow } from "../ui/workflow";
+import { Workflow } from "@/components/ui/workflow";
 
 export const WorkflowExample: React.FC = () => {
   const [activeStep, setActiveStep] = useState("4");
@@ -51,3 +51,5 @@ export const WorkflowExample: React.FC = () => {
     </div>
   );
 };
+
+export default WorkflowExample;

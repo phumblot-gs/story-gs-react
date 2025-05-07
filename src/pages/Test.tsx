@@ -14,8 +14,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Check, X } from "lucide-react";
 import PageHeader from "@/components/PageHeader";
 import { Workflow } from "@/components/ui/workflow";
-import { WorkflowExample } from "@/components/examples/workflow-example";
-import { LanguageSwitcherExample } from "@/components/examples/language-switcher-example";
+import { WorkflowExample } from "@/pages/examples/workflow-example";
+import { LanguageSwitcherExample } from "@/pages/examples/language-switcher-example";
 import { toast } from "@/components/ui/sonner";
 import { ToastSuccessIcon, ToastErrorIcon } from "@/components/ui/button-circle/custom-icons";
 import { IconProvider } from "@/components/ui/icon-provider";
@@ -25,9 +25,14 @@ const Test: React.FC = () => {
     <div className="container px-4 py-8">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">Components Test Page</h1>
-        <Link to="/">
-          <Button variant="outline">Back to Home</Button>
-        </Link>
+        <div className="flex gap-4">
+          <Link to="/">
+            <Button variant="outline">Back to Home</Button>
+          </Link>
+          <Link to="/examples">
+            <Button variant="outline">View Examples</Button>
+          </Link>
+        </div>
       </div>
 
       <Tabs defaultValue="page-header" className="w-full">

@@ -1,39 +1,32 @@
 
-import { Toaster } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
-import Test from "./pages/Test";
-import { ThemeProvider as NextThemeProvider } from "next-themes";
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { Toaster } from "./components/ui/sonner";
+
+import Index from "./pages/Index";
+import Test from "./pages/Test";
+import NotFound from "./pages/NotFound";
 import ThemeCustomizerPage from "./pages/ThemeCustomizerPage";
-import { ActivityStatusProvider } from "./contexts/ActivityStatusContext";
+import ExamplesPage from "./pages/examples"; // Import the new ExamplesPage
 
-const queryClient = new QueryClient();
+import "./App.css";
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <NextThemeProvider attribute="class" defaultTheme="system" enableSystem>
-      <ThemeProvider>
-        <ActivityStatusProvider>
-          <TooltipProvider>
-            <Toaster />
-            <BrowserRouter>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/test" element={<Test />} />
-                <Route path="/theme-customizer" element={<ThemeCustomizerPage />} />
-                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </BrowserRouter>
-          </TooltipProvider>
-        </ActivityStatusProvider>
-      </ThemeProvider>
-    </NextThemeProvider>
-  </QueryClientProvider>
-);
+function App() {
+  return (
+    <ThemeProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Index />} />
+          <Route path="/test" element={<Test />} />
+          <Route path="/examples" element={<ExamplesPage />} /> {/* Add route for examples */}
+          <Route path="/theme-customizer" element={<ThemeCustomizerPage />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </Router>
+      <Toaster />
+    </ThemeProvider>
+  );
+}
 
 export default App;
