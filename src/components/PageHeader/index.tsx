@@ -2,7 +2,7 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 import PageTitle from "./PageTitle";
-import { AllowedPictogram } from "@/components/ui/button-circle/types";
+import { IconName } from "@/components/ui/icons/types";
 import { useThemeValues } from "@/hooks/useThemeValues";
 import BrandLogo from "./BrandLogo";
 
@@ -10,7 +10,7 @@ export interface PageHeaderProps {
   logo?: React.ReactNode;
   title: string;
   showTitleButton?: boolean;
-  titleButtonIcon?: AllowedPictogram;
+  titleButtonIcon?: IconName;
   onTitleButtonClick?: () => void;
   centerContent?: React.ReactNode;
   rightContent?: React.ReactNode;

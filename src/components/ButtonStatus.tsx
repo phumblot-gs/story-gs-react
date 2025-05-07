@@ -3,11 +3,11 @@ import React from "react";
 import { MediaStatus, getMediaStatusColorClass, mediaStatusNames, shouldUseWhiteIcon } from "@/utils/mediaStatus";
 import { ButtonCircle } from "@/components/ui/button-circle";
 import { cn } from "@/lib/utils";
-import { AllowedPictogram } from "@/components/ui/button-circle/types";
+import { IconName } from "@/components/ui/icons/types";
 
 export interface ButtonStatusProps {
   status: MediaStatus;
-  icon: "Check" | "X"; // Using capitalized names to match AllowedPictogram type
+  icon: "Check" | "X"; // Using capitalized names to match IconName type
   isActive?: boolean;
   disabled?: boolean;
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
@@ -80,7 +80,7 @@ export const ButtonStatus: React.FC<ButtonStatusProps> = ({
         // Set CSS variables for dynamic colors
         "--status-bg-color": `var(--${statusColorClass}-color)`,
       } as React.CSSProperties}
-      icon={icon as AllowedPictogram}
+      icon={icon as IconName}
     />
   );
 };

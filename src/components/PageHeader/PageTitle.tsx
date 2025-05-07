@@ -1,13 +1,13 @@
 
 import React from "react";
 import { ButtonCircle } from "@/components/ui/button-circle";
-import { AllowedPictogram } from "@/components/ui/button-circle/types";
+import { IconName } from "@/components/ui/icons/types";
 import { cn } from "@/lib/utils";
 
 export interface PageTitleProps {
   title: string;
   showButton?: boolean;
-  buttonIcon?: AllowedPictogram;
+  buttonIcon?: IconName;
   onButtonClick?: () => void;
   className?: string;
   featured?: boolean;

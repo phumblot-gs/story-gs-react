@@ -1,8 +1,8 @@
 
 import React from "react"
 import * as LucideIcons from "lucide-react"
-import { IconName } from "@/components/ui/icons/types"
-import * as CustomIcons from "@/components/ui/icons"
+import { IconName } from "./icons/types"
+import * as CustomIcons from "./icons"
 
 /**
  * Renders the appropriate icon based on the icon name
