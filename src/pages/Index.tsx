@@ -35,7 +35,7 @@ const Index = () => {
             <CardContent>
               <ThemeSwitcher />
             </CardContent>
-            <CardFooter className="flex justify-between">
+            <CardFooter>
               <Link to="/theme-customizer">
                 <Button>Personnaliser le thème</Button>
               </Link>
