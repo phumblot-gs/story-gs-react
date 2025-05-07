@@ -19,7 +19,7 @@ const Toaster = ({ defaultDuration = 2000, debug = false, ...props }: ToasterPro
       toastOptions={{
         duration: defaultDuration,
         classNames: {
-          toast: "group toast group-[.toaster]:shadow-lg rounded-2 px-[30px] py-[20px]",
+          toast: "group toast group-[.toaster]:shadow-lg rounded-sm px-[30px] py-[20px]",
           title: "text-[1rem] italic font-[300]",
           description: "font-[300]",
           actionButton: "group-[.toast]:bg-primary group-[.toast]:text-primary-foreground",
