@@ -14,6 +14,7 @@ interface ColorInputProps {
   label: string;
   colorKey: string;
   defaultValue: string;
+  value?: string; // Ajout de la propriété value comme optionnelle
   onChange: (key: string, value: string) => void;
 }
 
@@ -21,18 +22,20 @@ const ColorInput = memo(({
   label, 
   colorKey, 
   defaultValue, 
+  value: externalValue, // Renommé pour éviter les conflits
   onChange 
 }: ColorInputProps) => {
   // Local state for preview color only
-  const [previewColor, setPreviewColor] = useState<string>(defaultValue);
+  const [previewColor, setPreviewColor] = useState<string>(externalValue || defaultValue);
   // Keep the current value in a ref to avoid re-renders
-  const inputValueRef = useRef<string>(defaultValue);
+  const inputValueRef = useRef<string>(externalValue || defaultValue);
   
-  // Update local preview whenever defaultValue changes externally
+  // Update local preview whenever defaultValue or externalValue changes
   useEffect(() => {
-    inputValueRef.current = defaultValue;
-    setPreviewColor(defaultValue);
-  }, [defaultValue]);
+    const newValue = externalValue !== undefined ? externalValue : defaultValue;
+    inputValueRef.current = newValue;
+    setPreviewColor(newValue);
+  }, [defaultValue, externalValue]);
 
   // Handle local input change without triggering re-renders
   const handleLocalChange = (e: React.ChangeEvent<HTMLInputElement>) => {
