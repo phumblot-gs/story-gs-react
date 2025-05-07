@@ -131,7 +131,7 @@ const ThemeProviderWrapper = ({
  *   return (
  *     <NextThemeProvider attribute="class" defaultTheme="system" enableSystem>
  *       <ThemeProvider>
- *         {/* Le reste de votre application */}
+ *         {/* Le contenu de votre application */}
  *       </ThemeProvider>
  *     </NextThemeProvider>
  *   );
@@ -153,7 +153,7 @@ const ThemeProviderWrapper = ({
  *     }
  *   }}
  * >
- *   {/* Le reste de votre application */}
+ *   {/* Le contenu de votre application */}
  * </ThemeProvider>
  * ```
  * 
@@ -182,7 +182,7 @@ const ThemeProviderWrapper = ({
  * 
  *   return (
  *     <div style={cssVars as React.CSSProperties}>
- *       {/* Votre contenu ici bénéficiera des variables CSS personnalisées */}
+ *       {/* Votre contenu bénéficiera des variables CSS personnalisées */}
  *       <h1>{brandName}</h1>
  *       <p>Mode actuel: {isDarkMode ? 'Sombre' : 'Clair'}</p>
  *     </div>
