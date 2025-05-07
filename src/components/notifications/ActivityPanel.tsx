@@ -43,7 +43,6 @@ const ActivityPanel: React.FC<ActivityPanelProps> = ({
       <SheetContent 
         side="right" 
         className="w-[350px] bg-bg-black border-none p-0"
-        overlayClassName="bg-[rgba(0,0,0,0.8)]"
       >
         <div className="flex flex-col h-full">
           {/* Header */}

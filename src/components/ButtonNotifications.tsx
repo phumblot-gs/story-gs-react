@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { ButtonCircle } from "@/components/ui/button-circle";
 import ActivityPanel from "./notifications/ActivityPanel";
-import { EventProps } from "./notifications/EventPanel";
+import { EventProps, NotificationType } from "./notifications/EventPanel";
 import { MediaStatus } from "@/utils/mediaStatus";
 
 // Mock data for demonstration, in a real app this would come from props or a data fetching hook

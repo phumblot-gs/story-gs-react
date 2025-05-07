@@ -3,7 +3,7 @@ import React from "react";
 import MediaStatus from "../MediaStatus";
 import { MediaStatus as MediaStatusEnum } from "@/utils/mediaStatus";
 import { cn } from "@/lib/utils";
-import Link from "next/link";
+import { Link } from "react-router-dom";
 
 export type NotificationType = "comment" | "transfer" | "other";
 
@@ -33,7 +33,7 @@ const EventPanel: React.FC<EventProps> = ({
 
   return (
     <Link 
-      href={redirectLink}
+      to={redirectLink}
       className="block no-underline text-white hover:bg-bg-black-secondary transition-all duration-200"
     >
       <div className="flex flex-row items-start p-2.5 gap-2.5 bg-bg-black">

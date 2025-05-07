@@ -3,6 +3,7 @@ import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import ButtonNotifications from "./ButtonNotifications";
 import { MediaStatus } from "@/utils/mediaStatus";
+import { NotificationType } from "./notifications/EventPanel";
 
 const meta: Meta<typeof ButtonNotifications> = {
   title: "Components/ButtonNotifications",
@@ -34,7 +35,7 @@ export const WithoutUnreadNotifications: Story = {
         title: "Connect Added Comments on photos",
         subtitle: "STANDARD-2025-05-07 H02-PART-1",
         pictureStatus: MediaStatus.SUBMITTED_FOR_APPROVAL,
-        type: "comment",
+        type: "comment" as NotificationType,
         redirectLink: "#",
         date: new Date(),
         unread: false
@@ -43,7 +44,7 @@ export const WithoutUnreadNotifications: Story = {
         title: "Files transferred to editing team",
         subtitle: "STANDARD-2025-05-07 H02-PART-1",
         pictureStatus: MediaStatus.SELECTED,
-        type: "transfer",
+        type: "transfer" as NotificationType,
         redirectLink: "#",
         date: new Date(),
         unread: false
@@ -59,7 +60,7 @@ export const WithUnreadNotifications: Story = {
         title: "Connect Added Comments on photos",
         subtitle: "STANDARD-2025-05-07 H02-PART-1",
         pictureStatus: MediaStatus.SUBMITTED_FOR_APPROVAL,
-        type: "comment",
+        type: "comment" as NotificationType,
         redirectLink: "#",
         date: new Date(),
         unread: true
@@ -68,7 +69,7 @@ export const WithUnreadNotifications: Story = {
         title: "Files transferred to editing team",
         subtitle: "STANDARD-2025-05-07 H02-PART-1",
         pictureStatus: MediaStatus.SELECTED,
-        type: "transfer",
+        type: "transfer" as NotificationType,
         redirectLink: "#",
         date: new Date(),
         unread: false

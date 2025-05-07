@@ -3,6 +3,7 @@ import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import ActivityPanel from "./ActivityPanel";
 import { MediaStatus } from "@/utils/mediaStatus";
+import { NotificationType } from "./EventPanel";
 
 const meta: Meta<typeof ActivityPanel> = {
   title: "Components/Notifications/ActivityPanel",
@@ -40,7 +41,7 @@ const generateMockEvents = () => {
       title: "Connect Added Comments on photos",
       subtitle: "STANDARD-2025-05-07 H02-PART-1",
       pictureStatus: MediaStatus.SUBMITTED_FOR_APPROVAL,
-      type: "comment",
+      type: "comment" as NotificationType,
       redirectLink: "#",
       date: today,
       unread: true
@@ -49,7 +50,7 @@ const generateMockEvents = () => {
       title: "Connect Added Comments on photos",
       subtitle: "STANDARD-2025-05-07 H02-PART-1",
       pictureStatus: MediaStatus.SELECTED,
-      type: "comment",
+      type: "comment" as NotificationType,
       redirectLink: "#",
       date: today,
       unread: true
@@ -58,7 +59,7 @@ const generateMockEvents = () => {
       title: "Files transferred to editing team",
       subtitle: "STANDARD-2025-05-07 H02-PART-1",
       pictureStatus: MediaStatus.VALIDATED,
-      type: "transfer",
+      type: "transfer" as NotificationType,
       redirectLink: "#",
       date: today,
       unread: true
@@ -67,7 +68,7 @@ const generateMockEvents = () => {
       title: "Connect Added Comments on photos",
       subtitle: "STANDARD-2025-05-07 H02-PART-1",
       pictureStatus: MediaStatus.BROADCAST,
-      type: "comment",
+      type: "comment" as NotificationType,
       redirectLink: "#",
       date: yesterday,
       unread: false
@@ -76,7 +77,7 @@ const generateMockEvents = () => {
       title: "Files published to website",
       subtitle: "STANDARD-2025-05-07 H02-PART-1",
       pictureStatus: MediaStatus.BROADCAST,
-      type: "other",
+      type: "other" as NotificationType,
       redirectLink: "#",
       date: yesterday,
       unread: false
