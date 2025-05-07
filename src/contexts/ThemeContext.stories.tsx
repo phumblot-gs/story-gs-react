@@ -13,30 +13,102 @@ const ThemeDemo = () => {
   return (
     <div className="space-y-6 p-6 max-w-3xl mx-auto">
       <Card className="p-6">
-        <h2 className="text-xl font-semibold mb-4">Theme Provider Demo</h2>
+        <h2 className="text-xl font-semibold mb-4">Theme Provider</h2>
         
         <div className="space-y-6">
           <div>
             <h3 className="text-lg font-medium mb-2">Current Theme</h3>
             <p><strong>Mode:</strong> {theme}</p>
             <p><strong>Brand Name:</strong> {customization.text.brandName}</p>
-            
-            <div className="mt-4 flex gap-4">
-              <Button 
-                variant="outline" 
-                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                className="flex items-center gap-2"
-              >
-                {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-                Toggle Theme
-              </Button>
-              
-              <Button variant="outline" onClick={resetCustomization}>
-                Reset Customization
-              </Button>
-            </div>
           </div>
-          
+
+          <div>
+            <p>The ThemeProvider overrides theme-related information:
+              <ul>
+                <li>Application colours</li>
+                <li>System colours (statuses, grades)</li>
+                <li>Brand name and logo</li>
+              </ul>
+            </p>
+          </div>
+
+          <div>
+            <p>
+              The ThemeProvider is a context component that manages the state
+              of the theme and customisations in your application. It supports
+              switching between light/dark modes and  customising colours,
+              resources and text.
+            </p>
+            <p>Note: only light mode is currently implemented</p>
+          </div>
+
+          <div>
+            <h3 className="text-lg font-medium mb-2">Integration</h3>
+            <p>If you integrate this component library into your application, you must:</p>
+            <p>1. Wrap your application with the necessary providers</p>
+```jsx
+// In your main file (e.g. App.tsx)
+import { ThemeProvider } from ‘./contexts/ThemeContext’;
+import { ThemeProvider as NextThemeProvider } from ‘next-themes’;
+ 
+function App() {
+ return (
+ <NextThemeProvider attribute=‘class’ defaultTheme=‘system’ enableSystem>
+ <ThemeProvider>
+ // The rest of your application
+ </ThemeProvider>
+ </NextThemeProvider>
+ );
+ }
+ ```
+            <p>2. Customise the default colours (optional)</p>
+```jsx
+ <ThemeProvider
+ initialCustomization={{
+ colours: {
+ bgWhite: ‘#FFFFFF’,
+ statusValidated: ‘#89CC52’,
+ // Other custom colours...
+ },
+ text: {
+ brandName: ‘My Application’
+ }
+ }}
+ >
+ // The rest of your application
+ </ThemeProvider>
+ ```
+            <p>3. Integrate the ThemeCustomizer component into your application</p>
+```jsx
+ import { ThemeCustomizer } from “@/components/ThemeCustomizer”;
+ 
+ function Header() {
+ return (
+ <header className=‘bg-background p-4 flex justify-between’>
+ <h1>My Application</h1>
+ <ThemeCustomizer />
+ </header>
+ );
+ }
+ ```
+            <p>4. Use the useThemeValues hook to apply styles</p>
+```jsx
+ import { useThemeValues } from ‘@/hooks/useThemeValues’;
+ 
+ function MyComponent() {
+ const { cssVars, brandName, isDarkMode } = useThemeValues();
+ 
+ return (
+ <div style={cssVars as React.CSSProperties}>
+ // Your content here will benefit from custom CSS variables
+ <h1>{brandName}</h1>
+ <p>Current mode: {isDarkMode ? ‘Dark’ : ‘Light’}</p>
+ </div>
+ );
+ }
+ ```
+          </div>
+
           <div>
             <h3 className="text-lg font-medium mb-2">Current Customizations</h3>
             <div className="bg-muted rounded-md p-4">
@@ -77,15 +149,6 @@ const ThemeDemo = () => {
             </div>
           </div>
           
-          <div>
-            <h3 className="text-lg font-medium mb-2">Example UI Elements</h3>
-            <div className="flex flex-wrap gap-4">
-              <Button>Default Button</Button>
-              <Button variant="destructive">Destructive Button</Button>
-              <Button variant="outline">Outline Button</Button>
-              <Button variant="ghost">Ghost Button</Button>
-            </div>
-          </div>
         </div>
       </Card>
     </div>
@@ -189,7 +252,7 @@ const ThemeProviderWrapper = ({
  * ```
  */
 const meta = {
-  title: "UI/ThemeProvider",
+  title: "Context/ThemeProvider",
   component: ThemeProviderWrapper,
   parameters: {
     layout: "centered",
