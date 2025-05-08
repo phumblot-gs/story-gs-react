@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { Sheet, SheetContent, SheetClose, SheetTitle } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetClose, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { ButtonCircle } from "@/components/ui/button-circle";
 import EventPanel, { EventProps } from "./EventPanel";
 import { format } from "date-fns";
@@ -49,6 +49,8 @@ const ActivityPanel: React.FC<ActivityPanelProps> = ({
       >
         {/* Add SheetTitle for accessibility */}
         <SheetTitle className="sr-only">Notifications Panel</SheetTitle>
+        {/* Add SheetDescription for accessibility */}
+        <SheetDescription className="sr-only">Liste des notifications et événements récents</SheetDescription>
         
         <div className="flex flex-col h-full">
           {/* Header */}
