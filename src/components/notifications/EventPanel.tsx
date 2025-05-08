@@ -42,10 +42,10 @@ const EventPanel: React.FC<EventProps> = ({
           className={cn(!unread && "opacity-30")}
         />
         <div className="flex-1 min-w-0">
-          <h4 className="text-white text-[1rem] font-light italic leading-tight m-0">{title}</h4>
-          <p className="text-white text-sm font-light m-0 mt-1 truncate">{subtitle}</p>
+          <h4 className="text-white text-sm font-light italic leading-tight m-0">{title}</h4>
+          <p className="text-white text-xs font-light m-0 mt-1 truncate">{subtitle}</p>
         </div>
-        <span className="text-white text-sm whitespace-nowrap">{formattedTime}</span>
+        <span className="text-white text-xs whitespace-nowrap">{formattedTime}</span>
       </div>
     </Link>
   );

@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Sheet, SheetContent, SheetClose, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { ButtonCircle } from "@/components/ui/button-circle";
@@ -64,7 +63,7 @@ const ActivityPanel: React.FC<ActivityPanelProps> = ({
                   aria-label="Close"
                 />
               </SheetClose>
-              <h3 className="text-white text-lg font-normal m-0">
+              <h3 className="text-white text-base font-normal m-0">
                 {unreadCount} notification{unreadCount !== 1 ? 's' : ''} non lue{unreadCount !== 1 ? 's' : ''}
               </h3>
             </div>
