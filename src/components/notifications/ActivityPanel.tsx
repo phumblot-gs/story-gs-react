@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { Sheet, SheetContent, SheetOverlay } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetOverlay, SheetClose } from "@/components/ui/sheet";
 import { ButtonCircle } from "@/components/ui/button-circle";
 import EventPanel, { EventProps } from "./EventPanel";
 import { format } from "date-fns";
@@ -40,13 +40,8 @@ const ActivityPanel: React.FC<ActivityPanelProps> = ({
 
   return (
     <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      {/* Custom overlay that starts below the header */}
-      <div 
-        className={`fixed inset-x-0 bottom-0 bg-black/80 z-40 transition-all duration-300 ease-in-out ${
-          isOpen ? 'opacity-100 top-[50px]' : 'opacity-0 pointer-events-none top-[50px]'
-        }`}
-        onClick={onClose}
-      />
+      {/* Use the customized SheetOverlay with topOffset */}
+      <SheetOverlay topOffset="50px" />
       
       <SheetContent 
         side="right" 
@@ -56,12 +51,14 @@ const ActivityPanel: React.FC<ActivityPanelProps> = ({
           {/* Header */}
           <div className="p-4 flex justify-between items-center">
             <div className="flex gap-4 items-center">
-              <ButtonCircle 
-                icon="X" 
-                size="large" 
-                background="black" 
-                onClick={onClose} 
-              />
+              <SheetClose asChild>
+                <ButtonCircle 
+                  icon="X" 
+                  size="large" 
+                  background="black" 
+                  aria-label="Close"
+                />
+              </SheetClose>
               <h3 className="text-white text-lg font-normal m-0">
                 {unreadCount} notification{unreadCount !== 1 ? 's' : ''} non lue{unreadCount !== 1 ? 's' : ''}
               </h3>
