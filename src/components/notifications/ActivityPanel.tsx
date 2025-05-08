@@ -44,7 +44,7 @@ const ActivityPanel: React.FC<ActivityPanelProps> = ({
       
       <SheetContent 
         side="right" 
-        className="w-[350px] bg-[#000000e6] border-none p-0 top-[50px] h-[calc(100%-50px)]"
+        className="w-[350px] bg-black border-none p-0 top-[50px] h-[calc(100%-50px)]"
         topOffset="50px" // Pass topOffset to SheetContent
       >
         {/* Add SheetTitle for accessibility */}
@@ -53,8 +53,8 @@ const ActivityPanel: React.FC<ActivityPanelProps> = ({
         <SheetDescription className="sr-only">Liste des notifications et événements récents</SheetDescription>
         
         <div className="flex flex-col h-full">
-          {/* Header */}
-          <div className="p-4 flex justify-between items-center">
+          {/* Header - Added pt-[50px] to push the header down 50px from the top */}
+          <div className="pt-[50px] px-4 flex justify-between items-center">
             <div className="flex gap-4 items-center">
               <SheetClose asChild>
                 <ButtonCircle 
@@ -79,14 +79,14 @@ const ActivityPanel: React.FC<ActivityPanelProps> = ({
             )}
           </div>
           
-          {/* Event list - Apply padding: 50px top, left, bottom and 20px right */}
-          <div className="flex-1 overflow-auto pl-[50px] pr-[20px] pt-[50px] pb-[50px]">
+          {/* Event list with space between title and first date (20px) */}
+          <div className="flex-1 overflow-auto pl-[50px] pr-[20px] pt-[20px] pb-[50px]">
             {Object.entries(eventsByDate).map(([dateStr, dateEvents]) => (
               <div key={dateStr} className="mb-4">
                 <div className="py-2 text-white text-sm">
                   {dateStr}
                 </div>
-                <div className="space-y-[10px]"> {/* Increased spacing between EventPanels to 10px */}
+                <div className="space-y-[10px]"> {/* Spacing between EventPanels is 10px */}
                   {dateEvents.map((event, index) => (
                     <EventPanel
                       key={`${dateStr}-${index}`}
