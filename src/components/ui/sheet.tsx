@@ -61,15 +61,17 @@ const sheetVariants = cva(
 
 interface SheetContentProps
   extends React.ComponentPropsWithoutRef<typeof SheetPrimitive.Content>,
-  VariantProps<typeof sheetVariants> { }
+  VariantProps<typeof sheetVariants> { 
+    topOffset?: string | number;
+  }
 
 const SheetContent = React.forwardRef<
   React.ElementRef<typeof SheetPrimitive.Content>,
   SheetContentProps
->(({ side = "right", className, children, ...props }, ref) => (
+>(({ side = "right", className, children, topOffset, ...props }, ref) => (
   <SheetPortal>
-    {/* Re-enable SheetOverlay but don't render the default close button */}
-    <SheetOverlay />
+    {/* Use topOffset prop if available */}
+    <SheetOverlay topOffset={topOffset} />
     <SheetPrimitive.Content
       ref={ref}
       className={cn(sheetVariants({ side }), className)}
