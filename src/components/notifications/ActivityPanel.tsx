@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { Sheet, SheetContent, SheetClose } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetClose, SheetTitle } from "@/components/ui/sheet";
 import { ButtonCircle } from "@/components/ui/button-circle";
 import EventPanel, { EventProps } from "./EventPanel";
 import { format } from "date-fns";
@@ -47,6 +47,9 @@ const ActivityPanel: React.FC<ActivityPanelProps> = ({
         className="w-[350px] bg-[#000000e6] border-none p-0 top-[50px] h-[calc(100%-50px)]"
         topOffset="50px" // Pass topOffset to SheetContent
       >
+        {/* Add SheetTitle for accessibility */}
+        <SheetTitle className="sr-only">Notifications Panel</SheetTitle>
+        
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className="p-4 flex justify-between items-center">
