@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Sheet, SheetContent, SheetClose, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { ButtonCircle } from "@/components/ui/button-circle";
@@ -78,14 +79,14 @@ const ActivityPanel: React.FC<ActivityPanelProps> = ({
             )}
           </div>
           
-          {/* Event list */}
-          <div className="flex-1 overflow-auto">
+          {/* Event list - Apply padding: 50px top, left, bottom and 20px right */}
+          <div className="flex-1 overflow-auto pl-[50px] pr-[20px] pt-[50px] pb-[50px]">
             {Object.entries(eventsByDate).map(([dateStr, dateEvents]) => (
               <div key={dateStr} className="mb-4">
-                <div className="px-4 py-2 text-white text-sm">
+                <div className="py-2 text-white text-sm">
                   {dateStr}
                 </div>
-                <div className="space-y-1">
+                <div className="space-y-[10px]"> {/* Increased spacing between EventPanels to 10px */}
                   {dateEvents.map((event, index) => (
                     <EventPanel
                       key={`${dateStr}-${index}`}
