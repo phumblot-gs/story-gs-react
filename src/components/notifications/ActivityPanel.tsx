@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetOverlay } from "@/components/ui/sheet";
 import { ButtonCircle } from "@/components/ui/button-circle";
 import EventPanel, { EventProps } from "./EventPanel";
 import { format } from "date-fns";
@@ -40,9 +40,17 @@ const ActivityPanel: React.FC<ActivityPanelProps> = ({
 
   return (
     <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      {/* Custom overlay that starts below the header */}
+      <div 
+        className={`fixed inset-x-0 bottom-0 bg-black/80 z-40 transition-all duration-300 ease-in-out ${
+          isOpen ? 'opacity-100 top-[50px]' : 'opacity-0 pointer-events-none top-[50px]'
+        }`}
+        onClick={onClose}
+      />
+      
       <SheetContent 
         side="right" 
-        className="w-[350px] bg-[#000000e6] border-none p-0"
+        className="w-[350px] bg-[#000000e6] border-none p-0 top-[50px] h-[calc(100%-50px)]"
       >
         <div className="flex flex-col h-full">
           {/* Header */}
