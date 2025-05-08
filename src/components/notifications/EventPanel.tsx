@@ -34,7 +34,7 @@ const EventPanel: React.FC<EventProps> = ({
   return (
     <Link 
       to={redirectLink}
-      className="block no-underline text-white hover:bg-bg-black-secondary transition-all duration-200"
+      className="block no-underline text-white hover:bg-black-secondary transition-all duration-200 group"
     >
       <div className="flex flex-row items-start p-2.5 gap-2.5 bg-[#0006]">
         <MediaStatus 
@@ -43,7 +43,7 @@ const EventPanel: React.FC<EventProps> = ({
         />
         <div className="flex-1 min-w-0">
           <h4 className="text-white text-sm font-light italic leading-tight m-0">{title}</h4>
-          <p className="text-white text-xs font-light m-0 mt-1 truncate">{subtitle}</p>
+          <p className="text-white text-xs font-light m-0 mt-1 truncate group-hover:underline">{subtitle}</p>
         </div>
         <span className="text-white text-xs whitespace-nowrap">{formattedTime}</span>
       </div>
