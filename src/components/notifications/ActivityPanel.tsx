@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Sheet, SheetContent, SheetClose, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { ButtonCircle } from "@/components/ui/button-circle";
@@ -38,12 +39,16 @@ const ActivityPanel: React.FC<ActivityPanelProps> = ({
         <SheetDescription className="sr-only">Liste des notifications et événements récents</SheetDescription>
         
         <div className="flex flex-col h-full">
-          {/* Header - Positioned with flexbox and paddings */}
-          <div className="flex items-center justify-between px-4 pt-[50px]">
-            <div className="flex items-center gap-4">
-              <SheetClose asChild>
-                <ButtonCircle icon="X" size="large" background="black" aria-label="Close" />
-              </SheetClose>
+          {/* ButtonCircle moved to its own line with p-2 class */}
+          <div className="p-2">
+            <SheetClose asChild>
+              <ButtonCircle icon="X" size="large" background="black" aria-label="Close" />
+            </SheetClose>
+          </div>
+          
+          {/* Header with adjusted paddings - pl-[50px] and pr-[20px] */}
+          <div className="flex items-center justify-between pl-[50px] pr-[20px] pt-[50px]">
+            <div className="flex items-center">
               <h3 className="text-white text-base font-normal m-0">
                 {unreadCount} notification{unreadCount !== 1 ? 's' : ''} non lue{unreadCount !== 1 ? 's' : ''}
               </h3>
