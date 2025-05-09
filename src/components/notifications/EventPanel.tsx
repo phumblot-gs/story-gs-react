@@ -31,13 +31,17 @@ const EventPanel: React.FC<EventProps> = ({
     minute: "2-digit"
   });
 
-  return <Link to={redirectLink} className="block no-underline text-white transition-all duration-200 group">
+  return (
+    <Link to={redirectLink} className="block no-underline text-white transition-all duration-200 group">
       <div className="flex items-start p-2.5 gap-2.5 bg-black-secondary">
-        <div className="flex items-center h-6">
-          <MediaStatus status={pictureStatus} className={cn(!unread && "opacity-30")} />
-        </div>
         <div className="flex-1 min-w-0 flex flex-col">
-          <div className="flex justify-between items-start">
+          <div className="flex justify-between items-start relative pl-5">
+            <div 
+              className="absolute left-0 top-1/2 -translate-y-1/2"
+              style={{ marginTop: '1px' }}
+            >
+              <MediaStatus status={pictureStatus} className={cn(!unread && "opacity-30")} />
+            </div>
             <h4 className="text-white text-sm font-medium leading-tight m-0 truncate">{title}</h4>
           </div>
           <div className="flex justify-between items-end mt-1">
@@ -48,7 +52,8 @@ const EventPanel: React.FC<EventProps> = ({
           </div>
         </div>
       </div>
-    </Link>;
+    </Link>
+  );
 };
 
 export default EventPanel;
