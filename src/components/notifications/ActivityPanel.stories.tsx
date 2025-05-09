@@ -15,34 +15,34 @@ const meta: Meta<typeof ActivityPanel> = {
     docs: {
       description: {
         component: `
-          # Activity Panel
-          
-          Le composant ActivityPanel est un panneau latéral qui affiche les notifications et activités récentes.
-          
-          ## Fonctionnalités
-          - Affiche les notifications regroupées par date
-          - Permet de marquer toutes les notifications comme lues
-          - Indique le nombre de notifications non lues
-          - Utilise le système de traduction pour l'internationalisation
-          
-          ## Utilisation
-          
-          \`\`\`tsx
-          import { ActivityPanel } from "@/components/notifications/ActivityPanel";
-          
-          function MyComponent() {
-            const [isOpen, setIsOpen] = useState(false);
-            const events = [/* ... vos événements ici ... */];
-            
-            return (
-              <ActivityPanel
-                isOpen={isOpen}
-                onClose={() => setIsOpen(false)}
-                events={events}
-              />
-            );
-          }
-          \`\`\`
+# Activity Panel
+
+Le composant ActivityPanel est un panneau latéral qui affiche les notifications et activités récentes.
+
+## Fonctionnalités
+- Affiche les notifications regroupées par date
+- Permet de marquer toutes les notifications comme lues
+- Indique le nombre de notifications non lues
+- Utilise le système de traduction pour l'internationalisation
+
+## Utilisation
+
+\`\`\`tsx
+import { ActivityPanel } from "@/components/notifications/ActivityPanel";
+
+function MyComponent() {
+  const [isOpen, setIsOpen] = useState(false);
+  const events = [/* ... vos événements ici ... */];
+  
+  return (
+    <ActivityPanel
+      isOpen={isOpen}
+      onClose={() => setIsOpen(false)}
+      events={events}
+    />
+  );
+}
+\`\`\`
         `,
       },
       // Disable the rendering of the component in the docs
