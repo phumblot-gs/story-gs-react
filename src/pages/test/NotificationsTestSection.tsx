@@ -1,105 +1,179 @@
 
 import React, { useState } from "react";
-import { Card, CardHeader, CardContent, CardTitle, CardDescription } from "@/components/ui/card";
-import { Workflow } from "@/components/ui/workflow";
-import PageHeader from "@/components/PageHeader";
-import { LanguageSwitcher, type Language } from "@/components/ui/language-switcher";
-import { ButtonCircle } from "@/components/ui/button-circle";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { MediaStatus } from "@/utils/mediaStatus";
+import EventPanel from "@/components/notifications/EventPanel";
+import ActivityPanel from "@/components/notifications/ActivityPanel";
 import ButtonNotifications from "@/components/ButtonNotifications";
+import { useGlobalActivityStatus } from "@/hooks/useGlobalActivityStatus";
 
 const NotificationsTestSection: React.FC = () => {
-  // Sample languages for the LanguageSwitcher component
-  const languages = [
-    { code: "FR", name: "Français" },
-    { code: "EN", name: "English" },
-    { code: "ES", name: "Español" },
-  ];
-  const [currentLanguage, setCurrentLanguage] = useState(languages[0]);
-
-  // Handler for language change
-  const handleLanguageChange = (language: Language) => {
-    setCurrentLanguage(language);
-    console.log(`Language changed to: ${language.code} - ${language.name}`);
+  const [isActivityPanelOpen, setIsActivityPanelOpen] = useState(false);
+  const { setActivityStatus } = useGlobalActivityStatus();
+  
+  // Generate events for activity panel
+  const generateMockEvents = () => {
+    const today = new Date();
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    
+    return [
+      {
+        title: "Connect Added Comments on photos",
+        subtitle: "STANDARD-2025-05-07 H02-PART-1",
+        pictureStatus: MediaStatus.SUBMITTED_FOR_APPROVAL,
+        type: "comment" as const,
+        redirectLink: "#",
+        date: today,
+        unread: true
+      },
+      {
+        title: "Files transferred to editing team",
+        subtitle: "STANDARD-2025-05-07 H02-PART-1",
+        pictureStatus: MediaStatus.VALIDATED,
+        type: "transfer" as const,
+        redirectLink: "#",
+        date: today,
+        unread: true
+      },
+      {
+        title: "Connect Added Comments on photos",
+        subtitle: "STANDARD-2025-05-07 H02-PART-1",
+        pictureStatus: MediaStatus.BROADCAST,
+        type: "comment" as const,
+        redirectLink: "#",
+        date: yesterday,
+        unread: false
+      },
+      {
+        title: "Files published to website",
+        subtitle: "STANDARD-2025-05-07 H02-PART-1",
+        pictureStatus: MediaStatus.BROADCAST,
+        type: "other" as const,
+        redirectLink: "#",
+        date: yesterday,
+        unread: false
+      },
+    ];
   };
 
-  // Custom logo component
-  const GsLogo = () => (
-    <div className="flex items-center justify-center font-bold text-black text-lg">
-      <span>GS</span>
-    </div>
-  );
-
-  // Center content with workflow tabs
-  const WorkflowTabs = () => (
-    <Workflow
-      steps={[
-        { bench_id: "1", label: "LIVE", onClick: () => console.log("LIVE clicked") },
-        { bench_id: "2", label: "PHASE 1", onClick: () => console.log("PHASE 1 clicked") },
-        { bench_id: "3", label: "EXPORTS", onClick: () => console.log("EXPORTS clicked") },
-        { bench_id: "4", label: "VALIDATION", isActive: true },
-      ]}
-      bench_root_id={1001}
-    />
-  );
-
-  // Right side content with buttons including ButtonNotifications
-  const RightSideContent = () => (
-    <>
-      <LanguageSwitcher 
-        languages={languages} 
-        currentLanguage={currentLanguage} 
-        onLanguageChange={handleLanguageChange} 
-      />
-      <ButtonCircle icon="User" size="large" background="white" />
-      <ButtonCircle icon="Settings" size="large" background="white" />
-      <ButtonCircle icon="Help" size="large" background="white" />
-      <ButtonCircle icon="Logout" size="large" background="white" />
-      <ButtonNotifications />
-    </>
-  );
+  const toggleActivityPanel = () => {
+    setIsActivityPanelOpen(!isActivityPanelOpen);
+  };
 
   return (
     <>
-      <Card>
+      <Card className="mb-6">
         <CardHeader>
-          <CardTitle>Notifications Test</CardTitle>
-          <CardDescription>Test the ButtonNotifications component integrated in a PageHeader</CardDescription>
+          <CardTitle>ButtonNotifications</CardTitle>
+          <CardDescription>A button that displays notification count</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="border rounded-lg overflow-hidden mb-4">
-            <PageHeader 
-              logo={<GsLogo />}
-              title="Collection Femme Printemps 2025"
-              showTitleButton={true}
-              titleButtonIcon="Pencil"
-              centerContent={<WorkflowTabs />}
-              rightContent={<RightSideContent />}
-            />
-          </div>
-          <div className="text-sm text-gray-500 italic mt-2">
-            Note: The header is designed for wider screens (min-width: 1280px). Click on the bell icon to open the notifications panel.
-          </div>
-
-          <div className="mt-8">
-            <h3 className="text-lg font-medium mb-4">ButtonNotifications Component</h3>
-            <p className="mb-4">The ButtonNotifications component displays a notification panel when clicked. Key features:</p>
-            <ul className="list-disc pl-6 space-y-2 mb-6">
-              <li>Shows notification count indicator for unread items</li>
-              <li>Opens a slide-in panel displaying recent notifications</li>
-              <li>Groups notifications by date with most recent on top</li>
-              <li>Visually distinguishes between read and unread notifications</li>
-              <li>Includes a "Mark all as read" option</li>
-            </ul>
-
-            <div className="flex flex-wrap gap-8 mt-8">
-              <div className="flex flex-col items-center">
-                <h4 className="text-md font-medium mb-2">Standalone Component</h4>
-                <div className="p-6 bg-gray-50 rounded-lg flex items-center justify-center">
-                  <ButtonNotifications />
-                </div>
+          <div className="flex flex-col space-y-4 items-center">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex flex-col items-center p-4 border rounded-md">
+                <p className="mb-2 font-medium">With count</p>
+                <ButtonNotifications count={5} onClick={() => {}} />
+              </div>
+              <div className="flex flex-col items-center p-4 border rounded-md">
+                <p className="mb-2 font-medium">No count</p>
+                <ButtonNotifications count={0} onClick={() => {}} />
               </div>
             </div>
+            <div className="grid grid-cols-2 gap-4 w-full">
+              <Button onClick={() => setActivityStatus(true)}>
+                Set Has Activity (Global)
+              </Button>
+              <Button variant="outline" onClick={() => setActivityStatus(false)}>
+                Set No Activity (Global)
+              </Button>
+            </div>
           </div>
+        </CardContent>
+      </Card>
+
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle>ActivityPanel</CardTitle>
+          <CardDescription>Panel displaying activity notifications</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex justify-center">
+            <Button onClick={toggleActivityPanel}>
+              {isActivityPanelOpen ? "Close Activity Panel" : "Open Activity Panel"}
+            </Button>
+          </div>
+          <ActivityPanel 
+            isOpen={isActivityPanelOpen}
+            onClose={() => setIsActivityPanelOpen(false)}
+            events={generateMockEvents()}
+          />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>EventPanel</CardTitle>
+          <CardDescription>Individual notification event panels</CardDescription>
+        </CardHeader>
+        <CardContent className="bg-black p-6 space-y-4">
+          <EventPanel
+            title="Connect Added Comments on photos"
+            subtitle="STANDARD-2025-05-07 H02-PART-1"
+            pictureStatus={MediaStatus.SUBMITTED_FOR_APPROVAL}
+            type="comment"
+            redirectLink="#"
+            date={new Date()}
+            unread={true}
+          />
+          <EventPanel
+            title="Files transferred to editing team"
+            subtitle="STANDARD-2025-05-07 H02-PART-1"
+            pictureStatus={MediaStatus.VALIDATED}
+            type="transfer"
+            redirectLink="#"
+            date={new Date()}
+            unread={true}
+          />
+          
+          {/* Add new EventPanels with unread=false */}
+          <EventPanel
+            title="Connect Added Comments on photos"
+            subtitle="STANDARD-2025-05-07 H02-PART-1"
+            pictureStatus={MediaStatus.BROADCAST}
+            type="comment"
+            redirectLink="#"
+            date={new Date(new Date().setDate(new Date().getDate() - 1))}
+            unread={false}
+          />
+          <EventPanel
+            title="Files published to website"
+            subtitle="STANDARD-2025-05-07 H02-PART-1"
+            pictureStatus={MediaStatus.BROADCAST}
+            type="other"
+            redirectLink="#"
+            date={new Date(new Date().setDate(new Date().getDate() - 1))}
+            unread={false}
+          />
+          <EventPanel
+            title="Project review completed"
+            subtitle="STANDARD-2025-05-07 H03-PART-2"
+            pictureStatus={MediaStatus.SELECTED}
+            type="comment"
+            redirectLink="#"
+            date={new Date(new Date().setDate(new Date().getDate() - 2))}
+            unread={false}
+          />
+          <EventPanel
+            title="Image collection updated"
+            subtitle="STANDARD-2025-05-08 H01-PART-1"
+            pictureStatus={MediaStatus.SUBMITTED_FOR_APPROVAL}
+            type="other"
+            redirectLink="#"
+            date={new Date(new Date().setDate(new Date().getDate() - 2))}
+            unread={false}
+          />
         </CardContent>
       </Card>
     </>
