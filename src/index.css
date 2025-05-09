@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -53,13 +52,13 @@
     --button-pd-header: 0.5rem;
     --button-radius-header: 0.25rem;
 
-    /* Padding variables */
-    --padding-small: 0.5rem;
-    --padding-medium: 1rem;
-    --padding-large: 1.5rem;
-    --padding-xlarge: 2rem;
-    --padding-xxlarge: 3rem;
-    --padding-xxxlarge: 4rem;
+    /* Padding variables - updated to multiples of 5px */
+    --padding-small: 10px;  /* was 0.5rem (8px) */
+    --padding-medium: 20px; /* was 1rem (16px) */
+    --padding-large: 30px;  /* was 1.5rem (24px) */
+    --padding-xlarge: 40px; /* was 2rem (32px) */
+    --padding-xxlarge: 60px; /* was 3rem (48px) */
+    --padding-xxxlarge: 80px; /* was 4rem (64px) */
 
     /* Background color variables */
     --bg-white: #FFFFFF;
