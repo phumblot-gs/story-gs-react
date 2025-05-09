@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -157,44 +158,44 @@
 
 /* Status icon classes - renamed to match status names instead of colors */
 .status-reshoot {
-  fill: var(--status-reshoot-color);
+  background-color: var(--status-reshoot-color);
 }
 
 .status-for-approval {
-  fill: var(--status-for-approval-color);
+  background-color: var(--status-for-approval-color);
 }
 
 .status-validated {
-  fill: var(--status-validated-color);
+  background-color: var(--status-validated-color);
   opacity: 0.8;
 }
 
 .status-selected {
-  fill: var(--status-selected-color);
+  background-color: var(--status-selected-color);
 }
 
 .status-to-publish {
-  fill: var(--status-to-publish-color);
+  background-color: var(--status-to-publish-color);
 }
 
 .status-ignored {
-  fill: var(--status-ignored-color);
+  background-color: var(--status-ignored-color);
 }
 
 .status-refused {
-  fill: var(--status-refused-color);
+  background-color: var(--status-refused-color);
 }
 
 .status-published {
-  fill: var(--status-published-color);
+  background-color: var(--status-published-color);
 }
 
 .status-not-selected {
-  fill: transparent;
+  background-color: transparent;
 }
 
 .status-error {
-  fill: var(--status-error-color);
+  background-color: var(--status-error-color);
 }
 
 /* Button hover state - adjust status icon classes */
@@ -208,7 +209,7 @@ button:hover .status-refused,
 button:hover .status-published,
 button:hover .status-not-selected,
 button:hover .status-error {
-  fill: currentColor;
+  background-color: currentColor;
 }
 
 /* Button active/pressed state */
@@ -222,7 +223,7 @@ button:active .status-refused,
 button:active .status-published,
 button:active .status-not-selected,
 button:active .status-error {
-  fill: var(--text-blue-primary, #CDEDFF); /* blue-primary color for active state with fallback */
+  background-color: var(--text-blue-primary, #CDEDFF); /* blue-primary color for active state with fallback */
 }
 
 /* Button disabled state */
@@ -236,7 +237,7 @@ button:disabled .status-refused,
 button:disabled .status-published,
 button:disabled .status-not-selected,
 button:disabled .status-error {
-  fill: var(--bg-grey-stronger, #C1C1C1); /* grey-stronger color for disabled state with fallback */
+  background-color: var(--bg-grey-stronger, #C1C1C1); /* grey-stronger color for disabled state with fallback */
 }
 
 /* Theme color swatches */
