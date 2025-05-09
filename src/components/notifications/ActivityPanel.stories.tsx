@@ -5,19 +5,56 @@ import ActivityPanel from "./ActivityPanel";
 import { MediaStatus } from "@/utils/mediaStatus";
 import { NotificationType } from "./EventPanel";
 import { MemoryRouter } from "react-router-dom";
+import { TranslationProvider } from "@/contexts/TranslationContext";
 
 const meta: Meta<typeof ActivityPanel> = {
   title: "Components/Notifications/ActivityPanel",
   component: ActivityPanel,
   parameters: {
     layout: "centered",
+    docs: {
+      description: {
+        component: `
+          # Activity Panel
+          
+          Le composant ActivityPanel est un panneau latéral qui affiche les notifications et activités récentes.
+          
+          ## Fonctionnalités
+          - Affiche les notifications regroupées par date
+          - Permet de marquer toutes les notifications comme lues
+          - Indique le nombre de notifications non lues
+          - Utilise le système de traduction pour l'internationalisation
+          
+          ## Utilisation
+          
+          \`\`\`tsx
+          import { ActivityPanel } from "@/components/notifications/ActivityPanel";
+          
+          function MyComponent() {
+            const [isOpen, setIsOpen] = useState(false);
+            const events = [/* ... vos événements ici ... */];
+            
+            return (
+              <ActivityPanel
+                isOpen={isOpen}
+                onClose={() => setIsOpen(false)}
+                events={events}
+              />
+            );
+          }
+          \`\`\`
+        `
+      }
+    }
   },
   tags: ["autodocs"],
   decorators: [
     (Story) => (
-      <MemoryRouter>
-        <Story />
-      </MemoryRouter>
+      <TranslationProvider initialLanguage={{ code: "FR", name: "Français" }}>
+        <MemoryRouter>
+          <Story />
+        </MemoryRouter>
+      </TranslationProvider>
     ),
   ],
   argTypes: {
