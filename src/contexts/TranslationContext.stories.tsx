@@ -15,7 +15,6 @@ const meta: Meta = {
     docs: {
       description: {
         component: `
-# TranslationProvider
         
 A context provider that handles internationalization for components in the library.
         
