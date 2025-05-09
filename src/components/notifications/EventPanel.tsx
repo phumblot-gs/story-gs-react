@@ -31,7 +31,7 @@ const EventPanel: React.FC<EventProps> = ({
         <MediaStatus status={pictureStatus} className={cn(!unread && "opacity-30")} />
         <div className="flex-1 min-w-0 flex flex-col">
           <div className="flex justify-between items-start">
-            <h4 className="text-white text-sm font-light italic leading-tight m-0 truncate">{title}</h4>
+            <h4 className="text-white text-sm font-medium leading-tight m-0 truncate">{title}</h4>
           </div>
           <div className="flex justify-between items-end mt-1">
             <p className="text-white text-xs font-light m-0 truncate group-hover:underline">{subtitle}</p>
