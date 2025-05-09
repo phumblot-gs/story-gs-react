@@ -1,16 +1,13 @@
-
 import React, { useState } from "react";
 import { Sheet, SheetContent, SheetClose, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { ButtonCircle } from "@/components/ui/button-circle";
 import EventPanel, { EventProps } from "./EventPanel";
 import { format } from "date-fns";
-
 export interface ActivityPanelProps {
   isOpen: boolean;
   onClose: () => void;
   events: EventProps[];
 }
-
 const ActivityPanel: React.FC<ActivityPanelProps> = ({
   isOpen,
   onClose,
@@ -28,7 +25,6 @@ const ActivityPanel: React.FC<ActivityPanelProps> = ({
     acc[dateStr].push(event);
     return acc;
   }, {});
-
   const markAllAsRead = () => {
     const updatedEvents = localEvents.map(event => ({
       ...event,
@@ -36,7 +32,6 @@ const ActivityPanel: React.FC<ActivityPanelProps> = ({
     }));
     setLocalEvents(updatedEvents);
   };
-
   return <Sheet open={isOpen} onOpenChange={open => !open && onClose()}>
       <SheetContent side="right" className="w-[400px] bg-black border-none p-0 top-[50px] h-[calc(100%-50px)]" topOffset="50px">
         <SheetTitle className="sr-only">Notifications Panel</SheetTitle>
@@ -62,7 +57,7 @@ const ActivityPanel: React.FC<ActivityPanelProps> = ({
           {/* Event list with flexbox layout */}
           <div className="flex-1 overflow-auto pl-[50px] pr-[20px] pt-[20px] pb-[50px]">
             {Object.entries(eventsByDate).map(([dateStr, dateEvents]) => <div key={dateStr} className="mb-4">
-                <div className="py-2 text-white text-sm opacity-75">
+                <div className="py-2 text-grey-stronger text-sm opacity-75">
                   {dateStr}
                 </div>
                 <div className="flex flex-col gap-[10px]">
@@ -74,5 +69,4 @@ const ActivityPanel: React.FC<ActivityPanelProps> = ({
       </SheetContent>
     </Sheet>;
 };
-
 export default ActivityPanel;
