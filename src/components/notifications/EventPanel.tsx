@@ -36,7 +36,7 @@ const EventPanel: React.FC<EventProps> = ({
       to={redirectLink}
       className="block no-underline text-white transition-all duration-200 group"
     >
-      <div className="flex flex-row items-start p-2.5 gap-2.5 bg-black-secondary">
+      <div className="flex items-start p-2.5 gap-2.5 bg-black-secondary">
         <MediaStatus 
           status={pictureStatus} 
           className={cn(!unread && "opacity-30")}

@@ -40,22 +40,18 @@ const ActivityPanel: React.FC<ActivityPanelProps> = ({
 
   return (
     <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      {/* No SheetOverlay here - it's handled in SheetContent */}
-      
       <SheetContent 
         side="right" 
         className="w-[350px] bg-black border-none p-0 top-[50px] h-[calc(100%-50px)]"
-        topOffset="50px" // Pass topOffset to SheetContent
+        topOffset="50px"
       >
-        {/* Add SheetTitle for accessibility */}
         <SheetTitle className="sr-only">Notifications Panel</SheetTitle>
-        {/* Add SheetDescription for accessibility */}
         <SheetDescription className="sr-only">Liste des notifications et événements récents</SheetDescription>
         
         <div className="flex flex-col h-full">
-          {/* Header - Added pt-[50px] to push the header down 50px from the top */}
-          <div className="pt-[50px] px-4 flex justify-between items-center">
-            <div className="flex gap-4 items-center">
+          {/* Header - Positioned with flexbox and paddings */}
+          <div className="flex items-center justify-between px-4 pt-[50px]">
+            <div className="flex items-center gap-4">
               <SheetClose asChild>
                 <ButtonCircle 
                   icon="X" 
@@ -79,14 +75,14 @@ const ActivityPanel: React.FC<ActivityPanelProps> = ({
             )}
           </div>
           
-          {/* Event list with space between title and first date (20px) */}
+          {/* Event list with flexbox layout */}
           <div className="flex-1 overflow-auto pl-[50px] pr-[20px] pt-[20px] pb-[50px]">
             {Object.entries(eventsByDate).map(([dateStr, dateEvents]) => (
               <div key={dateStr} className="mb-4">
-                <div className="py-2 text-white text-sm">
+                <div className="py-2 text-white text-sm opacity-75">
                   {dateStr}
                 </div>
-                <div className="space-y-[10px]"> {/* Spacing between EventPanels is 10px */}
+                <div className="flex flex-col gap-[10px]">
                   {dateEvents.map((event, index) => (
                     <EventPanel
                       key={`${dateStr}-${index}`}
