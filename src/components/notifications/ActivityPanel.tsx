@@ -10,12 +10,14 @@ export interface ActivityPanelProps {
   isOpen: boolean;
   onClose: () => void;
   events: EventProps[];
+  debug?: boolean; // Nouvelle prop pour activer/désactiver le mode debug
 }
 
 const ActivityPanel: React.FC<ActivityPanelProps> = ({
   isOpen,
   onClose,
-  events
+  events,
+  debug = false // False par défaut
 }) => {
   const [localEvents, setLocalEvents] = useState<EventProps[]>(events);
   const unreadCount = localEvents.filter(event => event.unread).length;
@@ -38,6 +40,13 @@ const ActivityPanel: React.FC<ActivityPanelProps> = ({
       unread: false
     }));
     setLocalEvents(updatedEvents);
+  };
+
+  // Fonction de gestion des clics sur les événements pour le mode debug
+  const handleEventClick = (event: EventProps) => {
+    if (debug) {
+      console.log('Event clicked in debug mode:', event);
+    }
   };
 
   return <Sheet open={isOpen} onOpenChange={open => !open && onClose()}>
@@ -78,7 +87,11 @@ const ActivityPanel: React.FC<ActivityPanelProps> = ({
                   {dateStr}
                 </div>
                 <div className="flex flex-col gap-[10px]">
-                  {dateEvents.map((event, index) => <EventPanel key={`${dateStr}-${index}`} {...event} />)}
+                  {dateEvents.map((event, index) => (
+                    <div key={`${dateStr}-${index}`} onClick={() => handleEventClick(event)}>
+                      <EventPanel {...event} />
+                    </div>
+                  ))}
                 </div>
               </div>)}
           </div>

@@ -10,6 +10,7 @@ import { useGlobalActivityStatus } from "@/hooks/useGlobalActivityStatus";
 
 const NotificationsTestSection: React.FC = () => {
   const [isActivityPanelOpen, setIsActivityPanelOpen] = useState(false);
+  const [debugMode, setDebugMode] = useState(false);
   const { setActivityStatus } = useGlobalActivityStatus();
   
   // Generate events for activity panel
@@ -99,15 +100,27 @@ const NotificationsTestSection: React.FC = () => {
           <CardDescription>Panel displaying activity notifications</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex justify-center">
-            <Button onClick={toggleActivityPanel}>
-              {isActivityPanelOpen ? "Close Activity Panel" : "Open Activity Panel"}
-            </Button>
+          <div className="flex justify-center flex-col gap-4">
+            <div className="flex gap-4 justify-center">
+              <Button onClick={toggleActivityPanel}>
+                {isActivityPanelOpen ? "Close Activity Panel" : "Open Activity Panel"}
+              </Button>
+              <Button 
+                variant={debugMode ? "default" : "outline"} 
+                onClick={() => setDebugMode(!debugMode)}
+              >
+                {debugMode ? "Debug Mode: ON" : "Debug Mode: OFF"}
+              </Button>
+            </div>
+            <div className="text-center text-sm text-muted-foreground">
+              {debugMode && "Debug mode enabled. Click on events to see details in console."}
+            </div>
           </div>
           <ActivityPanel 
             isOpen={isActivityPanelOpen}
             onClose={() => setIsActivityPanelOpen(false)}
             events={generateMockEvents()}
+            debug={debugMode}
           />
         </CardContent>
       </Card>

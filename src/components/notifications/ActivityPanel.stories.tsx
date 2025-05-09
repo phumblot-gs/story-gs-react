@@ -1,4 +1,3 @@
-
 import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import ActivityPanel from "./ActivityPanel";
@@ -24,6 +23,7 @@ Le composant ActivityPanel est un panneau latéral qui affiche les notifications
 - Permet de marquer toutes les notifications comme lues
 - Indique le nombre de notifications non lues
 - Utilise le système de traduction pour l'internationalisation
+- Mode debug disponible pour afficher les données des événements dans la console
 
 ## Utilisation
 
@@ -39,13 +39,13 @@ function MyComponent() {
       isOpen={isOpen}
       onClose={() => setIsOpen(false)}
       events={events}
+      debug={true} // Optionnel: activer le mode debug
     />
   );
 }
 \`\`\`
         `,
       },
-      // Disable the rendering of the component in the docs
       canvas: { disable: true }
     }
   },
@@ -71,6 +71,10 @@ function MyComponent() {
     events: {
       control: { type: "object" },
       description: "List of notification events",
+    },
+    debug: {
+      control: { type: "boolean" },
+      description: "Enable debug mode to log event data to console on click",
     },
   },
 };
@@ -136,10 +140,23 @@ export const Default: Story = {
   args: {
     isOpen: true,
     events: generateMockEvents(),
+    debug: false,
   },
   parameters: {
     chromatic: { disableSnapshot: true },
-    docs: { disable: true } // Disable this story in docs
+    docs: { disable: true }
+  }
+};
+
+export const DebugMode: Story = {
+  args: {
+    isOpen: true,
+    events: generateMockEvents(),
+    debug: true,
+  },
+  parameters: {
+    chromatic: { disableSnapshot: true },
+    docs: { disable: true }
   }
 };
 
@@ -150,7 +167,7 @@ export const Empty: Story = {
   },
   parameters: {
     chromatic: { disableSnapshot: true },
-    docs: { disable: true } // Disable this story in docs
+    docs: { disable: true }
   }
 };
 
@@ -171,7 +188,7 @@ export const ManyEvents: Story = {
   },
   parameters: {
     chromatic: { disableSnapshot: true },
-    docs: { disable: true } // Disable this story in docs
+    docs: { disable: true }
   }
 };
 
@@ -182,6 +199,6 @@ export const AllRead: Story = {
   },
   parameters: {
     chromatic: { disableSnapshot: true },
-    docs: { disable: true } // Disable this story in docs
+    docs: { disable: true }
   }
 };
