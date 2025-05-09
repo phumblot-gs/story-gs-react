@@ -4,14 +4,18 @@ import { useGlobalActivityStatus } from '@/hooks/useGlobalActivityStatus';
 
 interface ActivityStatusContextType {
   isIdle: boolean;
+  hasActivity: boolean;
   startRequest: () => void;
   endRequest: () => void;
+  setActivityStatus: (status: boolean) => void;
 }
 
 const ActivityStatusContext = createContext<ActivityStatusContextType>({
   isIdle: false,
+  hasActivity: false,
   startRequest: () => {},
   endRequest: () => {},
+  setActivityStatus: () => {},
 });
 
 export const ActivityStatusProvider: React.FC<{children: React.ReactNode}> = ({ children }) => {

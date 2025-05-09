@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 export const useGlobalActivityStatus = () => {
   const [pendingRequests, setPendingRequests] = useState<number>(0);
   const [isIdle, setIsIdle] = useState<boolean>(false);
+  const [hasActivity, setHasActivity] = useState<boolean>(false);
 
   const startRequest = () => {
     setPendingRequests(prev => prev + 1);
@@ -14,7 +15,12 @@ export const useGlobalActivityStatus = () => {
     setPendingRequests(prev => Math.max(0, prev - 1));
   };
 
-  // Mettre à jour l'état isIdle quand le nombre de requêtes change
+  // Added setActivityStatus function
+  const setActivityStatus = (status: boolean) => {
+    setHasActivity(status);
+  };
+
+  // Update isIdle when the number of requests changes
   useEffect(() => {
     if (pendingRequests === 0) {
       setIsIdle(false);
@@ -23,5 +29,5 @@ export const useGlobalActivityStatus = () => {
     }
   }, [pendingRequests]);
 
-  return { isIdle, startRequest, endRequest };
+  return { isIdle, hasActivity, startRequest, endRequest, setActivityStatus };
 };

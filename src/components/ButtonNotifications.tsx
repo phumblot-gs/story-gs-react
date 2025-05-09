@@ -5,7 +5,7 @@ import ActivityPanel from "./notifications/ActivityPanel";
 import { EventProps, NotificationType } from "./notifications/EventPanel";
 import { MediaStatus } from "@/utils/mediaStatus";
 
-// Mock data for demonstration, in a real app this would come from props or a data fetching hook
+// Mock data for demonstration
 const mockEvents: EventProps[] = [
   {
     title: "Connect Added Comments on photos",
@@ -83,17 +83,25 @@ const mockEvents: EventProps[] = [
 
 interface ButtonNotificationsProps {
   events?: EventProps[];
+  count?: number;
+  onClick?: () => void;
 }
 
 const ButtonNotifications: React.FC<ButtonNotificationsProps> = ({
-  events = mockEvents // Use mock data by default, but allow overriding via props
+  events = mockEvents,
+  count,
+  onClick
 }) => {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   
-  const unreadCount = events.filter(event => event.unread).length;
+  // Use provided count or calculate from events
+  const unreadCount = count !== undefined ? count : events.filter(event => event.unread).length;
   
   const togglePanel = () => {
     setIsPanelOpen(prev => !prev);
+    if (onClick) {
+      onClick();
+    }
   };
 
   return (
