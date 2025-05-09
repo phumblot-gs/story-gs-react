@@ -5,19 +5,61 @@ import ActivityPanel from "./ActivityPanel";
 import { MediaStatus } from "@/utils/mediaStatus";
 import { NotificationType } from "./EventPanel";
 import { MemoryRouter } from "react-router-dom";
+import { TranslationProvider } from "@/contexts/TranslationContext";
 
 const meta: Meta<typeof ActivityPanel> = {
   title: "Components/Notifications/ActivityPanel",
   component: ActivityPanel,
   parameters: {
     layout: "centered",
+    docs: {
+      description: {
+        component: `
+          # ActivityPanel
+          
+          A sliding panel that displays user notifications and activity events.
+          
+          ## Features
+          
+          - Groups notifications by date
+          - Displays unread notification count
+          - Allows marking all notifications as read
+          - Integrates with the translation system
+          
+          ## Usage
+          
+          \`\`\`tsx
+          import ActivityPanel from "@/components/notifications/ActivityPanel";
+          import { useState } from "react";
+          
+          const MyComponent = () => {
+            const [isOpen, setIsOpen] = useState(false);
+            const events = [...]; // Array of notification events
+            
+            return (
+              <>
+                <button onClick={() => setIsOpen(true)}>Open Notifications</button>
+                <ActivityPanel 
+                  isOpen={isOpen}
+                  onClose={() => setIsOpen(false)}
+                  events={events}
+                />
+              </>
+            );
+          };
+          \`\`\`
+        `,
+      },
+    },
   },
   tags: ["autodocs"],
   decorators: [
     (Story) => (
-      <MemoryRouter>
-        <Story />
-      </MemoryRouter>
+      <TranslationProvider>
+        <MemoryRouter>
+          <Story />
+        </MemoryRouter>
+      </TranslationProvider>
     ),
   ],
   argTypes: {
