@@ -29,7 +29,7 @@ const MediaStatus: React.FC<MediaStatusProps> = ({
   
   return (
     <div 
-      className={`inline-block ${statusClass} ${className}`} 
+      className={`flex-none justify-items-center inline-block ${statusClass} ${className}`} 
       style={{ 
         width: `${width}px`, 
         height: `${height}px`,
