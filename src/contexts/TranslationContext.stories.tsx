@@ -23,7 +23,7 @@ A context provider that handles internationalization for components in the libra
 - Allows parent applications to override default translations
 - Persists language selection in localStorage
 - Provides a simple translation hook with parameter interpolation
-        
+
 ## Usage
         
 Wrap your application or component with the TranslationProvider:
