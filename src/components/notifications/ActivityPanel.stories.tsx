@@ -5,6 +5,7 @@ import ActivityPanel from "./ActivityPanel";
 import { MediaStatus } from "@/utils/mediaStatus";
 import { NotificationType } from "./EventPanel";
 import { MemoryRouter } from "react-router-dom";
+import { TranslationProvider } from "@/contexts/TranslationContext";
 
 const meta: Meta<typeof ActivityPanel> = {
   title: "Components/Notifications/ActivityPanel",
@@ -16,7 +17,9 @@ const meta: Meta<typeof ActivityPanel> = {
   decorators: [
     (Story) => (
       <MemoryRouter>
-        <Story />
+        <TranslationProvider>
+          <Story />
+        </TranslationProvider>
       </MemoryRouter>
     ),
   ],
