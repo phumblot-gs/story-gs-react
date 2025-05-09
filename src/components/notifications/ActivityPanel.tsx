@@ -4,11 +4,13 @@ import { Sheet, SheetContent, SheetClose, SheetTitle, SheetDescription } from "@
 import { ButtonCircle } from "@/components/ui/button-circle";
 import EventPanel, { EventProps } from "./EventPanel";
 import { format } from "date-fns";
+
 export interface ActivityPanelProps {
   isOpen: boolean;
   onClose: () => void;
   events: EventProps[];
 }
+
 const ActivityPanel: React.FC<ActivityPanelProps> = ({
   isOpen,
   onClose,
@@ -26,6 +28,7 @@ const ActivityPanel: React.FC<ActivityPanelProps> = ({
     acc[dateStr].push(event);
     return acc;
   }, {});
+
   const markAllAsRead = () => {
     const updatedEvents = localEvents.map(event => ({
       ...event,
@@ -33,6 +36,7 @@ const ActivityPanel: React.FC<ActivityPanelProps> = ({
     }));
     setLocalEvents(updatedEvents);
   };
+
   return <Sheet open={isOpen} onOpenChange={open => !open && onClose()}>
       <SheetContent side="right" className="w-[400px] bg-black border-none p-0 top-[50px] h-[calc(100%-50px)]" topOffset="50px">
         <SheetTitle className="sr-only">Notifications Panel</SheetTitle>
@@ -50,7 +54,12 @@ const ActivityPanel: React.FC<ActivityPanelProps> = ({
           <div className="flex items-center justify-between pl-[50px] pr-[20px]">
             <div className="flex items-center">
               <h3 className="text-white text-base font-normal m-0">
-                {unreadCount} notification{unreadCount !== 1 ? 's' : ''} non lue{unreadCount !== 1 ? 's' : ''}
+                {unreadCount === 0 
+                  ? "Vous êtes à jour" 
+                  : unreadCount === 1
+                    ? "1 notification non lue"
+                    : `${unreadCount} notifications non lues`
+                }
               </h3>
             </div>
             
@@ -74,4 +83,5 @@ const ActivityPanel: React.FC<ActivityPanelProps> = ({
       </SheetContent>
     </Sheet>;
 };
+
 export default ActivityPanel;
