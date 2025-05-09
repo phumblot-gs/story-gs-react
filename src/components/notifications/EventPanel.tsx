@@ -36,18 +36,14 @@ const EventPanel: React.FC<EventProps> = ({
       <div className="flex items-start p-2.5 gap-2.5 bg-black-secondary">
         <div className="flex-1 min-w-0 flex flex-col">
           <div className="flex justify-between items-start">
-            <h4 className="text-white text-sm font-medium leading-tight m-0 truncate relative pl-5">
-              <span 
-                className="absolute left-0 top-[0.45em]"
-                aria-hidden="true"
-              >
-                <MediaStatus 
-                  status={pictureStatus} 
-                  className={cn(!unread && "opacity-30")} 
-                />
-              </span>
-              {title}
-            </h4>
+            <div className="flex items-center gap-2">
+              <div className={cn(!unread && "opacity-30")}>
+                <MediaStatus status={pictureStatus} />
+              </div>
+              <h4 className="text-white text-sm font-medium leading-tight m-0 truncate">
+                {title}
+              </h4>
+            </div>
           </div>
           <div className="flex justify-between items-end mt-1 pl-5">
             <p className="text-white text-xs font-light m-0 truncate group-hover:underline">{subtitle}</p>
