@@ -1,13 +1,16 @@
+
 import React, { useState } from "react";
 import { Sheet, SheetContent, SheetClose, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { ButtonCircle } from "@/components/ui/button-circle";
 import EventPanel, { EventProps } from "./EventPanel";
 import { format } from "date-fns";
+
 export interface ActivityPanelProps {
   isOpen: boolean;
   onClose: () => void;
   events: EventProps[];
 }
+
 const ActivityPanel: React.FC<ActivityPanelProps> = ({
   isOpen,
   onClose,
@@ -25,6 +28,7 @@ const ActivityPanel: React.FC<ActivityPanelProps> = ({
     acc[dateStr].push(event);
     return acc;
   }, {});
+
   const markAllAsRead = () => {
     const updatedEvents = localEvents.map(event => ({
       ...event,
@@ -32,8 +36,9 @@ const ActivityPanel: React.FC<ActivityPanelProps> = ({
     }));
     setLocalEvents(updatedEvents);
   };
+
   return <Sheet open={isOpen} onOpenChange={open => !open && onClose()}>
-      <SheetContent side="right" className="w-[350px] bg-black border-none p-0 top-[50px] h-[calc(100%-50px)]" topOffset="50px">
+      <SheetContent side="right" className="w-[400px] bg-black border-none p-0 top-[50px] h-[calc(100%-50px)]" topOffset="50px">
         <SheetTitle className="sr-only">Notifications Panel</SheetTitle>
         <SheetDescription className="sr-only">Liste des notifications et événements récents</SheetDescription>
         
@@ -69,4 +74,5 @@ const ActivityPanel: React.FC<ActivityPanelProps> = ({
       </SheetContent>
     </Sheet>;
 };
+
 export default ActivityPanel;
