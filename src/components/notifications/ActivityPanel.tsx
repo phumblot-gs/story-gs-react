@@ -46,8 +46,8 @@ const ActivityPanel: React.FC<ActivityPanelProps> = ({
             </SheetClose>
           </div>
           
-          {/* Header with adjusted paddings - pl-[50px] and pr-[20px] */}
-          <div className="flex items-center justify-between pl-[50px] pr-[20px] pt-[50px]">
+          {/* Header with adjusted paddings - removed pt-[50px] */}
+          <div className="flex items-center justify-between pl-[50px] pr-[20px]">
             <div className="flex items-center">
               <h3 className="text-white text-base font-normal m-0">
                 {unreadCount} notification{unreadCount !== 1 ? 's' : ''} non lue{unreadCount !== 1 ? 's' : ''}
