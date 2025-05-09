@@ -4,6 +4,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import ActivityPanel from "./ActivityPanel";
 import { MediaStatus } from "@/utils/mediaStatus";
 import { NotificationType } from "./EventPanel";
+import { MemoryRouter } from "react-router-dom";
 
 const meta: Meta<typeof ActivityPanel> = {
   title: "Components/Notifications/ActivityPanel",
@@ -12,6 +13,13 @@ const meta: Meta<typeof ActivityPanel> = {
     layout: "fullscreen",
   },
   tags: ["autodocs"],
+  decorators: [
+    (Story) => (
+      <MemoryRouter>
+        <Story />
+      </MemoryRouter>
+    ),
+  ],
   argTypes: {
     isOpen: {
       control: { type: "boolean" },
