@@ -3,6 +3,7 @@ import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import EventPanel from "./EventPanel";
 import { MediaStatus } from "@/utils/mediaStatus";
+import { MemoryRouter } from "react-router-dom";
 
 const meta: Meta<typeof EventPanel> = {
   title: "Components/Notifications/EventPanel",
@@ -14,6 +15,13 @@ const meta: Meta<typeof EventPanel> = {
     },
   },
   tags: ["autodocs"],
+  decorators: [
+    (Story) => (
+      <MemoryRouter>
+        <Story />
+      </MemoryRouter>
+    ),
+  ],
   argTypes: {
     title: {
       control: { type: "text" },
