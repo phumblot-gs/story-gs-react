@@ -43,8 +43,10 @@ const meta: Meta<typeof ActivityPanel> = {
             );
           }
           \`\`\`
-        `
-      }
+        `,
+      },
+      // Disable the rendering of the component in the docs
+      canvas: { disable: true }
     }
   },
   tags: ["autodocs"],
@@ -135,6 +137,10 @@ export const Default: Story = {
     isOpen: true,
     events: generateMockEvents(),
   },
+  parameters: {
+    chromatic: { disableSnapshot: true },
+    docs: { disable: true } // Disable this story in docs
+  }
 };
 
 export const Empty: Story = {
@@ -142,6 +148,10 @@ export const Empty: Story = {
     isOpen: true,
     events: [],
   },
+  parameters: {
+    chromatic: { disableSnapshot: true },
+    docs: { disable: true } // Disable this story in docs
+  }
 };
 
 export const ManyEvents: Story = {
@@ -159,6 +169,10 @@ export const ManyEvents: Story = {
       })),
     ],
   },
+  parameters: {
+    chromatic: { disableSnapshot: true },
+    docs: { disable: true } // Disable this story in docs
+  }
 };
 
 export const AllRead: Story = {
@@ -166,4 +180,8 @@ export const AllRead: Story = {
     isOpen: true,
     events: generateMockEvents().map(event => ({...event, unread: false})),
   },
+  parameters: {
+    chromatic: { disableSnapshot: true },
+    docs: { disable: true } // Disable this story in docs
+  }
 };
