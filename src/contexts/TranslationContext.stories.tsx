@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 
 // Define our story meta
 const meta: Meta = {
-  title: "Contexts/TranslationProvider",
+  title: "Context/TranslationProvider", // Changed from "Contexts" to "Context"
   component: TranslationProvider,
   tags: ["autodocs"],
   parameters: {
