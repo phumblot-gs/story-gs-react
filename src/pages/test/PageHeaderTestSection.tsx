@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import PageHeader from "@/components/PageHeader";
@@ -10,7 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { ButtonCircle } from "@/components/ui/button-circle";
 import { Workflow } from "@/components/ui/workflow";
 import { LanguageSwitcher, type Language } from "@/components/ui/language-switcher";
-import { LanguageSwitcherExample } from "@/pages/examples/language-switcher-example";
+import LanguageSwitcherExample from "@/pages/examples/language-switcher-example";
 
 const PageHeaderConfigDemo: React.FC = () => {
   const [title, setTitle] = useState("Collection Femme Printemps 2025");
