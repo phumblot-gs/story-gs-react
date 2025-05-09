@@ -1,75 +1,88 @@
 
 import React from "react";
-import { Link } from "react-router-dom";
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
+import { Link, Route, Routes } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
 
-export const ExamplesPage = () => {
-  // List of example pages with their descriptions
+// Import example components
+import ButtonExample from "./button-example";
+import ButtonVariantsExample from "./button-variants-example";
+import ButtonCircleIconsExample from "./button-circle-icons-example";
+import PageHeaderExample from "./page-header-example";
+import WorkflowExample from "./workflow-example";
+import NotificationsExample from "./notifications-example";
+import LanguageSwitcherExample from "./language-switcher-example";
+import TranslationExample from "./translation-example"; // Add the new example
+
+const ExamplesLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  return (
+    <div className="min-h-screen">
+      <header className="border-b">
+        <div className="container py-4 flex justify-between items-center">
+          <Link to="/">
+            <Button variant="ghost" size="sm" className="gap-2">
+              <ArrowLeft className="h-4 w-4" />
+              Back to Home
+            </Button>
+          </Link>
+          <Link to="/examples">
+            <Button variant="ghost" size="sm">
+              All Examples
+            </Button>
+          </Link>
+        </div>
+      </header>
+      <main className="container py-8">
+        {children}
+      </main>
+    </div>
+  );
+};
+
+const ExamplesList: React.FC = () => {
   const examples = [
-    {
-      title: "Button Examples",
-      description: "Various button components and their usage",
-      path: "/examples/button-example"
-    },
-    {
-      title: "Button Variants",
-      description: "Different styles and variants of button components",
-      path: "/examples/button-variants-example"
-    },
-    {
-      title: "Button Circle Icons",
-      description: "Circular buttons with various icon options",
-      path: "/examples/button-circle-icons-example"
-    },
-    {
-      title: "Language Switcher",
-      description: "Component for switching between different languages",
-      path: "/examples/language-switcher-example"
-    },
-    {
-      title: "Workflow Example",
-      description: "Workflow component for multistep processes",
-      path: "/examples/workflow-example"
-    },
-    {
-      title: "Page Header Example",
-      description: "Page header component with various configurations",
-      path: "/examples/page-header-example"
-    },
-    {
-      title: "Notifications System",
-      description: "Complete notifications system with ActivityPanel",
-      path: "/examples/notifications-example"
-    }
+    { path: "button", label: "Button Example" },
+    { path: "button-variants", label: "Button Variants" },
+    { path: "button-circle-icons", label: "Button Circle Icons" },
+    { path: "page-header", label: "Page Header" },
+    { path: "workflow", label: "Workflow" },
+    { path: "notifications", label: "Notifications" },
+    { path: "language-switcher", label: "Language Switcher" },
+    { path: "translation", label: "Translation System" }, // Add the new example
   ];
 
   return (
-    <div className="container py-10">
-      <div className="mb-10">
-        <h1 className="text-3xl font-bold mb-4">Component Examples</h1>
-        <p className="text-muted-foreground">
-          This page showcases various components and their implementations. Click on any card to view the specific example.
-        </p>
-      </div>
-
+    <div className="space-y-8">
+      <h1 className="text-3xl font-bold">Component Examples</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {examples.map((example, index) => (
-          <Link key={index} to={example.path} className="no-underline">
-            <Card className="h-full transition-all hover:shadow-md hover:-translate-y-1">
-              <CardHeader>
-                <CardTitle>{example.title}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">{example.description}</p>
-              </CardContent>
-              <CardFooter>
-                <span className="text-sm text-primary">View example →</span>
-              </CardFooter>
-            </Card>
+        {examples.map((example) => (
+          <Link key={example.path} to={example.path}>
+            <div className="border rounded-lg p-6 hover:bg-slate-50 transition-colors">
+              <h2 className="text-xl font-semibold">{example.label}</h2>
+              <p className="text-sm text-muted-foreground mt-2">
+                View example
+              </p>
+            </div>
           </Link>
         ))}
       </div>
     </div>
+  );
+};
+
+const ExamplesPage: React.FC = () => {
+  return (
+    <Routes>
+      <Route path="/" element={<ExamplesLayout><ExamplesList /></ExamplesLayout>} />
+      <Route path="/button" element={<ExamplesLayout><ButtonExample /></ExamplesLayout>} />
+      <Route path="/button-variants" element={<ExamplesLayout><ButtonVariantsExample /></ExamplesLayout>} />
+      <Route path="/button-circle-icons" element={<ExamplesLayout><ButtonCircleIconsExample /></ExamplesLayout>} />
+      <Route path="/page-header" element={<ExamplesLayout><PageHeaderExample /></ExamplesLayout>} />
+      <Route path="/workflow" element={<ExamplesLayout><WorkflowExample /></ExamplesLayout>} />
+      <Route path="/notifications" element={<ExamplesLayout><NotificationsExample /></ExamplesLayout>} />
+      <Route path="/language-switcher" element={<ExamplesLayout><LanguageSwitcherExample /></ExamplesLayout>} />
+      <Route path="/translation" element={<ExamplesLayout><TranslationExample /></ExamplesLayout>} /> {/* Add route for new example */}
+    </Routes>
   );
 };
 

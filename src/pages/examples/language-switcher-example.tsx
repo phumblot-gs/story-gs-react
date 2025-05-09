@@ -1,28 +1,27 @@
 
-import React, { useState } from "react"
-import { LanguageSwitcher, type Language } from "@/components/ui/language-switcher"
+import React from "react";
+import { useTranslation } from "@/contexts/TranslationContext";
+import { LanguageSwitcher } from "@/components/ui/language-switcher";
 
-const languages: Language[] = [
-  { code: "EN", name: "English" },
-  { code: "FR", name: "Français" },
-]
-
-export const LanguageSwitcherExample: React.FC = () => {
-  const [currentLanguage, setCurrentLanguage] = useState<Language>(languages[1]) // Default to French
+const LanguageSwitcherExample: React.FC = () => {
+  const { currentLanguage, setLanguage, availableLanguages } = useTranslation();
   
-  const handleLanguageChange = (language: Language) => {
-    setCurrentLanguage(language)
-    console.log(`Language changed to: ${language.code} - ${language.name}`)
-  }
+  // Sample content that changes with language
+  const sampleContent = {
+    "EN": "This is sample content in English.",
+    "FR": "Ceci est un exemple de contenu en Français.",
+    "ES": "Este es un contenido de ejemplo en Español.",
+    "IT": "Questo è un contenuto di esempio in Italiano."
+  };
 
   return (
     <div className="flex flex-col items-center gap-8 p-10">
       <div className="flex items-center gap-4">
         <span className="text-sm">Current Language:</span>
         <LanguageSwitcher
-          languages={languages}
+          languages={availableLanguages}
           currentLanguage={currentLanguage}
-          onLanguageChange={handleLanguageChange}
+          onLanguageChange={setLanguage}
           debug={true}
         />
       </div>
@@ -30,12 +29,11 @@ export const LanguageSwitcherExample: React.FC = () => {
       <div className="mt-8 p-6 border rounded w-full max-w-md">
         <h2 className="text-lg font-semibold mb-4">Sample Content in {currentLanguage.name}</h2>
         <p>
-          {currentLanguage.code === "EN" && "This is sample content in English."}
-          {currentLanguage.code === "FR" && "Ceci est un exemple de contenu en Français."}
+          {sampleContent[currentLanguage.code] || sampleContent["EN"]}
         </p>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default LanguageSwitcherExample
+export default LanguageSwitcherExample;

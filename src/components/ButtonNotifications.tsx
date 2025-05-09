@@ -4,6 +4,7 @@ import { ButtonCircle } from "@/components/ui/button-circle";
 import ActivityPanel from "./notifications/ActivityPanel";
 import { EventProps, NotificationType } from "./notifications/EventPanel";
 import { MediaStatus } from "@/utils/mediaStatus";
+import { useTranslation } from "@/contexts/TranslationContext";
 
 // Mock data for demonstration
 const mockEvents: EventProps[] = [
@@ -93,6 +94,7 @@ const ButtonNotifications: React.FC<ButtonNotificationsProps> = ({
   onClick
 }) => {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
+  const { t } = useTranslation();
   
   // Use provided count or calculate from events
   const unreadCount = count !== undefined ? count : events.filter(event => event.unread).length;
@@ -113,7 +115,7 @@ const ButtonNotifications: React.FC<ButtonNotificationsProps> = ({
         indicator={unreadCount > 0}
         featured={true}
         onClick={togglePanel}
-        aria-label={`Notifications${unreadCount > 0 ? ` (${unreadCount} non lues)` : ''}`}
+        aria-label={`${t("notifications.title")}${unreadCount > 0 ? ` (${unreadCount} ${t("notifications.unread")})` : ''}`}
       />
       
       <ActivityPanel 

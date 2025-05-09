@@ -3,7 +3,8 @@ import React, { useState } from "react";
 import { Sheet, SheetContent, SheetClose, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { ButtonCircle } from "@/components/ui/button-circle";
 import EventPanel, { EventProps } from "./EventPanel";
-import { format } from "date-fns";
+import { useTranslation } from "@/contexts/TranslationContext";
+import { formatDateForLocale } from "@/utils/translations";
 
 export interface ActivityPanelProps {
   isOpen: boolean;
@@ -18,10 +19,12 @@ const ActivityPanel: React.FC<ActivityPanelProps> = ({
 }) => {
   const [localEvents, setLocalEvents] = useState<EventProps[]>(events);
   const unreadCount = localEvents.filter(event => event.unread).length;
+  const { t, currentLanguage } = useTranslation();
 
   // Group events by date (using date string as key)
   const eventsByDate = localEvents.reduce((acc: Record<string, EventProps[]>, event) => {
-    const dateStr = format(event.date, 'EEEE d MMMM yyyy');
+    // Format date based on current language
+    const dateStr = formatDateForLocale(event.date, 'EEEE d MMMM yyyy', currentLanguage.code);
     if (!acc[dateStr]) {
       acc[dateStr] = [];
     }
@@ -40,7 +43,7 @@ const ActivityPanel: React.FC<ActivityPanelProps> = ({
   return <Sheet open={isOpen} onOpenChange={open => !open && onClose()}>
       <SheetContent side="right" className="w-[400px] bg-black border-none p-0 top-[50px] h-[calc(100%-50px)]" topOffset="50px">
         <SheetTitle className="sr-only">Notifications Panel</SheetTitle>
-        <SheetDescription className="sr-only">Liste des notifications et événements récents</SheetDescription>
+        <SheetDescription className="sr-only">{t('notifications.panelDescription')}</SheetDescription>
         
         <div className="flex flex-col h-full">
           {/* ButtonCircle moved to its own line with p-2 class */}
@@ -55,16 +58,16 @@ const ActivityPanel: React.FC<ActivityPanelProps> = ({
             <div className="flex items-center">
               <h3 className="text-white text-base font-normal m-0">
                 {unreadCount === 0 
-                  ? "Vous êtes à jour" 
+                  ? t("notifications.upToDate")
                   : unreadCount === 1
-                    ? "1 notification non lue"
-                    : `${unreadCount} notifications non lues`
+                    ? t("notifications.oneUnread")
+                    : t("notifications.multipleUnread", { count: unreadCount })
                 }
               </h3>
             </div>
             
             {unreadCount > 0 && <button onClick={markAllAsRead} className="text-white hover:underline text-xs">
-                marquer lu
+                {t("notifications.markAsRead")}
               </button>}
           </div>
           
