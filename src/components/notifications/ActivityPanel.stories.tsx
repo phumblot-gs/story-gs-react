@@ -2,7 +2,6 @@
 import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import ActivityPanel from "./ActivityPanel";
-import ActivityPanelContent from "./ActivityPanelContent";
 import { MediaStatus } from "@/utils/mediaStatus";
 import { NotificationType } from "./EventPanel";
 import { MemoryRouter } from "react-router-dom";
@@ -131,26 +130,6 @@ const generateMockEvents = () => {
   ];
 }
 
-// Configure the parameters for iframe display
-const iframeParameters = {
-  chromatic: { disableSnapshot: false },
-  viewport: {
-    viewports: {
-      activityPanel: {
-        name: 'ActivityPanel Frame',
-        styles: {
-          width: '400px',
-          height: '600px',
-        },
-      },
-    },
-    defaultViewport: 'activityPanel',
-  },
-  // This ensures the story is contained within its container
-  layout: 'fullscreen',
-};
-
-// Regular stories for the full component
 export const Default: Story = {
   args: {
     isOpen: true,
@@ -187,43 +166,4 @@ export const AllRead: Story = {
     isOpen: true,
     events: generateMockEvents().map(event => ({...event, unread: false})),
   },
-};
-
-// Static content view stories for better Storybook visualization
-export const StaticContentView: Story = {
-  name: "Contenu du panneau (iframe)",
-  parameters: iframeParameters,
-  render: () => <ActivityPanelContent events={generateMockEvents()} />
-};
-
-export const StaticContentEmpty: Story = {
-  name: "Contenu vide (iframe)",
-  parameters: iframeParameters,
-  render: () => <ActivityPanelContent events={[]} />
-};
-
-export const StaticContentManyEvents: Story = {
-  name: "Contenu avec plusieurs événements (iframe)",
-  parameters: iframeParameters,
-  render: () => <ActivityPanelContent 
-    events={[
-      ...generateMockEvents(),
-      ...generateMockEvents().map(event => ({
-        ...event,
-        date: new Date(new Date().setDate(new Date().getDate() - 2))
-      })),
-      ...generateMockEvents().map(event => ({
-        ...event,
-        date: new Date(new Date().setDate(new Date().getDate() - 3))
-      })),
-    ]} 
-  />
-};
-
-export const StaticContentAllRead: Story = {
-  name: "Contenu avec tout lu (iframe)",
-  parameters: iframeParameters,
-  render: () => <ActivityPanelContent 
-    events={generateMockEvents().map(event => ({...event, unread: false}))} 
-  />
 };
