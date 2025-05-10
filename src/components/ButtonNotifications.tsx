@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ButtonCircle } from "@/components/ui/button-circle";
 import ActivityPanel from "./notifications/ActivityPanel";
 import { NotificationProps, NotificationType } from "./notifications/EventPanel";
@@ -96,7 +96,7 @@ interface ButtonNotificationsProps {
   onClick?: () => void;
   onMarkAllAsRead?: (notifications: NotificationProps[]) => void;
   onNotificationClick?: (notification_id: string) => void;
-  debug?: boolean; // Added debug prop
+  debug?: boolean;
 }
 
 const ButtonNotifications: React.FC<ButtonNotificationsProps> = ({
@@ -105,19 +105,54 @@ const ButtonNotifications: React.FC<ButtonNotificationsProps> = ({
   onClick,
   onMarkAllAsRead,
   onNotificationClick,
-  debug = false // Default to false
+  debug = false
 }) => {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
+  const [localNotifications, setLocalNotifications] = useState<NotificationProps[]>(notifications);
   const { t } = useTranslation();
   
-  // Use provided count or calculate from notifications
-  const unreadCount = count !== undefined ? count : notifications.filter(notification => notification.unread).length;
+  // Update local notifications when prop changes
+  useEffect(() => {
+    setLocalNotifications(notifications);
+  }, [notifications]);
+  
+  // Use provided count or calculate from local notifications
+  const unreadCount = count !== undefined ? count : localNotifications.filter(notification => notification.unread).length;
   
   const togglePanel = () => {
     if (debug) console.log("ButtonNotifications: Panel toggled", { isPanelOpen: !isPanelOpen, unreadCount });
     setIsPanelOpen(prev => !prev);
     if (onClick) {
       onClick();
+    }
+  };
+
+  const handleMarkAllAsRead = (updatedNotifications: NotificationProps[]) => {
+    if (debug) console.log("ButtonNotifications: All notifications marked as read", updatedNotifications);
+    setLocalNotifications(updatedNotifications);
+    if (onMarkAllAsRead) {
+      onMarkAllAsRead(updatedNotifications);
+    }
+  };
+
+  const handleNotificationClick = (notificationId: string) => {
+    // Update the local notification to mark as read
+    const updatedNotifications = localNotifications.map(notification => 
+      notification.notification_id === notificationId && notification.unread 
+        ? { ...notification, unread: false } 
+        : notification
+    );
+    
+    setLocalNotifications(updatedNotifications);
+    
+    if (debug) console.log("ButtonNotifications: Notification clicked", { 
+      notificationId,
+      updatedNotifications
+    });
+    
+    // Pass to parent callback
+    if (onNotificationClick) {
+      onNotificationClick(notificationId);
     }
   };
 
@@ -141,7 +176,7 @@ const ButtonNotifications: React.FC<ButtonNotificationsProps> = ({
         indicator={unreadCount > 0}
         featured={true}
         onClick={togglePanel}
-        debug={debug} // Pass debug mode to ButtonCircle
+        debug={debug}
         aria-label={`${t("notifications.title")}${unreadCount > 0 ? ` (${unreadCount} ${t("notifications.unread")})` : ''}`}
       />
       
@@ -151,16 +186,10 @@ const ButtonNotifications: React.FC<ButtonNotificationsProps> = ({
           if (debug) console.log("ButtonNotifications: Panel closed");
           setIsPanelOpen(false);
         }} 
-        notifications={notifications}
-        onMarkAllAsRead={(updatedNotifications) => {
-          if (debug) console.log("ButtonNotifications: All notifications marked as read", updatedNotifications);
-          onMarkAllAsRead?.(updatedNotifications);
-        }}
-        onNotificationClick={(notificationId) => {
-          if (debug) console.log("ButtonNotifications: Notification clicked", { notificationId });
-          onNotificationClick?.(notificationId);
-        }}
-        debug={debug} // Pass debug mode to ActivityPanel
+        notifications={localNotifications}
+        onMarkAllAsRead={handleMarkAllAsRead}
+        onNotificationClick={handleNotificationClick}
+        debug={debug}
       />
     </>
   );
