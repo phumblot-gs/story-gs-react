@@ -1,4 +1,3 @@
-
 import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import ButtonNotifications from "./ButtonNotifications";
@@ -28,7 +27,11 @@ const meta: Meta<typeof ButtonNotifications> = {
   ],
   argTypes: {
     onMarkAllAsRead: { action: "marked all as read" },
-    onNotificationClick: { action: "notification clicked" }, // Changed from onEventClick
+    onNotificationClick: { action: "notification clicked" },
+    debug: { 
+      control: 'boolean',
+      description: 'Enable debug mode to log events to console'
+    }
   },
 };
 
@@ -38,7 +41,8 @@ type Story = StoryObj<typeof ButtonNotifications>;
 export const Default: Story = {
   args: {
     onMarkAllAsRead: action("marked all as read"),
-    onNotificationClick: action("notification clicked"), // Changed from onEventClick
+    onNotificationClick: action("notification clicked"),
+    debug: false
   },
 };
 
@@ -98,4 +102,42 @@ export const WithUnreadNotifications: Story = {
     onMarkAllAsRead: action("marked all as read"),
     onNotificationClick: action("notification clicked"), // Changed from onEventClick
   },
+};
+
+// Add a new story for debug mode
+export const DebugMode: Story = {
+  args: {
+    notifications: [
+      {
+        notification_id: "debug-notification-1",
+        title: "Debug Notification",
+        subtitle: "STANDARD-2025-05-07 H02-PART-1",
+        pictureStatus: MediaStatus.SUBMITTED_FOR_APPROVAL,
+        type: "comment" as NotificationType,
+        redirectLink: "#",
+        date: new Date(),
+        unread: true
+      },
+      {
+        notification_id: "debug-notification-2",
+        title: "Another Debug Notification",
+        subtitle: "STANDARD-2025-05-07 H02-PART-1",
+        pictureStatus: MediaStatus.SELECTED,
+        type: "transfer" as NotificationType,
+        redirectLink: "#",
+        date: new Date(),
+        unread: false
+      },
+    ],
+    onMarkAllAsRead: action("marked all as read"),
+    onNotificationClick: action("notification clicked"),
+    debug: true
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'This variant enables debug mode, which logs component actions to the console.'
+      }
+    }
+  }
 };

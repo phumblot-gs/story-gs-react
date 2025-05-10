@@ -91,32 +91,46 @@ const mockNotifications: NotificationProps[] = [
 ];
 
 interface ButtonNotificationsProps {
-  notifications?: NotificationProps[]; // Changed from events
+  notifications?: NotificationProps[];
   count?: number;
   onClick?: () => void;
-  onMarkAllAsRead?: (notifications: NotificationProps[]) => void; // Changed from events
-  onNotificationClick?: (notification_id: string) => void; // Changed from onEventClick and event_id
+  onMarkAllAsRead?: (notifications: NotificationProps[]) => void;
+  onNotificationClick?: (notification_id: string) => void;
+  debug?: boolean; // Added debug prop
 }
 
 const ButtonNotifications: React.FC<ButtonNotificationsProps> = ({
-  notifications = mockNotifications, // Changed from events and mockEvents
+  notifications = mockNotifications,
   count,
   onClick,
   onMarkAllAsRead,
-  onNotificationClick // Changed from onEventClick
+  onNotificationClick,
+  debug = false // Default to false
 }) => {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const { t } = useTranslation();
   
   // Use provided count or calculate from notifications
-  const unreadCount = count !== undefined ? count : notifications.filter(notification => notification.unread).length; // Changed from events and event
+  const unreadCount = count !== undefined ? count : notifications.filter(notification => notification.unread).length;
   
   const togglePanel = () => {
+    if (debug) console.log("ButtonNotifications: Panel toggled", { isPanelOpen: !isPanelOpen, unreadCount });
     setIsPanelOpen(prev => !prev);
     if (onClick) {
       onClick();
     }
   };
+
+  // Debug logging for component mount and prop changes
+  React.useEffect(() => {
+    if (debug) {
+      console.log("ButtonNotifications: Component mounted/updated", { 
+        notificationsCount: notifications.length,
+        unreadCount,
+        isPanelOpen
+      });
+    }
+  }, [debug, notifications, unreadCount, isPanelOpen]);
 
   return (
     <>
@@ -127,15 +141,26 @@ const ButtonNotifications: React.FC<ButtonNotificationsProps> = ({
         indicator={unreadCount > 0}
         featured={true}
         onClick={togglePanel}
+        debug={debug} // Pass debug mode to ButtonCircle
         aria-label={`${t("notifications.title")}${unreadCount > 0 ? ` (${unreadCount} ${t("notifications.unread")})` : ''}`}
       />
       
       <ActivityPanel 
         isOpen={isPanelOpen} 
-        onClose={() => setIsPanelOpen(false)} 
-        notifications={notifications} // Changed from events
-        onMarkAllAsRead={onMarkAllAsRead}
-        onNotificationClick={onNotificationClick} // Changed from onEventClick
+        onClose={() => {
+          if (debug) console.log("ButtonNotifications: Panel closed");
+          setIsPanelOpen(false);
+        }} 
+        notifications={notifications}
+        onMarkAllAsRead={(updatedNotifications) => {
+          if (debug) console.log("ButtonNotifications: All notifications marked as read", updatedNotifications);
+          onMarkAllAsRead?.(updatedNotifications);
+        }}
+        onNotificationClick={(notificationId) => {
+          if (debug) console.log("ButtonNotifications: Notification clicked", { notificationId });
+          onNotificationClick?.(notificationId);
+        }}
+        debug={debug} // Pass debug mode to ActivityPanel
       />
     </>
   );

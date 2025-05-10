@@ -105,7 +105,8 @@ const NotificationsTestSection: React.FC = () => {
                   count={5} 
                   onClick={() => {}} 
                   onMarkAllAsRead={handleMarkAllAsRead}
-                  onNotificationClick={handleNotificationClick} // Changed from onEventClick
+                  onNotificationClick={handleNotificationClick}
+                  debug={debugMode}
                 />
               </div>
               <div className="flex flex-col items-center p-4 border rounded-md">
@@ -114,7 +115,8 @@ const NotificationsTestSection: React.FC = () => {
                   count={0} 
                   onClick={() => {}} 
                   onMarkAllAsRead={handleMarkAllAsRead}
-                  onNotificationClick={handleNotificationClick} // Changed from onEventClick
+                  onNotificationClick={handleNotificationClick}
+                  debug={debugMode}
                 />
               </div>
             </div>
@@ -125,6 +127,19 @@ const NotificationsTestSection: React.FC = () => {
               <Button variant="outline" onClick={() => setActivityStatus(false)}>
                 Set No Activity (Global)
               </Button>
+            </div>
+            <div className="grid grid-cols-1 w-full">
+              <Button 
+                variant={debugMode ? "default" : "outline"} 
+                onClick={() => setDebugMode(!debugMode)}
+              >
+                {debugMode ? "Debug Mode: ON" : "Debug Mode: OFF"}
+              </Button>
+              {debugMode && (
+                <p className="text-sm text-muted-foreground mt-1 text-center">
+                  Debug mode enabled. Check browser console for logs.
+                </p>
+              )}
             </div>
           </div>
         </CardContent>
@@ -155,10 +170,10 @@ const NotificationsTestSection: React.FC = () => {
           <ActivityPanel 
             isOpen={isActivityPanelOpen}
             onClose={() => setIsActivityPanelOpen(false)}
-            notifications={generateMockNotifications()} // Changed from events
+            notifications={generateMockNotifications()}
             debug={debugMode}
             onMarkAllAsRead={handleMarkAllAsRead}
-            onNotificationClick={handleNotificationClick} // Changed from onEventClick
+            onNotificationClick={handleNotificationClick}
           />
         </CardContent>
       </Card>
@@ -170,7 +185,7 @@ const NotificationsTestSection: React.FC = () => {
         </CardHeader>
         <CardContent className="bg-black p-6 space-y-4">
           <EventPanel
-            notification_id="demo-1" // Changed from event_id
+            notification_id="demo-1"
             title="Connect Added Comments on photos"
             subtitle="STANDARD-2025-05-07 H02-PART-1"
             pictureStatus={MediaStatus.SUBMITTED_FOR_APPROVAL}
@@ -179,13 +194,13 @@ const NotificationsTestSection: React.FC = () => {
             date={new Date()}
             unread={true}
             onClick={(id) => toast({
-              title: "Notification cliquée", // Changed from Événement
-              description: `Vous avez cliqué sur la notification avec l'ID: ${id}`, // Changed from événement
+              title: "Notification cliquée",
+              description: `Vous avez cliqué sur la notification avec l'ID: ${id}`,
               duration: 3000,
             })}
           />
           <EventPanel
-            notification_id="demo-2" // Changed from event_id
+            notification_id="demo-2"
             title="Files transferred to editing team"
             subtitle="STANDARD-2025-05-07 H02-PART-1"
             pictureStatus={MediaStatus.VALIDATED}
@@ -195,9 +210,9 @@ const NotificationsTestSection: React.FC = () => {
             unread={true}
           />
           
-          {/* Add new EventPanels with unread=false */}
+          {/* Fixed syntax error in the EventPanel props */}
           <EventPanel
-            notification_id="demo-3" // Changed from event_id
+            notification_id="demo-3"
             title="Connect Added Comments on photos"
             subtitle="STANDARD-2025-05-07 H02-PART-1"
             pictureStatus={MediaStatus.BROADCAST}
@@ -207,7 +222,7 @@ const NotificationsTestSection: React.FC = () => {
             unread={false}
           />
           <EventPanel
-            notification_id="demo-4" // Changed from event_id
+            notification_id="demo-4"
             title="Files published to website"
             subtitle="STANDARD-2025-05-07 H02-PART-1"
             pictureStatus={MediaStatus.BROADCAST}
@@ -217,7 +232,7 @@ const NotificationsTestSection: React.FC = () => {
             unread={false}
           />
           <EventPanel
-            notification_id="demo-5" // Changed from event_id
+            notification_id="demo-5"
             title="Project review completed"
             subtitle="STANDARD-2025-05-07 H03-PART-2"
             pictureStatus={MediaStatus.SELECTED}
@@ -227,7 +242,7 @@ const NotificationsTestSection: React.FC = () => {
             unread={false}
           />
           <EventPanel
-            notification_id="demo-6" // Changed from event_id
+            notification_id="demo-6"
             title="Image collection updated"
             subtitle="STANDARD-2025-05-08 H01-PART-1"
             pictureStatus={MediaStatus.SUBMITTED_FOR_APPROVAL}
