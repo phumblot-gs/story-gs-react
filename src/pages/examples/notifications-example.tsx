@@ -6,7 +6,7 @@ import { ThemeProvider } from "@/contexts/ThemeContext";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/sonner";
-import { EventProps } from "@/components/notifications/EventPanel";
+import { NotificationProps } from "@/components/notifications/EventPanel";
 
 // Example of how to use the ButtonNotifications component in a PageHeader
 const NotificationsExample = () => {
@@ -20,19 +20,19 @@ const NotificationsExample = () => {
   };
 
   // Handle mark all as read
-  const handleMarkAllAsRead = (events: EventProps[]) => {
+  const handleMarkAllAsRead = (notifications: NotificationProps[]) => { // Changed from events
     toast({
       title: "Notifications marquées comme lues",
-      description: `${events.length} notification(s) mise(s) à jour`,
+      description: `${notifications.length} notification(s) mise(s) à jour`, // Changed from events
       duration: 3000,
     });
   };
 
-  // Handle event click
-  const handleEventClick = (eventId: string) => {
+  // Handle notification click
+  const handleNotificationClick = (notification_id: string) => { // Changed from eventId
     toast({
       title: "Navigation vers la notification",
-      description: `Redirection vers le détail de l'événement ${eventId}`,
+      description: `Redirection vers le détail de la notification ${notification_id}`, // Changed from événement
       duration: 3000,
     });
   };
@@ -79,7 +79,7 @@ const NotificationsExample = () => {
                 rightContent={
                   <ButtonNotifications 
                     onMarkAllAsRead={handleMarkAllAsRead}
-                    onEventClick={handleEventClick}
+                    onNotificationClick={handleNotificationClick} // Changed from onEventClick
                   />
                 }
               />
@@ -88,7 +88,7 @@ const NotificationsExample = () => {
           <p className="mt-4 text-sm text-muted-foreground">
             Cliquez sur le bouton Bell pour afficher le panneau des notifications.
             <br />
-            Les actions sur les événements et "marquer comme lu" sont connectées à des toasts de démonstration.
+            Les actions sur les notifications et "marquer comme lu" sont connectées à des toasts de démonstration.
           </p>
         </CardContent>
       </Card>

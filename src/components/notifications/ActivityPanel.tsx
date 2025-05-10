@@ -1,71 +1,72 @@
+
 import React, { useState } from "react";
 import { Sheet, SheetContent, SheetClose, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { ButtonCircle } from "@/components/ui/button-circle";
-import EventPanel, { EventProps } from "./EventPanel";
+import EventPanel, { NotificationProps } from "./EventPanel";
 import { useTranslation } from "@/contexts/TranslationContext";
 import { formatDateForLocale } from "@/utils/translations";
 
 export interface ActivityPanelProps {
-  isOpen?: boolean; // Rendu optionnel avec valeur par défaut
+  isOpen?: boolean;
   onClose: () => void;
-  events: EventProps[];
-  debug?: boolean; // Mode debug
-  onMarkAllAsRead?: (events: EventProps[]) => void; // Propriété pour escalader l'appel
-  onEventClick?: (event_id: string) => void; // Nouveau callback pour les clics sur les événements
+  notifications: NotificationProps[]; // Changed from events
+  debug?: boolean;
+  onMarkAllAsRead?: (notifications: NotificationProps[]) => void; // Changed from events
+  onNotificationClick?: (notification_id: string) => void; // Changed from onEventClick and event_id
 }
 
 const ActivityPanel: React.FC<ActivityPanelProps> = ({
-  isOpen = false, // Valeur par défaut définie à false
+  isOpen = false,
   onClose,
-  events,
+  notifications, // Changed from events
   debug = false,
   onMarkAllAsRead,
-  onEventClick
+  onNotificationClick // Changed from onEventClick
 }) => {
-  const [localEvents, setLocalEvents] = useState<EventProps[]>(events);
-  const unreadCount = localEvents.filter(event => event.unread).length;
+  const [localNotifications, setLocalNotifications] = useState<NotificationProps[]>(notifications); // Changed from events
+  const unreadCount = localNotifications.filter(notification => notification.unread).length; // Changed from event
   const { t, currentLanguage } = useTranslation();
 
-  // Group events by date (using date string as key)
-  const eventsByDate = localEvents.reduce((acc: Record<string, EventProps[]>, event) => {
+  // Group notifications by date (using date string as key)
+  const notificationsByDate = localNotifications.reduce((acc: Record<string, NotificationProps[]>, notification) => { // Changed from events and event
     // Format date based on current language
-    const dateStr = formatDateForLocale(event.date, 'EEEE d MMMM yyyy', currentLanguage.code);
+    const dateStr = formatDateForLocale(notification.date, 'EEEE d MMMM yyyy', currentLanguage.code); // Changed from event
     if (!acc[dateStr]) {
       acc[dateStr] = [];
     }
-    acc[dateStr].push(event);
+    acc[dateStr].push(notification); // Changed from event
     return acc;
   }, {});
 
   const markAllAsRead = () => {
-    const updatedEvents = localEvents.map(event => ({
-      ...event,
+    const updatedNotifications = localNotifications.map(notification => ({ // Changed from events and event
+      ...notification,
       unread: false
     }));
-    setLocalEvents(updatedEvents);
+    setLocalNotifications(updatedNotifications); // Changed from updatedEvents
     
     // Log dans la console en mode debug
     if (debug) {
-      console.log('Debug: All events marked as read', updatedEvents);
+      console.log('Debug: All notifications marked as read', updatedNotifications); // Changed from events
     }
     
     // Appel de la fonction de callback si elle est définie
     if (onMarkAllAsRead) {
-      onMarkAllAsRead(updatedEvents);
+      onMarkAllAsRead(updatedNotifications); // Changed from updatedEvents
     }
   };
 
-  // Fonction de gestion des clics sur les événements
-  const handleEventClick = (event_id: string) => {
-    // En mode debug, on log l'événement
+  // Fonction de gestion des clics sur les notifications
+  const handleNotificationClick = (notification_id: string) => { // Changed from event_id
+    // En mode debug, on log la notification
     if (debug) {
-      const clickedEvent = localEvents.find(e => e.event_id === event_id);
-      console.log('Event clicked in debug mode:', clickedEvent);
+      const clickedNotification = localNotifications.find(n => n.notification_id === notification_id); // Changed from event and event_id
+      console.log('Notification clicked in debug mode:', clickedNotification); // Changed from event
     }
     
-    // Transmettre l'event_id au callback parent s'il existe
-    if (onEventClick) {
-      onEventClick(event_id);
+    // Transmettre le notification_id au callback parent s'il existe
+    if (onNotificationClick) { // Changed from onEventClick
+      onNotificationClick(notification_id); // Changed from onEventClick and event_id
     }
   };
 
@@ -100,16 +101,16 @@ const ActivityPanel: React.FC<ActivityPanelProps> = ({
               </button>}
           </div>
           
-          {/* Event list with flexbox layout */}
+          {/* Notification list with flexbox layout */}
           <div className="flex-1 overflow-auto pl-[50px] pr-[20px] pt-[20px] pb-[50px]">
-            {Object.entries(eventsByDate).map(([dateStr, dateEvents]) => <div key={dateStr} className="mb-4">
+            {Object.entries(notificationsByDate).map(([dateStr, dateNotifications]) => <div key={dateStr} className="mb-4">
                 <div className="py-2 text-grey-stronger text-sm opacity-75">
                   {dateStr}
                 </div>
                 <div className="flex flex-col gap-[10px]">
-                  {dateEvents.map((event, index) => (
+                  {dateNotifications.map((notification, index) => (
                     <div key={`${dateStr}-${index}`}>
-                      <EventPanel {...event} onClick={handleEventClick} />
+                      <EventPanel {...notification} onClick={handleNotificationClick} />
                     </div>
                   ))}
                 </div>

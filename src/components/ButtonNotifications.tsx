@@ -2,14 +2,14 @@
 import React, { useState } from "react";
 import { ButtonCircle } from "@/components/ui/button-circle";
 import ActivityPanel from "./notifications/ActivityPanel";
-import { EventProps, NotificationType } from "./notifications/EventPanel";
+import { NotificationProps, NotificationType } from "./notifications/EventPanel";
 import { MediaStatus } from "@/utils/mediaStatus";
 import { useTranslation } from "@/contexts/TranslationContext";
 
 // Mock data for demonstration
-const mockEvents: EventProps[] = [
+const mockNotifications: NotificationProps[] = [
   {
-    event_id: "mock-event-1",
+    notification_id: "mock-notification-1",
     title: "Connect Added Comments on photos",
     subtitle: "STANDARD-2025-05-07 H02-PART-1",
     pictureStatus: MediaStatus.SUBMITTED_FOR_APPROVAL,
@@ -19,7 +19,7 @@ const mockEvents: EventProps[] = [
     unread: true
   },
   {
-    event_id: "mock-event-2",
+    notification_id: "mock-notification-2",
     title: "Connect Added Comments on photos",
     subtitle: "STANDARD-2025-05-07 H02-PART-1",
     pictureStatus: MediaStatus.SELECTED,
@@ -29,7 +29,7 @@ const mockEvents: EventProps[] = [
     unread: true
   },
   {
-    event_id: "mock-event-3",
+    notification_id: "mock-notification-3",
     title: "Connect Added Comments on photos",
     subtitle: "STANDARD-2025-05-07 H02-PART-1",
     pictureStatus: MediaStatus.REFUSED_1,
@@ -39,7 +39,7 @@ const mockEvents: EventProps[] = [
     unread: true
   },
   {
-    event_id: "mock-event-4",
+    notification_id: "mock-notification-4",
     title: "Connect Added Comments on photos",
     subtitle: "STANDARD-2025-05-07 H02-PART-1",
     pictureStatus: MediaStatus.VALIDATED,
@@ -49,7 +49,7 @@ const mockEvents: EventProps[] = [
     unread: true
   },
   {
-    event_id: "mock-event-5",
+    notification_id: "mock-notification-5",
     title: "Connect Added Comments on photos",
     subtitle: "STANDARD-2025-05-07 H02-PART-1",
     pictureStatus: MediaStatus.TO_RESHOOT,
@@ -59,7 +59,7 @@ const mockEvents: EventProps[] = [
     unread: true
   },
   {
-    event_id: "mock-event-6",
+    notification_id: "mock-notification-6",
     title: "Connect Added Comments on photos",
     subtitle: "STANDARD-2025-05-07 H02-PART-1",
     pictureStatus: MediaStatus.READY_TO_BROADCAST,
@@ -69,7 +69,7 @@ const mockEvents: EventProps[] = [
     unread: false
   },
   {
-    event_id: "mock-event-7",
+    notification_id: "mock-notification-7",
     title: "Connect Added Comments on photos",
     subtitle: "STANDARD-2025-05-07 H02-PART-1",
     pictureStatus: MediaStatus.BROADCAST,
@@ -79,7 +79,7 @@ const mockEvents: EventProps[] = [
     unread: false
   },
   {
-    event_id: "mock-event-8",
+    notification_id: "mock-notification-8",
     title: "Connect Added Comments on photos",
     subtitle: "STANDARD-2025-05-07 H02-PART-1",
     pictureStatus: MediaStatus.ERROR_DURING_BROADCAST,
@@ -91,25 +91,25 @@ const mockEvents: EventProps[] = [
 ];
 
 interface ButtonNotificationsProps {
-  events?: EventProps[];
+  notifications?: NotificationProps[]; // Changed from events
   count?: number;
   onClick?: () => void;
-  onMarkAllAsRead?: (events: EventProps[]) => void; // Nouveau callback
-  onEventClick?: (event_id: string) => void; // Nouveau callback
+  onMarkAllAsRead?: (notifications: NotificationProps[]) => void; // Changed from events
+  onNotificationClick?: (notification_id: string) => void; // Changed from onEventClick and event_id
 }
 
 const ButtonNotifications: React.FC<ButtonNotificationsProps> = ({
-  events = mockEvents,
+  notifications = mockNotifications, // Changed from events and mockEvents
   count,
   onClick,
   onMarkAllAsRead,
-  onEventClick
+  onNotificationClick // Changed from onEventClick
 }) => {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const { t } = useTranslation();
   
-  // Use provided count or calculate from events
-  const unreadCount = count !== undefined ? count : events.filter(event => event.unread).length;
+  // Use provided count or calculate from notifications
+  const unreadCount = count !== undefined ? count : notifications.filter(notification => notification.unread).length; // Changed from events and event
   
   const togglePanel = () => {
     setIsPanelOpen(prev => !prev);
@@ -133,9 +133,9 @@ const ButtonNotifications: React.FC<ButtonNotificationsProps> = ({
       <ActivityPanel 
         isOpen={isPanelOpen} 
         onClose={() => setIsPanelOpen(false)} 
-        events={events}
+        notifications={notifications} // Changed from events
         onMarkAllAsRead={onMarkAllAsRead}
-        onEventClick={onEventClick}
+        onNotificationClick={onNotificationClick} // Changed from onEventClick
       />
     </>
   );

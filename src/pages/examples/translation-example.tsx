@@ -5,24 +5,24 @@ import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import ButtonNotifications from "@/components/ButtonNotifications";
 import { toast } from "@/components/ui/sonner";
-import { EventProps } from "@/components/notifications/EventPanel";
+import { NotificationProps } from "@/components/notifications/EventPanel";
 
 const TranslationExample = () => {
   const { currentLanguage, setLanguage, availableLanguages, t } = useTranslation();
 
   // Handlers for ButtonNotifications
-  const handleMarkAllAsRead = (events: EventProps[]) => {
+  const handleMarkAllAsRead = (notifications: NotificationProps[]) => { // Changed from events
     toast({
       title: t("notifications.allMarkedAsRead"),
-      description: `${events.length} ${events.length > 1 ? t("notifications.multipleEvents") : t("notifications.oneEvent")}`,
+      description: `${notifications.length} ${notifications.length > 1 ? t("notifications.multipleEvents") : t("notifications.oneEvent")}`, // Changed from events
       duration: 3000,
     });
   };
 
-  const handleEventClick = (eventId: string) => {
+  const handleNotificationClick = (notification_id: string) => { // Changed from eventId
     toast({
       title: t("notifications.eventClicked"),
-      description: `${t("notifications.eventId")}: ${eventId}`,
+      description: `${t("notifications.eventId")}: ${notification_id}`, // Changed from eventId
       duration: 3000,
     });
   };
@@ -60,7 +60,7 @@ const TranslationExample = () => {
         <CardContent className="flex justify-center">
           <ButtonNotifications 
             onMarkAllAsRead={handleMarkAllAsRead}
-            onEventClick={handleEventClick}
+            onNotificationClick={handleNotificationClick} // Changed from onEventClick
           />
         </CardContent>
       </Card>

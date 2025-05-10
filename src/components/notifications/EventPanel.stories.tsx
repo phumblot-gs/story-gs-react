@@ -25,11 +25,11 @@ const meta: Meta<typeof EventPanel> = {
   argTypes: {
     title: {
       control: { type: "text" },
-      description: "Title of the event",
+      description: "Title of the notification", // Changed from event
     },
     subtitle: {
       control: { type: "text" },
-      description: "Subtitle of the event",
+      description: "Subtitle of the notification", // Changed from event
     },
     pictureStatus: {
       control: {
@@ -47,11 +47,11 @@ const meta: Meta<typeof EventPanel> = {
     },
     redirectLink: {
       control: { type: "text" },
-      description: "Link to redirect when clicking on the event",
+      description: "Link to redirect when clicking on the notification", // Changed from event
     },
     date: {
       control: { type: "date" },
-      description: "Date of the event",
+      description: "Date of the notification", // Changed from event
     },
     unread: {
       control: { type: "boolean" },
@@ -65,6 +65,7 @@ type Story = StoryObj<typeof EventPanel>;
 
 export const Default: Story = {
   args: {
+    notification_id: "story-notification-default", // Changed from event_id
     title: "Connect Added Comments on photos",
     subtitle: "STANDARD-2025-05-07 H02-PART-1",
     pictureStatus: MediaStatus.SUBMITTED_FOR_APPROVAL,

@@ -24,7 +24,7 @@ Le composant ActivityPanel est un panneau latéral qui affiche les notifications
 - Permet de marquer toutes les notifications comme lues
 - Indique le nombre de notifications non lues
 - Utilise le système de traduction pour l'internationalisation
-- Mode debug disponible pour afficher les données des événements dans la console
+- Mode debug disponible pour afficher les données des notifications dans la console
 - Possibilité d'être notifié quand toutes les notifications sont marquées comme lues via onMarkAllAsRead
 
 ## Utilisation
@@ -34,18 +34,18 @@ import { ActivityPanel } from "@/components/notifications/ActivityPanel";
 
 function MyComponent() {
   const [isOpen, setIsOpen] = useState(false);
-  const events = [/* ... vos événements ici ... */];
+  const notifications = [/* ... vos notifications ici ... */];
   
-  const handleMarkAllAsRead = (updatedEvents) => {
-    console.log('Tous les événements ont été marqués comme lus', updatedEvents);
-    // Faire quelque chose avec les événements mis à jour
+  const handleMarkAllAsRead = (updatedNotifications) => {
+    console.log('Toutes les notifications ont été marquées comme lues', updatedNotifications);
+    // Faire quelque chose avec les notifications mises à jour
   };
   
   return (
     <ActivityPanel
       isOpen={isOpen}
       onClose={() => setIsOpen(false)}
-      events={events}
+      notifications={notifications}
       debug={true} // Optionnel: activer le mode debug
       onMarkAllAsRead={handleMarkAllAsRead} // Optionnel: callback quand tout est marqué comme lu
     />
@@ -76,13 +76,13 @@ function MyComponent() {
       action: "closed",
       description: "Called when the panel is closed",
     },
-    events: {
+    notifications: { // Changed from events
       control: { type: "object" },
-      description: "List of notification events",
+      description: "List of notification items", // Changed from events
     },
     debug: {
       control: { type: "boolean" },
-      description: "Enable debug mode to log event data to console on click",
+      description: "Enable debug mode to log notification data to console on click", // Changed from event
     },
     onMarkAllAsRead: {
       action: "marked all as read",
@@ -94,14 +94,14 @@ function MyComponent() {
 export default meta;
 type Story = StoryObj<typeof ActivityPanel>;
 
-const generateMockEvents = () => {
+const generateMockNotifications = () => { // Changed from Events
   const today = new Date();
   const yesterday = new Date();
   yesterday.setDate(yesterday.getDate() - 1);
   
   return [
     {
-      event_id: "activity-story-1",
+      notification_id: "activity-story-1", // Changed from event_id
       title: "Connect Added Comments on photos",
       subtitle: "STANDARD-2025-05-07 H02-PART-1",
       pictureStatus: MediaStatus.SUBMITTED_FOR_APPROVAL,
@@ -111,7 +111,7 @@ const generateMockEvents = () => {
       unread: true
     },
     {
-      event_id: "activity-story-2",
+      notification_id: "activity-story-2", // Changed from event_id
       title: "Connect Added Comments on photos",
       subtitle: "STANDARD-2025-05-07 H02-PART-1",
       pictureStatus: MediaStatus.SELECTED,
@@ -121,7 +121,7 @@ const generateMockEvents = () => {
       unread: true
     },
     {
-      event_id: "activity-story-3",
+      notification_id: "activity-story-3", // Changed from event_id
       title: "Files transferred to editing team",
       subtitle: "STANDARD-2025-05-07 H02-PART-1",
       pictureStatus: MediaStatus.VALIDATED,
@@ -131,7 +131,7 @@ const generateMockEvents = () => {
       unread: true
     },
     {
-      event_id: "activity-story-4",
+      notification_id: "activity-story-4", // Changed from event_id
       title: "Connect Added Comments on photos",
       subtitle: "STANDARD-2025-05-07 H02-PART-1",
       pictureStatus: MediaStatus.BROADCAST,
@@ -141,7 +141,7 @@ const generateMockEvents = () => {
       unread: false
     },
     {
-      event_id: "activity-story-5",
+      notification_id: "activity-story-5", // Changed from event_id
       title: "Files published to website",
       subtitle: "STANDARD-2025-05-07 H02-PART-1",
       pictureStatus: MediaStatus.BROADCAST,
@@ -156,7 +156,7 @@ const generateMockEvents = () => {
 export const Default: Story = {
   args: {
     isOpen: true,
-    events: generateMockEvents(),
+    notifications: generateMockNotifications(), // Changed from events
     debug: false,
   },
   parameters: {
@@ -168,7 +168,7 @@ export const Default: Story = {
 export const DebugMode: Story = {
   args: {
     isOpen: true,
-    events: generateMockEvents(),
+    notifications: generateMockNotifications(), // Changed from events
     debug: true,
   },
   parameters: {
@@ -180,7 +180,7 @@ export const DebugMode: Story = {
 export const Empty: Story = {
   args: {
     isOpen: true,
-    events: [],
+    notifications: [], // Changed from events
   },
   parameters: {
     chromatic: { disableSnapshot: true },
@@ -188,19 +188,19 @@ export const Empty: Story = {
   }
 };
 
-export const ManyEvents: Story = {
+export const ManyNotifications: Story = { // Changed from ManyEvents
   args: {
     isOpen: true,
-    events: [
-      ...generateMockEvents(),
-      ...generateMockEvents().map(event => ({
-        ...event,
-        event_id: `many-${event.event_id}`,
+    notifications: [ // Changed from events
+      ...generateMockNotifications(),
+      ...generateMockNotifications().map(notification => ({ // Changed from event
+        ...notification,
+        notification_id: `many-${notification.notification_id}`, // Changed from event_id
         date: new Date(new Date().setDate(new Date().getDate() - 2))
       })),
-      ...generateMockEvents().map(event => ({
-        ...event,
-        event_id: `many-older-${event.event_id}`,
+      ...generateMockNotifications().map(notification => ({ // Changed from event
+        ...notification,
+        notification_id: `many-older-${notification.notification_id}`, // Changed from event_id
         date: new Date(new Date().setDate(new Date().getDate() - 3))
       })),
     ],
@@ -214,7 +214,7 @@ export const ManyEvents: Story = {
 export const AllRead: Story = {
   args: {
     isOpen: true,
-    events: generateMockEvents().map(event => ({...event, unread: false})),
+    notifications: generateMockNotifications().map(notification => ({...notification, unread: false})), // Changed from event
   },
   parameters: {
     chromatic: { disableSnapshot: true },

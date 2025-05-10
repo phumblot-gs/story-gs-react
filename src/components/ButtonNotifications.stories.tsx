@@ -28,7 +28,7 @@ const meta: Meta<typeof ButtonNotifications> = {
   ],
   argTypes: {
     onMarkAllAsRead: { action: "marked all as read" },
-    onEventClick: { action: "event clicked" },
+    onNotificationClick: { action: "notification clicked" }, // Changed from onEventClick
   },
 };
 
@@ -38,15 +38,15 @@ type Story = StoryObj<typeof ButtonNotifications>;
 export const Default: Story = {
   args: {
     onMarkAllAsRead: action("marked all as read"),
-    onEventClick: action("event clicked"),
+    onNotificationClick: action("notification clicked"), // Changed from onEventClick
   },
 };
 
 export const WithoutUnreadNotifications: Story = {
   args: {
-    events: [
+    notifications: [ // Changed from events
       {
-        event_id: "story-event-1",
+        notification_id: "story-notification-1", // Changed from event_id
         title: "Connect Added Comments on photos",
         subtitle: "STANDARD-2025-05-07 H02-PART-1",
         pictureStatus: MediaStatus.SUBMITTED_FOR_APPROVAL,
@@ -56,7 +56,7 @@ export const WithoutUnreadNotifications: Story = {
         unread: false
       },
       {
-        event_id: "story-event-2",
+        notification_id: "story-notification-2", // Changed from event_id
         title: "Files transferred to editing team",
         subtitle: "STANDARD-2025-05-07 H02-PART-1",
         pictureStatus: MediaStatus.SELECTED,
@@ -67,15 +67,15 @@ export const WithoutUnreadNotifications: Story = {
       },
     ],
     onMarkAllAsRead: action("marked all as read"),
-    onEventClick: action("event clicked"),
+    onNotificationClick: action("notification clicked"), // Changed from onEventClick
   },
 };
 
 export const WithUnreadNotifications: Story = {
   args: {
-    events: [
+    notifications: [ // Changed from events
       {
-        event_id: "story-event-3",
+        notification_id: "story-notification-3", // Changed from event_id
         title: "Connect Added Comments on photos",
         subtitle: "STANDARD-2025-05-07 H02-PART-1",
         pictureStatus: MediaStatus.SUBMITTED_FOR_APPROVAL,
@@ -85,7 +85,7 @@ export const WithUnreadNotifications: Story = {
         unread: true
       },
       {
-        event_id: "story-event-4",
+        notification_id: "story-notification-4", // Changed from event_id
         title: "Files transferred to editing team",
         subtitle: "STANDARD-2025-05-07 H02-PART-1",
         pictureStatus: MediaStatus.SELECTED,
@@ -96,6 +96,6 @@ export const WithUnreadNotifications: Story = {
       },
     ],
     onMarkAllAsRead: action("marked all as read"),
-    onEventClick: action("event clicked"),
+    onNotificationClick: action("notification clicked"), // Changed from onEventClick
   },
 };
