@@ -6,6 +6,7 @@ import { MediaStatus } from "@/utils/mediaStatus";
 import { NotificationType } from "./notifications/EventPanel";
 import { action } from "@storybook/addon-actions";
 import { TranslationProvider } from "@/contexts/TranslationContext";
+import { MemoryRouter } from "react-router-dom";
 
 const meta: Meta<typeof ButtonNotifications> = {
   title: "Components/ButtonNotifications",
@@ -17,9 +18,11 @@ const meta: Meta<typeof ButtonNotifications> = {
   decorators: [
     (Story) => (
       <TranslationProvider>
-        <div className="p-6 bg-white rounded-md">
-          <Story />
-        </div>
+        <MemoryRouter>
+          <div className="p-6 bg-white rounded-md">
+            <Story />
+          </div>
+        </MemoryRouter>
       </TranslationProvider>
     ),
   ],
