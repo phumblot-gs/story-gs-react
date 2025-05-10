@@ -11,7 +11,8 @@ export interface ActivityPanelProps {
   onClose: () => void;
   events: EventProps[];
   debug?: boolean; // Mode debug
-  onMarkAllAsRead?: (events: EventProps[]) => void; // Nouvelle propriété pour escalader l'appel
+  onMarkAllAsRead?: (events: EventProps[]) => void; // Propriété pour escalader l'appel
+  onEventClick?: (event_id: string) => void; // Nouveau callback pour les clics sur les événements
 }
 
 const ActivityPanel: React.FC<ActivityPanelProps> = ({
@@ -19,7 +20,8 @@ const ActivityPanel: React.FC<ActivityPanelProps> = ({
   onClose,
   events,
   debug = false,
-  onMarkAllAsRead
+  onMarkAllAsRead,
+  onEventClick
 }) => {
   const [localEvents, setLocalEvents] = useState<EventProps[]>(events);
   const unreadCount = localEvents.filter(event => event.unread).length;
@@ -54,10 +56,17 @@ const ActivityPanel: React.FC<ActivityPanelProps> = ({
     }
   };
 
-  // Fonction de gestion des clics sur les événements pour le mode debug
-  const handleEventClick = (event: EventProps) => {
+  // Fonction de gestion des clics sur les événements
+  const handleEventClick = (event_id: string) => {
+    // En mode debug, on log l'événement
     if (debug) {
-      console.log('Event clicked in debug mode:', event);
+      const clickedEvent = localEvents.find(e => e.event_id === event_id);
+      console.log('Event clicked in debug mode:', clickedEvent);
+    }
+    
+    // Transmettre l'event_id au callback parent s'il existe
+    if (onEventClick) {
+      onEventClick(event_id);
     }
   };
 
@@ -100,8 +109,8 @@ const ActivityPanel: React.FC<ActivityPanelProps> = ({
                 </div>
                 <div className="flex flex-col gap-[10px]">
                   {dateEvents.map((event, index) => (
-                    <div key={`${dateStr}-${index}`} onClick={() => handleEventClick(event)}>
-                      <EventPanel {...event} />
+                    <div key={`${dateStr}-${index}`}>
+                      <EventPanel {...event} onClick={handleEventClick} />
                     </div>
                   ))}
                 </div>

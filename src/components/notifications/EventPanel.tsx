@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 export type NotificationType = "comment" | "transfer" | "other";
 
 export interface EventProps {
+  event_id: string; // Identificateur unique pour chaque événement
   title: string;
   subtitle: string;
   pictureStatus: MediaStatusEnum;
@@ -17,19 +18,37 @@ export interface EventProps {
   unread: boolean;
 }
 
-const EventPanel: React.FC<EventProps> = ({
+interface EventPanelProps extends EventProps {
+  onClick?: (event_id: string) => void; // Callback de clic
+}
+
+const EventPanel: React.FC<EventPanelProps> = ({
+  event_id,
   title,
   subtitle,
   pictureStatus,
   type,
   redirectLink,
   date,
-  unread
+  unread,
+  onClick
 }) => {
   const formattedTime = date.toLocaleTimeString(undefined, {
     hour: "2-digit",
     minute: "2-digit"
   });
+
+  const handleClick = (e: React.MouseEvent) => {
+    // Si l'URL n'est pas valide, bloquer la redirection
+    if (!redirectLink || redirectLink === "#" || redirectLink.trim() === "") {
+      e.preventDefault();
+    }
+    
+    // Appeler le callback avec l'ID de l'événement s'il est défini
+    if (onClick) {
+      onClick(event_id);
+    }
+  };
 
   return (
     <Link 
@@ -38,6 +57,7 @@ const EventPanel: React.FC<EventProps> = ({
         "block no-underline text-white transition-all duration-200 group", 
         !unread && "opacity-30 hover:opacity-100"
       )}
+      onClick={handleClick}
     >
       <div className="flex items-start p-2.5 gap-2.5 bg-black-secondary">
         <div className="flex-1 min-w-0 flex flex-col">
