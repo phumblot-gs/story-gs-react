@@ -15,9 +15,9 @@ const meta: Meta<typeof ActivityPanel> = {
     docs: {
       description: {
         component: `
-# Activity Panel
 
 Le composant ActivityPanel est un panneau latéral qui affiche les notifications et activités récentes.
+Il est nativement instancié par le composant ButtonNotifications.
 
 ## Fonctionnalités
 - Affiche les notifications regroupées par date
