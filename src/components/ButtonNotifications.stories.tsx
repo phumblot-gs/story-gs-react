@@ -5,6 +5,7 @@ import ButtonNotifications from "./ButtonNotifications";
 import { MediaStatus } from "@/utils/mediaStatus";
 import { NotificationType } from "./notifications/EventPanel";
 import { action } from "@storybook/addon-actions";
+import { TranslationProvider } from "@/contexts/TranslationContext";
 
 const meta: Meta<typeof ButtonNotifications> = {
   title: "Components/ButtonNotifications",
@@ -15,9 +16,11 @@ const meta: Meta<typeof ButtonNotifications> = {
   tags: ["autodocs"],
   decorators: [
     (Story) => (
-      <div className="p-6 bg-white rounded-md">
-        <Story />
-      </div>
+      <TranslationProvider>
+        <div className="p-6 bg-white rounded-md">
+          <Story />
+        </div>
+      </TranslationProvider>
     ),
   ],
   argTypes: {
