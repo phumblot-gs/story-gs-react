@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Sheet, SheetContent, SheetClose, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { ButtonCircle } from "@/components/ui/button-circle";
@@ -7,7 +6,7 @@ import { useTranslation } from "@/contexts/TranslationContext";
 import { formatDateForLocale } from "@/utils/translations";
 
 export interface ActivityPanelProps {
-  isOpen: boolean;
+  isOpen?: boolean; // Rendu optionnel avec valeur par défaut
   onClose: () => void;
   events: EventProps[];
   debug?: boolean; // Mode debug
@@ -16,7 +15,7 @@ export interface ActivityPanelProps {
 }
 
 const ActivityPanel: React.FC<ActivityPanelProps> = ({
-  isOpen,
+  isOpen = false, // Valeur par défaut définie à false
   onClose,
   events,
   debug = false,
