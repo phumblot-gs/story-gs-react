@@ -10,14 +10,16 @@ export interface ActivityPanelProps {
   isOpen: boolean;
   onClose: () => void;
   events: EventProps[];
-  debug?: boolean; // Nouvelle prop pour activer/désactiver le mode debug
+  debug?: boolean; // Mode debug
+  onMarkAllAsRead?: (events: EventProps[]) => void; // Nouvelle propriété pour escalader l'appel
 }
 
 const ActivityPanel: React.FC<ActivityPanelProps> = ({
   isOpen,
   onClose,
   events,
-  debug = false // False par défaut
+  debug = false,
+  onMarkAllAsRead
 }) => {
   const [localEvents, setLocalEvents] = useState<EventProps[]>(events);
   const unreadCount = localEvents.filter(event => event.unread).length;
@@ -40,6 +42,16 @@ const ActivityPanel: React.FC<ActivityPanelProps> = ({
       unread: false
     }));
     setLocalEvents(updatedEvents);
+    
+    // Log dans la console en mode debug
+    if (debug) {
+      console.log('Debug: All events marked as read', updatedEvents);
+    }
+    
+    // Appel de la fonction de callback si elle est définie
+    if (onMarkAllAsRead) {
+      onMarkAllAsRead(updatedEvents);
+    }
   };
 
   // Fonction de gestion des clics sur les événements pour le mode debug

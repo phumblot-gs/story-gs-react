@@ -1,3 +1,4 @@
+
 import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import ActivityPanel from "./ActivityPanel";
@@ -24,6 +25,7 @@ Le composant ActivityPanel est un panneau latéral qui affiche les notifications
 - Indique le nombre de notifications non lues
 - Utilise le système de traduction pour l'internationalisation
 - Mode debug disponible pour afficher les données des événements dans la console
+- Possibilité d'être notifié quand toutes les notifications sont marquées comme lues via onMarkAllAsRead
 
 ## Utilisation
 
@@ -34,12 +36,18 @@ function MyComponent() {
   const [isOpen, setIsOpen] = useState(false);
   const events = [/* ... vos événements ici ... */];
   
+  const handleMarkAllAsRead = (updatedEvents) => {
+    console.log('Tous les événements ont été marqués comme lus', updatedEvents);
+    // Faire quelque chose avec les événements mis à jour
+  };
+  
   return (
     <ActivityPanel
       isOpen={isOpen}
       onClose={() => setIsOpen(false)}
       events={events}
       debug={true} // Optionnel: activer le mode debug
+      onMarkAllAsRead={handleMarkAllAsRead} // Optionnel: callback quand tout est marqué comme lu
     />
   );
 }
@@ -75,6 +83,10 @@ function MyComponent() {
     debug: {
       control: { type: "boolean" },
       description: "Enable debug mode to log event data to console on click",
+    },
+    onMarkAllAsRead: {
+      action: "marked all as read",
+      description: "Called when all notifications are marked as read",
     },
   },
 };

@@ -7,6 +7,7 @@ import EventPanel from "@/components/notifications/EventPanel";
 import ActivityPanel from "@/components/notifications/ActivityPanel";
 import ButtonNotifications from "@/components/ButtonNotifications";
 import { useGlobalActivityStatus } from "@/hooks/useGlobalActivityStatus";
+import { EventProps } from "@/components/notifications/EventPanel";
 
 const NotificationsTestSection: React.FC = () => {
   const [isActivityPanelOpen, setIsActivityPanelOpen] = useState(false);
@@ -61,6 +62,11 @@ const NotificationsTestSection: React.FC = () => {
 
   const toggleActivityPanel = () => {
     setIsActivityPanelOpen(!isActivityPanelOpen);
+  };
+  
+  // Handler pour le callback onMarkAllAsRead
+  const handleMarkAllAsRead = (updatedEvents: EventProps[]) => {
+    console.log("NotificationsTestSection: All events marked as read", updatedEvents);
   };
 
   return (
@@ -121,6 +127,7 @@ const NotificationsTestSection: React.FC = () => {
             onClose={() => setIsActivityPanelOpen(false)}
             events={generateMockEvents()}
             debug={debugMode}
+            onMarkAllAsRead={handleMarkAllAsRead}
           />
         </CardContent>
       </Card>
