@@ -199,7 +199,7 @@ const NotificationsTestSection: React.FC = () => {
           <EventPanel
             notification_id="demo-3" // Changed from event_id
             title="Connect Added Comments on photos"
-            subtitle: "STANDARD-2025-05-07 H02-PART-1"
+            subtitle="STANDARD-2025-05-07 H02-PART-1"
             pictureStatus={MediaStatus.BROADCAST}
             type="comment"
             redirectLink="#"
