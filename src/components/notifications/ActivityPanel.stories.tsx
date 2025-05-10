@@ -3,7 +3,7 @@ import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import ActivityPanel from "./ActivityPanel";
 import { MediaStatus } from "@/utils/mediaStatus";
-import { NotificationType } from "./EventPanel";
+import { NotificationType } from "./NotificationPanel";
 import { MemoryRouter } from "react-router-dom";
 import { TranslationProvider } from "@/contexts/TranslationContext";
 
@@ -76,13 +76,13 @@ function MyComponent() {
       action: "closed",
       description: "Called when the panel is closed",
     },
-    notifications: { // Changed from events
+    notifications: {
       control: { type: "object" },
-      description: "List of notification items", // Changed from events
+      description: "List of notification items",
     },
     debug: {
       control: { type: "boolean" },
-      description: "Enable debug mode to log notification data to console on click", // Changed from event
+      description: "Enable debug mode to log notification data to console on click",
     },
     onMarkAllAsRead: {
       action: "marked all as read",
@@ -94,14 +94,14 @@ function MyComponent() {
 export default meta;
 type Story = StoryObj<typeof ActivityPanel>;
 
-const generateMockNotifications = () => { // Changed from Events
+const generateMockNotifications = () => {
   const today = new Date();
   const yesterday = new Date();
   yesterday.setDate(yesterday.getDate() - 1);
   
   return [
     {
-      notification_id: "activity-story-1", // Changed from event_id
+      notification_id: "activity-story-1",
       title: "Connect Added Comments on photos",
       subtitle: "STANDARD-2025-05-07 H02-PART-1",
       pictureStatus: MediaStatus.SUBMITTED_FOR_APPROVAL,
@@ -111,7 +111,7 @@ const generateMockNotifications = () => { // Changed from Events
       unread: true
     },
     {
-      notification_id: "activity-story-2", // Changed from event_id
+      notification_id: "activity-story-2",
       title: "Connect Added Comments on photos",
       subtitle: "STANDARD-2025-05-07 H02-PART-1",
       pictureStatus: MediaStatus.SELECTED,
@@ -121,7 +121,7 @@ const generateMockNotifications = () => { // Changed from Events
       unread: true
     },
     {
-      notification_id: "activity-story-3", // Changed from event_id
+      notification_id: "activity-story-3",
       title: "Files transferred to editing team",
       subtitle: "STANDARD-2025-05-07 H02-PART-1",
       pictureStatus: MediaStatus.VALIDATED,
@@ -131,7 +131,7 @@ const generateMockNotifications = () => { // Changed from Events
       unread: true
     },
     {
-      notification_id: "activity-story-4", // Changed from event_id
+      notification_id: "activity-story-4",
       title: "Connect Added Comments on photos",
       subtitle: "STANDARD-2025-05-07 H02-PART-1",
       pictureStatus: MediaStatus.BROADCAST,
@@ -141,7 +141,7 @@ const generateMockNotifications = () => { // Changed from Events
       unread: false
     },
     {
-      notification_id: "activity-story-5", // Changed from event_id
+      notification_id: "activity-story-5",
       title: "Files published to website",
       subtitle: "STANDARD-2025-05-07 H02-PART-1",
       pictureStatus: MediaStatus.BROADCAST,
@@ -156,7 +156,7 @@ const generateMockNotifications = () => { // Changed from Events
 export const Default: Story = {
   args: {
     isOpen: true,
-    notifications: generateMockNotifications(), // Changed from events
+    notifications: generateMockNotifications(),
     debug: false,
   },
   parameters: {
@@ -168,7 +168,7 @@ export const Default: Story = {
 export const DebugMode: Story = {
   args: {
     isOpen: true,
-    notifications: generateMockNotifications(), // Changed from events
+    notifications: generateMockNotifications(),
     debug: true,
   },
   parameters: {
@@ -180,7 +180,7 @@ export const DebugMode: Story = {
 export const Empty: Story = {
   args: {
     isOpen: true,
-    notifications: [], // Changed from events
+    notifications: [],
   },
   parameters: {
     chromatic: { disableSnapshot: true },
@@ -188,19 +188,19 @@ export const Empty: Story = {
   }
 };
 
-export const ManyNotifications: Story = { // Changed from ManyEvents
+export const ManyNotifications: Story = {
   args: {
     isOpen: true,
-    notifications: [ // Changed from events
+    notifications: [
       ...generateMockNotifications(),
-      ...generateMockNotifications().map(notification => ({ // Changed from event
+      ...generateMockNotifications().map(notification => ({
         ...notification,
-        notification_id: `many-${notification.notification_id}`, // Changed from event_id
+        notification_id: `many-${notification.notification_id}`,
         date: new Date(new Date().setDate(new Date().getDate() - 2))
       })),
-      ...generateMockNotifications().map(notification => ({ // Changed from event
+      ...generateMockNotifications().map(notification => ({
         ...notification,
-        notification_id: `many-older-${notification.notification_id}`, // Changed from event_id
+        notification_id: `many-older-${notification.notification_id}`,
         date: new Date(new Date().setDate(new Date().getDate() - 3))
       })),
     ],
@@ -214,7 +214,7 @@ export const ManyNotifications: Story = { // Changed from ManyEvents
 export const AllRead: Story = {
   args: {
     isOpen: true,
-    notifications: generateMockNotifications().map(notification => ({...notification, unread: false})), // Changed from event
+    notifications: generateMockNotifications().map(notification => ({...notification, unread: false})),
   },
   parameters: {
     chromatic: { disableSnapshot: true },

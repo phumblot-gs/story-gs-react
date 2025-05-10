@@ -1,13 +1,13 @@
 
 import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
-import EventPanel from "./EventPanel";
+import NotificationPanel from "./NotificationPanel";
 import { MediaStatus } from "@/utils/mediaStatus";
 import { MemoryRouter } from "react-router-dom";
 
-const meta: Meta<typeof EventPanel> = {
-  title: "Components/Notifications/EventPanel",
-  component: EventPanel,
+const meta: Meta<typeof NotificationPanel> = {
+  title: "Components/Notifications/NotificationPanel",
+  component: NotificationPanel,
   parameters: {
     layout: "centered",
     backgrounds: {
@@ -25,11 +25,11 @@ const meta: Meta<typeof EventPanel> = {
   argTypes: {
     title: {
       control: { type: "text" },
-      description: "Title of the notification", // Changed from event
+      description: "Title of the notification",
     },
     subtitle: {
       control: { type: "text" },
-      description: "Subtitle of the notification", // Changed from event
+      description: "Subtitle of the notification",
     },
     pictureStatus: {
       control: {
@@ -47,11 +47,11 @@ const meta: Meta<typeof EventPanel> = {
     },
     redirectLink: {
       control: { type: "text" },
-      description: "Link to redirect when clicking on the notification", // Changed from event
+      description: "Link to redirect when clicking on the notification",
     },
     date: {
       control: { type: "date" },
-      description: "Date of the notification", // Changed from event
+      description: "Date of the notification",
     },
     unread: {
       control: { type: "boolean" },
@@ -61,11 +61,11 @@ const meta: Meta<typeof EventPanel> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof EventPanel>;
+type Story = StoryObj<typeof NotificationPanel>;
 
 export const Default: Story = {
   args: {
-    notification_id: "story-notification-default", // Changed from event_id
+    notification_id: "story-notification-default",
     title: "Connect Added Comments on photos",
     subtitle: "STANDARD-2025-05-07 H02-PART-1",
     pictureStatus: MediaStatus.SUBMITTED_FOR_APPROVAL,

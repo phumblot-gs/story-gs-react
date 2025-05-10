@@ -1,8 +1,7 @@
-
 import React, { useState, useEffect } from "react";
 import { ButtonCircle } from "@/components/ui/button-circle";
 import ActivityPanel from "./notifications/ActivityPanel";
-import { NotificationProps, NotificationType } from "./notifications/EventPanel";
+import { NotificationProps, NotificationType } from "./notifications/NotificationPanel";
 import { MediaStatus } from "@/utils/mediaStatus";
 import { useTranslation } from "@/contexts/TranslationContext";
 

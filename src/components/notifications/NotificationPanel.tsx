@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 export type NotificationType = "comment" | "transfer" | "other";
 
 export interface NotificationProps {
-  notification_id: string; // Changed from event_id
+  notification_id: string;
   title: string;
   subtitle: string;
   pictureStatus: MediaStatusEnum;
@@ -18,12 +18,12 @@ export interface NotificationProps {
   unread: boolean;
 }
 
-interface EventPanelProps extends NotificationProps {
-  onClick?: (notification_id: string) => void; // Changed from event_id
+interface NotificationPanelProps extends NotificationProps {
+  onClick?: (notification_id: string) => void;
 }
 
-const EventPanel: React.FC<EventPanelProps> = ({
-  notification_id, // Changed from event_id
+const NotificationPanel: React.FC<NotificationPanelProps> = ({
+  notification_id,
   title,
   subtitle,
   pictureStatus,
@@ -46,7 +46,7 @@ const EventPanel: React.FC<EventPanelProps> = ({
     
     // Appeler le callback avec l'ID de la notification s'il est défini
     if (onClick) {
-      onClick(notification_id); // Changed from event_id
+      onClick(notification_id);
     }
   };
 
@@ -83,4 +83,4 @@ const EventPanel: React.FC<EventPanelProps> = ({
   );
 };
 
-export default EventPanel;
+export default NotificationPanel;

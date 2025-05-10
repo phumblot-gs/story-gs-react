@@ -3,11 +3,11 @@ import React, { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MediaStatus } from "@/utils/mediaStatus";
-import EventPanel from "@/components/notifications/EventPanel";
+import NotificationPanel from "@/components/notifications/NotificationPanel";
 import ActivityPanel from "@/components/notifications/ActivityPanel";
 import ButtonNotifications from "@/components/ButtonNotifications";
 import { useGlobalActivityStatus } from "@/hooks/useGlobalActivityStatus";
-import { NotificationProps } from "@/components/notifications/EventPanel";
+import { NotificationProps } from "@/components/notifications/NotificationPanel";
 import { toast } from "@/components/ui/sonner";
 
 const NotificationsTestSection: React.FC = () => {
@@ -16,14 +16,14 @@ const NotificationsTestSection: React.FC = () => {
   const { setActivityStatus } = useGlobalActivityStatus();
   
   // Generate notifications for activity panel
-  const generateMockNotifications = () => { // Changed from Events
+  const generateMockNotifications = () => {
     const today = new Date();
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
     
     return [
       {
-        notification_id: "notification-1", // Changed from event-1
+        notification_id: "notification-1",
         title: "Connect Added Comments on photos",
         subtitle: "STANDARD-2025-05-07 H02-PART-1",
         pictureStatus: MediaStatus.SUBMITTED_FOR_APPROVAL,
@@ -33,7 +33,7 @@ const NotificationsTestSection: React.FC = () => {
         unread: true
       },
       {
-        notification_id: "notification-2", // Changed from event-2
+        notification_id: "notification-2",
         title: "Files transferred to editing team",
         subtitle: "STANDARD-2025-05-07 H02-PART-1",
         pictureStatus: MediaStatus.VALIDATED,
@@ -43,7 +43,7 @@ const NotificationsTestSection: React.FC = () => {
         unread: true
       },
       {
-        notification_id: "notification-3", // Changed from event-3
+        notification_id: "notification-3",
         title: "Connect Added Comments on photos",
         subtitle: "STANDARD-2025-05-07 H02-PART-1",
         pictureStatus: MediaStatus.BROADCAST,
@@ -53,7 +53,7 @@ const NotificationsTestSection: React.FC = () => {
         unread: false
       },
       {
-        notification_id: "notification-4", // Changed from event-4
+        notification_id: "notification-4",
         title: "Files published to website",
         subtitle: "STANDARD-2025-05-07 H02-PART-1",
         pictureStatus: MediaStatus.BROADCAST,
@@ -70,21 +70,21 @@ const NotificationsTestSection: React.FC = () => {
   };
   
   // Handler pour le callback onMarkAllAsRead
-  const handleMarkAllAsRead = (updatedNotifications: NotificationProps[]) => { // Changed from updatedEvents
-    console.log("NotificationsTestSection: All notifications marked as read", updatedNotifications); // Changed from events
+  const handleMarkAllAsRead = (updatedNotifications: NotificationProps[]) => {
+    console.log("NotificationsTestSection: All notifications marked as read", updatedNotifications);
     toast({
-      title: "Toutes les notifications marquées comme lues", // Changed from événements
-      description: `${updatedNotifications.length} notifications mises à jour`, // Changed from événements
+      title: "Toutes les notifications marquées comme lues",
+      description: `${updatedNotifications.length} notifications mises à jour`,
       duration: 3000,
     });
   };
   
   // Handler pour le callback onNotificationClick
-  const handleNotificationClick = (notification_id: string) => { // Changed from event_id
-    console.log("NotificationsTestSection: Notification clicked with ID", notification_id); // Changed from Event
+  const handleNotificationClick = (notification_id: string) => {
+    console.log("NotificationsTestSection: Notification clicked with ID", notification_id);
     toast({
-      title: "Notification cliquée", // Changed from Événement
-      description: `Vous avez cliqué sur la notification avec l'ID: ${notification_id}`, // Changed from événement
+      title: "Notification cliquée",
+      description: `Vous avez cliqué sur la notification avec l'ID: ${notification_id}`,
       duration: 3000,
     });
   };
@@ -180,11 +180,11 @@ const NotificationsTestSection: React.FC = () => {
 
       <Card>
         <CardHeader>
-          <CardTitle>EventPanel</CardTitle>
+          <CardTitle>NotificationPanel</CardTitle>
           <CardDescription>Individual notification event panels</CardDescription>
         </CardHeader>
         <CardContent className="bg-black p-6 space-y-4">
-          <EventPanel
+          <NotificationPanel
             notification_id="demo-1"
             title="Connect Added Comments on photos"
             subtitle="STANDARD-2025-05-07 H02-PART-1"
@@ -199,7 +199,7 @@ const NotificationsTestSection: React.FC = () => {
               duration: 3000,
             })}
           />
-          <EventPanel
+          <NotificationPanel
             notification_id="demo-2"
             title="Files transferred to editing team"
             subtitle="STANDARD-2025-05-07 H02-PART-1"
@@ -210,8 +210,7 @@ const NotificationsTestSection: React.FC = () => {
             unread={true}
           />
           
-          {/* Fixed syntax error in the EventPanel props */}
-          <EventPanel
+          <NotificationPanel
             notification_id="demo-3"
             title="Connect Added Comments on photos"
             subtitle="STANDARD-2025-05-07 H02-PART-1"
@@ -221,7 +220,7 @@ const NotificationsTestSection: React.FC = () => {
             date={new Date(new Date().setDate(new Date().getDate() - 1))}
             unread={false}
           />
-          <EventPanel
+          <NotificationPanel
             notification_id="demo-4"
             title="Files published to website"
             subtitle="STANDARD-2025-05-07 H02-PART-1"
@@ -231,7 +230,7 @@ const NotificationsTestSection: React.FC = () => {
             date={new Date(new Date().setDate(new Date().getDate() - 1))}
             unread={false}
           />
-          <EventPanel
+          <NotificationPanel
             notification_id="demo-5"
             title="Project review completed"
             subtitle="STANDARD-2025-05-07 H03-PART-2"
@@ -241,7 +240,7 @@ const NotificationsTestSection: React.FC = () => {
             date={new Date(new Date().setDate(new Date().getDate() - 2))}
             unread={false}
           />
-          <EventPanel
+          <NotificationPanel
             notification_id="demo-6"
             title="Image collection updated"
             subtitle="STANDARD-2025-05-08 H01-PART-1"

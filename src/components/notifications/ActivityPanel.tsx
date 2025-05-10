@@ -1,8 +1,7 @@
-
 import React, { useState } from "react";
 import { Sheet, SheetContent, SheetClose, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { ButtonCircle } from "@/components/ui/button-circle";
-import EventPanel, { NotificationProps } from "./EventPanel";
+import NotificationPanel, { NotificationProps } from "./NotificationPanel";
 import { useTranslation } from "@/contexts/TranslationContext";
 import { formatDateForLocale } from "@/utils/translations";
 
@@ -127,7 +126,7 @@ const ActivityPanel: React.FC<ActivityPanelProps> = ({
                 <div className="flex flex-col gap-[10px]">
                   {dateNotifications.map((notification, index) => (
                     <div key={`${dateStr}-${index}`}>
-                      <EventPanel 
+                      <NotificationPanel 
                         {...notification} 
                         onClick={handleNotificationClick} 
                       />
