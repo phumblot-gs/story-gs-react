@@ -72,6 +72,11 @@ const NotificationsTestSection: React.FC = () => {
   // Handler pour le callback onMarkAllAsRead
   const handleMarkAllAsRead = (updatedEvents: EventProps[]) => {
     console.log("NotificationsTestSection: All events marked as read", updatedEvents);
+    toast({
+      title: "Tous les événements marqués comme lus",
+      description: `${updatedEvents.length} événements mis à jour`,
+      duration: 3000,
+    });
   };
   
   // Handler pour le callback onEventClick
@@ -96,11 +101,21 @@ const NotificationsTestSection: React.FC = () => {
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col items-center p-4 border rounded-md">
                 <p className="mb-2 font-medium">With count</p>
-                <ButtonNotifications count={5} onClick={() => {}} />
+                <ButtonNotifications 
+                  count={5} 
+                  onClick={() => {}} 
+                  onMarkAllAsRead={handleMarkAllAsRead}
+                  onEventClick={handleEventClick}
+                />
               </div>
               <div className="flex flex-col items-center p-4 border rounded-md">
                 <p className="mb-2 font-medium">No count</p>
-                <ButtonNotifications count={0} onClick={() => {}} />
+                <ButtonNotifications 
+                  count={0} 
+                  onClick={() => {}} 
+                  onMarkAllAsRead={handleMarkAllAsRead}
+                  onEventClick={handleEventClick}
+                />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4 w-full">

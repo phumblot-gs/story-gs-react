@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/contexts/ThemeContext";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/sonner";
+import { EventProps } from "@/components/notifications/EventPanel";
 
 // Example of how to use the ButtonNotifications component in a PageHeader
 const NotificationsExample = () => {
@@ -15,6 +16,24 @@ const NotificationsExample = () => {
       description: "Les notifications apparaissent à droite de l'écran en cliquant sur le bouton Bell",
       type: "info",
       duration: 5000,
+    });
+  };
+
+  // Handle mark all as read
+  const handleMarkAllAsRead = (events: EventProps[]) => {
+    toast({
+      title: "Notifications marquées comme lues",
+      description: `${events.length} notification(s) mise(s) à jour`,
+      duration: 3000,
+    });
+  };
+
+  // Handle event click
+  const handleEventClick = (eventId: string) => {
+    toast({
+      title: "Navigation vers la notification",
+      description: `Redirection vers le détail de l'événement ${eventId}`,
+      duration: 3000,
     });
   };
 
@@ -57,12 +76,19 @@ const NotificationsExample = () => {
             <div className="border rounded">
               <PageHeader 
                 title="Collection Printemps 2025" 
-                rightContent={<ButtonNotifications />}
+                rightContent={
+                  <ButtonNotifications 
+                    onMarkAllAsRead={handleMarkAllAsRead}
+                    onEventClick={handleEventClick}
+                  />
+                }
               />
             </div>
           </ThemeProvider>
           <p className="mt-4 text-sm text-muted-foreground">
             Cliquez sur le bouton Bell pour afficher le panneau des notifications.
+            <br />
+            Les actions sur les événements et "marquer comme lu" sont connectées à des toasts de démonstration.
           </p>
         </CardContent>
       </Card>

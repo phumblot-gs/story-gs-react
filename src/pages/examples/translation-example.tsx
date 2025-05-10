@@ -4,9 +4,28 @@ import { useTranslation } from "@/contexts/TranslationContext";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import ButtonNotifications from "@/components/ButtonNotifications";
+import { toast } from "@/components/ui/sonner";
+import { EventProps } from "@/components/notifications/EventPanel";
 
 const TranslationExample = () => {
-  const { currentLanguage, setLanguage, availableLanguages } = useTranslation();
+  const { currentLanguage, setLanguage, availableLanguages, t } = useTranslation();
+
+  // Handlers for ButtonNotifications
+  const handleMarkAllAsRead = (events: EventProps[]) => {
+    toast({
+      title: t("notifications.allMarkedAsRead"),
+      description: `${events.length} ${events.length > 1 ? t("notifications.multipleEvents") : t("notifications.oneEvent")}`,
+      duration: 3000,
+    });
+  };
+
+  const handleEventClick = (eventId: string) => {
+    toast({
+      title: t("notifications.eventClicked"),
+      description: `${t("notifications.eventId")}: ${eventId}`,
+      duration: 3000,
+    });
+  };
 
   return (
     <div className="flex flex-col gap-8 p-6">
@@ -39,7 +58,10 @@ const TranslationExample = () => {
           </CardDescription>
         </CardHeader>
         <CardContent className="flex justify-center">
-          <ButtonNotifications />
+          <ButtonNotifications 
+            onMarkAllAsRead={handleMarkAllAsRead}
+            onEventClick={handleEventClick}
+          />
         </CardContent>
       </Card>
     </div>

@@ -94,12 +94,16 @@ interface ButtonNotificationsProps {
   events?: EventProps[];
   count?: number;
   onClick?: () => void;
+  onMarkAllAsRead?: (events: EventProps[]) => void; // Nouveau callback
+  onEventClick?: (event_id: string) => void; // Nouveau callback
 }
 
 const ButtonNotifications: React.FC<ButtonNotificationsProps> = ({
   events = mockEvents,
   count,
-  onClick
+  onClick,
+  onMarkAllAsRead,
+  onEventClick
 }) => {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const { t } = useTranslation();
@@ -130,6 +134,8 @@ const ButtonNotifications: React.FC<ButtonNotificationsProps> = ({
         isOpen={isPanelOpen} 
         onClose={() => setIsPanelOpen(false)} 
         events={events}
+        onMarkAllAsRead={onMarkAllAsRead}
+        onEventClick={onEventClick}
       />
     </>
   );

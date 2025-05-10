@@ -4,6 +4,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import ButtonNotifications from "./ButtonNotifications";
 import { MediaStatus } from "@/utils/mediaStatus";
 import { NotificationType } from "./notifications/EventPanel";
+import { action } from "@storybook/addon-actions";
 
 const meta: Meta<typeof ButtonNotifications> = {
   title: "Components/ButtonNotifications",
@@ -19,13 +20,20 @@ const meta: Meta<typeof ButtonNotifications> = {
       </div>
     ),
   ],
+  argTypes: {
+    onMarkAllAsRead: { action: "marked all as read" },
+    onEventClick: { action: "event clicked" },
+  },
 };
 
 export default meta;
 type Story = StoryObj<typeof ButtonNotifications>;
 
 export const Default: Story = {
-  args: {},
+  args: {
+    onMarkAllAsRead: action("marked all as read"),
+    onEventClick: action("event clicked"),
+  },
 };
 
 export const WithoutUnreadNotifications: Story = {
@@ -52,6 +60,8 @@ export const WithoutUnreadNotifications: Story = {
         unread: false
       },
     ],
+    onMarkAllAsRead: action("marked all as read"),
+    onEventClick: action("event clicked"),
   },
 };
 
@@ -79,5 +89,7 @@ export const WithUnreadNotifications: Story = {
         unread: false
       },
     ],
+    onMarkAllAsRead: action("marked all as read"),
+    onEventClick: action("event clicked"),
   },
 };
