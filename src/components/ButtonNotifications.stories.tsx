@@ -32,6 +32,7 @@ export const WithoutUnreadNotifications: Story = {
   args: {
     events: [
       {
+        event_id: "story-event-1",
         title: "Connect Added Comments on photos",
         subtitle: "STANDARD-2025-05-07 H02-PART-1",
         pictureStatus: MediaStatus.SUBMITTED_FOR_APPROVAL,
@@ -41,6 +42,7 @@ export const WithoutUnreadNotifications: Story = {
         unread: false
       },
       {
+        event_id: "story-event-2",
         title: "Files transferred to editing team",
         subtitle: "STANDARD-2025-05-07 H02-PART-1",
         pictureStatus: MediaStatus.SELECTED,
@@ -57,6 +59,7 @@ export const WithUnreadNotifications: Story = {
   args: {
     events: [
       {
+        event_id: "story-event-3",
         title: "Connect Added Comments on photos",
         subtitle: "STANDARD-2025-05-07 H02-PART-1",
         pictureStatus: MediaStatus.SUBMITTED_FOR_APPROVAL,
@@ -66,6 +69,7 @@ export const WithUnreadNotifications: Story = {
         unread: true
       },
       {
+        event_id: "story-event-4",
         title: "Files transferred to editing team",
         subtitle: "STANDARD-2025-05-07 H02-PART-1",
         pictureStatus: MediaStatus.SELECTED,

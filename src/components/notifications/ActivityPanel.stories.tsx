@@ -101,6 +101,7 @@ const generateMockEvents = () => {
   
   return [
     {
+      event_id: "activity-story-1",
       title: "Connect Added Comments on photos",
       subtitle: "STANDARD-2025-05-07 H02-PART-1",
       pictureStatus: MediaStatus.SUBMITTED_FOR_APPROVAL,
@@ -110,6 +111,7 @@ const generateMockEvents = () => {
       unread: true
     },
     {
+      event_id: "activity-story-2",
       title: "Connect Added Comments on photos",
       subtitle: "STANDARD-2025-05-07 H02-PART-1",
       pictureStatus: MediaStatus.SELECTED,
@@ -119,6 +121,7 @@ const generateMockEvents = () => {
       unread: true
     },
     {
+      event_id: "activity-story-3",
       title: "Files transferred to editing team",
       subtitle: "STANDARD-2025-05-07 H02-PART-1",
       pictureStatus: MediaStatus.VALIDATED,
@@ -128,6 +131,7 @@ const generateMockEvents = () => {
       unread: true
     },
     {
+      event_id: "activity-story-4",
       title: "Connect Added Comments on photos",
       subtitle: "STANDARD-2025-05-07 H02-PART-1",
       pictureStatus: MediaStatus.BROADCAST,
@@ -137,6 +141,7 @@ const generateMockEvents = () => {
       unread: false
     },
     {
+      event_id: "activity-story-5",
       title: "Files published to website",
       subtitle: "STANDARD-2025-05-07 H02-PART-1",
       pictureStatus: MediaStatus.BROADCAST,
@@ -190,10 +195,12 @@ export const ManyEvents: Story = {
       ...generateMockEvents(),
       ...generateMockEvents().map(event => ({
         ...event,
+        event_id: `many-${event.event_id}`,
         date: new Date(new Date().setDate(new Date().getDate() - 2))
       })),
       ...generateMockEvents().map(event => ({
         ...event,
+        event_id: `many-older-${event.event_id}`,
         date: new Date(new Date().setDate(new Date().getDate() - 3))
       })),
     ],

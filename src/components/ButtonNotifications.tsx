@@ -9,6 +9,7 @@ import { useTranslation } from "@/contexts/TranslationContext";
 // Mock data for demonstration
 const mockEvents: EventProps[] = [
   {
+    event_id: "mock-event-1",
     title: "Connect Added Comments on photos",
     subtitle: "STANDARD-2025-05-07 H02-PART-1",
     pictureStatus: MediaStatus.SUBMITTED_FOR_APPROVAL,
@@ -18,6 +19,7 @@ const mockEvents: EventProps[] = [
     unread: true
   },
   {
+    event_id: "mock-event-2",
     title: "Connect Added Comments on photos",
     subtitle: "STANDARD-2025-05-07 H02-PART-1",
     pictureStatus: MediaStatus.SELECTED,
@@ -27,6 +29,7 @@ const mockEvents: EventProps[] = [
     unread: true
   },
   {
+    event_id: "mock-event-3",
     title: "Connect Added Comments on photos",
     subtitle: "STANDARD-2025-05-07 H02-PART-1",
     pictureStatus: MediaStatus.REFUSED_1,
@@ -36,6 +39,7 @@ const mockEvents: EventProps[] = [
     unread: true
   },
   {
+    event_id: "mock-event-4",
     title: "Connect Added Comments on photos",
     subtitle: "STANDARD-2025-05-07 H02-PART-1",
     pictureStatus: MediaStatus.VALIDATED,
@@ -45,6 +49,7 @@ const mockEvents: EventProps[] = [
     unread: true
   },
   {
+    event_id: "mock-event-5",
     title: "Connect Added Comments on photos",
     subtitle: "STANDARD-2025-05-07 H02-PART-1",
     pictureStatus: MediaStatus.TO_RESHOOT,
@@ -54,6 +59,7 @@ const mockEvents: EventProps[] = [
     unread: true
   },
   {
+    event_id: "mock-event-6",
     title: "Connect Added Comments on photos",
     subtitle: "STANDARD-2025-05-07 H02-PART-1",
     pictureStatus: MediaStatus.READY_TO_BROADCAST,
@@ -63,6 +69,7 @@ const mockEvents: EventProps[] = [
     unread: false
   },
   {
+    event_id: "mock-event-7",
     title: "Connect Added Comments on photos",
     subtitle: "STANDARD-2025-05-07 H02-PART-1",
     pictureStatus: MediaStatus.BROADCAST,
@@ -72,6 +79,7 @@ const mockEvents: EventProps[] = [
     unread: false
   },
   {
+    event_id: "mock-event-8",
     title: "Connect Added Comments on photos",
     subtitle: "STANDARD-2025-05-07 H02-PART-1",
     pictureStatus: MediaStatus.ERROR_DURING_BROADCAST,
