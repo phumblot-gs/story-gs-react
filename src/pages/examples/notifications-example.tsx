@@ -6,7 +6,7 @@ import { ThemeProvider } from "@/contexts/ThemeContext";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/sonner";
-import { NotificationProps } from "@/components/notifications/EventPanel";
+import { NotificationProps } from "@/components/notifications/NotificationPanel";
 
 // Example of how to use the ButtonNotifications component in a PageHeader
 const NotificationsExample = () => {
@@ -20,19 +20,19 @@ const NotificationsExample = () => {
   };
 
   // Handle mark all as read
-  const handleMarkAllAsRead = (notifications: NotificationProps[]) => { // Changed from events
+  const handleMarkAllAsRead = (notifications: NotificationProps[]) => {
     toast({
       title: "Notifications marquées comme lues",
-      description: `${notifications.length} notification(s) mise(s) à jour`, // Changed from events
+      description: `${notifications.length} notification(s) mise(s) à jour`,
       duration: 3000,
     });
   };
 
   // Handle notification click
-  const handleNotificationClick = (notification_id: string) => { // Changed from eventId
+  const handleNotificationClick = (notification_id: string) => {
     toast({
       title: "Navigation vers la notification",
-      description: `Redirection vers le détail de la notification ${notification_id}`, // Changed from événement
+      description: `Redirection vers le détail de la notification ${notification_id}`,
       duration: 3000,
     });
   };

@@ -5,24 +5,24 @@ import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import ButtonNotifications from "@/components/ButtonNotifications";
 import { toast } from "@/components/ui/sonner";
-import { NotificationProps } from "@/components/notifications/EventPanel";
+import { NotificationProps } from "@/components/notifications/NotificationPanel";
 
 const TranslationExample = () => {
   const { currentLanguage, setLanguage, availableLanguages, t } = useTranslation();
 
   // Handlers for ButtonNotifications
-  const handleMarkAllAsRead = (notifications: NotificationProps[]) => { // Changed from events
+  const handleMarkAllAsRead = (notifications: NotificationProps[]) => {
     toast({
       title: t("notifications.allMarkedAsRead"),
-      description: `${notifications.length} ${notifications.length > 1 ? t("notifications.multipleEvents") : t("notifications.oneEvent")}`, // Changed from events
+      description: `${notifications.length} ${notifications.length > 1 ? t("notifications.multipleEvents") : t("notifications.oneEvent")}`,
       duration: 3000,
     });
   };
 
-  const handleNotificationClick = (notification_id: string) => { // Changed from eventId
+  const handleNotificationClick = (notification_id: string) => {
     toast({
       title: t("notifications.eventClicked"),
-      description: `${t("notifications.eventId")}: ${notification_id}`, // Changed from eventId
+      description: `${t("notifications.eventId")}: ${notification_id}`,
       duration: 3000,
     });
   };
