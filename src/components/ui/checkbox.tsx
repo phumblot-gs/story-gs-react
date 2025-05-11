@@ -7,13 +7,13 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const checkboxVariants = cva(
-  "peer h-4 w-4 shrink-0 rounded-sm border ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:border",
+  "peer h-[30px] w-[30px] shrink-0 border-none ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:border-none",
   {
     variants: {
       background: {
-        white: "border-black bg-white data-[state=checked]:bg-black data-[state=checked]:text-white",
-        black: "border-white bg-black data-[state=checked]:bg-white data-[state=checked]:text-black",
-        grey: "border-black bg-grey data-[state=checked]:bg-black data-[state=checked]:text-grey",
+        white: "bg-grey-lighter data-[state=checked]:bg-black data-[state=checked]:text-white",
+        black: "bg-black data-[state=checked]:bg-white data-[state=checked]:text-black",
+        grey: "bg-grey data-[state=checked]:bg-black data-[state=checked]:text-grey",
       },
     },
     defaultVariants: {
