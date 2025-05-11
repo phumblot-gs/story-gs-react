@@ -69,7 +69,11 @@ const TruncatedText = ({
           </Component>
         </TooltipTrigger>
         <TooltipContent
-          className={cn("bg-black text-white", tooltipMaxWidth, tooltipClassName)}
+          className={cn(
+            "bg-[#292828] text-white border border-[#3A3A3A] rounded-[2px]", 
+            tooltipMaxWidth, 
+            tooltipClassName
+          )}
           side={tooltipSide}
         >
           {text}
