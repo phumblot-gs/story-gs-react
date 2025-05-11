@@ -62,10 +62,8 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({
       <div className="flex items-start p-2.5 gap-2.5 bg-black-secondary">
         <div className="flex-1 min-w-0 flex flex-col">
           <div className="flex justify-between items-start">
-            <div className="flex items-center gap-2">
-              <div className="flex">
-                <MediaStatus status={pictureStatus} />
-              </div>
+            <div className="flex items-center gap-2 max-w-full">
+              <MediaStatus status={pictureStatus} />
               <h4 className="text-white text-sm font-medium leading-tight m-0 truncate">
                 {title}
               </h4>
