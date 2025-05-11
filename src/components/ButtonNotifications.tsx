@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, forwardRef, useImperativeHandle } from "react";
 import { ButtonCircle } from "@/components/ui/button-circle";
 import ActivityPanel from "./notifications/ActivityPanel";
 import { NotificationProps, NotificationType } from "./notifications/NotificationPanel";
@@ -155,6 +155,59 @@ const ButtonNotifications: React.FC<ButtonNotificationsProps> = ({
     }
   };
 
+  /**
+   * Adds new notifications to the panel while maintaining a maximum of 100 items
+   * Removes oldest read notifications first, then oldest unread if necessary
+   * @param newNotifications Array of new notifications to add
+   */
+  const addNotifications = (newNotifications: NotificationProps[]) => {
+    if (newNotifications.length === 0) return;
+    
+    if (debug) console.log("ButtonNotifications: Adding new notifications", newNotifications);
+    
+    setLocalNotifications(current => {
+      // Combine current notifications with new ones
+      const combinedNotifications = [...current, ...newNotifications];
+      
+      // If we're under the limit, no need to remove any
+      if (combinedNotifications.length <= 100) {
+        return combinedNotifications;
+      }
+      
+      // We need to trim the list to 100 items
+      // First, separate read and unread notifications
+      const read = combinedNotifications.filter(n => !n.unread);
+      const unread = combinedNotifications.filter(n => n.unread);
+      
+      // Sort both arrays by date (oldest first)
+      const sortByDate = (a: NotificationProps, b: NotificationProps) => 
+        new Date(a.date).getTime() - new Date(b.date).getTime();
+      
+      const sortedRead = [...read].sort(sortByDate);
+      const sortedUnread = [...unread].sort(sortByDate);
+      
+      // Calculate how many items we need to remove
+      const excessCount = combinedNotifications.length - 100;
+      
+      let result: NotificationProps[] = [];
+      
+      // If we have enough read notifications to remove
+      if (sortedRead.length >= excessCount) {
+        // Remove oldest read notifications
+        const remainingRead = sortedRead.slice(excessCount);
+        result = [...remainingRead, ...sortedUnread];
+      } else {
+        // Remove all read notifications and some unread ones if necessary
+        const unreadToRemove = excessCount - sortedRead.length;
+        const remainingUnread = sortedUnread.slice(unreadToRemove);
+        result = [...remainingUnread];
+      }
+      
+      // Sort the final array by date (newest first) for display
+      return result.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    });
+  };
+
   // Debug logging for component mount and prop changes
   React.useEffect(() => {
     if (debug) {
@@ -165,6 +218,15 @@ const ButtonNotifications: React.FC<ButtonNotificationsProps> = ({
       });
     }
   }, [debug, notifications, unreadCount, isPanelOpen]);
+
+  // Expose the addNotifications method to parent components
+  React.useImperativeHandle(
+    ref,
+    () => ({
+      addNotifications,
+    }),
+    []
+  );
 
   return (
     <>
@@ -194,4 +256,12 @@ const ButtonNotifications: React.FC<ButtonNotificationsProps> = ({
   );
 };
 
-export default ButtonNotifications;
+// Modified version with ref support
+const ButtonNotificationsWithRef = React.forwardRef<
+  { addNotifications: (newNotifications: NotificationProps[]) => void },
+  ButtonNotificationsProps
+>((props, ref) => {
+  return <ButtonNotifications {...props} ref={ref} />;
+});
+
+export default ButtonNotificationsWithRef;

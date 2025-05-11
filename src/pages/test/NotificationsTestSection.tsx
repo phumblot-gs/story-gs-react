@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MediaStatus } from "@/utils/mediaStatus";
@@ -14,6 +14,7 @@ const NotificationsTestSection: React.FC = () => {
   const [isActivityPanelOpen, setIsActivityPanelOpen] = useState(false);
   const [debugMode, setDebugMode] = useState(false);
   const { setActivityStatus } = useGlobalActivityStatus();
+  const notificationsRef = useRef<{ addNotifications: (newNotifications: NotificationProps[]) => void }>(null);
   
   // Generate notifications for activity panel
   const generateMockNotifications = () => {
@@ -89,6 +90,57 @@ const NotificationsTestSection: React.FC = () => {
     });
   };
 
+  // Add a single notification
+  const addSingleNotification = () => {
+    if (!notificationsRef.current) return;
+    
+    const newNotification = {
+      notification_id: `test-${Date.now()}`,
+      title: "New test notification",
+      subtitle: `Added at ${new Date().toLocaleTimeString()}`,
+      pictureStatus: MediaStatus.SUBMITTED_FOR_APPROVAL,
+      type: "comment" as const,
+      redirectLink: "#",
+      date: new Date(),
+      unread: true
+    };
+    
+    notificationsRef.current.addNotifications([newNotification]);
+    
+    toast({
+      title: "Notification ajoutée",
+      description: "Une nouvelle notification a été ajoutée",
+      duration: 2000,
+    });
+  };
+  
+  // Add many notifications at once to test limit handling
+  const addManyNotifications = () => {
+    if (!notificationsRef.current) return;
+    
+    const statuses = Object.values(MediaStatus);
+    const types = ["comment", "transfer", "other"] as const;
+    
+    const bulkNotifications = Array.from({ length: 20 }, (_, i) => ({
+      notification_id: `bulk-${Date.now()}-${i}`,
+      title: `Bulk notification #${i + 1}`,
+      subtitle: `Testing notification limit - batch ${new Date().toLocaleTimeString()}`,
+      pictureStatus: statuses[i % statuses.length],
+      type: types[i % types.length],
+      redirectLink: "#",
+      date: new Date(),
+      unread: i % 2 === 0 // alternate between read and unread
+    }));
+    
+    notificationsRef.current.addNotifications(bulkNotifications);
+    
+    toast({
+      title: "Notifications multiples ajoutées",
+      description: `${bulkNotifications.length} notifications ont été ajoutées`,
+      duration: 3000,
+    });
+  };
+
   return (
     <>
       <Card className="mb-6">
@@ -102,6 +154,7 @@ const NotificationsTestSection: React.FC = () => {
               <div className="flex flex-col items-center p-4 border rounded-md">
                 <p className="mb-2 font-medium">With count</p>
                 <ButtonNotifications 
+                  ref={notificationsRef}
                   count={5} 
                   onClick={() => {}} 
                   onMarkAllAsRead={handleMarkAllAsRead}
@@ -119,6 +172,14 @@ const NotificationsTestSection: React.FC = () => {
                   debug={debugMode}
                 />
               </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4 w-full">
+              <Button onClick={addSingleNotification}>
+                Add Single Notification
+              </Button>
+              <Button onClick={addManyNotifications} variant="outline">
+                Add 20 Notifications
+              </Button>
             </div>
             <div className="grid grid-cols-2 gap-4 w-full">
               <Button onClick={() => setActivityStatus(true)}>

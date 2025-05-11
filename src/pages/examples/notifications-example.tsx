@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useRef } from "react";
 import PageHeader from "@/components/PageHeader";
 import ButtonNotifications from "@/components/ButtonNotifications";
 import { ThemeProvider } from "@/contexts/ThemeContext";
@@ -7,9 +7,13 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/sonner";
 import { NotificationProps } from "@/components/notifications/NotificationPanel";
+import { MediaStatus } from "@/utils/mediaStatus";
 
 // Example of how to use the ButtonNotifications component in a PageHeader
 const NotificationsExample = () => {
+  // Ref to ButtonNotifications component for adding notifications
+  const notificationsRef = useRef<{ addNotifications: (newNotifications: NotificationProps[]) => void }>(null);
+
   const addToast = () => {
     toast({
       title: "Notifications système",
@@ -37,6 +41,63 @@ const NotificationsExample = () => {
     });
   };
 
+  // Add new notifications example
+  const handleAddNotification = () => {
+    const newNotification: NotificationProps = {
+      notification_id: `new-${Date.now()}`,
+      title: "Nouvelle notification ajoutée",
+      subtitle: `Notification ajoutée le ${new Date().toLocaleTimeString()}`,
+      pictureStatus: MediaStatus.SUBMITTED_FOR_APPROVAL,
+      type: "comment",
+      redirectLink: "#",
+      date: new Date(),
+      unread: true
+    };
+
+    if (notificationsRef.current) {
+      notificationsRef.current.addNotifications([newNotification]);
+      
+      toast({
+        title: "Notification ajoutée",
+        description: "Une nouvelle notification a été ajoutée au panneau",
+        duration: 3000,
+      });
+    }
+  };
+
+  // Add multiple notifications example
+  const handleAddMultipleNotifications = () => {
+    const statuses = [
+      MediaStatus.SELECTED, 
+      MediaStatus.VALIDATED, 
+      MediaStatus.BROADCAST, 
+      MediaStatus.REFUSED_1
+    ];
+    
+    const types: ("comment" | "transfer" | "other")[] = ["comment", "transfer", "other"];
+    
+    const newNotifications: NotificationProps[] = Array.from({ length: 5 }, (_, i) => ({
+      notification_id: `bulk-${Date.now()}-${i}`,
+      title: `Notification groupée #${i + 1}`,
+      subtitle: `Groupe de notifications ${new Date().toLocaleDateString()}`,
+      pictureStatus: statuses[i % statuses.length],
+      type: types[i % types.length],
+      redirectLink: "#",
+      date: new Date(),
+      unread: true
+    }));
+
+    if (notificationsRef.current) {
+      notificationsRef.current.addNotifications(newNotifications);
+      
+      toast({
+        title: "Notifications ajoutées",
+        description: `${newNotifications.length} nouvelles notifications ont été ajoutées`,
+        duration: 3000,
+      });
+    }
+  };
+
   return (
     <div className="flex flex-col gap-8 p-6">
       <h1 className="text-2xl font-medium">Exemple de système de notifications</h1>
@@ -59,11 +120,15 @@ const NotificationsExample = () => {
               qui affiche la liste des notifications regroupées par date.
             </li>
             <li>
-              <strong>EventPanel</strong> : Chaque élément de notification dans le panneau,
+              <strong>NotificationPanel</strong> : Chaque élément de notification dans le panneau,
               qui affiche les détails d'une notification.
             </li>
           </ul>
-          <Button onClick={addToast}>Afficher une notification toast</Button>
+          <div className="flex gap-4">
+            <Button onClick={addToast}>Afficher une notification toast</Button>
+            <Button onClick={handleAddNotification} variant="outline">Ajouter une notification</Button>
+            <Button onClick={handleAddMultipleNotifications} variant="outline">Ajouter 5 notifications</Button>
+          </div>
         </CardContent>
       </Card>
       
@@ -78,8 +143,9 @@ const NotificationsExample = () => {
                 title="Collection Printemps 2025" 
                 rightContent={
                   <ButtonNotifications 
+                    ref={notificationsRef}
                     onMarkAllAsRead={handleMarkAllAsRead}
-                    onNotificationClick={handleNotificationClick} // Changed from onEventClick
+                    onNotificationClick={handleNotificationClick}
                   />
                 }
               />

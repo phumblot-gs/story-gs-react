@@ -1,14 +1,17 @@
 
-import React from "react";
+import React, { useRef } from "react";
 import { useTranslation } from "@/contexts/TranslationContext";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import ButtonNotifications from "@/components/ButtonNotifications";
 import { toast } from "@/components/ui/sonner";
 import { NotificationProps } from "@/components/notifications/NotificationPanel";
+import { Button } from "@/components/ui/button";
+import { MediaStatus } from "@/utils/mediaStatus";
 
 const TranslationExample = () => {
   const { currentLanguage, setLanguage, availableLanguages, t } = useTranslation();
+  const notificationsRef = useRef<{ addNotifications: (newNotifications: NotificationProps[]) => void }>(null);
 
   // Handlers for ButtonNotifications
   const handleMarkAllAsRead = (notifications: NotificationProps[]) => {
@@ -23,6 +26,30 @@ const TranslationExample = () => {
     toast({
       title: t("notifications.eventClicked"),
       description: `${t("notifications.eventId")}: ${notification_id}`,
+      duration: 3000,
+    });
+  };
+
+  // Add new notification with current language
+  const handleAddNotification = () => {
+    if (!notificationsRef.current) return;
+    
+    const newNotification: NotificationProps = {
+      notification_id: `lang-${Date.now()}`,
+      title: t("examples.newNotification"),
+      subtitle: `${currentLanguage.name} - ${new Date().toLocaleTimeString()}`,
+      pictureStatus: MediaStatus.VALIDATED,
+      type: "comment",
+      redirectLink: "#",
+      date: new Date(),
+      unread: true
+    };
+
+    notificationsRef.current.addNotifications([newNotification]);
+    
+    toast({
+      title: t("examples.notificationAdded"),
+      description: t("examples.notificationAddedDesc"),
       duration: 3000,
     });
   };
@@ -57,11 +84,15 @@ const TranslationExample = () => {
             The notifications button below uses the translation system
           </CardDescription>
         </CardHeader>
-        <CardContent className="flex justify-center">
+        <CardContent className="flex flex-col items-center gap-4">
           <ButtonNotifications 
+            ref={notificationsRef}
             onMarkAllAsRead={handleMarkAllAsRead}
-            onNotificationClick={handleNotificationClick} // Changed from onEventClick
+            onNotificationClick={handleNotificationClick}
           />
+          <Button onClick={handleAddNotification}>
+            {t("examples.addNotification")}
+          </Button>
         </CardContent>
       </Card>
     </div>
