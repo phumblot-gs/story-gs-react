@@ -97,7 +97,7 @@ const contentVariants = cva(
       },
       position: {
         popper: "data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1",
-        item: "",
+        "item-aligned": "", // Changed from "item" to "item-aligned" to match Radix UI's expected values
       },
     },
     defaultVariants: {
@@ -107,10 +107,13 @@ const contentVariants = cva(
   }
 )
 
+// Define a type for the position prop that matches the contentVariants and Radix UI's expected values
+type SelectContentPosition = "popper" | "item-aligned"
+
 export interface SelectContentProps
-  extends React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content>,
-    VariantProps<typeof contentVariants> {
+  extends React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content> {
   background?: "white" | "black" | "grey"
+  position?: SelectContentPosition
 }
 
 const SelectContent = React.forwardRef<
