@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -182,7 +181,7 @@ const FormComponentsTestSection: React.FC = () => {
                     <label
                       htmlFor={`terms-${bg}`}
                       className={cn(
-                        "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
+                        "text-sm leading-[30px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
                         bg === "black" ? "text-white" : "text-black"
                       )}
                     >
@@ -199,7 +198,10 @@ const FormComponentsTestSection: React.FC = () => {
                         <RadioGroupItem background={bg} value="option1" id={`option1-${bg}`} />
                         <label 
                           htmlFor={`option1-${bg}`}
-                          className={bg === "black" ? "text-white" : "text-black"}
+                          className={cn(
+                            "text-sm leading-[30px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
+                            bg === "black" ? "text-white" : "text-black"
+                          )}
                         >
                           Option 1
                         </label>
@@ -208,7 +210,10 @@ const FormComponentsTestSection: React.FC = () => {
                         <RadioGroupItem background={bg} value="option2" id={`option2-${bg}`} />
                         <label 
                           htmlFor={`option2-${bg}`}
-                          className={bg === "black" ? "text-white" : "text-black"}
+                          className={cn(
+                            "text-sm leading-[30px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
+                            bg === "black" ? "text-white" : "text-black"
+                          )}
                         >
                           Option 2
                         </label>
@@ -474,7 +479,7 @@ const FormComponentsTestSection: React.FC = () => {
                             <RadioGroupItem background={selectedBackground} value="email" />
                           </FormControl>
                           <FormLabel className={cn(
-                            "font-normal",
+                            "text-sm leading-[30px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
                             selectedBackground === "black" ? "text-white" : ""
                           )}>
                             Email
@@ -485,7 +490,7 @@ const FormComponentsTestSection: React.FC = () => {
                             <RadioGroupItem background={selectedBackground} value="sms" />
                           </FormControl>
                           <FormLabel className={cn(
-                            "font-normal",
+                            "text-sm leading-[30px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
                             selectedBackground === "black" ? "text-white" : ""
                           )}>
                             SMS
@@ -496,7 +501,7 @@ const FormComponentsTestSection: React.FC = () => {
                             <RadioGroupItem background={selectedBackground} value="push" />
                           </FormControl>
                           <FormLabel className={cn(
-                            "font-normal",
+                            "text-sm leading-[30px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
                             selectedBackground === "black" ? "text-white" : ""
                           )}>
                             Push Notification
