@@ -14,6 +14,7 @@ interface TruncatedTextProps {
   as?: React.ElementType;
   tooltipClassName?: string;
   tooltipSide?: "top" | "right" | "bottom" | "left";
+  tooltipMaxWidth?: string;
 }
 
 const TruncatedText = ({
@@ -22,6 +23,7 @@ const TruncatedText = ({
   as: Component = "span",
   tooltipClassName,
   tooltipSide = "top",
+  tooltipMaxWidth = "max-w-[200px]", // Default max width for tooltip
 }: TruncatedTextProps) => {
   const textRef = useRef<HTMLElement>(null);
   const [isTruncated, setIsTruncated] = useState(false);
@@ -67,7 +69,7 @@ const TruncatedText = ({
           </Component>
         </TooltipTrigger>
         <TooltipContent
-          className={cn("bg-black text-white", tooltipClassName)}
+          className={cn("bg-black text-white", tooltipMaxWidth, tooltipClassName)}
           side={tooltipSide}
         >
           {text}
