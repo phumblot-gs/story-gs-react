@@ -21,13 +21,13 @@ const RadioGroup = React.forwardRef<
 RadioGroup.displayName = RadioGroupPrimitive.Root.displayName
 
 const radioGroupItemVariants = cva(
-  "aspect-square h-[14px] w-[14px] rounded-full align-baseline border-none ring-offset-background focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+  "aspect-square h-3 w-3 p-1 rounded-full align-baseline border-none ring-offset-background focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
   {
     variants: {
       background: {
-        white: "bg-grey-lighter [&>span>svg]:fill-black [&>span>svg]:text-black",
+        white: "bg-grey-lighter [&>span>svg]:fill-black [&>span>svg]:text-black data-[state=checked]:bg-black [&>span>svg]:data-[state=checked]:fill-white [&>span>svg]:data-[state=checked]:text-white",
         black: "bg-black [&>span>svg]:fill-white [&>span>svg]:text-white",
-        grey: "bg-grey [&>span>svg]:fill-black [&>span>svg]:text-black",
+        grey: "bg-grey [&>span>svg]:fill-black [&>span>svg]:text-black data-[state=checked]:bg-black [&>span>svg]:data-[state=checked]:fill-white [&>span>svg]:data-[state=checked]:text-white",
       },
     },
     defaultVariants: {
