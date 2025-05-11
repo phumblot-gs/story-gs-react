@@ -1,6 +1,7 @@
+
 import * as React from "react"
 import { cn } from "@/lib/utils"
-import { Button as ButtonBase, buttonVariants } from "@/components/ui/button-base"
+import { Button as ButtonBase, buttonVariants, type ButtonProps as ButtonBaseProps } from "@/components/ui/button-base"
 import { cva, type VariantProps } from "class-variance-authority"
 
 export type ButtonBackground = "white" | "black" | "grey"
