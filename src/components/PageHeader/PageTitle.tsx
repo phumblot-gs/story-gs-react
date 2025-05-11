@@ -28,13 +28,14 @@ const PageTitle: React.FC<PageTitleProps> = ({
       featured && "pl-5 border-l border-[#EAEAEA]", 
       className
     )}>
-      {/* Remplacé h2 par TruncatedText */}
-      <TruncatedText 
-        text={title}
-        as="h2" 
-        className="text-base font-light text-black whitespace-nowrap max-w-[250px]"
-        tooltipSide="bottom"
-      />
+      <div className="flex-1 min-w-0 overflow-hidden">
+        <TruncatedText 
+          text={title}
+          as="h2" 
+          className="text-base font-light text-black whitespace-nowrap"
+          tooltipSide="bottom"
+        />
+      </div>
       {showButton && (
         <ButtonCircle 
           icon={buttonIcon} 

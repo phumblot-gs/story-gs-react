@@ -23,9 +23,10 @@ const TruncatedText = ({
   as: Component = "span",
   tooltipClassName,
   tooltipSide = "top",
-  tooltipMaxWidth = "max-w-[200px]", // Default max width for tooltip
+  tooltipMaxWidth = "max-w-[200px]",
 }: TruncatedTextProps) => {
   const textRef = useRef<HTMLElement>(null);
+  const containerRef = useRef<HTMLElement | null>(null);
   const [isTruncated, setIsTruncated] = useState(false);
 
   useEffect(() => {
@@ -41,11 +42,29 @@ const TruncatedText = ({
     // Check on initial render
     checkTruncation();
 
-    // Check on window resize
+    // Setup ResizeObserver to detect container size changes
+    const resizeObserver = new ResizeObserver(() => {
+      // Re-check truncation when container size changes
+      checkTruncation();
+    });
+
+    // Start observing the element
+    if (textRef.current) {
+      resizeObserver.observe(textRef.current);
+      
+      // If we have a parent container, observe that too
+      if (textRef.current.parentElement) {
+        containerRef.current = textRef.current.parentElement;
+        resizeObserver.observe(containerRef.current);
+      }
+    }
+    
+    // Check on window resize as well
     window.addEventListener("resize", checkTruncation);
     
     // Cleanup
     return () => {
+      resizeObserver.disconnect();
       window.removeEventListener("resize", checkTruncation);
     };
   }, [text]); // Re-check when text changes
@@ -53,7 +72,10 @@ const TruncatedText = ({
   // If not truncated, just render the text
   if (!isTruncated) {
     return (
-      <Component ref={textRef} className={cn("truncate", className)}>
+      <Component 
+        ref={textRef} 
+        className={cn("truncate w-full", className)}
+      >
         {text}
       </Component>
     );
@@ -64,7 +86,10 @@ const TruncatedText = ({
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Component ref={textRef} className={cn("truncate", className)}>
+          <Component 
+            ref={textRef} 
+            className={cn("truncate w-full", className)}
+          >
             {text}
           </Component>
         </TooltipTrigger>

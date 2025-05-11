@@ -31,7 +31,6 @@ const PageHeader: React.FC<PageHeaderProps> = ({
 }) => {
   const { logo: themeLogo } = useThemeValues();
 
-  {/* Removed : min-w-[1280px] */}
   return (
     <header
       className={cn(
@@ -39,12 +38,12 @@ const PageHeader: React.FC<PageHeaderProps> = ({
         className
       )}
     >
-      {/* Left Side */}
-      <div className="flex items-center gap-5">
+      {/* Left Side - with flex-shrink to allow truncation */}
+      <div className="flex items-center gap-5 flex-shrink overflow-hidden">
         {logo ? (
-          <div className="w-[25px]">{logo}</div>
+          <div className="w-[25px] flex-shrink-0">{logo}</div>
         ) : (
-          <BrandLogo logo={themeLogo} width={25} height={14} />
+          <BrandLogo logo={themeLogo} width={25} height={14} className="flex-shrink-0" />
         )}
         <PageTitle 
           title={title} 
@@ -52,19 +51,20 @@ const PageHeader: React.FC<PageHeaderProps> = ({
           buttonIcon={titleButtonIcon}
           onButtonClick={onTitleButtonClick}
           featured={true}
+          className="flex-shrink min-w-0"
         />
       </div>
       
       {/* Center Side */}
       {centerContent && (
-        <div className="flex justify-center">
+        <div className="flex justify-center flex-shrink-0">
           {centerContent}
         </div>
       )}
       
       {/* Right Side */}
       {rightContent && (
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-shrink-0">
           {rightContent}
         </div>
       )}
