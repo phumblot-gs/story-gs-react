@@ -11,6 +11,7 @@ import ButtonTestSection from "./test/ButtonTestSection";
 import ToastTestSection from "./test/ToastTestSection";
 import StatusComponentsTestSection from "./test/StatusComponentsTestSection";
 import NestedComponentsTestSection from "./test/NestedComponentsTestSection";
+import FormComponentsTestSection from "./test/FormComponentsTestSection";
 
 const Test: React.FC = () => {
   return (
@@ -32,6 +33,7 @@ const Test: React.FC = () => {
           <TabsTrigger value="page-header">Page Header</TabsTrigger>
           <TabsTrigger value="notifications">Notifications</TabsTrigger>
           <TabsTrigger value="buttons">Buttons</TabsTrigger>
+          <TabsTrigger value="forms">Forms</TabsTrigger>
           <TabsTrigger value="status">Status Components</TabsTrigger>
           <TabsTrigger value="nested">Nested Components</TabsTrigger>
         </TabsList>
@@ -47,6 +49,10 @@ const Test: React.FC = () => {
         <TabsContent value="buttons" className="space-y-8">
           <ButtonTestSection />
           <ToastTestSection />
+        </TabsContent>
+        
+        <TabsContent value="forms" className="space-y-8">
+          <FormComponentsTestSection />
         </TabsContent>
 
         <TabsContent value="status" className="space-y-8">
