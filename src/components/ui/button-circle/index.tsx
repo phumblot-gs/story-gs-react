@@ -1,7 +1,7 @@
 
 import React from "react"
 import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button-base"
 import { ButtonCircleProps } from "./types"
 import { getButtonStyles } from "./styles"
 import { sizeVariants } from "./variants"

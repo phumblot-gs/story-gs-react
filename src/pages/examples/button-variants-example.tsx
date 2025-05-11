@@ -1,7 +1,7 @@
 
 import React from "react"
-import { Button } from "@/components/ui/button-default"
-import { ButtonSmall } from "@/index" // Import ButtonSmall from index instead of non-existent file
+import { Button } from "@/components/ui/button"
+import { ButtonSmall } from "@/index" 
 import { ButtonCircle } from "@/components/ui/button-circle"
 
 const ButtonVariantsExample = () => {

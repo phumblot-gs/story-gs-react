@@ -9,10 +9,12 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { ButtonCircle } from "@/components/ui/button-circle";
 
 const ButtonTestSection: React.FC = () => {
-  const [buttonVariant, setButtonVariant] = useState<"default" | "destructive" | "outline" | "secondary" | "ghost" | "link">("default");
-  const [buttonSize, setButtonSize] = useState<"default" | "sm" | "lg" | "icon">("default");
   const [buttonText, setButtonText] = useState("Button");
+  const [buttonSize, setButtonSize] = useState<"small" | "large">("large");
+  const [buttonBackground, setButtonBackground] = useState<"white" | "black" | "grey">("white");
+  const [buttonFeatured, setButtonFeatured] = useState(true);
   const [buttonDisabled, setButtonDisabled] = useState(false);
+  const [buttonIndicator, setButtonIndicator] = useState(false);
 
   const [circleButtonSize, setCircleButtonSize] = useState<"small" | "large">("large");
   const [circleButtonBackground, setCircleButtonBackground] = useState<"white" | "black" | "grey">("white");
@@ -25,7 +27,7 @@ const ButtonTestSection: React.FC = () => {
       <Card>
         <CardHeader>
           <CardTitle>Standard Button</CardTitle>
-          <CardDescription>Test the standard button component with different variants and sizes.</CardDescription>
+          <CardDescription>Test the standard button component with different options.</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -40,25 +42,6 @@ const ButtonTestSection: React.FC = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="button-variant">Variant</Label>
-                <Select 
-                  value={buttonVariant} 
-                  onValueChange={(value) => setButtonVariant(value as any)}>
-                  <SelectTrigger id="button-variant">
-                    <SelectValue placeholder="Select variant" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="default">Default</SelectItem>
-                    <SelectItem value="destructive">Destructive</SelectItem>
-                    <SelectItem value="outline">Outline</SelectItem>
-                    <SelectItem value="secondary">Secondary</SelectItem>
-                    <SelectItem value="ghost">Ghost</SelectItem>
-                    <SelectItem value="link">Link</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
                 <Label htmlFor="button-size">Size</Label>
                 <Select 
                   value={buttonSize} 
@@ -67,12 +50,35 @@ const ButtonTestSection: React.FC = () => {
                     <SelectValue placeholder="Select size" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="default">Default</SelectItem>
-                    <SelectItem value="sm">Small</SelectItem>
-                    <SelectItem value="lg">Large</SelectItem>
-                    <SelectItem value="icon">Icon</SelectItem>
+                    <SelectItem value="small">Small</SelectItem>
+                    <SelectItem value="large">Large</SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="button-bg">Background</Label>
+                <Select 
+                  value={buttonBackground} 
+                  onValueChange={(value) => setButtonBackground(value as any)}>
+                  <SelectTrigger id="button-bg">
+                    <SelectValue placeholder="Select background" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="white">White</SelectItem>
+                    <SelectItem value="black">Black</SelectItem>
+                    <SelectItem value="grey">Grey</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="button-featured"
+                  checked={buttonFeatured}
+                  onCheckedChange={(checked) => setButtonFeatured(!!checked)}
+                />
+                <Label htmlFor="button-featured">Featured</Label>
               </div>
 
               <div className="flex items-center space-x-2">
@@ -83,14 +89,25 @@ const ButtonTestSection: React.FC = () => {
                 />
                 <Label htmlFor="button-disabled">Disabled</Label>
               </div>
+
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="button-indicator"
+                  checked={buttonIndicator}
+                  onCheckedChange={(checked) => setButtonIndicator(!!checked)}
+                />
+                <Label htmlFor="button-indicator">Show Indicator</Label>
+              </div>
             </div>
 
             <div className="flex flex-col space-y-4 items-center justify-center bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
               <h3 className="text-lg font-medium">Preview</h3>
               <Button
-                variant={buttonVariant}
                 size={buttonSize}
+                background={buttonBackground}
+                featured={buttonFeatured}
                 disabled={buttonDisabled}
+                indicator={buttonIndicator}
               >
                 {buttonText}
               </Button>

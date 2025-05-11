@@ -1,7 +1,8 @@
+
 // Import all components first
 import * as React from "react";
-import { buttonVariants } from "./components/ui/button";
-import { Button } from "./components/ui/button-default";
+import { buttonVariants } from "./components/ui/button-base";
+import { Button } from "./components/ui/button";
 import { ButtonCircle } from "./components/ui/button-circle";
 import { LanguageSwitcher } from "./components/ui/language-switcher";
 import ButtonNotifications from "./components/ButtonNotifications";
@@ -12,7 +13,7 @@ import type {
   ButtonBackground,
   ButtonProps,
   ButtonSize
-} from "./components/ui/button-default";
+} from "./components/ui/button";
 
 import type {
   ButtonBackground as ButtonCircleBackground,
