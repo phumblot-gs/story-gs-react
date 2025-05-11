@@ -6,7 +6,7 @@ import { MediaStatus } from "@/utils/mediaStatus";
 export const mockNotifications: NotificationProps[] = [
   {
     notification_id: "mock-notification-1",
-    title: "Connect Added Comments on photos",
+    title: "charles@grand-shooting.com added comments on photos",
     subtitle: "STANDARD-2025-05-07 H02-PART-1",
     pictureStatus: MediaStatus.SUBMITTED_FOR_APPROVAL,
     type: "comment",
@@ -16,7 +16,7 @@ export const mockNotifications: NotificationProps[] = [
   },
   {
     notification_id: "mock-notification-2",
-    title: "Connect Added Comments on photos",
+    title: "charles@grand-shooting.com added comments on photos",
     subtitle: "STANDARD-2025-05-07 H02-PART-1",
     pictureStatus: MediaStatus.SELECTED,
     type: "comment",
@@ -26,7 +26,7 @@ export const mockNotifications: NotificationProps[] = [
   },
   {
     notification_id: "mock-notification-3",
-    title: "Connect Added Comments on photos",
+    title: "charles@grand-shooting.com added comments on photos",
     subtitle: "STANDARD-2025-05-07 H02-PART-1",
     pictureStatus: MediaStatus.REFUSED_1,
     type: "transfer",
@@ -36,7 +36,7 @@ export const mockNotifications: NotificationProps[] = [
   },
   {
     notification_id: "mock-notification-4",
-    title: "Connect Added Comments on photos",
+    title: "charles@grand-shooting.com added comments on photos",
     subtitle: "STANDARD-2025-05-07 H02-PART-1",
     pictureStatus: MediaStatus.VALIDATED,
     type: "comment",
@@ -46,7 +46,7 @@ export const mockNotifications: NotificationProps[] = [
   },
   {
     notification_id: "mock-notification-5",
-    title: "Connect Added Comments on photos",
+    title: "charles@grand-shooting.com added comments on photos",
     subtitle: "STANDARD-2025-05-07 H02-PART-1",
     pictureStatus: MediaStatus.TO_RESHOOT,
     type: "other",
@@ -56,7 +56,7 @@ export const mockNotifications: NotificationProps[] = [
   },
   {
     notification_id: "mock-notification-6",
-    title: "Connect Added Comments on photos",
+    title: "charles@grand-shooting.com added comments on photos",
     subtitle: "STANDARD-2025-05-07 H02-PART-1",
     pictureStatus: MediaStatus.READY_TO_BROADCAST,
     type: "other",
@@ -66,7 +66,7 @@ export const mockNotifications: NotificationProps[] = [
   },
   {
     notification_id: "mock-notification-7",
-    title: "Connect Added Comments on photos",
+    title: "charles@grand-shooting.com added comments on photos",
     subtitle: "STANDARD-2025-05-07 H02-PART-1",
     pictureStatus: MediaStatus.BROADCAST,
     type: "transfer",
@@ -76,7 +76,7 @@ export const mockNotifications: NotificationProps[] = [
   },
   {
     notification_id: "mock-notification-8",
-    title: "Connect Added Comments on photos",
+    title: "charles@grand-shooting.com added comments on photos",
     subtitle: "STANDARD-2025-05-07 H02-PART-1",
     pictureStatus: MediaStatus.ERROR_DURING_BROADCAST,
     type: "comment",

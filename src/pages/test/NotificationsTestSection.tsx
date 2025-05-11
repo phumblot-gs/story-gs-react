@@ -29,7 +29,7 @@ const NotificationsTestSection: React.FC = () => {
     return [
       {
         notification_id: "notification-1",
-        title: "Connect Added Comments on photos",
+        title: "charles@grand-shooting.com added comments on photos",
         subtitle: "STANDARD-2025-05-07 H02-PART-1",
         pictureStatus: MediaStatus.SUBMITTED_FOR_APPROVAL,
         type: "comment" as const,
@@ -49,7 +49,7 @@ const NotificationsTestSection: React.FC = () => {
       },
       {
         notification_id: "notification-3",
-        title: "Connect Added Comments on photos",
+        title: "charles@grand-shooting.com added comments on photos",
         subtitle: "STANDARD-2025-05-07 H02-PART-1",
         pictureStatus: MediaStatus.BROADCAST,
         type: "comment" as const,
@@ -105,7 +105,7 @@ const NotificationsTestSection: React.FC = () => {
     
     const newNotification: NotificationProps = {
       notification_id: `test-${Date.now()}`,
-      title: "New test notification",
+      title: "charles@grand-shooting.com added comments on photos",
       subtitle: `Added at ${new Date().toLocaleTimeString()}`,
       pictureStatus: MediaStatus.SUBMITTED_FOR_APPROVAL,
       type: "comment" as const,
@@ -308,7 +308,7 @@ const NotificationsTestSection: React.FC = () => {
         <CardContent className="bg-black p-6 space-y-4">
           <NotificationPanel
             notification_id="demo-1"
-            title="Connect Added Comments on photos"
+            title="charles@grand-shooting.com added comments on photos"
             subtitle="STANDARD-2025-05-07 H02-PART-1"
             pictureStatus={MediaStatus.SUBMITTED_FOR_APPROVAL}
             type="comment"
@@ -335,7 +335,7 @@ const NotificationsTestSection: React.FC = () => {
           
           <NotificationPanel
             notification_id="demo-long-subtitle"
-            title="Connect Added Comments"
+            title="charles@grand-shooting.com added comments"
             subtitle="This is a very long subtitle that should demonstrate the text truncation functionality and show a tooltip when hovering over it - STANDARD-2025-05-07 H02-PART-1"
             pictureStatus={MediaStatus.BROADCAST}
             type="comment"
@@ -357,7 +357,7 @@ const NotificationsTestSection: React.FC = () => {
           
           <NotificationPanel
             notification_id="demo-3"
-            title="Connect Added Comments on photos"
+            title="charles@grand-shooting.com added comments on photos"
             subtitle="STANDARD-2025-05-07 H02-PART-1"
             pictureStatus={MediaStatus.BROADCAST}
             type="comment"
