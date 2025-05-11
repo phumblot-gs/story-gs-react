@@ -26,10 +26,16 @@ const buttonVariants = cva(
         lg: "h-11 rounded-md px-8",
         icon: "h-10 w-10",
       },
+      background: {
+        white: "bg-white text-black border-grey-lighter hover:bg-black hover:text-white active:bg-black active:text-blue-primary",
+        black: "bg-black text-white border-grey-strongest hover:bg-white hover:text-black active:bg-black active:text-blue-primary",
+        grey: "bg-grey text-black border-grey-stronger hover:bg-black hover:text-white active:bg-black active:text-blue-primary",
+      },
     },
     defaultVariants: {
       variant: "default",
       size: "default",
+      background: "white",
     },
   }
 )
@@ -38,15 +44,16 @@ export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean
-  className?: string // Explicitly adding className prop for clarity, even though it's already included in ButtonHTMLAttributes
+  className?: string
+  background?: "white" | "black" | "grey"
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, ...props }, ref) => {
+  ({ className, variant, size, background, asChild = false, ...props }, ref) => {
     const Comp = asChild ? Slot : "button"
     return (
       <Comp
-        className={cn(buttonVariants({ variant, size, className }))}
+        className={cn(buttonVariants({ variant, size, background, className }))}
         ref={ref}
         {...props}
       />

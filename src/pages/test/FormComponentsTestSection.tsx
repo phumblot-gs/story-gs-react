@@ -26,6 +26,8 @@ import {
   FormLabel, 
   FormMessage 
 } from "@/components/ui/form";
+import { Label } from "@/components/ui/label";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 // Form schema for validation
 const formSchema = z.object({
@@ -46,8 +48,15 @@ const formSchema = z.object({
   }),
 });
 
+// Background context for form components
+type BackgroundType = "white" | "black" | "grey";
+const backgrounds: BackgroundType[] = ["white", "black", "grey"];
+
 // Define the FormTestSection component
 const FormComponentsTestSection: React.FC = () => {
+  // For the background tabs
+  const [selectedBackground, setSelectedBackground] = useState<BackgroundType>("white");
+  
   // Initialize the form with react-hook-form
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -77,125 +86,163 @@ const FormComponentsTestSection: React.FC = () => {
       <div>
         <h2 className="text-2xl font-bold mb-4">Form Components</h2>
         <p className="text-muted-foreground mb-6">
-          These are all the available form components that can be used in your application.
+          These are all the available form components with different background variants.
         </p>
       </div>
 
-      {/* Basic components showcase */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="space-y-6">
-          <div>
-            <h3 className="text-lg font-medium mb-2">Input</h3>
-            <Input placeholder="Enter your text here" />
-          </div>
-          
-          <div>
-            <h3 className="text-lg font-medium mb-2">Textarea</h3>
-            <Textarea placeholder="Write your message here" />
-          </div>
-          
-          <div>
-            <h3 className="text-lg font-medium mb-2">Select</h3>
-            <Select>
-              <SelectTrigger>
-                <SelectValue placeholder="Select an option" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="option1">Option 1</SelectItem>
-                <SelectItem value="option2">Option 2</SelectItem>
-                <SelectItem value="option3">Option 3</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          
-          <div>
-            <h3 className="text-lg font-medium mb-2">Slider</h3>
-            <Slider 
-              value={sliderValue} 
-              onValueChange={setSliderValue} 
-              max={100} 
-              step={1} 
-            />
-            <p className="text-sm text-muted-foreground mt-1">
-              Value: {sliderValue}
-            </p>
-          </div>
-        </div>
+      <Tabs defaultValue="white" onValueChange={(value) => setSelectedBackground(value as BackgroundType)}>
+        <TabsList>
+          <TabsTrigger value="white">White Background</TabsTrigger>
+          <TabsTrigger value="black">Black Background</TabsTrigger>
+          <TabsTrigger value="grey">Grey Background</TabsTrigger>
+        </TabsList>
         
-        <div className="space-y-6">
-          <div>
-            <h3 className="text-lg font-medium mb-2">Switch</h3>
-            <div className="flex items-center space-x-2">
-              <Switch
-                checked={switchValue}
-                onCheckedChange={setSwitchValue}
-              />
-              <span className="text-sm text-muted-foreground">
-                {switchValue ? "On" : "Off"}
-              </span>
-            </div>
-          </div>
-          
-          <div>
-            <h3 className="text-lg font-medium mb-2">Checkbox</h3>
-            <div className="flex items-center space-x-2">
-              <Checkbox id="terms" />
-              <label
-                htmlFor="terms"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-              >
-                Accept terms and conditions
-              </label>
-            </div>
-          </div>
-          
-          <div>
-            <h3 className="text-lg font-medium mb-2">Radio Group</h3>
-            <RadioGroup defaultValue="option1">
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="option1" id="option1" />
-                <label htmlFor="option1">Option 1</label>
+        {backgrounds.map((bg) => (
+          <TabsContent key={bg} value={bg} className={cn(
+            "p-6 rounded-lg mt-4",
+            bg === "white" && "bg-white",
+            bg === "black" && "bg-black",
+            bg === "grey" && "bg-grey"
+          )}>
+            {/* Basic components showcase */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="space-y-6">
+                <div>
+                  <Label className={bg === "black" ? "text-white" : "text-black"}>Input</Label>
+                  <div className="mt-2">
+                    <Input background={bg} placeholder="Enter your text here" />
+                  </div>
+                </div>
+                
+                <div>
+                  <Label className={bg === "black" ? "text-white" : "text-black"}>Textarea</Label>
+                  <div className="mt-2">
+                    <Textarea background={bg} placeholder="Write your message here" />
+                  </div>
+                </div>
+                
+                <div>
+                  <Label className={bg === "black" ? "text-white" : "text-black"}>Select</Label>
+                  <div className="mt-2">
+                    <Select>
+                      <SelectTrigger background={bg}>
+                        <SelectValue placeholder="Select an option" />
+                      </SelectTrigger>
+                      <SelectContent background={bg}>
+                        <SelectItem value="option1">Option 1</SelectItem>
+                        <SelectItem value="option2">Option 2</SelectItem>
+                        <SelectItem value="option3">Option 3</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                
+                <div>
+                  <Label className={bg === "black" ? "text-white" : "text-black"}>Slider</Label>
+                  <div className="mt-2">
+                    <Slider 
+                      background={bg}
+                      value={sliderValue} 
+                      onValueChange={setSliderValue} 
+                      max={100} 
+                      step={1} 
+                    />
+                    <p className={cn(
+                      "text-sm mt-1",
+                      bg === "black" ? "text-white" : "text-muted-foreground"
+                    )}>
+                      Value: {sliderValue}
+                    </p>
+                  </div>
+                </div>
               </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="option2" id="option2" />
-                <label htmlFor="option2">Option 2</label>
+              
+              <div className="space-y-6">
+                <div>
+                  <Label className={bg === "black" ? "text-white" : "text-black"}>Switch</Label>
+                  <div className="flex items-center space-x-2 mt-2">
+                    <Switch
+                      background={bg}
+                      checked={switchValue}
+                      onCheckedChange={setSwitchValue}
+                    />
+                    <span className={cn(
+                      "text-sm",
+                      bg === "black" ? "text-white" : "text-muted-foreground"
+                    )}>
+                      {switchValue ? "On" : "Off"}
+                    </span>
+                  </div>
+                </div>
+                
+                <div>
+                  <Label className={bg === "black" ? "text-white" : "text-black"}>Checkbox</Label>
+                  <div className="flex items-center space-x-2 mt-2">
+                    <Checkbox background={bg} id={`terms-${bg}`} />
+                    <label
+                      htmlFor={`terms-${bg}`}
+                      className={cn(
+                        "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
+                        bg === "black" ? "text-white" : "text-black"
+                      )}
+                    >
+                      Accept terms and conditions
+                    </label>
+                  </div>
+                </div>
+                
+                <div>
+                  <Label className={bg === "black" ? "text-white" : "text-black"}>Radio Group</Label>
+                  <div className="mt-2">
+                    <RadioGroup defaultValue="option1">
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem background={bg} value="option1" id={`option1-${bg}`} />
+                        <label 
+                          htmlFor={`option1-${bg}`}
+                          className={bg === "black" ? "text-white" : "text-black"}
+                        >
+                          Option 1
+                        </label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem background={bg} value="option2" id={`option2-${bg}`} />
+                        <label 
+                          htmlFor={`option2-${bg}`}
+                          className={bg === "black" ? "text-white" : "text-black"}
+                        >
+                          Option 2
+                        </label>
+                      </div>
+                    </RadioGroup>
+                  </div>
+                </div>
+                
+                <div>
+                  <Label className={bg === "black" ? "text-white" : "text-black"}>Button</Label>
+                  <div className="mt-2 space-x-2">
+                    <Button 
+                      variant="default" 
+                      background={bg as any}
+                    >
+                      Default Button
+                    </Button>
+                  </div>
+                </div>
               </div>
-            </RadioGroup>
-          </div>
-          
-          <div>
-            <h3 className="text-lg font-medium mb-2">Date Picker</h3>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className={cn(
-                    "w-[280px] justify-start text-left font-normal",
-                    !selectedDate && "text-muted-foreground"
-                  )}
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {selectedDate ? format(selectedDate, "PPP") : <span>Pick a date</span>}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={selectedDate}
-                  onSelect={setSelectedDate}
-                  initialFocus
-                  className="pointer-events-auto"
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
-        </div>
-      </div>
+            </div>
+          </TabsContent>
+        ))}
+      </Tabs>
 
       {/* Complete form example */}
       <div className="mt-16">
-        <h2 className="text-2xl font-bold mb-4">Complete Form Example</h2>
-        <div className="bg-card p-6 rounded-lg border">
+        <h2 className="text-2xl font-bold mb-4">Complete Form Example with {selectedBackground} Background</h2>
+        <div className={cn(
+          "p-6 rounded-lg border",
+          selectedBackground === "white" && "bg-white",
+          selectedBackground === "black" && "bg-black", 
+          selectedBackground === "grey" && "bg-grey"
+        )}>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -204,11 +251,11 @@ const FormComponentsTestSection: React.FC = () => {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Name</FormLabel>
+                      <FormLabel className={selectedBackground === "black" ? "text-white" : ""}>Name</FormLabel>
                       <FormControl>
-                        <Input placeholder="Your name" {...field} />
+                        <Input background={selectedBackground} placeholder="Your name" {...field} />
                       </FormControl>
-                      <FormDescription>
+                      <FormDescription className={selectedBackground === "black" ? "text-gray-400" : ""}>
                         Enter your full name.
                       </FormDescription>
                       <FormMessage />
@@ -221,11 +268,11 @@ const FormComponentsTestSection: React.FC = () => {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Email</FormLabel>
+                      <FormLabel className={selectedBackground === "black" ? "text-white" : ""}>Email</FormLabel>
                       <FormControl>
-                        <Input placeholder="your.email@example.com" {...field} />
+                        <Input background={selectedBackground} placeholder="your.email@example.com" {...field} />
                       </FormControl>
-                      <FormDescription>
+                      <FormDescription className={selectedBackground === "black" ? "text-gray-400" : ""}>
                         Your email will not be shared.
                       </FormDescription>
                       <FormMessage />
@@ -239,15 +286,16 @@ const FormComponentsTestSection: React.FC = () => {
                 name="bio"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Bio</FormLabel>
+                    <FormLabel className={selectedBackground === "black" ? "text-white" : ""}>Bio</FormLabel>
                     <FormControl>
                       <Textarea 
+                        background={selectedBackground}
                         placeholder="Tell us a bit about yourself" 
                         className="min-h-[120px]" 
                         {...field} 
                       />
                     </FormControl>
-                    <FormDescription>
+                    <FormDescription className={selectedBackground === "black" ? "text-gray-400" : ""}>
                       Brief description for your profile.
                     </FormDescription>
                     <FormMessage />
@@ -261,23 +309,23 @@ const FormComponentsTestSection: React.FC = () => {
                   name="role"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Role</FormLabel>
+                      <FormLabel className={selectedBackground === "black" ? "text-white" : ""}>Role</FormLabel>
                       <Select 
                         onValueChange={field.onChange} 
                         defaultValue={field.value}
                       >
                         <FormControl>
-                          <SelectTrigger>
+                          <SelectTrigger background={selectedBackground}>
                             <SelectValue placeholder="Select a role" />
                           </SelectTrigger>
                         </FormControl>
-                        <SelectContent>
+                        <SelectContent background={selectedBackground}>
                           <SelectItem value="admin">Admin</SelectItem>
                           <SelectItem value="user">User</SelectItem>
                           <SelectItem value="editor">Editor</SelectItem>
                         </SelectContent>
                       </Select>
-                      <FormDescription>
+                      <FormDescription className={selectedBackground === "black" ? "text-gray-400" : ""}>
                         Your role in the system
                       </FormDescription>
                       <FormMessage />
@@ -290,9 +338,10 @@ const FormComponentsTestSection: React.FC = () => {
                   name="expertise"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Expertise Level (1-100)</FormLabel>
+                      <FormLabel className={selectedBackground === "black" ? "text-white" : ""}>Expertise Level (1-100)</FormLabel>
                       <FormControl>
                         <Slider
+                          background={selectedBackground}
                           min={1}
                           max={100}
                           step={1}
@@ -300,7 +349,10 @@ const FormComponentsTestSection: React.FC = () => {
                           onValueChange={(vals) => field.onChange(vals[0])}
                         />
                       </FormControl>
-                      <FormDescription className="flex justify-between">
+                      <FormDescription className={cn(
+                        "flex justify-between",
+                        selectedBackground === "black" ? "text-gray-400" : ""
+                      )}>
                         <span>Beginner</span>
                         <span>Current: {field.value}</span>
                         <span>Expert</span>
@@ -316,16 +368,20 @@ const FormComponentsTestSection: React.FC = () => {
                   control={form.control}
                   name="notifications"
                   render={({ field }) => (
-                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                    <FormItem className={cn(
+                      "flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4",
+                      selectedBackground === "black" ? "border-gray-700" : ""
+                    )}>
                       <FormControl>
                         <Switch
+                          background={selectedBackground}
                           checked={field.value}
                           onCheckedChange={field.onChange}
                         />
                       </FormControl>
                       <div className="space-y-1 leading-none">
-                        <FormLabel>Enable Notifications</FormLabel>
-                        <FormDescription>
+                        <FormLabel className={selectedBackground === "black" ? "text-white" : ""}>Enable Notifications</FormLabel>
+                        <FormDescription className={selectedBackground === "black" ? "text-gray-400" : ""}>
                           Receive notifications about account activity.
                         </FormDescription>
                       </div>
@@ -339,12 +395,13 @@ const FormComponentsTestSection: React.FC = () => {
                   name="date"
                   render={({ field }) => (
                     <FormItem className="flex flex-col">
-                      <FormLabel>Select Date</FormLabel>
+                      <FormLabel className={selectedBackground === "black" ? "text-white" : ""}>Select Date</FormLabel>
                       <Popover>
                         <PopoverTrigger asChild>
                           <FormControl>
                             <Button
                               variant={"outline"}
+                              background={selectedBackground as any}
                               className={cn(
                                 "w-full pl-3 text-left font-normal",
                                 !field.value && "text-muted-foreground"
@@ -369,7 +426,7 @@ const FormComponentsTestSection: React.FC = () => {
                           />
                         </PopoverContent>
                       </Popover>
-                      <FormDescription>
+                      <FormDescription className={selectedBackground === "black" ? "text-gray-400" : ""}>
                         Select an important date.
                       </FormDescription>
                       <FormMessage />
@@ -385,13 +442,14 @@ const FormComponentsTestSection: React.FC = () => {
                   <FormItem className="flex flex-row items-start space-x-3 space-y-0">
                     <FormControl>
                       <Checkbox
+                        background={selectedBackground}
                         checked={field.value}
                         onCheckedChange={field.onChange}
                       />
                     </FormControl>
                     <div className="space-y-1 leading-none">
-                      <FormLabel>Subscribe to newsletter</FormLabel>
-                      <FormDescription>
+                      <FormLabel className={selectedBackground === "black" ? "text-white" : ""}>Subscribe to newsletter</FormLabel>
+                      <FormDescription className={selectedBackground === "black" ? "text-gray-400" : ""}>
                         Receive emails about new features and updates.
                       </FormDescription>
                     </div>
@@ -404,7 +462,7 @@ const FormComponentsTestSection: React.FC = () => {
                 name="communication"
                 render={({ field }) => (
                   <FormItem className="space-y-3">
-                    <FormLabel>Preferred Communication</FormLabel>
+                    <FormLabel className={selectedBackground === "black" ? "text-white" : ""}>Preferred Communication</FormLabel>
                     <FormControl>
                       <RadioGroup
                         onValueChange={field.onChange}
@@ -413,25 +471,34 @@ const FormComponentsTestSection: React.FC = () => {
                       >
                         <FormItem className="flex items-center space-x-3 space-y-0">
                           <FormControl>
-                            <RadioGroupItem value="email" />
+                            <RadioGroupItem background={selectedBackground} value="email" />
                           </FormControl>
-                          <FormLabel className="font-normal">
+                          <FormLabel className={cn(
+                            "font-normal",
+                            selectedBackground === "black" ? "text-white" : ""
+                          )}>
                             Email
                           </FormLabel>
                         </FormItem>
                         <FormItem className="flex items-center space-x-3 space-y-0">
                           <FormControl>
-                            <RadioGroupItem value="sms" />
+                            <RadioGroupItem background={selectedBackground} value="sms" />
                           </FormControl>
-                          <FormLabel className="font-normal">
+                          <FormLabel className={cn(
+                            "font-normal",
+                            selectedBackground === "black" ? "text-white" : ""
+                          )}>
                             SMS
                           </FormLabel>
                         </FormItem>
                         <FormItem className="flex items-center space-x-3 space-y-0">
                           <FormControl>
-                            <RadioGroupItem value="push" />
+                            <RadioGroupItem background={selectedBackground} value="push" />
                           </FormControl>
-                          <FormLabel className="font-normal">
+                          <FormLabel className={cn(
+                            "font-normal",
+                            selectedBackground === "black" ? "text-white" : ""
+                          )}>
                             Push Notification
                           </FormLabel>
                         </FormItem>
@@ -442,7 +509,13 @@ const FormComponentsTestSection: React.FC = () => {
                 )}
               />
               
-              <Button type="submit" className="w-full md:w-auto">Submit Form</Button>
+              <Button 
+                background={selectedBackground as any} 
+                type="submit" 
+                className="w-full md:w-auto"
+              >
+                Submit Form
+              </Button>
             </form>
           </Form>
         </div>
