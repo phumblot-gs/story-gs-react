@@ -1,7 +1,7 @@
 
 import * as React from "react"
 import { cn } from "@/lib/utils"
-import { Button as ButtonBase, ButtonProps as ButtonBaseProps } from "@/components/ui/button-base"
+import { Button as ButtonBase, ButtonProps as ButtonBaseProps, buttonVariants } from "@/components/ui/button-base"
 import { cva, type VariantProps } from "class-variance-authority"
 
 export type ButtonBackground = "white" | "black" | "grey"
@@ -12,19 +12,25 @@ const sizeVariants = cva('', {
     size: {
       small: "text-xs py-[8px] px-[12px] h-[24px]",
       large: "text-sm py-[10px] px-[15px] h-[30px]",
+      // Compatibility aliases
+      sm: "text-xs py-[8px] px-[12px] h-[24px]",
+      default: "text-sm py-[10px] px-[15px] h-[30px]",
+      lg: "text-sm py-[12px] px-[18px] h-[32px]",
+      icon: "p-0 h-8 w-8",
     },
   },
   defaultVariants: { size: "large" },
 });
 
-export type ButtonSize = "small" | "large"
+export type ButtonSize = "small" | "large" | "sm" | "default" | "lg" | "icon"
 
-export interface ButtonProps extends Omit<ButtonBaseProps, 'variant' | 'size'>, VariantProps<typeof sizeVariants> {
+export interface ButtonProps extends Omit<ButtonBaseProps, 'size'>, VariantProps<typeof sizeVariants> {
   background?: ButtonBackground
   indicator?: boolean
   disabled?: boolean
   featured?: boolean
   debug?: boolean
+  variant?: string // For backward compatibility
   onClick?: React.MouseEventHandler<HTMLButtonElement>
   onFocus?: React.FocusEventHandler<HTMLButtonElement>
   onBlur?: React.FocusEventHandler<HTMLButtonElement>
@@ -38,7 +44,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     disabled, 
     featured = true, 
     size, 
-    children, 
+    children,
+    variant, // Accept but don't use directly
     debug = false,
     onClick,
     onFocus,
@@ -104,6 +111,31 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       onBlur?.(e);
     };
 
+    // Handle variant prop for compatibility (map old variant props to appropriate styling)
+    let compatibilityClasses = "";
+    if (variant) {
+      switch(variant) {
+        case "outline":
+          compatibilityClasses = "border border-input bg-background hover:bg-accent hover:text-accent-foreground";
+          break;
+        case "ghost":
+          compatibilityClasses = "hover:bg-accent hover:text-accent-foreground";
+          break;
+        case "link":
+          compatibilityClasses = "text-primary underline-offset-4 hover:underline";
+          break;
+        case "destructive":
+          compatibilityClasses = "bg-destructive text-destructive-foreground hover:bg-destructive/90";
+          break;
+        case "secondary":
+          compatibilityClasses = "bg-secondary text-secondary-foreground hover:bg-secondary/80";
+          break;
+        default:
+          // Default variant styling already handled by other props
+          break;
+      }
+    }
+
     return (
       <div className="relative">
         <ButtonBase
@@ -112,6 +144,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             "relative rounded-full font-light flex items-center leading-none justify-center font-custom transition-colors duration-200",
             sizeClasses,
             getButtonStyles(),
+            compatibilityClasses,
             className
           )}
           disabled={disabled}
@@ -133,4 +166,4 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
 Button.displayName = "Button"
 
-export { Button }
+export { Button, buttonVariants }

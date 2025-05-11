@@ -16,8 +16,8 @@ const ThemeSwitcher: React.FC = () => {
         </div>
         <div className="flex items-center gap-2">
           <Button
-            variant="ghost"
-            size="sm"
+            className="h-8 w-8 p-0"
+            size="small"
             onClick={() => resetCustomization()}
             title="Réinitialiser le thème"
           >

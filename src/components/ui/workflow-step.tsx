@@ -1,7 +1,7 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button-default";
+import { Button } from "@/components/ui/button";
 
 export interface WorkflowStepProps {
   label: string;

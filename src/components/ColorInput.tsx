@@ -72,8 +72,7 @@ const ColorInput = memo(({
         />
         {showResetButton && (
           <Button 
-            variant="ghost" 
-            size="icon" 
+            size="small" 
             className="h-5 w-5 p-0" 
             onClick={() => {
               setLocalValue('');
