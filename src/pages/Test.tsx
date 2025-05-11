@@ -20,10 +20,10 @@ const Test: React.FC = () => {
         <h1 className="text-3xl font-bold">Components Test Page</h1>
         <div className="flex gap-4">
           <Link to="/">
-            <Button variant="outline">Back to Home</Button>
+            <Button variant="outline" background="white" featured={true}>Back to Home</Button>
           </Link>
           <Link to="/examples">
-            <Button variant="outline">View Examples</Button>
+            <Button variant="outline" background="white" featured={true}>View Examples</Button>
           </Link>
         </div>
       </div>

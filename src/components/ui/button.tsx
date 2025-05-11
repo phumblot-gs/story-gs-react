@@ -46,14 +46,45 @@ export interface ButtonProps
   asChild?: boolean
   className?: string
   background?: "white" | "black" | "grey"
+  featured?: boolean
+  indicator?: boolean
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, background, asChild = false, ...props }, ref) => {
+  ({ className, variant, size, background, asChild = false, featured = false, indicator = false, ...props }, ref) => {
     const Comp = asChild ? Slot : "button"
+    
+    // Apply featured styles if needed
+    let buttonClasses = buttonVariants({ variant, size, background, className });
+    
+    if (featured) {
+      if (background === "white") {
+        buttonClasses = cn(buttonClasses, "bg-grey-lighter");
+      } else if (background === "black") {
+        buttonClasses = cn(buttonClasses, "bg-grey-strongest");
+      } else if (background === "grey") {
+        buttonClasses = cn(buttonClasses, "bg-white");
+      }
+    }
+    
+    if (indicator) {
+      // For indicator, we'll wrap the button in a relative div
+      // and add the indicator as an absolute div
+      return (
+        <div className="relative">
+          <Comp
+            className={buttonClasses}
+            ref={ref}
+            {...props}
+          />
+          <div className="absolute bottom-0 right-0 w-[7px] h-[7px] rounded-full bg-yellow"></div>
+        </div>
+      )
+    }
+    
     return (
       <Comp
-        className={cn(buttonVariants({ variant, size, background, className }))}
+        className={buttonClasses}
         ref={ref}
         {...props}
       />
