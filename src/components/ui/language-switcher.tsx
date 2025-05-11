@@ -74,7 +74,7 @@ export const LanguageSwitcher = ({
             <button
               key={language.code}
               className={cn(
-                "w-full px-4 py-2 text-white text-left hover:bg-white hover:text-black active:bg-blue-primary active:text-black text-sm",
+                "w-full px-4 py-2 text-white text-left hover:bg-white hover:text-black active:bg-blue-primary active:text-black text-sm whitespace-nowrap",
                 currentLanguage.code === language.code ? "bg-grey-strongest" : "bg-grey-strongest/90"
               )}
               onClick={() => handleSelect(language)}
