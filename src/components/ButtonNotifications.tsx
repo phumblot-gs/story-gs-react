@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, forwardRef, useImperativeHandle } from "react";
 import { ButtonCircle } from "@/components/ui/button-circle";
 import ActivityPanel from "./notifications/ActivityPanel";
@@ -96,6 +97,7 @@ interface ButtonNotificationsProps {
   onMarkAllAsRead?: (notifications: NotificationProps[]) => void;
   onNotificationClick?: (notification_id: string) => void;
   debug?: boolean;
+  limit?: number; // New prop for limiting the number of notifications
 }
 
 // Define the ref interface explicitly
@@ -103,22 +105,71 @@ export interface ButtonNotificationsRef {
   addNotifications: (newNotifications: NotificationProps[]) => void;
 }
 
+/**
+ * Enforces the notification limit by removing older notifications
+ * @param notifications The current notifications array
+ * @param limit Maximum number of notifications to keep
+ * @returns Filtered notifications array respecting the limit
+ */
+const enforceNotificationLimit = (
+  notifications: NotificationProps[], 
+  limit: number
+): NotificationProps[] => {
+  if (notifications.length <= limit) {
+    return notifications;
+  }
+  
+  // Separate read and unread notifications
+  const read = notifications.filter(n => !n.unread);
+  const unread = notifications.filter(n => n.unread);
+  
+  // Sort both arrays by date (oldest first)
+  const sortByDate = (a: NotificationProps, b: NotificationProps) => 
+    new Date(a.date).getTime() - new Date(b.date).getTime();
+  
+  const sortedRead = [...read].sort(sortByDate);
+  const sortedUnread = [...unread].sort(sortByDate);
+  
+  // Calculate how many items we need to remove
+  const excessCount = notifications.length - limit;
+  
+  let result: NotificationProps[] = [];
+  
+  // If we have enough read notifications to remove
+  if (sortedRead.length >= excessCount) {
+    // Remove oldest read notifications
+    const remainingRead = sortedRead.slice(excessCount);
+    result = [...remainingRead, ...sortedUnread];
+  } else {
+    // Remove all read notifications and some unread ones if necessary
+    const unreadToRemove = excessCount - sortedRead.length;
+    const remainingUnread = sortedUnread.slice(unreadToRemove);
+    result = [...remainingUnread];
+  }
+  
+  // Sort the final array by date (newest first) for display
+  return result.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+};
+
 const ButtonNotifications = forwardRef<ButtonNotificationsRef, ButtonNotificationsProps>(({
   notifications = mockNotifications,
   count,
   onClick,
   onMarkAllAsRead,
   onNotificationClick,
-  debug = false
+  debug = false,
+  limit = 100 // Default limit is 100
 }, ref) => {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
-  const [localNotifications, setLocalNotifications] = useState<NotificationProps[]>(notifications);
+  const [localNotifications, setLocalNotifications] = useState<NotificationProps[]>([]);
   const { t } = useTranslation();
   
-  // Update local notifications when prop changes
+  // Update local notifications when prop changes or limit changes
   useEffect(() => {
-    setLocalNotifications(notifications);
-  }, [notifications]);
+    if (debug) console.log("ButtonNotifications: Notifications updated or limit changed", { notificationsCount: notifications.length, limit });
+    // Apply limit when setting initial notifications
+    setLocalNotifications(enforceNotificationLimit(notifications, limit));
+  }, [notifications, limit, debug]);
   
   // Use provided count or calculate from local notifications
   const unreadCount = count !== undefined ? count : localNotifications.filter(notification => notification.unread).length;
@@ -161,55 +212,25 @@ const ButtonNotifications = forwardRef<ButtonNotificationsRef, ButtonNotificatio
   };
 
   /**
-   * Adds new notifications to the panel while maintaining a maximum of 100 items
+   * Adds new notifications to the panel while maintaining the maximum limit
    * Removes oldest read notifications first, then oldest unread if necessary
    * @param newNotifications Array of new notifications to add
    */
   const addNotifications = (newNotifications: NotificationProps[]) => {
     if (newNotifications.length === 0) return;
     
-    if (debug) console.log("ButtonNotifications: Adding new notifications", newNotifications);
+    if (debug) console.log("ButtonNotifications: Adding new notifications", { 
+      newCount: newNotifications.length, 
+      currentCount: localNotifications.length,
+      limit
+    });
     
     setLocalNotifications(current => {
       // Combine current notifications with new ones
       const combinedNotifications = [...current, ...newNotifications];
       
-      // If we're under the limit, no need to remove any
-      if (combinedNotifications.length <= 100) {
-        return combinedNotifications;
-      }
-      
-      // We need to trim the list to 100 items
-      // First, separate read and unread notifications
-      const read = combinedNotifications.filter(n => !n.unread);
-      const unread = combinedNotifications.filter(n => n.unread);
-      
-      // Sort both arrays by date (oldest first)
-      const sortByDate = (a: NotificationProps, b: NotificationProps) => 
-        new Date(a.date).getTime() - new Date(b.date).getTime();
-      
-      const sortedRead = [...read].sort(sortByDate);
-      const sortedUnread = [...unread].sort(sortByDate);
-      
-      // Calculate how many items we need to remove
-      const excessCount = combinedNotifications.length - 100;
-      
-      let result: NotificationProps[] = [];
-      
-      // If we have enough read notifications to remove
-      if (sortedRead.length >= excessCount) {
-        // Remove oldest read notifications
-        const remainingRead = sortedRead.slice(excessCount);
-        result = [...remainingRead, ...sortedUnread];
-      } else {
-        // Remove all read notifications and some unread ones if necessary
-        const unreadToRemove = excessCount - sortedRead.length;
-        const remainingUnread = sortedUnread.slice(unreadToRemove);
-        result = [...remainingUnread];
-      }
-      
-      // Sort the final array by date (newest first) for display
-      return result.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+      // Apply the limit using the utility function
+      return enforceNotificationLimit(combinedNotifications, limit);
     });
   };
 
@@ -217,12 +238,13 @@ const ButtonNotifications = forwardRef<ButtonNotificationsRef, ButtonNotificatio
   React.useEffect(() => {
     if (debug) {
       console.log("ButtonNotifications: Component mounted/updated", { 
-        notificationsCount: notifications.length,
+        notificationsCount: localNotifications.length,
         unreadCount,
-        isPanelOpen
+        isPanelOpen,
+        limit
       });
     }
-  }, [debug, notifications, unreadCount, isPanelOpen]);
+  }, [debug, localNotifications, unreadCount, isPanelOpen, limit]);
 
   // Expose the addNotifications method to parent components via ref
   useImperativeHandle(ref, () => ({

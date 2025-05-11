@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -12,6 +13,7 @@ import { toast } from "@/components/ui/sonner";
 const NotificationsTestSection: React.FC = () => {
   const [isActivityPanelOpen, setIsActivityPanelOpen] = useState(false);
   const [debugMode, setDebugMode] = useState(false);
+  const [notificationLimit, setNotificationLimit] = useState(100);
   const { setActivityStatus } = useGlobalActivityStatus();
   const notificationsRef = useRef<ButtonNotificationsRef>(null);
   
@@ -140,6 +142,18 @@ const NotificationsTestSection: React.FC = () => {
     });
   };
 
+  // Toggle notification limit between 10 and 100
+  const toggleNotificationLimit = () => {
+    const newLimit = notificationLimit === 100 ? 10 : 100;
+    setNotificationLimit(newLimit);
+    
+    toast({
+      title: "Limite de notifications modifiée",
+      description: `Nouvelle limite: ${newLimit} notifications`,
+      duration: 2000,
+    });
+  };
+
   return (
     <>
       <Card className="mb-6">
@@ -159,6 +173,7 @@ const NotificationsTestSection: React.FC = () => {
                   onMarkAllAsRead={handleMarkAllAsRead}
                   onNotificationClick={handleNotificationClick}
                   debug={debugMode}
+                  limit={notificationLimit}
                 />
               </div>
               <div className="flex flex-col items-center p-4 border rounded-md">
@@ -188,15 +203,21 @@ const NotificationsTestSection: React.FC = () => {
                 Set No Activity (Global)
               </Button>
             </div>
-            <div className="grid grid-cols-1 w-full">
+            <div className="grid grid-cols-2 gap-4 w-full">
               <Button 
                 variant={debugMode ? "default" : "outline"} 
                 onClick={() => setDebugMode(!debugMode)}
               >
                 {debugMode ? "Debug Mode: ON" : "Debug Mode: OFF"}
               </Button>
+              <Button 
+                variant={notificationLimit === 10 ? "default" : "outline"} 
+                onClick={toggleNotificationLimit}
+              >
+                {`Limit: ${notificationLimit}`}
+              </Button>
               {debugMode && (
-                <p className="text-sm text-muted-foreground mt-1 text-center">
+                <p className="text-sm text-muted-foreground mt-1 text-center col-span-2">
                   Debug mode enabled. Check browser console for logs.
                 </p>
               )}

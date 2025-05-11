@@ -12,7 +12,7 @@ import { MediaStatus } from "@/utils/mediaStatus";
 // Example of how to use the ButtonNotifications component in a PageHeader
 const NotificationsExample = () => {
   // Ref to ButtonNotifications component for adding notifications
-  const notificationsRef = useRef<{ addNotifications: (newNotifications: NotificationProps[]) => void }>(null);
+  const notificationsRef = useRef<ButtonNotificationsRef>(null);
 
   const addToast = () => {
     toast({
@@ -144,6 +144,7 @@ const NotificationsExample = () => {
                 rightContent={
                   <ButtonNotifications 
                     ref={notificationsRef}
+                    limit={50} // Set a custom limit of 50 notifications
                     onMarkAllAsRead={handleMarkAllAsRead}
                     onNotificationClick={handleNotificationClick}
                   />
@@ -155,6 +156,8 @@ const NotificationsExample = () => {
             Cliquez sur le bouton Bell pour afficher le panneau des notifications.
             <br />
             Les actions sur les notifications et "marquer comme lu" sont connectées à des toasts de démonstration.
+            <br />
+            Ce composant limite le panneau à 50 notifications maximum.
           </p>
         </CardContent>
       </Card>

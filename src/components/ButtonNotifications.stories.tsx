@@ -34,6 +34,10 @@ const meta: Meta<typeof ButtonNotifications> = {
     debug: { 
       control: 'boolean',
       description: 'Enable debug mode to log events to console'
+    },
+    limit: {
+      control: { type: 'number', min: 5, max: 200, step: 5 },
+      description: 'Maximum number of notifications to display (default: 100)'
     }
   },
 };
@@ -145,6 +149,33 @@ export const DebugMode: Story = {
   }
 };
 
+// Add story to demonstrate notification limit
+export const WithSmallLimit: Story = {
+  args: {
+    notifications: Array.from({ length: 20 }, (_, i) => ({
+      notification_id: `limit-${i}`,
+      title: `Notification ${i+1}`,
+      subtitle: `Test notification ${i+1}`,
+      pictureStatus: i % 2 === 0 ? MediaStatus.VALIDATED : MediaStatus.SUBMITTED_FOR_APPROVAL,
+      type: i % 3 === 0 ? "comment" : i % 3 === 1 ? "transfer" : "other",
+      redirectLink: "#",
+      date: new Date(Date.now() - i * 3600000), // Each 1 hour apart
+      unread: i < 5 // First 5 are unread
+    })),
+    onMarkAllAsRead: action("marked all as read"),
+    onNotificationClick: action("notification clicked"),
+    debug: true,
+    limit: 10 // Show only 10 notifications maximum
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Demonstrates limiting the number of notifications to 10. When new notifications are added, older ones are automatically removed.'
+      }
+    }
+  }
+};
+
 // Add example with notification addition
 const IncrementalNotificationsTemplate = (args) => {
   const notificationsRef = useRef<ButtonNotificationsRef>(null);
@@ -173,7 +204,7 @@ const IncrementalNotificationsTemplate = (args) => {
       <div className="flex flex-col gap-2 items-center">
         <Button onClick={addNotification}>Add New Notification</Button>
         <p className="text-sm text-muted-foreground text-center max-w-xs mt-2">
-          Click to add notifications incrementally. The component automatically manages the 100 notification limit.
+          Click to add notifications incrementally. The component automatically manages the notification limit.
         </p>
       </div>
     </div>
@@ -197,12 +228,13 @@ export const IncrementalNotifications: Story = {
     ],
     onMarkAllAsRead: action("marked all as read"),
     onNotificationClick: action("notification clicked"),
-    debug: true
+    debug: true,
+    limit: 20
   },
   parameters: {
     docs: {
       description: {
-        story: 'Demonstrates adding notifications incrementally with the exposed ref method.'
+        story: 'Demonstrates adding notifications incrementally with the exposed ref method and a custom limit of 20.'
       }
     }
   }
