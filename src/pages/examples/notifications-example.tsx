@@ -1,3 +1,4 @@
+
 import React, { useRef } from "react";
 import { useTranslation } from "@/contexts/TranslationContext";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
@@ -8,6 +9,8 @@ import { toast } from "@/components/ui/sonner";
 import { NotificationProps } from "@/components/notifications/NotificationPanel";
 import { Button } from "@/components/ui/button";
 import { MediaStatus } from "@/utils/mediaStatus";
+import { ThemeProvider } from "@/contexts/ThemeContext";
+import PageHeader from "@/components/PageHeader";
 
 // Example of how to use the ButtonNotifications component in a PageHeader
 const NotificationsExample = () => {
