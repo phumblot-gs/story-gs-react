@@ -20,13 +20,13 @@ const RadioGroup = React.forwardRef<
 RadioGroup.displayName = RadioGroupPrimitive.Root.displayName
 
 const radioGroupItemVariants = cva(
-  "aspect-square h-3 w-3 rounded-full align-baseline border-none ring-offset-background focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+  "aspect-square h-3 w-3 rounded-full align-baseline border border-[1px] ring-offset-background focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
   {
     variants: {
       background: {
-        white: "bg-grey-lighter [&>span>svg]:fill-black [&>span>svg]:text-black data-[state=checked]:bg-black data-[state=checked]:text-white [&>span>svg]:data-[state=checked]:fill-white [&>span>svg]:data-[state=checked]:text-white",
-        black: "bg-black [&>span>svg]:fill-white [&>span>svg]:text-white",
-        grey: "bg-grey [&>span>svg]:fill-black [&>span>svg]:text-black data-[state=checked]:bg-black data-[state=checked]:text-white [&>span>svg]:data-[state=checked]:fill-white [&>span>svg]:data-[state=checked]:text-white",
+        white: "bg-grey-lighter border-grey-lighter [&>span>svg]:fill-black [&>span>svg]:text-black data-[state=checked]:bg-black data-[state=checked]:text-white [&>span>svg]:data-[state=checked]:fill-white [&>span>svg]:data-[state=checked]:text-white data-[state=checked]:border-black",
+        black: "bg-black border-black [&>span>svg]:fill-white [&>span>svg]:text-white",
+        grey: "bg-grey border-grey [&>span>svg]:fill-black [&>span>svg]:text-black data-[state=checked]:bg-black data-[state=checked]:text-white [&>span>svg]:data-[state=checked]:fill-white [&>span>svg]:data-[state=checked]:text-white data-[state=checked]:border-black",
       },
     },
     defaultVariants: {
