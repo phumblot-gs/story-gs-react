@@ -272,7 +272,7 @@ const IncrementalNotificationsTemplate = (args) => {
     
     const newNotification = {
       notification_id: `story-add-${Date.now()}`,
-      title: "Incrementally Added Notification",
+      title: "Ajout dynamique de notifications (Ref API)",
       subtitle: `Added at ${new Date().toLocaleTimeString()}`,
       pictureStatus: MediaStatus.VALIDATED,
       type: "comment" as NotificationType,
@@ -322,8 +322,6 @@ export const IncrementalNotifications: Story = {
     docs: {
       description: {
         story: `
-### Ajout dynamique de notifications (Ref API)
-
 Ce mode démontre l'ajout incrémental de notifications via la méthode \`addNotifications\` exposée par le composant.
 
 #### Code d'exemple:
@@ -374,7 +372,7 @@ export const MultilingualSupport: Story = {
     notifications: [
       {
         notification_id: "multilingual-1",
-        title: "Notification with multilingual support",
+        title: "Support multilingue",
         subtitle: "STANDARD-2025-05-07 H02-PART-1",
         pictureStatus: MediaStatus.SUBMITTED_FOR_APPROVAL,
         type: "comment" as NotificationType,
@@ -391,8 +389,6 @@ export const MultilingualSupport: Story = {
     docs: {
       description: {
         story: `
-### Support multilingue
-
 Le composant utilise le contexte \`TranslationContext\` pour traduire automatiquement :
 - Le texte du bouton et son aria-label
 - Les titres et descriptions du panneau de notifications
@@ -495,8 +491,6 @@ export const CallbackHandling: Story = {
     docs: {
       description: {
         story: `
-### Gestion des callbacks
-
 Ce composant expose deux callbacks principaux :
 
 #### 1. onNotificationClick
