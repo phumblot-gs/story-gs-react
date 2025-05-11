@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+
+import React, { useState, useEffect } from "react";
 import { Sheet, SheetContent, SheetClose, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { ButtonCircle } from "@/components/ui/button-circle";
 import NotificationPanel, { NotificationProps } from "./NotificationPanel";
@@ -25,6 +26,14 @@ const ActivityPanel: React.FC<ActivityPanelProps> = ({
   const [localNotifications, setLocalNotifications] = useState<NotificationProps[]>(notifications);
   const unreadCount = localNotifications.filter(notification => notification.unread).length;
   const { t, currentLanguage } = useTranslation();
+  
+  // Ajout d'un useEffect pour mettre à jour les notifications locales quand les props changent
+  useEffect(() => {
+    if (debug) {
+      console.log("ActivityPanel: notifications prop changed", notifications);
+    }
+    setLocalNotifications(notifications);
+  }, [notifications, debug]);
 
   // Group notifications by date (using date string as key)
   const notificationsByDate = localNotifications.reduce((acc: Record<string, NotificationProps[]>, notification) => {
