@@ -11,11 +11,8 @@ import { ButtonCircle } from "@/components/ui/button-circle";
 const ButtonTestSection: React.FC = () => {
   const [buttonVariant, setButtonVariant] = useState<"default" | "destructive" | "outline" | "secondary" | "ghost" | "link">("default");
   const [buttonSize, setButtonSize] = useState<"default" | "sm" | "lg" | "icon">("default");
-  const [buttonBackground, setButtonBackground] = useState<"white" | "black" | "grey">("white");
   const [buttonText, setButtonText] = useState("Button");
   const [buttonDisabled, setButtonDisabled] = useState(false);
-  const [buttonFeatured, setButtonFeatured] = useState(false);
-  const [buttonIndicator, setButtonIndicator] = useState(false);
 
   const [circleButtonSize, setCircleButtonSize] = useState<"small" | "large">("large");
   const [circleButtonBackground, setCircleButtonBackground] = useState<"white" | "black" | "grey">("white");
@@ -78,22 +75,6 @@ const ButtonTestSection: React.FC = () => {
                 </Select>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="button-background">Background</Label>
-                <Select 
-                  value={buttonBackground} 
-                  onValueChange={(value) => setButtonBackground(value as any)}>
-                  <SelectTrigger id="button-background">
-                    <SelectValue placeholder="Select background" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="white">White</SelectItem>
-                    <SelectItem value="black">Black</SelectItem>
-                    <SelectItem value="grey">Grey</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
               <div className="flex items-center space-x-2">
                 <Checkbox
                   id="button-disabled"
@@ -102,42 +83,17 @@ const ButtonTestSection: React.FC = () => {
                 />
                 <Label htmlFor="button-disabled">Disabled</Label>
               </div>
-
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="button-featured"
-                  checked={buttonFeatured}
-                  onCheckedChange={(checked) => setButtonFeatured(!!checked)}
-                />
-                <Label htmlFor="button-featured">Featured</Label>
-              </div>
-
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="button-indicator"
-                  checked={buttonIndicator}
-                  onCheckedChange={(checked) => setButtonIndicator(!!checked)}
-                />
-                <Label htmlFor="button-indicator">Show Indicator</Label>
-              </div>
             </div>
 
             <div className="flex flex-col space-y-4 items-center justify-center bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
               <h3 className="text-lg font-medium">Preview</h3>
-              <div className="relative">
-                <Button
-                  variant={buttonVariant}
-                  size={buttonSize}
-                  background={buttonBackground}
-                  disabled={buttonDisabled}
-                  className={buttonFeatured ? "font-medium" : ""}
-                >
-                  {buttonText}
-                </Button>
-                {buttonIndicator && (
-                  <div className="absolute bottom-0 right-0 w-[7px] h-[7px] rounded-full bg-yellow"></div>
-                )}
-              </div>
+              <Button
+                variant={buttonVariant}
+                size={buttonSize}
+                disabled={buttonDisabled}
+              >
+                {buttonText}
+              </Button>
             </div>
           </div>
         </CardContent>
