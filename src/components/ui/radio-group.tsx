@@ -24,9 +24,9 @@ const radioGroupItemVariants = cva(
   {
     variants: {
       background: {
-        white: "bg-grey-lighter [&>span>svg]:fill-black [&>span>svg]:text-black",
+        white: "bg-grey-lighter [&>span>svg]:fill-black [&>span>svg]:text-black data-[state=checked]:bg-black data-[state=checked]:text-white [&>span>svg]:data-[state=checked]:fill-white [&>span>svg]:data-[state=checked]:text-white",
         black: "bg-black [&>span>svg]:fill-white [&>span>svg]:text-white",
-        grey: "bg-grey [&>span>svg]:fill-black [&>span>svg]:text-black",
+        grey: "bg-grey [&>span>svg]:fill-black [&>span>svg]:text-black data-[state=checked]:bg-black data-[state=checked]:text-white [&>span>svg]:data-[state=checked]:fill-white [&>span>svg]:data-[state=checked]:text-white",
       },
     },
     defaultVariants: {
