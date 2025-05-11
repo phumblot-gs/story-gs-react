@@ -1,11 +1,10 @@
-
 import React, { useState, useRef } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MediaStatus } from "@/utils/mediaStatus";
 import NotificationPanel from "@/components/notifications/NotificationPanel";
 import ActivityPanel from "@/components/notifications/ActivityPanel";
-import ButtonNotifications from "@/components/ButtonNotifications";
+import ButtonNotifications, { ButtonNotificationsRef } from "@/components/ButtonNotifications";
 import { useGlobalActivityStatus } from "@/hooks/useGlobalActivityStatus";
 import { NotificationProps } from "@/components/notifications/NotificationPanel";
 import { toast } from "@/components/ui/sonner";
@@ -14,7 +13,7 @@ const NotificationsTestSection: React.FC = () => {
   const [isActivityPanelOpen, setIsActivityPanelOpen] = useState(false);
   const [debugMode, setDebugMode] = useState(false);
   const { setActivityStatus } = useGlobalActivityStatus();
-  const notificationsRef = useRef<{ addNotifications: (newNotifications: NotificationProps[]) => void }>(null);
+  const notificationsRef = useRef<ButtonNotificationsRef>(null);
   
   // Generate notifications for activity panel
   const generateMockNotifications = () => {
@@ -94,7 +93,7 @@ const NotificationsTestSection: React.FC = () => {
   const addSingleNotification = () => {
     if (!notificationsRef.current) return;
     
-    const newNotification = {
+    const newNotification: NotificationProps = {
       notification_id: `test-${Date.now()}`,
       title: "New test notification",
       subtitle: `Added at ${new Date().toLocaleTimeString()}`,
@@ -118,10 +117,10 @@ const NotificationsTestSection: React.FC = () => {
   const addManyNotifications = () => {
     if (!notificationsRef.current) return;
     
-    const statuses = Object.values(MediaStatus);
+    const statuses = Object.values(MediaStatus).filter(value => typeof value === "number") as MediaStatus[];
     const types = ["comment", "transfer", "other"] as const;
     
-    const bulkNotifications = Array.from({ length: 20 }, (_, i) => ({
+    const bulkNotifications: NotificationProps[] = Array.from({ length: 20 }, (_, i) => ({
       notification_id: `bulk-${Date.now()}-${i}`,
       title: `Bulk notification #${i + 1}`,
       subtitle: `Testing notification limit - batch ${new Date().toLocaleTimeString()}`,

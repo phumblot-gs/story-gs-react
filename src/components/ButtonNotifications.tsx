@@ -98,14 +98,19 @@ interface ButtonNotificationsProps {
   debug?: boolean;
 }
 
-const ButtonNotifications: React.FC<ButtonNotificationsProps> = ({
+// Define the ref interface explicitly
+export interface ButtonNotificationsRef {
+  addNotifications: (newNotifications: NotificationProps[]) => void;
+}
+
+const ButtonNotifications = forwardRef<ButtonNotificationsRef, ButtonNotificationsProps>(({
   notifications = mockNotifications,
   count,
   onClick,
   onMarkAllAsRead,
   onNotificationClick,
   debug = false
-}) => {
+}, ref) => {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [localNotifications, setLocalNotifications] = useState<NotificationProps[]>(notifications);
   const { t } = useTranslation();
@@ -219,14 +224,10 @@ const ButtonNotifications: React.FC<ButtonNotificationsProps> = ({
     }
   }, [debug, notifications, unreadCount, isPanelOpen]);
 
-  // Expose the addNotifications method to parent components
-  React.useImperativeHandle(
-    ref,
-    () => ({
-      addNotifications,
-    }),
-    []
-  );
+  // Expose the addNotifications method to parent components via ref
+  useImperativeHandle(ref, () => ({
+    addNotifications,
+  }), []);
 
   return (
     <>
@@ -254,14 +255,8 @@ const ButtonNotifications: React.FC<ButtonNotificationsProps> = ({
       />
     </>
   );
-};
-
-// Modified version with ref support
-const ButtonNotificationsWithRef = React.forwardRef<
-  { addNotifications: (newNotifications: NotificationProps[]) => void },
-  ButtonNotificationsProps
->((props, ref) => {
-  return <ButtonNotifications {...props} ref={ref} />;
 });
 
-export default ButtonNotificationsWithRef;
+ButtonNotifications.displayName = "ButtonNotifications";
+
+export default ButtonNotifications;

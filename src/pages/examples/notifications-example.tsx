@@ -1,7 +1,7 @@
 
 import React, { useRef } from "react";
 import PageHeader from "@/components/PageHeader";
-import ButtonNotifications from "@/components/ButtonNotifications";
+import ButtonNotifications, { ButtonNotificationsRef } from "@/components/ButtonNotifications";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";

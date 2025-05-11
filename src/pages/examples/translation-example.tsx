@@ -1,9 +1,8 @@
-
 import React, { useRef } from "react";
 import { useTranslation } from "@/contexts/TranslationContext";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
-import ButtonNotifications from "@/components/ButtonNotifications";
+import ButtonNotifications, { ButtonNotificationsRef } from "@/components/ButtonNotifications";
 import { toast } from "@/components/ui/sonner";
 import { NotificationProps } from "@/components/notifications/NotificationPanel";
 import { Button } from "@/components/ui/button";
@@ -11,7 +10,7 @@ import { MediaStatus } from "@/utils/mediaStatus";
 
 const TranslationExample = () => {
   const { currentLanguage, setLanguage, availableLanguages, t } = useTranslation();
-  const notificationsRef = useRef<{ addNotifications: (newNotifications: NotificationProps[]) => void }>(null);
+  const notificationsRef = useRef<ButtonNotificationsRef>(null);
 
   // Handlers for ButtonNotifications
   const handleMarkAllAsRead = (notifications: NotificationProps[]) => {
