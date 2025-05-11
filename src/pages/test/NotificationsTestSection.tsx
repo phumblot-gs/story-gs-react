@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -322,15 +321,38 @@ const NotificationsTestSection: React.FC = () => {
               duration: 3000,
             })}
           />
+          
           <NotificationPanel
-            notification_id="demo-2"
-            title="Files transferred to editing team"
+            notification_id="demo-long-title"
+            title="This is an extremely long title that should demonstrate the text truncation functionality and show a tooltip when hovering over it"
             subtitle="STANDARD-2025-05-07 H02-PART-1"
             pictureStatus={MediaStatus.VALIDATED}
             type="transfer"
             redirectLink="#"
             date={new Date()}
             unread={true}
+          />
+          
+          <NotificationPanel
+            notification_id="demo-long-subtitle"
+            title="Connect Added Comments"
+            subtitle="This is a very long subtitle that should demonstrate the text truncation functionality and show a tooltip when hovering over it - STANDARD-2025-05-07 H02-PART-1"
+            pictureStatus={MediaStatus.BROADCAST}
+            type="comment"
+            redirectLink="#"
+            date={new Date(new Date().setDate(new Date().getDate() - 1))}
+            unread={false}
+          />
+          
+          <NotificationPanel
+            notification_id="demo-both-long"
+            title="This is another extremely long notification title that should demonstrate the text truncation functionality with a tooltip on hover"
+            subtitle="This is also a very long subtitle that should demonstrate the text truncation functionality with a tooltip on hover - PROJECT-ID-2025-VERY-LONG-IDENTIFIER"
+            pictureStatus={MediaStatus.SELECTED}
+            type="other"
+            redirectLink="#"
+            date={new Date(new Date().setDate(new Date().getDate() - 1))}
+            unread={false}
           />
           
           <NotificationPanel

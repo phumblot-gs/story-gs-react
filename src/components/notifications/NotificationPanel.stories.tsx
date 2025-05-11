@@ -83,10 +83,25 @@ export const Read: Story = {
   },
 };
 
+export const WithLongTitle: Story = {
+  args: {
+    ...Default.args,
+    title: "This is an extremely long notification title that should demonstrate the text truncation functionality with a tooltip when hovering over it",
+  },
+};
+
 export const WithLongSubtitle: Story = {
   args: {
     ...Default.args,
-    subtitle: "STANDARD-2025-05-07 H02-PART-1 This is a very long subtitle that should be truncated",
+    subtitle: "STANDARD-2025-05-07 H02-PART-1 This is a very long subtitle that should be truncated and show tooltip on hover",
+  },
+};
+
+export const WithBothLong: Story = {
+  args: {
+    ...Default.args,
+    title: "This is a very long notification title that should demonstrate the text truncation functionality",
+    subtitle: "This is also a very long subtitle that should demonstrate the text truncation functionality - PROJECT-ID-2025-VERY-LONG-IDENTIFIER",
   },
 };
 
