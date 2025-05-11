@@ -1,15 +1,16 @@
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MediaStatus } from "@/utils/mediaStatus";
 import NotificationPanel from "@/components/notifications/NotificationPanel";
 import ActivityPanel from "@/components/notifications/ActivityPanel";
 import ButtonNotifications from "@/components/ButtonNotifications";
-import type { ButtonNotificationsRef } from "@/components/notifications/types";
+import { ButtonNotificationsRef } from "@/components/notifications/types";
 import { useGlobalActivityStatus } from "@/hooks/useGlobalActivityStatus";
 import { NotificationProps } from "@/components/notifications/NotificationPanel";
 import { toast } from "@/components/ui/sonner";
+import { mockNotifications } from "@/components/notifications/mockNotifications";
 
 const NotificationsTestSection: React.FC = () => {
   const [isActivityPanelOpen, setIsActivityPanelOpen] = useState(false);
@@ -17,6 +18,8 @@ const NotificationsTestSection: React.FC = () => {
   const [notificationLimit, setNotificationLimit] = useState(100);
   const { setActivityStatus } = useGlobalActivityStatus();
   const notificationsRef = useRef<ButtonNotificationsRef>(null);
+  // État local pour stocker les notifications pour le bouton avec count fixe
+  const [countButtonNotifications, setCountButtonNotifications] = useState<NotificationProps[]>(mockNotifications.slice(0, 5));
   
   // Generate notifications for activity panel
   const generateMockNotifications = () => {
@@ -80,6 +83,11 @@ const NotificationsTestSection: React.FC = () => {
       description: `${updatedNotifications.length} notifications mises à jour`,
       duration: 3000,
     });
+    
+    // Mettre à jour les notifications du bouton avec compteur fixe
+    if (notificationsRef.current) {
+      setCountButtonNotifications(updatedNotifications);
+    }
   };
   
   // Handler pour le callback onNotificationClick
@@ -109,6 +117,9 @@ const NotificationsTestSection: React.FC = () => {
     
     notificationsRef.current.addNotifications([newNotification]);
     
+    // Mettre à jour les notifications du bouton avec compteur fixe
+    setCountButtonNotifications(prev => [newNotification, ...prev]);
+    
     toast({
       title: "Notification ajoutée",
       description: "Une nouvelle notification a été ajoutée",
@@ -135,6 +146,9 @@ const NotificationsTestSection: React.FC = () => {
     }));
     
     notificationsRef.current.addNotifications(bulkNotifications);
+    
+    // Mettre à jour les notifications du bouton avec compteur fixe
+    setCountButtonNotifications(prev => [...bulkNotifications.slice(0, 5), ...prev].slice(0, 5));
     
     toast({
       title: "Notifications multiples ajoutées",
@@ -170,7 +184,14 @@ const NotificationsTestSection: React.FC = () => {
                 <ButtonNotifications 
                   ref={notificationsRef}
                   count={5} 
-                  onClick={() => {}} 
+                  notifications={countButtonNotifications} 
+                  onClick={() => {
+                    toast({
+                      title: "Button Clicked",
+                      description: "Notification button with count clicked",
+                      duration: 2000,
+                    });
+                  }} 
                   onMarkAllAsRead={handleMarkAllAsRead}
                   onNotificationClick={handleNotificationClick}
                   debug={debugMode}
@@ -181,7 +202,13 @@ const NotificationsTestSection: React.FC = () => {
                 <p className="mb-2 font-medium">No count</p>
                 <ButtonNotifications 
                   count={0} 
-                  onClick={() => {}} 
+                  onClick={() => {
+                    toast({
+                      title: "Button Clicked",
+                      description: "Notification button without count clicked",
+                      duration: 2000,
+                    });
+                  }}
                   onMarkAllAsRead={handleMarkAllAsRead}
                   onNotificationClick={handleNotificationClick}
                   debug={debugMode}
@@ -197,10 +224,24 @@ const NotificationsTestSection: React.FC = () => {
               </Button>
             </div>
             <div className="grid grid-cols-2 gap-4 w-full">
-              <Button onClick={() => setActivityStatus(true)}>
+              <Button onClick={() => {
+                setActivityStatus(true);
+                toast({
+                  title: "Activity Status Changed",
+                  description: "Global activity status set to: Active",
+                  duration: 2000,
+                });
+              }}>
                 Set Has Activity (Global)
               </Button>
-              <Button variant="outline" onClick={() => setActivityStatus(false)}>
+              <Button variant="outline" onClick={() => {
+                setActivityStatus(false);
+                toast({
+                  title: "Activity Status Changed",
+                  description: "Global activity status set to: Inactive",
+                  duration: 2000,
+                });
+              }}>
                 Set No Activity (Global)
               </Button>
             </div>
