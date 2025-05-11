@@ -1,3 +1,4 @@
+
 import React, { useRef } from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import ButtonNotifications from "./ButtonNotifications";
@@ -15,6 +16,26 @@ const meta: Meta<typeof ButtonNotifications> = {
   component: ButtonNotifications,
   parameters: {
     layout: "centered",
+    docs: {
+      description: {
+        component: `
+### ButtonNotifications
+
+Un composant qui gère l'affichage et l'interaction avec les notifications. Ce composant:
+
+- **Intègre ActivityPanel** : Ouvre/ferme le panneau latéral de notifications
+- **Support multilingue** : Utilise le contexte TranslationProvider pour adapter les textes à la langue sélectionnée
+- **Gestion de limite** : Limite l'affichage à un nombre configurable de notifications (100 par défaut)
+- **API Ref** : Expose des méthodes pour ajouter des notifications programmatiquement
+
+#### Règles de gestion des limites de notifications :
+- Lorsque la limite est atteinte, les notifications les plus anciennes sont supprimées en priorisant:
+  1. D'abord les notifications déjà lues (les plus anciennes)
+  2. Ensuite seulement les notifications non lues (les plus anciennes)
+- Le tri des notifications se fait par date (plus récentes en haut)
+        `
+      }
+    }
   },
   tags: ["autodocs"],
   decorators: [
@@ -29,16 +50,48 @@ const meta: Meta<typeof ButtonNotifications> = {
     ),
   ],
   argTypes: {
-    onMarkAllAsRead: { action: "marked all as read" },
-    onNotificationClick: { action: "notification clicked" },
+    onMarkAllAsRead: { 
+      action: "marked all as read",
+      description: 'Callback appelé lorsque l\'utilisateur clique sur "Marquer tout comme lu"',
+      table: {
+        type: { summary: '(notifications: NotificationProps[]) => void' }
+      }
+    },
+    onNotificationClick: { 
+      action: "notification clicked",
+      description: 'Callback appelé lorsque l\'utilisateur clique sur une notification',
+      table: {
+        type: { summary: '(notification_id: string) => void' }
+      }
+    },
     debug: { 
       control: 'boolean',
-      description: 'Enable debug mode to log events to console'
+      description: 'Active le mode debug pour afficher les événements dans la console',
+      table: {
+        defaultValue: { summary: false }
+      }
     },
     limit: {
       control: { type: 'number', min: 5, max: 200, step: 5 },
-      description: 'Maximum number of notifications to display (default: 100)'
-    }
+      description: 'Nombre maximum de notifications à afficher (défaut: 100)',
+      table: {
+        defaultValue: { summary: 100 }
+      }
+    },
+    notifications: {
+      description: 'Liste initiale des notifications à afficher',
+      control: 'object',
+      table: {
+        type: { summary: 'NotificationProps[]' }
+      }
+    },
+    count: {
+      description: 'Nombre de notifications non lues à afficher sur le badge (calculé automatiquement si non spécifié)',
+      control: 'number',
+      table: {
+        type: { summary: 'number' }
+      }
+    },
   },
 };
 
@@ -51,6 +104,13 @@ export const Default: Story = {
     onNotificationClick: action("notification clicked"),
     debug: false
   },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Configuration par défaut avec des notifications simulées (mockNotifications)'
+      }
+    }
+  }
 };
 
 export const WithoutUnreadNotifications: Story = {
@@ -80,6 +140,13 @@ export const WithoutUnreadNotifications: Story = {
     onMarkAllAsRead: action("marked all as read"),
     onNotificationClick: action("notification clicked"),
   },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Sans notifications non lues - le bouton n\'affiche pas de badge'
+      }
+    }
+  }
 };
 
 export const WithUnreadNotifications: Story = {
@@ -109,6 +176,13 @@ export const WithUnreadNotifications: Story = {
     onMarkAllAsRead: action("marked all as read"),
     onNotificationClick: action("notification clicked"),
   },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Avec notifications non lues - le bouton affiche un badge'
+      }
+    }
+  }
 };
 
 // Add a new story for debug mode
@@ -143,7 +217,7 @@ export const DebugMode: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'This variant enables debug mode, which logs component actions to the console.'
+        story: 'Avec mode debug activé - les actions sont enregistrées dans la console. Utile pour développement et débogage.'
       }
     }
   }
@@ -170,7 +244,14 @@ export const WithSmallLimit: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Demonstrates limiting the number of notifications to 10. When new notifications are added, older ones are automatically removed.'
+        story: `
+### Gestion des limites (10 notifications max)
+
+Ce mode démontre la limitation à 10 notifications. Règles de suppression :
+1. Les notifications les plus anciennes sont supprimées en premier
+2. Les notifications déjà lues sont supprimées avant les non lues
+3. Quand de nouvelles notifications arrivent, les plus anciennes sont supprimées automatiquement
+        `
       }
     }
   }
@@ -204,7 +285,7 @@ const IncrementalNotificationsTemplate = (args) => {
       <div className="flex flex-col gap-2 items-center">
         <Button onClick={addNotification}>Add New Notification</Button>
         <p className="text-sm text-muted-foreground text-center max-w-xs mt-2">
-          Click to add notifications incrementally. The component automatically manages the notification limit.
+          Cliquez pour ajouter des notifications dynamiquement. Le composant gère automatiquement les limites.
         </p>
       </div>
     </div>
@@ -234,8 +315,213 @@ export const IncrementalNotifications: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Demonstrates adding notifications incrementally with the exposed ref method and a custom limit of 20.'
+        story: `
+### Ajout dynamique de notifications (Ref API)
+
+Ce mode démontre l'ajout incrémental de notifications via la méthode \`addNotifications\` exposée par le composant.
+
+#### Code d'exemple:
+
+\`\`\`tsx
+// Créer une référence au composant ButtonNotifications
+const notificationsRef = useRef<ButtonNotificationsRef>(null);
+
+// Plus tard dans le code, ajouter une notification
+if (notificationsRef.current) {
+  const newNotification = {
+    notification_id: \`notification-\${Date.now()}\`,
+    title: "Nouvelle notification",
+    subtitle: "Détails de la notification",
+    pictureStatus: MediaStatus.VALIDATED,
+    type: "comment",
+    redirectLink: "/chemin-vers-page",
+    date: new Date(),
+    unread: true
+  };
+  
+  notificationsRef.current.addNotifications([newNotification]);
+}
+\`\`\`
+        `
       }
     }
   }
 };
+
+// Add story for multilingual support
+const MultilingualTemplate = (args) => {
+  const notificationsRef = useRef<ButtonNotificationsRef>(null);
+  
+  return (
+    <div className="flex flex-col items-center gap-6">
+      <p className="text-sm text-center mb-4">
+        Changez de langue dans la barre latérale de Storybook pour voir la traduction automatique des textes du composant.
+      </p>
+      <ButtonNotifications {...args} ref={notificationsRef} />
+    </div>
+  );
+};
+
+export const MultilingualSupport: Story = {
+  render: MultilingualTemplate,
+  args: {
+    notifications: [
+      {
+        notification_id: "multilingual-1",
+        title: "Notification with multilingual support",
+        subtitle: "STANDARD-2025-05-07 H02-PART-1",
+        pictureStatus: MediaStatus.SUBMITTED_FOR_APPROVAL,
+        type: "comment" as NotificationType,
+        redirectLink: "#",
+        date: new Date(),
+        unread: true
+      }
+    ],
+    onMarkAllAsRead: action("marked all as read"),
+    onNotificationClick: action("notification clicked"),
+    debug: true
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: `
+### Support multilingue
+
+Le composant utilise le contexte \`TranslationContext\` pour traduire automatiquement :
+- Le texte du bouton et son aria-label
+- Les titres et descriptions du panneau de notifications
+- Les messages d'état ("Vous êtes à jour", "X notifications non lues", etc.)
+- Le bouton "marquer comme lu"
+- Le format des dates (selon la locale)
+
+#### Comment ça fonctionne
+
+1. Le composant s'entoure d'un \`TranslationProvider\` :
+\`\`\`tsx
+<TranslationProvider>
+  <ButtonNotifications />
+</TranslationProvider>
+\`\`\`
+
+2. Il utilise le hook useTranslation pour accéder aux traductions :
+\`\`\`tsx
+const { t, currentLanguage } = useTranslation();
+\`\`\`
+
+3. Les clés de traduction sont utilisées via la fonction \`t()\` :
+\`\`\`tsx
+aria-label={t("notifications.title")}
+\`\`\`
+
+4. Les dates sont formatées selon la langue courante :
+\`\`\`tsx
+formatDateForLocale(date, 'format', currentLanguage.code)
+\`\`\`
+        `
+      }
+    }
+  }
+};
+
+// Callback handling example
+const CallbackHandlingTemplate = (args) => {
+  const [lastAction, setLastAction] = React.useState<string>("Aucune action");
+  const [lastId, setLastId] = React.useState<string>("");
+  
+  const handleMarkAllAsRead = (notifications: NotificationProps[]) => {
+    setLastAction(`Marquer tout comme lu (${notifications.length} notifications)`);
+    action("marked all as read")(notifications);
+  };
+
+  const handleNotificationClick = (id: string) => {
+    setLastAction(`Notification cliquée`);
+    setLastId(id);
+    action("notification clicked")(id);
+  };
+  
+  return (
+    <div className="flex flex-col items-center gap-6">
+      <ButtonNotifications 
+        {...args} 
+        onMarkAllAsRead={handleMarkAllAsRead}
+        onNotificationClick={handleNotificationClick}
+      />
+      <div className="border rounded p-4 mt-4 w-full max-w-md">
+        <h4 className="font-semibold mb-2">Journal d'actions :</h4>
+        <p>Dernière action : {lastAction}</p>
+        {lastId && <p className="text-sm text-muted-foreground">ID: {lastId}</p>}
+      </div>
+      <p className="text-sm text-center">
+        Cliquez sur le bouton de notification, puis testez les actions dans le panneau qui s'ouvre.
+      </p>
+    </div>
+  );
+};
+
+export const CallbackHandling: Story = {
+  render: CallbackHandlingTemplate,
+  args: {
+    notifications: [
+      {
+        notification_id: "callback-1",
+        title: "Notification with callback",
+        subtitle: "Click me to trigger callback",
+        pictureStatus: MediaStatus.VALIDATED,
+        type: "comment" as NotificationType,
+        redirectLink: "#",
+        date: new Date(),
+        unread: true
+      },
+      {
+        notification_id: "callback-2",
+        title: "Another notification",
+        subtitle: "STANDARD-2025-05-07 H02-PART-1",
+        pictureStatus: MediaStatus.SUBMITTED_FOR_APPROVAL,
+        type: "transfer" as NotificationType,
+        redirectLink: "#",
+        date: new Date(),
+        unread: true
+      }
+    ],
+    debug: true
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: `
+### Gestion des callbacks
+
+Ce composant expose deux callbacks principaux :
+
+#### 1. onNotificationClick
+Appelé lorsque l'utilisateur clique sur une notification individuelle :
+\`\`\`tsx
+const handleNotificationClick = (notificationId: string) => {
+  // Navigation vers la page liée à la notification
+  navigate(\`/details/\${notificationId}\`);
+  
+  // Ou mise à jour d'un état dans votre application
+  markAsReadInDatabase(notificationId);
+}
+\`\`\`
+
+#### 2. onMarkAllAsRead
+Appelé lorsque l'utilisateur clique sur "marquer tout comme lu" :
+\`\`\`tsx
+const handleMarkAllAsRead = (notifications: NotificationProps[]) => {
+  // Mise à jour dans la base de données
+  updateAllNotificationsStatus(notifications);
+  
+  // Affichage d'un toast de confirmation
+  toast({
+    title: "Notifications mises à jour",
+    description: "Toutes les notifications ont été marquées comme lues"
+  });
+}
+\`\`\`
+        `
+      }
+    }
+  }
+};
+
