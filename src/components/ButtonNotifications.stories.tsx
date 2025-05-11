@@ -1,4 +1,3 @@
-
 import React, { useRef } from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import ButtonNotifications from "./ButtonNotifications";
@@ -26,6 +25,7 @@ Un composant qui gère l'affichage et l'interaction avec les notifications. Ce c
 - **Support multilingue** : Utilise le contexte TranslationProvider pour adapter les textes à la langue sélectionnée
 - **Gestion de limite** : Limite l'affichage à un nombre configurable de notifications (100 par défaut)
 - **API Ref** : Expose des méthodes pour ajouter des notifications programmatiquement
+- **Callback onClick** : Appelé lorsque l'utilisateur clique sur le bouton de notifications, en parallèle de l'ouverture/fermeture du panneau
 
 #### Règles de gestion des limites de notifications :
 - Lorsque la limite est atteinte, les notifications les plus anciennes sont supprimées en priorisant:
@@ -49,6 +49,13 @@ Un composant qui gère l'affichage et l'interaction avec les notifications. Ce c
     ),
   ],
   argTypes: {
+    onClick: { 
+      action: "clicked",
+      description: 'Callback appelé lorsque l\'utilisateur clique sur le bouton de notifications pour ouvrir/fermer le panneau',
+      table: {
+        type: { summary: '() => void' }
+      }
+    },
     onMarkAllAsRead: { 
       action: "marked all as read",
       description: 'Callback appelé lorsque l\'utilisateur clique sur "Marquer tout comme lu"',
@@ -524,3 +531,88 @@ const handleMarkAllAsRead = (notifications: NotificationProps[]) => {
   }
 };
 
+// Add an example demonstrating the onClick callback functionality
+const OnClickCallbackTemplate = (args) => {
+  const [clickCount, setClickCount] = React.useState<number>(0);
+  const [panelState, setPanelState] = React.useState<string>("fermé");
+  
+  const handleButtonClick = () => {
+    setClickCount(prevCount => prevCount + 1);
+    setPanelState(prev => prev === "fermé" ? "ouvert" : "fermé");
+    action("button clicked")();
+  };
+  
+  return (
+    <div className="flex flex-col items-center gap-6">
+      <ButtonNotifications 
+        {...args} 
+        onClick={handleButtonClick}
+      />
+      <div className="border rounded p-4 mt-4 w-full max-w-md">
+        <h4 className="font-semibold mb-2">Démonstration du callback onClick :</h4>
+        <p>Nombre de clics : {clickCount}</p>
+        <p>État du panneau : {panelState}</p>
+      </div>
+      <p className="text-sm text-center max-w-md">
+        Cet exemple illustre comment le callback onClick est appelé à chaque clic sur le bouton de notifications, 
+        parallèlement à l'ouverture ou la fermeture du panneau. Le callback peut être utilisé pour effectuer 
+        des actions supplémentaires comme la journalisation, le suivi analytique, ou la mise à jour d'états.
+      </p>
+    </div>
+  );
+};
+
+export const OnClickCallbackExample: Story = {
+  render: OnClickCallbackTemplate,
+  args: {
+    notifications: [
+      {
+        notification_id: "onclick-1",
+        title: "Notification avec callback onClick",
+        subtitle: "STANDARD-2025-05-07 H02-PART-1",
+        pictureStatus: MediaStatus.VALIDATED,
+        type: "comment" as NotificationType,
+        redirectLink: "#",
+        date: new Date(),
+        unread: true
+      }
+    ],
+    debug: true
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: `
+### Utilisation du callback onClick
+
+Le composant \`ButtonNotifications\` accepte un prop \`onClick\` qui est appelé à chaque fois que l'utilisateur clique sur le bouton de notifications, en parallèle de l'ouverture/fermeture du panneau.
+
+#### Cas d'utilisation
+- Journalisation des interations utilisateur
+- Déclenchement d'analyses (analytics)
+- Mise à jour d'états externes
+- Toute autre action qui doit se produire lors du clic sur le bouton
+
+#### Exemple de code
+\`\`\`tsx
+// Dans votre composant parent
+const handleNotificationButtonClick = () => {
+  console.log("L'utilisateur a interagi avec les notifications");
+  logUserInteraction("notifications_panel_toggle");
+  
+  // Autres actions possibles comme afficher un toast, mettre à jour un état, etc.
+};
+
+// Puis dans le rendu
+<ButtonNotifications 
+  onClick={handleNotificationButtonClick}
+  notifications={myNotifications}
+/>
+\`\`\`
+
+**Note importante**: Ce callback est indépendant de la fonctionnalité d'ouverture/fermeture du panneau qui se produit automatiquement. Le callback est simplement une façon pour le composant parent d'être informé et de réagir au clic sur le bouton.
+        `
+      }
+    }
+  }
+};
