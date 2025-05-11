@@ -4,6 +4,7 @@ import MediaStatus from "../MediaStatus";
 import { MediaStatus as MediaStatusEnum } from "@/utils/mediaStatus";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
+import { TruncatedText } from "@/components/ui/truncated-text";
 
 export type NotificationType = "comment" | "transfer" | "other";
 
@@ -64,13 +65,21 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({
           <div className="flex justify-between items-start">
             <div className="flex items-center gap-2 max-w-full">
               <MediaStatus status={pictureStatus} />
-              <h4 className="text-white text-sm font-medium leading-tight m-0 truncate">
-                {title}
-              </h4>
+              <TruncatedText
+                as="h4"
+                text={title}
+                className="text-white text-sm font-medium leading-tight m-0"
+                tooltipClassName="bg-black-secondary border border-grey-stronger"
+              />
             </div>
           </div>
           <div className="flex justify-between items-end mt-1 pl-5">
-            <p className="text-white text-xs font-light m-0 truncate group-hover:underline">{subtitle}</p>
+            <TruncatedText
+              text={subtitle}
+              className="text-white text-xs font-light m-0 group-hover:underline"
+              tooltipClassName="bg-black-secondary border border-grey-stronger"
+              tooltipSide="bottom"
+            />
             <span className="text-grey-stronger text-xs whitespace-nowrap ml-2 shrink-0">
               {formattedTime}
             </span>
