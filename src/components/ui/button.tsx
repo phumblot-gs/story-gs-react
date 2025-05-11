@@ -1,7 +1,6 @@
-
 import * as React from "react"
 import { cn } from "@/lib/utils"
-import { Button as ButtonBase, ButtonProps as ButtonBaseProps, buttonVariants } from "@/components/ui/button-base"
+import { Button as ButtonBase, buttonVariants } from "@/components/ui/button-base"
 import { cva, type VariantProps } from "class-variance-authority"
 
 export type ButtonBackground = "white" | "black" | "grey"
@@ -24,13 +23,15 @@ const sizeVariants = cva('', {
 
 export type ButtonSize = "small" | "large" | "sm" | "default" | "lg" | "icon"
 
+// Fix the interface to avoid circular reference
 export interface ButtonProps extends Omit<ButtonBaseProps, 'size'>, VariantProps<typeof sizeVariants> {
   background?: ButtonBackground
   indicator?: boolean
   disabled?: boolean
   featured?: boolean
   debug?: boolean
-  variant?: string // For backward compatibility
+  // Accept variant prop but type it properly to match the base component's variant options
+  variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link"
   onClick?: React.MouseEventHandler<HTMLButtonElement>
   onFocus?: React.FocusEventHandler<HTMLButtonElement>
   onBlur?: React.FocusEventHandler<HTMLButtonElement>
@@ -45,7 +46,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     featured = true, 
     size, 
     children,
-    variant, // Accept but don't use directly
+    variant, 
     debug = false,
     onClick,
     onFocus,
@@ -151,6 +152,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           onClick={handleClick}
           onFocus={handleFocus}
           onBlur={handleBlur}
+          variant={variant}
           {...props}
         >
           {children}
