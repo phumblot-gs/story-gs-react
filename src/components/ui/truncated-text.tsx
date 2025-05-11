@@ -70,7 +70,7 @@ const TruncatedText = ({
         </TooltipTrigger>
         <TooltipContent
           className={cn(
-            "bg-[#292828] text-white border border-[#3A3A3A] rounded-[2px]", 
+            "bg-black text-white border border-black-secondary rounded-[2px]", 
             tooltipMaxWidth, 
             tooltipClassName
           )}
