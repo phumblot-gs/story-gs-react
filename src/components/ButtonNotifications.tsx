@@ -8,6 +8,9 @@ import { mockNotifications } from "./notifications/mockNotifications";
 import { enforceNotificationLimit } from "@/utils/notificationUtils";
 import { ButtonNotificationsProps, ButtonNotificationsRef } from "./notifications/types";
 
+// Export the ref type for use in other files
+export type { ButtonNotificationsRef };
+
 const ButtonNotifications = forwardRef<ButtonNotificationsRef, ButtonNotificationsProps>(({
   notifications = mockNotifications,
   count,

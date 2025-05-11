@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import type { Meta, StoryObj } from "@storybook/react";
-import ButtonNotifications, { ButtonNotificationsRef } from "./ButtonNotifications";
+import ButtonNotifications from "./ButtonNotifications";
 import { MediaStatus } from "@/utils/mediaStatus";
 import { NotificationType } from "./notifications/NotificationPanel";
 import { action } from "@storybook/addon-actions";
@@ -8,7 +8,7 @@ import { TranslationProvider } from "@/contexts/TranslationContext";
 import { MemoryRouter } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { NotificationProps } from "./notifications/NotificationPanel";
-import { ButtonNotificationsRef } from "./notifications/types";
+import type { ButtonNotificationsRef } from "./notifications/types";
 
 const meta: Meta<typeof ButtonNotifications> = {
   title: "Components/ButtonNotifications",

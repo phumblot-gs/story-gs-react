@@ -1,8 +1,10 @@
+
 import React, { useRef } from "react";
 import { useTranslation } from "@/contexts/TranslationContext";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
-import ButtonNotifications, { ButtonNotificationsRef } from "@/components/ButtonNotifications";
+import ButtonNotifications from "@/components/ButtonNotifications";
+import type { ButtonNotificationsRef } from "@/components/notifications/types";
 import { toast } from "@/components/ui/sonner";
 import { NotificationProps } from "@/components/notifications/NotificationPanel";
 import { Button } from "@/components/ui/button";

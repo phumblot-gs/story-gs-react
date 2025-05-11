@@ -1,12 +1,12 @@
-
 import React, { useRef } from "react";
-import PageHeader from "@/components/PageHeader";
-import ButtonNotifications, { ButtonNotificationsRef } from "@/components/ButtonNotifications";
-import { ThemeProvider } from "@/contexts/ThemeContext";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { useTranslation } from "@/contexts/TranslationContext";
+import { LanguageSwitcher } from "@/components/ui/language-switcher";
+import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
+import ButtonNotifications from "@/components/ButtonNotifications";
+import type { ButtonNotificationsRef } from "@/components/notifications/types";
 import { toast } from "@/components/ui/sonner";
 import { NotificationProps } from "@/components/notifications/NotificationPanel";
+import { Button } from "@/components/ui/button";
 import { MediaStatus } from "@/utils/mediaStatus";
 
 // Example of how to use the ButtonNotifications component in a PageHeader
