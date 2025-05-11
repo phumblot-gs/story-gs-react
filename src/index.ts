@@ -1,10 +1,11 @@
-
 // Import all components first
 import * as React from "react";
 import { buttonVariants } from "./components/ui/button";
 import { Button } from "./components/ui/button-default";
 import { ButtonCircle } from "./components/ui/button-circle";
 import { LanguageSwitcher } from "./components/ui/language-switcher";
+import ButtonNotifications from "./components/ButtonNotifications";
+import { ButtonNotificationsRef } from "./components/notifications/types";
 
 // Import types for re-export
 import type { 
@@ -37,6 +38,8 @@ export { buttonVariants };
 export { Button };
 export { ButtonCircle };
 export { LanguageSwitcher };
+export { ButtonNotifications };
+export type { ButtonNotificationsRef };
 
 // Export types
 export type { 
