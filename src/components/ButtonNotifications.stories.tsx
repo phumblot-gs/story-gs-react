@@ -19,7 +19,6 @@ const meta: Meta<typeof ButtonNotifications> = {
     docs: {
       description: {
         component: `
-### ButtonNotifications
 
 Un composant qui gère l'affichage et l'interaction avec les notifications. Ce composant:
 
