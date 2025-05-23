@@ -12,6 +12,7 @@ import { LanguageSwitcher, type Language } from "@/components/ui/language-switch
 
 const PageHeaderConfigDemo: React.FC = () => {
   const [title, setTitle] = useState("Collection Femme Printemps 2025");
+  const [showBackButton, setShowBackButton] = useState(false);
   const [showTitleButton, setShowTitleButton] = useState(true);
   const [titleButtonIcon, setTitleButtonIcon] = useState<"Pencil" | "Plus" | "Settings">("Pencil");
   const [showLogo, setShowLogo] = useState(true);
@@ -30,6 +31,11 @@ const PageHeaderConfigDemo: React.FC = () => {
   const handleLanguageChange = (language: Language) => {
     setCurrentLanguage(language);
     console.log(`Language changed to: ${language.code} - ${language.name}`);
+  };
+
+  // Handler for back button click
+  const handleBackButtonClick = () => {
+    console.log("Back button clicked");
   };
 
   // Custom logo component
@@ -75,6 +81,8 @@ const PageHeaderConfigDemo: React.FC = () => {
         <PageHeader 
           logo={showLogo ? <GsLogo /> : undefined}
           title={title}
+          showBackButton={showBackButton}
+          onBackButtonClick={handleBackButtonClick}
           showTitleButton={showTitleButton}
           titleButtonIcon={titleButtonIcon}
           centerContent={showCenterContent ? <WorkflowTabs /> : undefined}
@@ -109,6 +117,15 @@ const PageHeaderConfigDemo: React.FC = () => {
                 <SelectItem value="Settings">Settings</SelectItem>
               </SelectContent>
             </Select>
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="show-back-button"
+              checked={showBackButton}
+              onCheckedChange={(checked) => setShowBackButton(!!checked)}
+            />
+            <Label htmlFor="show-back-button">Show Back Button</Label>
           </div>
 
           <div className="flex items-center space-x-2">

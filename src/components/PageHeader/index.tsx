@@ -5,10 +5,13 @@ import PageTitle from "./PageTitle";
 import { IconName } from "@/components/ui/icons/types";
 import { useThemeValues } from "@/hooks/useThemeValues";
 import BrandLogo from "./BrandLogo";
+import { ButtonCircle } from "@/components/ui/button-circle";
 
 export interface PageHeaderProps {
   logo?: React.ReactNode;
   title: string;
+  showBackButton?: boolean;
+  onBackButtonClick?: () => void;
   showTitleButton?: boolean;
   titleButtonIcon?: IconName;
   onTitleButtonClick?: () => void;
@@ -21,6 +24,8 @@ export interface PageHeaderProps {
 const PageHeader: React.FC<PageHeaderProps> = ({
   logo,
   title,
+  showBackButton = false,
+  onBackButtonClick,
   showTitleButton = true,
   titleButtonIcon = "Pencil",
   onTitleButtonClick,
@@ -40,6 +45,15 @@ const PageHeader: React.FC<PageHeaderProps> = ({
     >
       {/* Left Side - with flex-shrink to allow truncation */}
       <div className="flex items-center gap-5 flex-shrink overflow-hidden">
+        {showBackButton && (
+          <ButtonCircle 
+            icon="ArrowLeft" 
+            size="large" 
+            background="white"
+            onClick={onBackButtonClick}
+            className="flex-shrink-0"
+          />
+        )}
         {logo ? (
           <div className="w-[25px] flex-shrink-0">{logo}</div>
         ) : (
