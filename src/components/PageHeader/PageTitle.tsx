@@ -12,6 +12,8 @@ export interface PageTitleProps {
   onButtonClick?: () => void;
   className?: string;
   featured?: boolean;
+  showBackButton?: boolean;
+  onBackButtonClick?: () => void;
 }
 
 const PageTitle: React.FC<PageTitleProps> = ({
@@ -21,6 +23,8 @@ const PageTitle: React.FC<PageTitleProps> = ({
   onButtonClick,
   className,
   featured = false,
+  showBackButton = false,
+  onBackButtonClick,
 }) => {
   return (
     <div className={cn(
@@ -28,6 +32,15 @@ const PageTitle: React.FC<PageTitleProps> = ({
       featured && "pl-5 border-l border-[#EAEAEA]", 
       className
     )}>
+      {showBackButton && (
+        <ButtonCircle 
+          icon="ArrowLeft" 
+          size="large" 
+          background="white"
+          onClick={onBackButtonClick}
+          className="flex-shrink-0 mr-2"
+        />
+      )}
       <div className="flex-1 min-w-0 overflow-hidden">
         <TruncatedText 
           text={title}

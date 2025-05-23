@@ -45,15 +45,6 @@ const PageHeader: React.FC<PageHeaderProps> = ({
     >
       {/* Left Side - with flex-shrink to allow truncation */}
       <div className="flex items-center gap-5 flex-shrink overflow-hidden">
-        {showBackButton && (
-          <ButtonCircle 
-            icon="ArrowLeft" 
-            size="large" 
-            background="white"
-            onClick={onBackButtonClick}
-            className="flex-shrink-0"
-          />
-        )}
         {logo ? (
           <div className="w-[25px] flex-shrink-0">{logo}</div>
         ) : (
@@ -66,6 +57,8 @@ const PageHeader: React.FC<PageHeaderProps> = ({
           onButtonClick={onTitleButtonClick}
           featured={true}
           className="flex-shrink min-w-0"
+          showBackButton={showBackButton}
+          onBackButtonClick={onBackButtonClick}
         />
       </div>
       
