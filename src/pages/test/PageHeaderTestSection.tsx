@@ -1,7 +1,7 @@
+
 import React, { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import PageHeader from "@/components/PageHeader";
-import PageHeaderExample from "@/pages/examples/page-header-example";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -9,7 +9,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { ButtonCircle } from "@/components/ui/button-circle";
 import { Workflow } from "@/components/ui/workflow";
 import { LanguageSwitcher, type Language } from "@/components/ui/language-switcher";
-import LanguageSwitcherExample from "@/pages/examples/language-switcher-example";
 
 const PageHeaderConfigDemo: React.FC = () => {
   const [title, setTitle] = useState("Collection Femme Printemps 2025");
@@ -151,41 +150,21 @@ const PageHeaderConfigDemo: React.FC = () => {
           </div>
         </div>
       </div>
-
-      {/* Language Switcher component section */}
-      <div className="mt-8">
-        <h3 className="text-lg font-medium mb-4">Language Switcher Component</h3>
-        <div className="border rounded-lg p-6 bg-gray-50">
-          <LanguageSwitcherExample />
-        </div>
-      </div>
     </>
   );
 };
 
 const PageHeaderTestSection: React.FC = () => {
   return (
-    <>
-      <Card className="mb-8">
-        <CardHeader>
-          <CardTitle>Interactive Page Header Demo</CardTitle>
-          <CardDescription>Configure and test the Page Header component with different options</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <PageHeaderConfigDemo />
-        </CardContent>
-      </Card>
-      
-      <Card>
-        <CardHeader>
-          <CardTitle>Page Header Examples</CardTitle>
-          <CardDescription>Pre-configured examples of the Page Header component in different scenarios</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <PageHeaderExample />
-        </CardContent>
-      </Card>
-    </>
+    <Card>
+      <CardHeader>
+        <CardTitle>Interactive Page Header Demo</CardTitle>
+        <CardDescription>Configure and test the Page Header component with different options</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <PageHeaderConfigDemo />
+      </CardContent>
+    </Card>
   );
 };
 
