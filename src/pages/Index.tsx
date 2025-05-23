@@ -9,52 +9,52 @@ const Index: React.FC = () => {
     {
       name: "ActivityPanel",
       description: "Panel for displaying activity notifications",
-      path: "/test#activity-panel"
+      path: "/activity-panel"
     },
     {
       name: "Button",
       description: "Standard button component with various styles",
-      path: "/test#button"
+      path: "/button"
     },
     {
       name: "ButtonCircle",
       description: "Circular button component with icon support",
-      path: "/test#button-circle"
+      path: "/button-circle"
     },
     {
       name: "ButtonNotifications",
       description: "Button with notification indicator",
-      path: "/test#button-notifications"
+      path: "/button-notifications"
     },
     {
       name: "ButtonStatus",
       description: "Status-specific button component",
-      path: "/test#button-status"
+      path: "/button-status"
     },
     {
       name: "LanguageSwitcher",
       description: "Component for switching between languages",
-      path: "/test#language-switcher"
+      path: "/language-switcher"
     },
     {
       name: "MediaStatus",
       description: "Visual indicator for media status",
-      path: "/test#media-status"
+      path: "/media-status"
     },
     {
       name: "NotificationPanel",
       description: "Panel for displaying individual notifications",
-      path: "/test#notification-panel"
+      path: "/notification-panel"
     },
     {
       name: "PageHeader",
       description: "Header component for pages",
-      path: "/test#page-header"
+      path: "/page-header"
     },
     {
       name: "StatusIndicator",
       description: "Visual status indicator component",
-      path: "/test#status-indicator"
+      path: "/status-indicator"
     },
     {
       name: "ThemeProvider",
@@ -64,22 +64,22 @@ const Index: React.FC = () => {
     {
       name: "Toaster",
       description: "Toast notification system",
-      path: "/test#toaster"
+      path: "/toaster"
     },
     {
       name: "TranslationProvider",
       description: "Context provider for internationalization",
-      path: "/test#translation"
+      path: "/translation-provider"
     },
     {
       name: "Workflow",
       description: "Workflow component for step-based processes",
-      path: "/test#workflow"
+      path: "/workflow"
     },
     {
       name: "WorkflowStep",
       description: "Individual step component for workflows",
-      path: "/test#workflow-step"
+      path: "/workflow-step"
     }
   ];
 
@@ -114,14 +114,14 @@ const Index: React.FC = () => {
       <div className="mt-12 text-center">
         <Card>
           <CardHeader>
-            <CardTitle>Interactive Testing</CardTitle>
+            <CardTitle>All Components Test Page</CardTitle>
             <CardDescription>
-              Test all components with interactive controls and configurations
+              View all components together with interactive controls and configurations
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Link to="/test">
-              <Button size="lg">Go to Test Page</Button>
+              <Button size="lg">Go to Combined Test Page</Button>
             </Link>
           </CardContent>
         </Card>
