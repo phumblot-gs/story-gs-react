@@ -2,7 +2,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import NestedComponentsTestSection from "./test/NestedComponentsTestSection";
+import WorkflowTestSection from "./test/WorkflowTestSection";
 
 const WorkflowPage: React.FC = () => {
   return (
@@ -13,7 +13,7 @@ const WorkflowPage: React.FC = () => {
           <Button>Back to Home</Button>
         </Link>
       </div>
-      <NestedComponentsTestSection />
+      <WorkflowTestSection />
     </div>
   );
 };
