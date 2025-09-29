@@ -60,3 +60,12 @@ export const CustomLogoutIcon = () => (
     <path d="M9.552 8.40961L11.616 6.34561C11.808 6.15361 11.808 5.85601 11.616 5.66401L9.552 3.60001" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
 )
+
+export const CustomRefreshIcon = () => (
+  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M10.5 6C10.5 4.80653 10.0259 3.66193 9.18198 2.81802C8.33807 1.97411 7.19347 1.5 6 1.5C4.74198 1.50473 3.53448 1.99561 2.63 2.87L1.5 4" stroke="currentColor" strokeWidth="0.75" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M1.5 1.5V4H4" stroke="currentColor" strokeWidth="0.75" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M1.5 6C1.5 7.19347 1.97411 8.33807 2.81802 9.18198C3.66193 10.0259 4.80653 10.5 6 10.5C7.25802 10.4953 8.46552 10.0044 9.37 9.13L10.5 8" stroke="currentColor" strokeWidth="0.75" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M8 8H10.5V10.5" stroke="currentColor" strokeWidth="0.75" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+)
