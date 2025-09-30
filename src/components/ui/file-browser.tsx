@@ -693,7 +693,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
           <p className="text-sm">Aucun fichier dans ce dossier</p>
         </div>
       )}
-      </div>
+    </div>
     </TooltipProvider>
   );
 };
