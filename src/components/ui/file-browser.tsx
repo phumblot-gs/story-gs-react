@@ -145,8 +145,8 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
   // Trier les fichiers selon la configuration actuelle
   const sortedFiles = useMemo(() => {
     const sorted = [...files].sort((a, b) => {
-      let aValue: any;
-      let bValue: any;
+      let aValue: string | number | Date;
+      let bValue: string | number | Date;
 
       switch (sortConfig.field) {
         case "file_name":
