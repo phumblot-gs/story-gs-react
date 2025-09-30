@@ -38,3 +38,18 @@ export const CustomCommentIcon = () => (
     <path d="M0.772172 9.4833C0.852248 9.01428 0.840809 8.53383 0.669217 8.09913C-0.131546 6.04002 0.303154 3.61486 1.95044 1.95613C4.18113 -0.274562 7.81888 -0.274562 10.0496 1.95613C12.2803 4.18683 12.2803 7.82458 10.0496 10.0553C8.39086 11.714 5.96569 12.1373 3.90659 11.3365C3.47189 11.1649 2.97999 11.1535 2.52241 11.245L1.36702 11.4509C0.898006 11.531 0.486185 11.1306 0.577701 10.6616L0.783611 9.50618L0.772172 9.4833Z" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
 )
+
+export const CustomFolderOpenedIcon = () => (
+  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M1.5 3.5V2.5C1.5 2.22386 1.72386 2 2 2H4.25L5.5 3.5H10C10.2761 3.5 10.5 3.72386 10.5 4V4.5" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M1.5 4.5H10.5L10 9.5C9.94771 9.77614 9.72386 10 9.44721 10H2.55279C2.27614 10 2.05229 9.77614 2 9.5L1.5 4.5Z" fill="currentColor" fillOpacity="0.1" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+)
+
+export const CustomFolderMovedIcon = () => (
+  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M1.5 3.5V2.5C1.5 2.22386 1.72386 2 2 2H4.25L5.5 3.5H10C10.2761 3.5 10.5 3.72386 10.5 4V9C10.5 9.27614 10.2761 9.5 10 9.5H2C1.72386 9.5 1.5 9.27614 1.5 9V3.5Z" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M7 5.5L8.5 7L7 8.5" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M4 7H8.5" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+)

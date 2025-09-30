@@ -38,6 +38,8 @@ export const renderIcon = (
       return <CustomIcons.CustomEyeIcon />;
     case "Logout":
       return <CustomIcons.CustomLogoutIcon />;
+    case "Refresh":
+      return <CustomIcons.CustomRefreshIcon />;
       
     // Item icons
     case "Tag":
@@ -50,6 +52,10 @@ export const renderIcon = (
       return <CustomIcons.CustomVedetteIcon />;
     case "Comment":
       return <CustomIcons.CustomCommentIcon />;
+    case "FolderOpened":
+      return <CustomIcons.CustomFolderOpenedIcon />;
+    case "FolderMoved":
+      return <CustomIcons.CustomFolderMovedIcon />;
       
     // Navigation icons
     case "ArrowRight":
