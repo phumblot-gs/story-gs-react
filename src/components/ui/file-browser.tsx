@@ -705,7 +705,6 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
                     isSelected
                       ? "bg-blue-primary text-black hover:bg-blue-primary"
                       : "hover:bg-gray-50",
-                    item.is_directory && "hover:bg-blue-100",
                     isActive && !isSelected && "ring-2 ring-inset ring-blue-400"
                   )}
                   onClick={(e) => handleItemSelect(item, index, e.shiftKey, e.ctrlKey || e.metaKey)}
