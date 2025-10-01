@@ -770,7 +770,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
                           <TooltipTrigger asChild>
                             <ButtonCircle
                               size="large"
-                              icon="Move"
+                              icon="FolderMoved"
                               background="white"
                               onClick={(e) => {
                                 e.stopPropagation();
