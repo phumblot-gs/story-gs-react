@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { fn } from "@storybook/test";
 import { FileBrowser, type FileItem } from "./file-browser";
 
 const meta: Meta<typeof FileBrowser> = {
@@ -38,6 +39,23 @@ const meta: Meta<typeof FileBrowser> = {
     onDownload: { action: "download" },
     onShare: { action: "share" },
     onDelete: { action: "delete" },
+    onDateFilterChange: { action: "dateFilterChange" },
+    onSortChange: { action: "sortChange" },
+    onSelectionChange: { action: "selectionChange" },
+  },
+  args: {
+    onNavigate: fn(),
+    onRefresh: fn(),
+    onUpload: fn(),
+    onFileDrop: fn(),
+    onRename: fn(),
+    onMove: fn(),
+    onDownload: fn(),
+    onShare: fn(),
+    onDelete: fn(),
+    onDateFilterChange: fn(),
+    onSortChange: fn(),
+    onSelectionChange: fn(),
   },
 };
 
