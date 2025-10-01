@@ -40,6 +40,7 @@ export interface FileBrowserProps {
   onDelete?: (items: FileItem[]) => void;
   onDateFilterChange?: (filter: string) => void;
   onSortChange?: (sortConfig: SortConfig) => void;
+  onSelectionChange?: (selectedItems: FileItem[]) => void;
 }
 
 export type DateFilter = "all" | "today" | "7days" | "30days" | "thisYear" | "lastYear" | "beforeLastYear";
@@ -76,10 +77,12 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
   onDelete,
   onDateFilterChange,
   onSortChange,
+  onSelectionChange,
 }) => {
   const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
   const [hoveredRow, setHoveredRow] = useState<string | null>(null);
   const [lastSelectedIndex, setLastSelectedIndex] = useState<number | null>(null);
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [dateFilter, setDateFilter] = useState<DateFilter>("all");
   const [sortConfig, setSortConfig] = useState<SortConfig>(initialSort);
   const [isDraggingOver, setIsDraggingOver] = useState(false);
@@ -123,9 +126,20 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
     return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + " " + sizes[i];
   };
 
-  // Formate la date
+  // Formate la date avec validation
   const formatDate = (dateString: string): string => {
+    if (!dateString) {
+      console.error("[FileBrowser] Date invalide: valeur vide ou null");
+      return "Date invalide";
+    }
+
     const date = new Date(dateString);
+
+    if (isNaN(date.getTime())) {
+      console.error(`[FileBrowser] Date invalide: impossible de parser "${dateString}"`);
+      return "Date invalide";
+    }
+
     return new Intl.DateTimeFormat("fr-FR", {
       day: "2-digit",
       month: "2-digit",
@@ -150,16 +164,30 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
 
       switch (sortConfig.field) {
         case "file_name":
-          aValue = a.file_name.toLowerCase();
-          bValue = b.file_name.toLowerCase();
+          aValue = a.file_name?.toLowerCase() || "";
+          bValue = b.file_name?.toLowerCase() || "";
           break;
         case "updated_at":
-          aValue = new Date(a.updated_at).getTime();
-          bValue = new Date(b.updated_at).getTime();
+          const aDate = new Date(a.updated_at || 0);
+          const bDate = new Date(b.updated_at || 0);
+
+          if (isNaN(aDate.getTime())) {
+            console.error(`[FileBrowser] Date invalide lors du tri pour le fichier "${a.file_name}": "${a.updated_at}"`);
+            aValue = 0;
+          } else {
+            aValue = aDate.getTime();
+          }
+
+          if (isNaN(bDate.getTime())) {
+            console.error(`[FileBrowser] Date invalide lors du tri pour le fichier "${b.file_name}": "${b.updated_at}"`);
+            bValue = 0;
+          } else {
+            bValue = bDate.getTime();
+          }
           break;
         case "file_size":
-          aValue = a.file_size;
-          bValue = b.file_size;
+          aValue = a.file_size || 0;
+          bValue = b.file_size || 0;
           break;
         default:
           return 0;
@@ -189,8 +217,29 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
     return sortConfig.direction === "asc" ? "ArrowUp" : "ArrowDown";
   };
 
+  // Gestion du double-clic pour naviguer dans les dossiers
+  const handleItemDoubleClick = useCallback((item: FileItem) => {
+    if (item.is_directory && onNavigate) {
+      // Construire le nouveau chemin
+      const newPath = item.parent_path
+        ? `${item.parent_path}/${item.file_name}`
+        : `/${item.file_name}`;
+
+      onNavigate(newPath);
+
+      // Désélectionner tous les items après navigation
+      setSelectedItems(new Set());
+    }
+  }, [onNavigate]);
+
   // Gestion de la sélection
   const handleItemSelect = useCallback((item: FileItem, index: number, shiftKey: boolean, ctrlKey: boolean) => {
+    // Donner le focus au tableau pour activer la navigation clavier
+    tableRef.current?.focus();
+
+    // Définir l'index actif pour la navigation clavier
+    setActiveIndex(index);
+
     setSelectedItems(prev => {
       const newSelection = new Set(prev);
 
@@ -231,15 +280,71 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
     }
   }, [sortedFiles, lastSelectedIndex]);
 
-  // Raccourci Cmd+A (macOS) et Ctrl+A (Windows/Linux)
+  // Notifier le parent du changement de sélection
+  useEffect(() => {
+    if (onSelectionChange) {
+      const selected = sortedFiles.filter(f => selectedItems.has(f.id));
+      onSelectionChange(selected);
+    }
+  }, [selectedItems, sortedFiles, onSelectionChange]);
+
+  // Navigation clavier : Cmd+A, flèches haut/bas, Enter
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Ignorer si la touche est pressée dans un input
+      if ((e.target as HTMLElement)?.tagName === "INPUT") {
+        return;
+      }
+
       const isSelectAll = (e.metaKey || e.ctrlKey) && e.key === "a";
 
-      if (isSelectAll && (!e.target ||
-          (e.target as HTMLElement)?.tagName !== "INPUT")) {
+      // Cmd+A / Ctrl+A : Sélectionner tout
+      if (isSelectAll) {
         e.preventDefault();
         setSelectedItems(new Set(sortedFiles.map(f => f.id)));
+        return;
+      }
+
+      // Navigation avec les flèches et Enter uniquement si le tableau a le focus
+      if (document.activeElement !== tableRef.current) {
+        return;
+      }
+
+      // Flèche bas : Descendre
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        setActiveIndex(prev => {
+          const newIndex = prev === null ? 0 : Math.min(prev + 1, sortedFiles.length - 1);
+          if (sortedFiles[newIndex]) {
+            // Sélectionner l'item actif
+            setSelectedItems(new Set([sortedFiles[newIndex].id]));
+            setLastSelectedIndex(newIndex);
+          }
+          return newIndex;
+        });
+      }
+
+      // Flèche haut : Monter
+      if (e.key === "ArrowUp") {
+        e.preventDefault();
+        setActiveIndex(prev => {
+          const newIndex = prev === null ? 0 : Math.max(prev - 1, 0);
+          if (sortedFiles[newIndex]) {
+            // Sélectionner l'item actif
+            setSelectedItems(new Set([sortedFiles[newIndex].id]));
+            setLastSelectedIndex(newIndex);
+          }
+          return newIndex;
+        });
+      }
+
+      // Enter : Naviguer dans le dossier si c'est un dossier
+      if (e.key === "Enter" && activeIndex !== null) {
+        e.preventDefault();
+        const activeItem = sortedFiles[activeIndex];
+        if (activeItem) {
+          handleItemDoubleClick(activeItem);
+        }
       }
     };
 
@@ -247,7 +352,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
       document.addEventListener("keydown", handleKeyDown);
       return () => document.removeEventListener("keydown", handleKeyDown);
     }
-  }, [sortedFiles]);
+  }, [sortedFiles, activeIndex, handleItemDoubleClick]);
 
   // Obtenez le label pour le filtre de date sélectionné avec années dynamiques
   const getDateFilterLabel = (filter: DateFilter): string => {
@@ -350,6 +455,39 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
     const segments = getPathSegments();
     return segments[segments.length - 1].name;
   }, [getPathSegments]);
+
+  // Validation des données en mode debug
+  useEffect(() => {
+    if (debug && files.length > 0) {
+      console.log("[FileBrowser] Debug: Validation des données");
+
+      files.forEach((file, index) => {
+        const errors: string[] = [];
+
+        if (!file.file_name) errors.push("file_name manquant");
+        if (!file.updated_at) errors.push("updated_at manquant");
+        if (file.file_size === undefined) errors.push("file_size manquant");
+        if (file.is_directory === undefined) errors.push("is_directory manquant");
+
+        if (errors.length > 0) {
+          console.error(`[FileBrowser] Fichier invalide à l'index ${index}:`, {
+            fichier: file,
+            erreurs: errors,
+            format_attendu: {
+              id: "string",
+              file_name: "string",
+              parent_path: "string | null",
+              file_size: "number",
+              mime_type: "string | null",
+              is_directory: "boolean",
+              created_at: "string (ISO 8601)",
+              updated_at: "string (ISO 8601)"
+            }
+          });
+        }
+      });
+    }
+  }, [files, debug]);
 
   if (debug) {
     console.log("FileBrowser Debug:", {
@@ -519,7 +657,11 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
       </div>
 
       {/* Tableau */}
-      <div className="overflow-hidden border-t border-b border-gray-200 select-none" ref={tableRef}>
+      <div
+        className="overflow-hidden border-t border-b border-gray-200 select-none outline-none"
+        ref={tableRef}
+        tabIndex={0}
+      >
         <table className="w-full">
           <thead>
             <tr className="bg-gray-50 border-b border-gray-200">
@@ -563,6 +705,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
             {sortedFiles.map((item, index) => {
               const isSelected = selectedItems.has(item.id);
               const isHovered = hoveredRow === item.id;
+              const isActive = activeIndex === index;
 
               return (
                 <tr
@@ -571,9 +714,11 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
                     "h-12 cursor-pointer transition-colors duration-150",
                     isSelected
                       ? "bg-blue-primary text-black hover:bg-blue-primary"
-                      : "hover:bg-gray-50"
+                      : "hover:bg-gray-50",
+                    isActive && !isSelected && "ring-2 ring-inset ring-blue-400"
                   )}
                   onClick={(e) => handleItemSelect(item, index, e.shiftKey, e.ctrlKey || e.metaKey)}
+                  onDoubleClick={() => handleItemDoubleClick(item)}
                   onMouseEnter={() => setHoveredRow(item.id)}
                   onMouseLeave={() => setHoveredRow(null)}
                 >

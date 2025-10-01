@@ -4,7 +4,6 @@ import * as React from "react";
 import * as SelectPrimitive from "@radix-ui/react-select";
 import { cn } from "@/lib/utils";
 import { IconProvider } from "@/components/ui/icon-provider";
-import { ButtonCircle } from "@/components/ui/button-circle";
 
 export type SelectBackground = "white" | "black" | "grey";
 
@@ -190,21 +189,20 @@ const SelectTrigger = React.forwardRef<
       <span className="flex-1 text-left">{children}</span>
       <div className="ml-[5px]">
         <SelectPrimitive.Icon asChild>
-          <ButtonCircle
-            size="small"
-            icon={getIcon()}
-            background="grey"
-            featured={true}
+          <div
             className={cn(
-              "transition-all duration-200",
+              // Base styles from ButtonCircle small size
+              "flex h-5 w-5 items-center justify-center rounded-full",
+              "bg-grey transition-all duration-200",
               (isHovered || isOpen) && "!bg-black [&_svg]:text-white",
               isPressed && "brightness-90 scale-95",
-              allowClear && hasValue && !isOpen ? "pointer-events-auto cursor-pointer" : "pointer-events-none"
+              allowClear && hasValue && !isOpen ? "cursor-pointer" : ""
             )}
             onPointerDown={handleClearPointerDown}
             data-icon-clear={allowClear && hasValue && !isOpen ? "true" : "false"}
-            tabIndex={-1}
-          />
+          >
+            <IconProvider icon={getIcon()} size={12} />
+          </div>
         </SelectPrimitive.Icon>
       </div>
     </SelectPrimitive.Trigger>

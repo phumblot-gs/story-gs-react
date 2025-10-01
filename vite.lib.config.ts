@@ -8,17 +8,20 @@ import dts from "vite-plugin-dts";
 export default defineConfig({
   plugins: [
     react(),
-    dts({ 
-      include: ["src/components/ui/**", "src/lib/**", "src/utils/**"],
-      exclude: ["**/*.stories.tsx", "**/*.test.tsx", "**/*.spec.tsx"],
+    dts({
+      tsconfigPath: "./tsconfig.lib.json",
+      rollupTypes: true,
     }),
   ],
   build: {
     lib: {
-      entry: path.resolve(__dirname, "src/index.ts"),
+      entry: {
+        index: path.resolve(__dirname, "src/index.ts"),
+      },
       name: "GSComponents",
       fileName: (format) => `gs-components.${format}.js`,
     },
+    cssCodeSplit: false,
     rollupOptions: {
       external: ["react", "react-dom", "react/jsx-runtime"],
       output: {
