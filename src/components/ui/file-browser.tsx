@@ -214,6 +214,21 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
     return sortConfig.direction === "asc" ? "ArrowUp" : "ArrowDown";
   };
 
+  // Gestion du double-clic pour naviguer dans les dossiers
+  const handleItemDoubleClick = useCallback((item: FileItem) => {
+    if (item.is_directory && onNavigate) {
+      // Construire le nouveau chemin
+      const newPath = item.parent_path
+        ? `${item.parent_path}/${item.file_name}`
+        : `/${item.file_name}`;
+
+      onNavigate(newPath);
+
+      // Désélectionner tous les items après navigation
+      setSelectedItems(new Set());
+    }
+  }, [onNavigate]);
+
   // Gestion de la sélection
   const handleItemSelect = useCallback((item: FileItem, index: number, shiftKey: boolean, ctrlKey: boolean) => {
     setSelectedItems(prev => {
@@ -629,9 +644,11 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
                     "h-12 cursor-pointer transition-colors duration-150",
                     isSelected
                       ? "bg-blue-primary text-black hover:bg-blue-primary"
-                      : "hover:bg-gray-50"
+                      : "hover:bg-gray-50",
+                    item.is_directory && "hover:bg-blue-100"
                   )}
                   onClick={(e) => handleItemSelect(item, index, e.shiftKey, e.ctrlKey || e.metaKey)}
+                  onDoubleClick={() => handleItemDoubleClick(item)}
                   onMouseEnter={() => setHoveredRow(item.id)}
                   onMouseLeave={() => setHoveredRow(null)}
                 >

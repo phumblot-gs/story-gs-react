@@ -198,6 +198,7 @@ const files: FileItem[] = [
 - Dates must be valid ISO 8601 strings
 - Enable `debug={true}` to see validation errors in console
 - If dates are invalid, the component will display "Date invalide" instead of crashing
+- **Double-click on a folder** to navigate into it (triggers `onNavigate` with the new path)
 
 ## Available Icons
 
