@@ -1,3 +1,5 @@
+// Import styles
+import "./lib.css";
 
 // Import all components first
 import * as React from "react";
@@ -40,7 +42,11 @@ import type {
 
 import type {
   FileItem,
-  FileBrowserProps
+  FileBrowserProps,
+  DateFilter,
+  SortConfig,
+  SortField,
+  SortDirection
 } from "./components/ui/file-browser";
 
 import type {
@@ -74,6 +80,10 @@ export type {
   LanguageSwitcherProps,
   FileItem,
   FileBrowserProps,
+  DateFilter,
+  SortConfig,
+  SortField,
+  SortDirection,
   SelectBackground
 };
 

@@ -123,9 +123,20 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
     return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + " " + sizes[i];
   };
 
-  // Formate la date
+  // Formate la date avec validation
   const formatDate = (dateString: string): string => {
+    if (!dateString) {
+      console.error("[FileBrowser] Date invalide: valeur vide ou null");
+      return "Date invalide";
+    }
+
     const date = new Date(dateString);
+
+    if (isNaN(date.getTime())) {
+      console.error(`[FileBrowser] Date invalide: impossible de parser "${dateString}"`);
+      return "Date invalide";
+    }
+
     return new Intl.DateTimeFormat("fr-FR", {
       day: "2-digit",
       month: "2-digit",
@@ -150,16 +161,30 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
 
       switch (sortConfig.field) {
         case "file_name":
-          aValue = a.file_name.toLowerCase();
-          bValue = b.file_name.toLowerCase();
+          aValue = a.file_name?.toLowerCase() || "";
+          bValue = b.file_name?.toLowerCase() || "";
           break;
         case "updated_at":
-          aValue = new Date(a.updated_at).getTime();
-          bValue = new Date(b.updated_at).getTime();
+          const aDate = new Date(a.updated_at || 0);
+          const bDate = new Date(b.updated_at || 0);
+
+          if (isNaN(aDate.getTime())) {
+            console.error(`[FileBrowser] Date invalide lors du tri pour le fichier "${a.file_name}": "${a.updated_at}"`);
+            aValue = 0;
+          } else {
+            aValue = aDate.getTime();
+          }
+
+          if (isNaN(bDate.getTime())) {
+            console.error(`[FileBrowser] Date invalide lors du tri pour le fichier "${b.file_name}": "${b.updated_at}"`);
+            bValue = 0;
+          } else {
+            bValue = bDate.getTime();
+          }
           break;
         case "file_size":
-          aValue = a.file_size;
-          bValue = b.file_size;
+          aValue = a.file_size || 0;
+          bValue = b.file_size || 0;
           break;
         default:
           return 0;
@@ -350,6 +375,39 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
     const segments = getPathSegments();
     return segments[segments.length - 1].name;
   }, [getPathSegments]);
+
+  // Validation des données en mode debug
+  useEffect(() => {
+    if (debug && files.length > 0) {
+      console.log("[FileBrowser] Debug: Validation des données");
+
+      files.forEach((file, index) => {
+        const errors: string[] = [];
+
+        if (!file.file_name) errors.push("file_name manquant");
+        if (!file.updated_at) errors.push("updated_at manquant");
+        if (file.file_size === undefined) errors.push("file_size manquant");
+        if (file.is_directory === undefined) errors.push("is_directory manquant");
+
+        if (errors.length > 0) {
+          console.error(`[FileBrowser] Fichier invalide à l'index ${index}:`, {
+            fichier: file,
+            erreurs: errors,
+            format_attendu: {
+              id: "string",
+              file_name: "string",
+              parent_path: "string | null",
+              file_size: "number",
+              mime_type: "string | null",
+              is_directory: "boolean",
+              created_at: "string (ISO 8601)",
+              updated_at: "string (ISO 8601)"
+            }
+          });
+        }
+      });
+    }
+  }, [files, debug]);
 
   if (debug) {
     console.log("FileBrowser Debug:", {

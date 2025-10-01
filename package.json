@@ -1,6 +1,6 @@
 {
   "name": "@gs/gs-components-library",
-  "version": "0.3.0-beta.1",
+  "version": "0.3.0-beta.2",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -99,6 +99,7 @@
   "main": "dist/gs-components.umd.js",
   "module": "dist/gs-components.es.js",
   "types": "dist/index.d.ts",
+  "style": "dist/style.css",
   "files": [
     "dist"
   ],

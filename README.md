@@ -15,24 +15,65 @@ A modern, responsive UI component library built with React, Tailwind CSS, and Ty
 ## Installation
 
 ```bash
-npm install gs-components-library
+npm install @gs/gs-components-library
+```
+
+## Setup
+
+### 1. Import the CSS
+
+**Important:** You must import the CSS file in your application's entry point to ensure proper styling:
+
+```jsx
+// In your main App.tsx or index.tsx
+import '@gs/gs-components-library/dist/style.css';
+```
+
+### 2. Configure Tailwind (Optional but Recommended)
+
+If you're using Tailwind in your project, add the library's components to your `content` array:
+
+```js
+// tailwind.config.js
+module.exports = {
+  content: [
+    "./src/**/*.{js,jsx,ts,tsx}",
+    "./node_modules/@gs/gs-components-library/dist/**/*.js"
+  ],
+  // ... rest of your config
+}
 ```
 
 ## Usage
 
+**Quick Start:**
+
 ```jsx
-import { Button, ButtonCircle, ButtonSmall, ButtonStatus, StatusIndicator } from 'gs-components-library';
-import 'gs-components-library/dist/style.css';
+import { Button, FileBrowser, type FileItem } from '@gs/gs-components-library';
+import '@gs/gs-components-library/dist/style.css';
 
 function App() {
+  const files: FileItem[] = [
+    {
+      id: "1",
+      file_name: "document.pdf",
+      parent_path: "/",
+      file_size: 1024000,
+      mime_type: "application/pdf",
+      is_directory: false,
+      created_at: "2025-10-01T09:13:47.042Z",
+      updated_at: "2025-10-01T09:13:47.042Z"
+    }
+  ];
+
   return (
     <div className="space-y-4">
       <Button>Standard Button</Button>
-      <ButtonSmall>Small Button</ButtonSmall>
-      <ButtonCircle icon="Plus" />
-      <ButtonCircle>A</ButtonCircle>
-      <ButtonStatus status={MediaStatus.FOR_APPROVAL} icon="Check" />
-      <StatusIndicator status={MediaStatus.VALIDATED} size="md" />
+      <FileBrowser
+        files={files}
+        currentPath="/"
+        onNavigate={(path) => console.log('Navigate to:', path)}
+      />
     </div>
   );
 }
@@ -111,6 +152,52 @@ Visual indicator for different status states:
   status={MediaStatus.VALIDATED} // MediaStatus enum
 />
 ```
+
+### FileBrowser
+
+File browser component with sorting, filtering, and actions:
+
+```jsx
+import { FileBrowser, type FileItem, type SortConfig } from '@gs/gs-components-library';
+
+const files: FileItem[] = [
+  {
+    id: "unique-id",
+    file_name: "document.pdf",        // Required: snake_case
+    parent_path: "/folder",           // Required: snake_case
+    file_size: 1024000,               // Required: snake_case (in bytes)
+    mime_type: "application/pdf",     // Required: snake_case
+    is_directory: false,              // Required: snake_case
+    created_at: "2025-10-01T09:13:47.042Z",  // Required: snake_case (ISO 8601)
+    updated_at: "2025-10-01T09:13:47.042Z"   // Required: snake_case (ISO 8601)
+  }
+];
+
+<FileBrowser
+  files={files}
+  currentPath="/"
+  labelRootFolder="My Files"
+  showUploadButton={true}
+  debug={false}
+  onNavigate={(path) => console.log('Navigate:', path)}
+  onRefresh={() => console.log('Refresh')}
+  onUpload={() => console.log('Upload')}
+  onFileDrop={(fileList) => console.log('Files dropped:', fileList)}
+  onRename={(items) => console.log('Rename:', items)}
+  onMove={(items) => console.log('Move:', items)}
+  onDownload={(items) => console.log('Download:', items)}
+  onShare={(items) => console.log('Share:', items)}
+  onDelete={(items) => console.log('Delete:', items)}
+  onDateFilterChange={(filter) => console.log('Filter:', filter)}
+  onSortChange={(sortConfig) => console.log('Sort:', sortConfig)}
+/>
+```
+
+**Important Notes:**
+- All field names must be in **snake_case** (e.g., `file_name`, not `fileName`)
+- Dates must be valid ISO 8601 strings
+- Enable `debug={true}` to see validation errors in console
+- If dates are invalid, the component will display "Date invalide" instead of crashing
 
 ## Available Icons
 
