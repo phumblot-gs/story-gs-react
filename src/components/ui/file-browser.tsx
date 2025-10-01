@@ -100,15 +100,21 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
   // Parse le chemin actuel pour créer les segments de navigation
   const getPathSegments = useCallback((): PathSegment[] => {
     if (currentPath === "/" || currentPath === "") {
-      return [{ name: labelRootFolder, path: "/" }];
+      return [{ name: labelRootFolder, path: currentPath || "" }];
     }
 
+    // Détecter si le chemin commence par "/"
+    const startsWithSlash = currentPath.startsWith("/");
     const parts = currentPath.split("/").filter(Boolean);
-    const segments: PathSegment[] = [{ name: labelRootFolder, path: "/" }];
+    const segments: PathSegment[] = [{ name: labelRootFolder, path: startsWithSlash ? "/" : "" }];
 
     let buildPath = "";
-    parts.forEach((part) => {
-      buildPath += `/${part}`;
+    parts.forEach((part, index) => {
+      if (index === 0) {
+        buildPath = startsWithSlash ? `/${part}` : part;
+      } else {
+        buildPath += `/${part}`;
+      }
       segments.push({ name: part, path: buildPath });
     });
 
@@ -228,10 +234,15 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
   // Gestion du double-clic pour naviguer dans les dossiers
   const handleItemDoubleClick = useCallback((item: FileItem) => {
     if (item.is_directory && onNavigate) {
-      // Construire le nouveau chemin à partir du currentPath
-      const newPath = currentPath === "/"
-        ? `/${item.file_name}`
-        : `${currentPath}/${item.file_name}`;
+      // Construire le nouveau chemin en préservant le format (avec ou sans "/" au début)
+      let newPath: string;
+      if (!currentPath || currentPath === "") {
+        newPath = item.file_name;
+      } else if (currentPath === "/") {
+        newPath = `/${item.file_name}`;
+      } else {
+        newPath = `${currentPath}/${item.file_name}`;
+      }
 
       onNavigate(newPath);
 
