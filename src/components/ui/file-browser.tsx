@@ -236,6 +236,9 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
     if (item.is_directory && onNavigate) {
       // Construire le nouveau chemin en préservant le format (avec ou sans "/" au début)
       let newPath: string;
+
+      console.log('[FileBrowser] handleItemDoubleClick - currentPath:', currentPath, 'file_name:', item.file_name);
+
       if (!currentPath || currentPath === "") {
         newPath = item.file_name;
       } else if (currentPath === "/") {
@@ -244,6 +247,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
         newPath = `${currentPath}/${item.file_name}`;
       }
 
+      console.log('[FileBrowser] handleItemDoubleClick - constructed newPath:', newPath);
       onNavigate(newPath);
 
       // Désélectionner tous les items après navigation
@@ -583,7 +587,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
             <>
               <Button
                 size="large"
-                onClick={() => onNavigate?.(pathSegments[pathSegments.length - 3]?.path || "/")}
+                onClick={() => onNavigate?.(pathSegments[pathSegments.length - 3]?.path || "")}
               >
                 <IconProvider icon="MoreHorizontal" size={16} />
               </Button>
