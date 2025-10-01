@@ -32,6 +32,9 @@ export interface FileBrowserProps {
   onNavigate?: (path: string) => void;
   onRefresh?: () => void;
   onUpload?: () => void;
+  onCreateFolder?: () => void;
+  onImportFiles?: () => void;
+  onImportFolders?: () => void;
   onFileDrop?: (files: FileList) => void;
   onRename?: (items: FileItem[]) => void;
   onMove?: (items: FileItem[]) => void;
@@ -69,6 +72,9 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
   onNavigate,
   onRefresh,
   onUpload,
+  onCreateFolder,
+  onImportFiles,
+  onImportFolders,
   onFileDrop,
   onRename,
   onMove,
@@ -86,8 +92,10 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
   const [dateFilter, setDateFilter] = useState<DateFilter>("all");
   const [sortConfig, setSortConfig] = useState<SortConfig>(initialSort);
   const [isDraggingOver, setIsDraggingOver] = useState(false);
+  const [isAddMenuOpen, setIsAddMenuOpen] = useState(false);
   const tableRef = useRef<HTMLDivElement>(null);
   const dragCounter = useRef(0);
+  const addMenuRef = useRef<HTMLDivElement>(null);
 
   // Parse le chemin actuel pour créer les segments de navigation
   const getPathSegments = useCallback((): PathSegment[] => {
@@ -456,6 +464,20 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
     return segments[segments.length - 1].name;
   }, [getPathSegments]);
 
+  // Fermer le menu d'ajout quand on clique en dehors
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (addMenuRef.current && !addMenuRef.current.contains(event.target as Node)) {
+        setIsAddMenuOpen(false);
+      }
+    };
+
+    if (isAddMenuOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => document.removeEventListener("mousedown", handleClickOutside);
+    }
+  }, [isAddMenuOpen]);
+
   // Validation des données en mode debug
   useEffect(() => {
     if (debug && files.length > 0) {
@@ -614,18 +636,49 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
             <TooltipContent>Actualiser</TooltipContent>
           </Tooltip>
           {showUploadButton && (
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <ButtonCircle
-                  size="large"
-                  icon="Plus"
-                  onClick={onUpload}
-                  background="white"
-                  featured
-                />
-              </TooltipTrigger>
-              <TooltipContent>Ajouter des fichiers</TooltipContent>
-            </Tooltip>
+            <div className="relative" ref={addMenuRef}>
+              <ButtonCircle
+                size="large"
+                icon="Plus"
+                onClick={() => setIsAddMenuOpen(!isAddMenuOpen)}
+                background="white"
+                featured
+                isActive={isAddMenuOpen}
+              />
+              {isAddMenuOpen && (
+                <div className="absolute right-0 top-full mt-1 z-50 overflow-hidden rounded-none border shadow-lg bg-black text-white border-grey-strongest">
+                  <div className="p-0">
+                    <button
+                      onClick={() => {
+                        onCreateFolder?.();
+                        setIsAddMenuOpen(false);
+                      }}
+                      className="w-full px-4 py-2 text-left text-sm whitespace-nowrap bg-black-secondary text-white hover:bg-white hover:text-black active:bg-white active:text-blue-primary transition-colors duration-200"
+                    >
+                      Nouveau dossier
+                    </button>
+                    <button
+                      onClick={() => {
+                        onImportFiles?.();
+                        setIsAddMenuOpen(false);
+                      }}
+                      className="w-full px-4 py-2 text-left text-sm whitespace-nowrap bg-black-secondary text-white hover:bg-white hover:text-black active:bg-white active:text-blue-primary transition-colors duration-200"
+                    >
+                      Importer des fichiers
+                    </button>
+                    <button
+                      onClick={() => {
+                        onImportFolders?.();
+                        setIsAddMenuOpen(false);
+                      }}
+                      className="w-full px-4 py-2 text-left text-sm whitespace-nowrap bg-black-secondary text-white hover:bg-white hover:text-black active:bg-white active:text-blue-primary transition-colors duration-200"
+                    >
+                      Importer des dossiers
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           )}
 
           {/* Actions en masse (visible uniquement avec sélection) */}
@@ -770,7 +823,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
                           <TooltipTrigger asChild>
                             <ButtonCircle
                               size="large"
-                              icon="Move"
+                              icon="FolderMoved"
                               background="white"
                               onClick={(e) => {
                                 e.stopPropagation();

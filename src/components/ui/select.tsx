@@ -171,7 +171,7 @@ const SelectTrigger = React.forwardRef<
       }}
       className={cn(
         // Base styles selon Figma
-        "flex h-[30px] w-full items-center justify-between rounded-full border pl-[10px] pr-[5px] py-[10px]",
+        "flex h-[30px] w-full items-center justify-between rounded-full border pl-[10px] pr-[2px] py-[10px]",
         "text-sm font-light transition-colors duration-200",
         "focus:outline-none focus:ring-0",
         "disabled:cursor-not-allowed disabled:opacity-50",
@@ -193,7 +193,7 @@ const SelectTrigger = React.forwardRef<
             className={cn(
               // Base styles from ButtonCircle small size
               "flex h-5 w-5 items-center justify-center rounded-full",
-              "bg-grey transition-all duration-200",
+              "bg-white transition-all duration-200",
               (isHovered || isOpen) && "!bg-black [&_svg]:text-white",
               isPressed && "brightness-90 scale-95",
               allowClear && hasValue && !isOpen ? "cursor-pointer" : ""
