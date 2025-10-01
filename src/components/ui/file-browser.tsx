@@ -80,6 +80,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
   const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
   const [hoveredRow, setHoveredRow] = useState<string | null>(null);
   const [lastSelectedIndex, setLastSelectedIndex] = useState<number | null>(null);
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [dateFilter, setDateFilter] = useState<DateFilter>("all");
   const [sortConfig, setSortConfig] = useState<SortConfig>(initialSort);
   const [isDraggingOver, setIsDraggingOver] = useState(false);
@@ -231,6 +232,12 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
 
   // Gestion de la sélection
   const handleItemSelect = useCallback((item: FileItem, index: number, shiftKey: boolean, ctrlKey: boolean) => {
+    // Donner le focus au tableau pour activer la navigation clavier
+    tableRef.current?.focus();
+
+    // Définir l'index actif pour la navigation clavier
+    setActiveIndex(index);
+
     setSelectedItems(prev => {
       const newSelection = new Set(prev);
 
@@ -271,15 +278,63 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
     }
   }, [sortedFiles, lastSelectedIndex]);
 
-  // Raccourci Cmd+A (macOS) et Ctrl+A (Windows/Linux)
+  // Navigation clavier : Cmd+A, flèches haut/bas, Enter
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Ignorer si la touche est pressée dans un input
+      if ((e.target as HTMLElement)?.tagName === "INPUT") {
+        return;
+      }
+
       const isSelectAll = (e.metaKey || e.ctrlKey) && e.key === "a";
 
-      if (isSelectAll && (!e.target ||
-          (e.target as HTMLElement)?.tagName !== "INPUT")) {
+      // Cmd+A / Ctrl+A : Sélectionner tout
+      if (isSelectAll) {
         e.preventDefault();
         setSelectedItems(new Set(sortedFiles.map(f => f.id)));
+        return;
+      }
+
+      // Navigation avec les flèches et Enter uniquement si le tableau a le focus
+      if (document.activeElement !== tableRef.current) {
+        return;
+      }
+
+      // Flèche bas : Descendre
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        setActiveIndex(prev => {
+          const newIndex = prev === null ? 0 : Math.min(prev + 1, sortedFiles.length - 1);
+          if (sortedFiles[newIndex]) {
+            // Sélectionner l'item actif
+            setSelectedItems(new Set([sortedFiles[newIndex].id]));
+            setLastSelectedIndex(newIndex);
+          }
+          return newIndex;
+        });
+      }
+
+      // Flèche haut : Monter
+      if (e.key === "ArrowUp") {
+        e.preventDefault();
+        setActiveIndex(prev => {
+          const newIndex = prev === null ? 0 : Math.max(prev - 1, 0);
+          if (sortedFiles[newIndex]) {
+            // Sélectionner l'item actif
+            setSelectedItems(new Set([sortedFiles[newIndex].id]));
+            setLastSelectedIndex(newIndex);
+          }
+          return newIndex;
+        });
+      }
+
+      // Enter : Naviguer dans le dossier si c'est un dossier
+      if (e.key === "Enter" && activeIndex !== null) {
+        e.preventDefault();
+        const activeItem = sortedFiles[activeIndex];
+        if (activeItem) {
+          handleItemDoubleClick(activeItem);
+        }
       }
     };
 
@@ -287,7 +342,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
       document.addEventListener("keydown", handleKeyDown);
       return () => document.removeEventListener("keydown", handleKeyDown);
     }
-  }, [sortedFiles]);
+  }, [sortedFiles, activeIndex, handleItemDoubleClick]);
 
   // Obtenez le label pour le filtre de date sélectionné avec années dynamiques
   const getDateFilterLabel = (filter: DateFilter): string => {
@@ -592,7 +647,11 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
       </div>
 
       {/* Tableau */}
-      <div className="overflow-hidden border-t border-b border-gray-200 select-none" ref={tableRef}>
+      <div
+        className="overflow-hidden border-t border-b border-gray-200 select-none outline-none"
+        ref={tableRef}
+        tabIndex={0}
+      >
         <table className="w-full">
           <thead>
             <tr className="bg-gray-50 border-b border-gray-200">
@@ -636,6 +695,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
             {sortedFiles.map((item, index) => {
               const isSelected = selectedItems.has(item.id);
               const isHovered = hoveredRow === item.id;
+              const isActive = activeIndex === index;
 
               return (
                 <tr
@@ -645,7 +705,8 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
                     isSelected
                       ? "bg-blue-primary text-black hover:bg-blue-primary"
                       : "hover:bg-gray-50",
-                    item.is_directory && "hover:bg-blue-100"
+                    item.is_directory && "hover:bg-blue-100",
+                    isActive && !isSelected && "ring-2 ring-inset ring-blue-400"
                   )}
                   onClick={(e) => handleItemSelect(item, index, e.shiftKey, e.ctrlKey || e.metaKey)}
                   onDoubleClick={() => handleItemDoubleClick(item)}
