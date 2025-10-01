@@ -14,6 +14,7 @@ export interface ButtonCircleProps extends Omit<ButtonProps, 'variant' | 'size'>
   featured?: boolean
   icon?: IconName
   indicator?: boolean
+  isActive?: boolean
   debug?: boolean
   className?: string
   onClick?: React.MouseEventHandler<HTMLButtonElement>

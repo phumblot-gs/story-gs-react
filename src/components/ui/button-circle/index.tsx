@@ -8,25 +8,26 @@ import { sizeVariants } from "./variants"
 import { IconProvider } from "@/components/ui/icon-provider"
 
 const ButtonCircle = React.forwardRef<HTMLButtonElement, ButtonCircleProps>(
-  ({ 
-    background = "white", 
+  ({
+    background = "white",
     children,
-    className, 
-    disabled, 
-    featured = false, 
+    className,
+    disabled,
+    featured = false,
     icon,
-    indicator, 
-    size = "large", 
+    indicator,
+    isActive = false,
+    size = "large",
     debug = false,
     onClick,
     onFocus,
     onBlur,
     style,
-    ...props 
+    ...props
   }, ref) => {
-    
+
     // Determine button styling based on background and states
-    const buttonStyles = getButtonStyles(background, disabled, featured)
+    const buttonStyles = getButtonStyles(background, disabled, featured, isActive, background)
     
     // Get size classes using CVA
     const sizeClasses = sizeVariants({ size })

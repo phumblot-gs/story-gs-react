@@ -30,6 +30,7 @@ export interface ButtonProps extends Omit<ButtonBaseProps, 'size'>, VariantProps
   indicator?: boolean
   disabled?: boolean
   featured?: boolean
+  isActive?: boolean
   debug?: boolean
   // Accept variant prop but type it properly to match the base component's variant options
   variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link"
@@ -39,24 +40,25 @@ export interface ButtonProps extends Omit<ButtonBaseProps, 'size'>, VariantProps
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ 
-    className, 
-    background = "white", 
-    indicator, 
-    disabled, 
-    featured = true, 
-    size, 
+  ({
+    className,
+    background = "white",
+    indicator,
+    disabled,
+    featured = true,
+    isActive = false,
+    size,
     children,
-    variant, 
+    variant,
     debug = false,
     onClick,
     onFocus,
     onBlur,
-    ...props 
+    ...props
   }, ref) => {
     // Get size-specific classes using CVA
     const sizeClasses = sizeVariants({ size });
-    
+
     // Determine button styling based on background and states
     const getButtonStyles = () => {
       if (disabled) {
@@ -66,6 +68,33 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           return "bg-black text-grey-stronger"
         } else {
           return "bg-grey text-grey-stronger"
+        }
+      }
+
+      // When isActive is true, apply black-secondary background with hover state based on original background
+      if (isActive) {
+        if (featured) {
+          switch (background) {
+            case "white":
+              return "bg-black-secondary text-white hover:bg-grey-lighter hover:text-black active:bg-black active:text-blue-primary"
+            case "black":
+              return "bg-black-secondary text-white hover:bg-grey-strongest hover:text-white active:bg-black active:text-blue-primary"
+            case "grey":
+              return "bg-black-secondary text-white hover:bg-white hover:text-black active:bg-black active:text-blue-primary"
+            default:
+              return "bg-black-secondary text-white hover:bg-grey-lighter hover:text-black active:bg-black active:text-blue-primary"
+          }
+        } else {
+          switch (background) {
+            case "white":
+              return "bg-black-secondary text-white hover:bg-white hover:text-black active:bg-black active:text-blue-primary"
+            case "black":
+              return "bg-black-secondary text-white hover:bg-black hover:text-white active:bg-black active:text-blue-primary"
+            case "grey":
+              return "bg-black-secondary text-white hover:bg-grey hover:text-black active:bg-black active:text-blue-primary"
+            default:
+              return "bg-black-secondary text-white hover:bg-white hover:text-black"
+          }
         }
       }
 
