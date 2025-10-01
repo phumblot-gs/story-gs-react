@@ -228,17 +228,17 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
   // Gestion du double-clic pour naviguer dans les dossiers
   const handleItemDoubleClick = useCallback((item: FileItem) => {
     if (item.is_directory && onNavigate) {
-      // Construire le nouveau chemin
-      const newPath = item.parent_path
-        ? `${item.parent_path}/${item.file_name}`
-        : `/${item.file_name}`;
+      // Construire le nouveau chemin à partir du currentPath
+      const newPath = currentPath === "/"
+        ? `/${item.file_name}`
+        : `${currentPath}/${item.file_name}`;
 
       onNavigate(newPath);
 
       // Désélectionner tous les items après navigation
       setSelectedItems(new Set());
     }
-  }, [onNavigate]);
+  }, [onNavigate, currentPath]);
 
   // Gestion de la sélection
   const handleItemSelect = useCallback((item: FileItem, index: number, shiftKey: boolean, ctrlKey: boolean) => {
