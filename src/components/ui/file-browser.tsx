@@ -40,6 +40,7 @@ export interface FileBrowserProps {
   onDelete?: (items: FileItem[]) => void;
   onDateFilterChange?: (filter: string) => void;
   onSortChange?: (sortConfig: SortConfig) => void;
+  onSelectionChange?: (selectedItems: FileItem[]) => void;
 }
 
 export type DateFilter = "all" | "today" | "7days" | "30days" | "thisYear" | "lastYear" | "beforeLastYear";
@@ -76,6 +77,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
   onDelete,
   onDateFilterChange,
   onSortChange,
+  onSelectionChange,
 }) => {
   const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
   const [hoveredRow, setHoveredRow] = useState<string | null>(null);
@@ -277,6 +279,14 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
       setLastSelectedIndex(index);
     }
   }, [sortedFiles, lastSelectedIndex]);
+
+  // Notifier le parent du changement de sélection
+  useEffect(() => {
+    if (onSelectionChange) {
+      const selected = sortedFiles.filter(f => selectedItems.has(f.id));
+      onSelectionChange(selected);
+    }
+  }, [selectedItems, sortedFiles, onSelectionChange]);
 
   // Navigation clavier : Cmd+A, flèches haut/bas, Enter
   useEffect(() => {

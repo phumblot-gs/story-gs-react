@@ -190,6 +190,10 @@ const files: FileItem[] = [
   onDelete={(items) => console.log('Delete:', items)}
   onDateFilterChange={(filter) => console.log('Filter:', filter)}
   onSortChange={(sortConfig) => console.log('Sort:', sortConfig)}
+  onSelectionChange={(selectedItems) => {
+    console.log('Selection changed:', selectedItems);
+    // Use this to display preview, update UI, etc.
+  }}
 />
 ```
 
@@ -205,6 +209,29 @@ const files: FileItem[] = [
 - **Enter**: Open the selected folder (triggers `onNavigate` with the new path)
 - **Cmd+A / Ctrl+A**: Select all files
 - **Double-click on a folder**: Navigate into it (same as Enter key)
+
+**Selection Tracking:**
+The `onSelectionChange` callback is triggered whenever the selection changes:
+```jsx
+const [selectedFiles, setSelectedFiles] = useState<FileItem[]>([]);
+
+<FileBrowser
+  files={files}
+  onSelectionChange={(items) => {
+    setSelectedFiles(items);
+    // Display preview, enable/disable actions, etc.
+  }}
+/>
+
+{/* Display preview of selected file */}
+{selectedFiles.length === 1 && (
+  <div className="preview">
+    <h3>{selectedFiles[0].file_name}</h3>
+    <p>Size: {selectedFiles[0].file_size} bytes</p>
+    <p>Modified: {selectedFiles[0].updated_at}</p>
+  </div>
+)}
+```
 
 ## Available Icons
 
