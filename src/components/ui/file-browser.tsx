@@ -345,9 +345,20 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
         setActiveIndex(prev => {
           const newIndex = prev === null ? 0 : Math.min(prev + 1, sortedFiles.length - 1);
           if (sortedFiles[newIndex]) {
-            // Sélectionner l'item actif
-            setSelectedItems(new Set([sortedFiles[newIndex].id]));
-            setLastSelectedIndex(newIndex);
+            if (e.shiftKey && lastSelectedIndex !== null) {
+              // Shift+Flèche : Étendre la sélection
+              const start = Math.min(lastSelectedIndex, newIndex);
+              const end = Math.max(lastSelectedIndex, newIndex);
+              const newSelection = new Set<string>();
+              for (let i = start; i <= end; i++) {
+                newSelection.add(sortedFiles[i].id);
+              }
+              setSelectedItems(newSelection);
+            } else {
+              // Sans Shift : Remplacer la sélection
+              setSelectedItems(new Set([sortedFiles[newIndex].id]));
+              setLastSelectedIndex(newIndex);
+            }
           }
           return newIndex;
         });
@@ -359,9 +370,20 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
         setActiveIndex(prev => {
           const newIndex = prev === null ? 0 : Math.max(prev - 1, 0);
           if (sortedFiles[newIndex]) {
-            // Sélectionner l'item actif
-            setSelectedItems(new Set([sortedFiles[newIndex].id]));
-            setLastSelectedIndex(newIndex);
+            if (e.shiftKey && lastSelectedIndex !== null) {
+              // Shift+Flèche : Étendre la sélection
+              const start = Math.min(lastSelectedIndex, newIndex);
+              const end = Math.max(lastSelectedIndex, newIndex);
+              const newSelection = new Set<string>();
+              for (let i = start; i <= end; i++) {
+                newSelection.add(sortedFiles[i].id);
+              }
+              setSelectedItems(newSelection);
+            } else {
+              // Sans Shift : Remplacer la sélection
+              setSelectedItems(new Set([sortedFiles[newIndex].id]));
+              setLastSelectedIndex(newIndex);
+            }
           }
           return newIndex;
         });
