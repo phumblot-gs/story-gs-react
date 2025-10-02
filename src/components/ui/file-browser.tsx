@@ -698,11 +698,14 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
 
           {/* Actions en masse (visible uniquement avec sélection) */}
           {hasSelection && (
-            <Select onValueChange={(value) => {
-              if (value !== "placeholder") {
-                handleAction(value, getSelectedItems());
-              }
-            }}>
+            <Select
+              value=""
+              onValueChange={(value) => {
+                if (value !== "placeholder" && value !== "") {
+                  handleAction(value, getSelectedItems());
+                }
+              }}
+            >
               <SelectTrigger className="w-48">
                 <SelectValue placeholder={`${selectedItems.size} sélectionné${selectedItems.size > 1 ? "s" : ""}`} />
               </SelectTrigger>
