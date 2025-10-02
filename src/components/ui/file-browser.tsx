@@ -21,6 +21,8 @@ export interface FileItem {
   updated_at: string;
 }
 
+export type HeightMode = "auto" | "fill-container" | "max-height";
+
 export interface FileBrowserProps {
   files: FileItem[];
   currentPath: string;
@@ -29,6 +31,8 @@ export interface FileBrowserProps {
   debug?: boolean;
   className?: string;
   initialSort?: SortConfig;
+  heightMode?: HeightMode;
+  maxHeight?: string;
   onNavigate?: (path: string) => void;
   onRefresh?: () => void;
   onUpload?: () => void;
@@ -69,6 +73,8 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
   debug = false,
   className,
   initialSort = { field: "file_name", direction: "asc" },
+  heightMode = "auto",
+  maxHeight = "600px",
   onNavigate,
   onRefresh,
   onUpload,
@@ -537,10 +543,31 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
     });
   }
 
+  // Calculer les classes CSS selon le heightMode
+  const containerClasses = cn(
+    "w-full relative",
+    heightMode === "fill-container" && "flex flex-col h-full",
+    className
+  );
+
+  const tableWrapperClasses = cn(
+    "w-full",
+    heightMode === "fill-container" && "flex-1 overflow-hidden",
+    heightMode === "max-height" && "overflow-hidden"
+  );
+
+  const tableContainerClasses = cn(
+    heightMode === "auto" && "overflow-x-auto",
+    heightMode === "fill-container" && "h-full overflow-auto",
+    heightMode === "max-height" && "overflow-auto"
+  );
+
+  const tableContainerStyle = heightMode === "max-height" ? { maxHeight } : undefined;
+
   return (
     <TooltipProvider>
       <div
-        className={cn("w-full relative", className)}
+        className={containerClasses}
         onDragEnter={handleDragEnter}
         onDragLeave={handleDragLeave}
         onDragOver={handleDragOver}
@@ -728,12 +755,14 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
       </div>
 
       {/* Tableau */}
-      <div
-        className="overflow-hidden border-t border-b border-gray-200 select-none outline-none"
-        ref={tableRef}
-        tabIndex={0}
-      >
-        <table className="w-full">
+      <div className={tableWrapperClasses}>
+        <div
+          className={cn("border-t border-b border-gray-200 select-none outline-none", tableContainerClasses)}
+          style={tableContainerStyle}
+          ref={tableRef}
+          tabIndex={0}
+        >
+          <table className="w-full">
           <thead>
             <tr className="bg-gray-50 border-b border-gray-200">
               <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
@@ -901,6 +930,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
             })}
           </tbody>
         </table>
+        </div>
       </div>
 
       {sortedFiles.length === 0 && (
