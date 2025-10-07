@@ -17,6 +17,7 @@ import {
 } from "./components/ui/select";
 import ButtonNotifications from "./components/ButtonNotifications";
 import { ButtonNotificationsRef } from "./components/notifications/types";
+import PageHeader from "./components/PageHeader";
 
 // Import types for re-export
 import type { 
@@ -53,6 +54,10 @@ import type {
   SelectBackground
 } from "./components/ui/select";
 
+import type {
+  PageHeaderProps
+} from "./components/PageHeader";
+
 // Export icons
 export * from "./components/ui/icons";
 export * from "./components/ui/icon-provider";
@@ -66,6 +71,7 @@ export { FileBrowser };
 export { Select, SelectTrigger, SelectContent, SelectItem, SelectValue };
 export { ButtonNotifications };
 export type { ButtonNotificationsRef };
+export { PageHeader };
 
 // Export types
 export type {
@@ -84,7 +90,8 @@ export type {
   SortConfig,
   SortField,
   SortDirection,
-  SelectBackground
+  SelectBackground,
+  PageHeaderProps
 };
 
 // For backward compatibility, export ButtonSmall as a type alias
