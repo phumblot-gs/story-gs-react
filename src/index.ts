@@ -15,6 +15,12 @@ import {
   SelectItem,
   SelectValue,
 } from "./components/ui/select";
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+} from "./components/ui/tabs";
 import ButtonNotifications from "./components/ButtonNotifications";
 import { ButtonNotificationsRef } from "./components/notifications/types";
 import PageHeader from "./components/PageHeader";
@@ -69,6 +75,7 @@ export { ButtonCircle };
 export { LanguageSwitcher };
 export { FileBrowser };
 export { Select, SelectTrigger, SelectContent, SelectItem, SelectValue };
+export { Tabs, TabsList, TabsTrigger, TabsContent };
 export { ButtonNotifications };
 export type { ButtonNotificationsRef };
 export { PageHeader };
