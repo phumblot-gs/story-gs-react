@@ -21,6 +21,8 @@ import {
   TabsTrigger,
   TabsContent,
 } from "./components/ui/tabs";
+import { ModalLayer } from "./components/ui/modal-layer";
+import { FolderBrowser } from "./components/ui/folder-browser";
 import ButtonNotifications from "./components/ButtonNotifications";
 import { ButtonNotificationsRef } from "./components/notifications/types";
 import PageHeader from "./components/PageHeader";
@@ -64,6 +66,15 @@ import type {
   PageHeaderProps
 } from "./components/PageHeader";
 
+import type {
+  ModalLayerProps
+} from "./components/ui/modal-layer";
+
+import type {
+  FolderItem,
+  FolderBrowserProps
+} from "./components/ui/folder-browser";
+
 // Export icons
 export * from "./components/ui/icons";
 export * from "./components/ui/icon-provider";
@@ -76,6 +87,8 @@ export { LanguageSwitcher };
 export { FileBrowser };
 export { Select, SelectTrigger, SelectContent, SelectItem, SelectValue };
 export { Tabs, TabsList, TabsTrigger, TabsContent };
+export { ModalLayer };
+export { FolderBrowser };
 export { ButtonNotifications };
 export type { ButtonNotificationsRef };
 export { PageHeader };
@@ -98,7 +111,10 @@ export type {
   SortField,
   SortDirection,
   SelectBackground,
-  PageHeaderProps
+  PageHeaderProps,
+  ModalLayerProps,
+  FolderItem,
+  FolderBrowserProps
 };
 
 // For backward compatibility, export ButtonSmall as a type alias
