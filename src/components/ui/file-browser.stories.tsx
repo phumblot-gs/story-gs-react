@@ -1,3 +1,4 @@
+import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { fn } from "@storybook/test";
 import { FileBrowser, type FileItem } from "./file-browser";
@@ -285,6 +286,116 @@ export const WithDragAndDrop: Story = {
     docs: {
       description: {
         story: "Story pour tester le drag & drop. Déposez des fichiers depuis votre explorateur pour voir l'overlay et déclencher l'action onFileDrop.",
+      },
+    },
+  },
+};
+
+// Structure simulée du système de fichiers
+const fileSystem: Record<string, FileItem[]> = {
+  "/": mockFiles,
+  "/Documents": [
+    {
+      id: "10",
+      file_name: "Contrats",
+      parent_path: "/Documents",
+      file_size: 0,
+      mime_type: null,
+      is_directory: true,
+      created_at: "2024-01-10T09:15:00Z",
+      updated_at: "2024-01-25T16:20:00Z",
+    },
+    {
+      id: "11",
+      file_name: "Factures",
+      parent_path: "/Documents",
+      file_size: 0,
+      mime_type: null,
+      is_directory: true,
+      created_at: "2024-01-10T09:15:00Z",
+      updated_at: "2024-01-25T16:20:00Z",
+    },
+    {
+      id: "12",
+      file_name: "contrat-2024.pdf",
+      parent_path: "/Documents",
+      file_size: 245760,
+      mime_type: "application/pdf",
+      is_directory: false,
+      created_at: "2024-01-10T09:15:00Z",
+      updated_at: "2024-01-25T16:20:00Z",
+    },
+  ],
+  "/Images": subFolderFiles,
+  "/Images/Archives": [
+    {
+      id: "13",
+      file_name: "old_photo.jpg",
+      parent_path: "/Images/Archives",
+      file_size: 1572864,
+      mime_type: "image/jpeg",
+      is_directory: false,
+      created_at: "2023-12-01T10:00:00Z",
+      updated_at: "2023-12-01T10:00:00Z",
+    },
+    {
+      id: "14",
+      file_name: "vintage.png",
+      parent_path: "/Images/Archives",
+      file_size: 892864,
+      mime_type: "image/png",
+      is_directory: false,
+      created_at: "2023-11-15T10:00:00Z",
+      updated_at: "2023-11-15T10:00:00Z",
+    },
+  ],
+};
+
+export const InteractiveNavigation: Story = {
+  render: (args) => {
+    const [currentPath, setCurrentPath] = React.useState("/");
+    const [files, setFiles] = React.useState(fileSystem["/"] || []);
+
+    const handleNavigate = (newPath: string) => {
+      console.log("[Story] Navigation vers:", newPath);
+      setCurrentPath(newPath);
+      // Simuler le chargement des fichiers du nouveau dossier
+      const newFiles = fileSystem[newPath] || [];
+      setFiles(newFiles);
+      console.log("[Story] Nouveaux fichiers:", newFiles);
+    };
+
+    return (
+      <FileBrowser
+        {...args}
+        files={files}
+        currentPath={currentPath}
+        onNavigate={handleNavigate}
+        debug={true}
+      />
+    );
+  },
+  args: {
+    labelRootFolder: "Mes fichiers",
+    showUploadButton: true,
+    onRefresh: fn(),
+    onUpload: fn(),
+    onCreateFolder: fn(),
+    onImportFiles: fn(),
+    onImportFolders: fn(),
+    onRename: fn(),
+    onMove: fn(),
+    onDownload: fn(),
+    onShare: fn(),
+    onDelete: fn(),
+    onDateFilterChange: fn(),
+    onSortChange: fn(),
+    onSelectionChange: fn(),
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: "Navigation interactive avec double-clic sur les dossiers. Double-cliquez sur un dossier pour naviguer dedans et utilisez le breadcrumb pour remonter.",
       },
     },
   },
