@@ -103,13 +103,20 @@ export const FolderBrowser: React.FC<FolderBrowserProps> = ({
 
   // Double-clic sur une ligne pour naviguer
   const handleRowDoubleClick = useCallback((folder: FolderItem) => {
-    const newPath = folder.parent_path
-      ? `${folder.parent_path}/${folder.file_name}`.replace(/\/+/g, "/")
-      : `/${folder.file_name}`;
+    // Utiliser currentPath au lieu de folder.parent_path pour construire le nouveau chemin
+    let newPath: string;
+
+    if (!currentPath || currentPath === "") {
+      newPath = folder.file_name;
+    } else if (currentPath === "/") {
+      newPath = `/${folder.file_name}`;
+    } else {
+      newPath = `${currentPath}/${folder.file_name}`;
+    }
 
     if (debug) console.log("[FolderBrowser] Navigate to:", newPath);
     onNavigate?.(newPath);
-  }, [onNavigate, debug]);
+  }, [onNavigate, currentPath, debug]);
 
   // Sélection d'un dossier
   const handleSelectFolder = useCallback((folder: FolderItem, e: React.MouseEvent) => {
