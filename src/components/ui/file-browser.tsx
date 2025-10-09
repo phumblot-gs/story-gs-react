@@ -8,6 +8,8 @@ import { IconProvider } from "@/components/ui/icon-provider";
 import { IconName } from "@/components/ui/icons/types";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ModalLayer } from "@/components/ui/modal-layer";
+import { FolderBrowser } from "@/components/ui/folder-browser";
 
 // Types basés sur le schéma BDD
 export interface FileItem {
@@ -99,6 +101,9 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
   const [sortConfig, setSortConfig] = useState<SortConfig>(initialSort);
   const [isDraggingOver, setIsDraggingOver] = useState(false);
   const [isAddMenuOpen, setIsAddMenuOpen] = useState(false);
+  const [isFolderBrowserOpen, setIsFolderBrowserOpen] = useState(false);
+  const [itemsToMove, setItemsToMove] = useState<FileItem[]>([]);
+  const [folderBrowserPath, setFolderBrowserPath] = useState<string>(currentPath);
   const tableRef = useRef<HTMLDivElement>(null);
   const dragCounter = useRef(0);
   const addMenuRef = useRef<HTMLDivElement>(null);
@@ -136,6 +141,35 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
     // Utiliser Folder standard pour tous les dossiers
     return "Folder";
   };
+
+  // Handlers pour le FolderBrowser
+  const handleFolderBrowserNavigate = useCallback((path: string) => {
+    setFolderBrowserPath(path);
+  }, []);
+
+  const handleFolderBrowserClose = useCallback(() => {
+    setIsFolderBrowserOpen(false);
+    setItemsToMove([]);
+  }, []);
+
+  const handleFolderSelect = useCallback((folder: FileItem) => {
+    if (debug) {
+      console.log("[FileBrowser] Folder selected:", folder);
+      console.log("[FileBrowser] Items to move:", itemsToMove);
+    }
+
+    // Appeler onMove avec les items et le dossier de destination
+    onMove?.(itemsToMove);
+
+    // Fermer le FolderBrowser
+    setIsFolderBrowserOpen(false);
+    setItemsToMove([]);
+  }, [itemsToMove, onMove, debug]);
+
+  // Filtrer les dossiers pour le FolderBrowser
+  const folderItems = useMemo(() => {
+    return files.filter(item => item.is_directory);
+  }, [files]);
 
   // Formate la taille des fichiers
   const formatFileSize = (bytes: number): string => {
@@ -437,7 +471,10 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
         onRename?.(items);
         break;
       case "move":
-        onMove?.(items);
+        // Ouvrir le FolderBrowser au lieu d'appeler directement onMove
+        setItemsToMove(items);
+        setFolderBrowserPath(currentPath);
+        setIsFolderBrowserOpen(true);
         break;
       case "download":
         onDownload?.(items);
@@ -961,6 +998,33 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
           <p className="text-sm">Aucun fichier dans ce dossier</p>
         </div>
       )}
+
+      {/* Modal FolderBrowser */}
+      <ModalLayer
+        isOpen={isFolderBrowserOpen}
+        onClose={handleFolderBrowserClose}
+        className="w-[800px] max-w-[90vw]"
+        footer={
+          <Button
+            size="large"
+            background="white"
+            onClick={handleFolderBrowserClose}
+          >
+            Annuler
+          </Button>
+        }
+      >
+        <div className="p-[30px]">
+          <FolderBrowser
+            folders={folderItems}
+            currentPath={folderBrowserPath}
+            labelRootFolder={labelRootFolder}
+            debug={debug}
+            onNavigate={handleFolderBrowserNavigate}
+            onFolderSelect={handleFolderSelect}
+          />
+        </div>
+      </ModalLayer>
     </div>
     </TooltipProvider>
   );

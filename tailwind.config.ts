@@ -116,6 +116,7 @@ export default {
 				'grey-stronger': 'var(--bg-grey-stronger, #C1C1C1)',
 				'grey-strongest': 'var(--bg-grey-strongest, #595959)',
 				'white': 'var(--bg-white, #FFFFFF)',
+				'overlay-20': 'rgba(41, 40, 40, 0.2)',
 				'blue-primary': 'var(--text-blue-primary, #CDEDFF)',
 				'blue': 'var(--text-blue, #74D4DA)',
 				'green-primary': 'var(--text-green-primary, #9EDEDAB)',
