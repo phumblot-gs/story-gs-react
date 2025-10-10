@@ -198,8 +198,7 @@ export const FolderBrowser: React.FC<FolderBrowserProps> = ({
                 {sortedFolders.length === 0 ? (
                   <tr>
                     <td colSpan={2} className="text-center py-12 text-gray-500">
-                      <IconProvider icon="Folder" size={48} className="mx-auto mb-4 text-gray-300" />
-                      <p className="text-sm">Aucun dossier</p>
+                      <p className="text-sm">Dossier vide</p>
                     </td>
                   </tr>
                 ) : (
