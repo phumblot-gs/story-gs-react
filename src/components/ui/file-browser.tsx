@@ -19,6 +19,7 @@ export interface FileItem {
   is_directory: boolean;
   created_at: string;
   updated_at: string;
+  disabled?: boolean;
 }
 
 export type HeightMode = "auto" | "fill-container" | "max-height";
@@ -33,6 +34,12 @@ export interface FileBrowserProps {
   initialSort?: SortConfig;
   heightMode?: HeightMode;
   maxHeight?: string;
+  // Pagination
+  totalFiles?: number | null;    // Nombre total de fichiers (null si inconnu)
+  hasMore?: boolean;             // Indique s'il y a plus de fichiers à charger
+  isLoadingMore?: boolean;       // Indique si un chargement est en cours
+  onLoadMore?: () => void;       // Callback appelé quand l'utilisateur demande plus de fichiers
+  maxFilesLimit?: number;        // Limite maximale de fichiers (défaut: 10000)
   onNavigate?: (path: string) => void;
   onRefresh?: () => void;
   onUpload?: () => void;
@@ -75,6 +82,12 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
   initialSort = { field: "file_name", direction: "asc" },
   heightMode = "auto",
   maxHeight = "600px",
+  // Pagination
+  totalFiles = null,
+  hasMore = false,
+  isLoadingMore = false,
+  onLoadMore,
+  maxFilesLimit = 10000,
   onNavigate,
   onRefresh,
   onUpload,
@@ -145,6 +158,35 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
     const sizes = ["B", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + " " + sizes[i];
+  };
+
+  // Formate un nombre avec des espaces pour les milliers
+  const formatNumber = (num: number): string => {
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  };
+
+  // Génère le texte du compteur de fichiers selon la logique demandée
+  const getFileCountText = (): string => {
+    const currentCount = sortedFiles.length;
+    const isLimitReached = currentCount >= maxFilesLimit;
+
+    if (currentCount === 0) {
+      return "Aucun fichier";
+    }
+
+    if (isLimitReached) {
+      return `${formatNumber(currentCount)} fichier${currentCount > 1 ? "s" : ""} (limite atteinte)`;
+    }
+
+    if (hasMore && (totalFiles === null || totalFiles === undefined || totalFiles > currentCount)) {
+      return `${formatNumber(currentCount)} fichier${currentCount > 1 ? "s" : ""} et plus...`;
+    }
+
+    if (totalFiles !== null && totalFiles !== undefined && totalFiles !== currentCount) {
+      return `${formatNumber(totalFiles)} fichier${totalFiles > 1 ? "s" : ""}`;
+    }
+
+    return `${formatNumber(currentCount)} fichier${currentCount > 1 ? "s" : ""}`;
   };
 
   // Formate la date avec validation
@@ -679,10 +721,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
 
           {/* Compteur de fichiers */}
           <span className="text-sm text-gray-600">
-            {sortedFiles.length === 0
-              ? "Aucun fichier"
-              : `${sortedFiles.length} fichier${sortedFiles.length > 1 ? "s" : ""}`
-            }
+            {getFileCountText()}
           </span>
         </div>
 
@@ -777,6 +816,18 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
         </div>
       </div>
 
+      {/* Bandeau limite atteinte */}
+      {sortedFiles.length >= maxFilesLimit && (
+        <div className="bg-yellow-50 border-l-4 border-yellow-400 px-4 py-3">
+          <div className="flex items-center">
+            <IconProvider icon="AlertTriangle" size={16} className="text-yellow-600 mr-3" />
+            <p className="text-sm text-yellow-800">
+              Limite de {formatNumber(maxFilesLimit)} fichiers atteinte. Utilisez la recherche ou les filtres pour affiner les résultats.
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Tableau */}
       <div className={tableWrapperClasses}>
         <div
@@ -829,31 +880,39 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
               const isSelected = selectedItems.has(item.id);
               const isHovered = hoveredRow === item.id;
               const isActive = activeIndex === index;
+              const isDisabled = item.disabled === true;
 
               return (
                 <tr
                   key={item.id}
                   className={cn(
-                    "h-12 cursor-pointer transition-colors duration-150",
-                    isSelected
+                    "h-12 transition-colors duration-150",
+                    isDisabled
+                      ? "cursor-not-allowed"
+                      : "cursor-pointer",
+                    !isDisabled && isSelected
                       ? "bg-blue-primary text-black hover:bg-blue-primary"
-                      : "hover:bg-gray-50",
-                    isActive && !isSelected && "ring-2 ring-inset ring-blue-400"
+                      : !isDisabled && "hover:bg-gray-50",
+                    !isDisabled && isActive && !isSelected && "ring-2 ring-inset ring-blue-400"
                   )}
-                  onClick={(e) => handleItemSelect(item, index, e.shiftKey, e.ctrlKey || e.metaKey)}
-                  onDoubleClick={() => handleItemDoubleClick(item)}
-                  onMouseEnter={() => setHoveredRow(item.id)}
-                  onMouseLeave={() => setHoveredRow(null)}
+                  onClick={(e) => !isDisabled && handleItemSelect(item, index, e.shiftKey, e.ctrlKey || e.metaKey)}
+                  onDoubleClick={() => !isDisabled && handleItemDoubleClick(item)}
+                  onMouseEnter={() => !isDisabled && setHoveredRow(item.id)}
+                  onMouseLeave={() => !isDisabled && setHoveredRow(null)}
                 >
                   <td className="px-4 py-2">
                     <div className="flex items-center space-x-3">
                       <IconProvider
                         icon={getFolderIcon(item)}
                         size={16}
-                        className={isSelected ? "text-black" : "text-gray-500"}
+                        className={cn(
+                          isDisabled ? "text-[#c1c1c1]" :
+                          isSelected ? "text-black" : "text-gray-500"
+                        )}
                       />
                       <span className={cn(
                         "text-sm font-medium truncate",
+                        isDisabled ? "text-[#c1c1c1]" :
                         isSelected ? "text-black" : "text-gray-900"
                       )}>
                         {item.file_name}
@@ -862,18 +921,20 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
                   </td>
                   <td className={cn(
                     "px-4 py-2 text-sm",
+                    isDisabled ? "text-[#c1c1c1]" :
                     isSelected ? "text-black" : "text-gray-600"
                   )}>
                     {formatDate(item.updated_at)}
                   </td>
                   <td className={cn(
                     "px-4 py-2 text-sm",
+                    isDisabled ? "text-[#c1c1c1]" :
                     isSelected ? "text-black" : "text-gray-600"
                   )}>
                     {item.is_directory ? "—" : formatFileSize(item.file_size)}
                   </td>
                   <td className="px-4 py-2">
-                    {isHovered && (
+                    {isHovered && !isDisabled && (
                       <div className="flex items-center justify-end space-x-1">
                         <Tooltip>
                           <TooltipTrigger asChild>
@@ -955,6 +1016,27 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
         </table>
         </div>
       </div>
+
+      {/* Bouton "Afficher les éléments suivants" */}
+      {hasMore && sortedFiles.length < maxFilesLimit && (
+        <div className="bg-white border-t border-gray-200 px-4 py-3 flex justify-center">
+          <Button
+            size="large"
+            onClick={onLoadMore}
+            disabled={isLoadingMore}
+            className="min-w-[200px]"
+          >
+            {isLoadingMore ? (
+              <span className="flex items-center space-x-2">
+                <IconProvider icon="Loader" size={16} className="animate-spin" />
+                <span>Chargement...</span>
+              </span>
+            ) : (
+              "Afficher les éléments suivants"
+            )}
+          </Button>
+        </div>
+      )}
 
       {sortedFiles.length === 0 && (
         <div className="text-center py-12 text-gray-500 bg-white border-t border-b border-gray-200">
