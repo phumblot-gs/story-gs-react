@@ -46,6 +46,23 @@ const meta: Meta<typeof FileBrowser> = {
     onDateFilterChange: { action: "dateFilterChange" },
     onSortChange: { action: "sortChange" },
     onSelectionChange: { action: "selectionChange" },
+    onLoadMore: { action: "loadMore" },
+    totalFiles: {
+      control: "number",
+      description: "Nombre total de fichiers (null si inconnu)",
+    },
+    hasMore: {
+      control: "boolean",
+      description: "Indique s'il y a plus de fichiers à charger",
+    },
+    isLoadingMore: {
+      control: "boolean",
+      description: "Indique si un chargement est en cours",
+    },
+    maxFilesLimit: {
+      control: "number",
+      description: "Limite maximale de fichiers",
+    },
   },
   args: {
     onNavigate: fn(),
@@ -63,6 +80,7 @@ const meta: Meta<typeof FileBrowser> = {
     onDateFilterChange: fn(),
     onSortChange: fn(),
     onSelectionChange: fn(),
+    onLoadMore: fn(),
   },
 };
 
@@ -396,6 +414,262 @@ export const InteractiveNavigation: Story = {
     docs: {
       description: {
         story: "Navigation interactive avec double-clic sur les dossiers. Double-cliquez sur un dossier pour naviguer dedans et utilisez le breadcrumb pour remonter.",
+      },
+    },
+  },
+};
+
+export const WithDisabledItems: Story = {
+  args: {
+    files: [
+      ...mockFiles.slice(0, 2),
+      {
+        ...mockFiles[2],
+        disabled: true,
+      },
+      mockFiles[3],
+      {
+        ...mockFiles[4],
+        disabled: true,
+      },
+    ],
+    currentPath: "/",
+    labelRootFolder: "Mes fichiers",
+    showUploadButton: true,
+    debug: false,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: "Certains items sont désactivés (disabled). Ils apparaissent en gris clair et ne sont pas cliquables. Les boutons d'action ne s'affichent pas au survol.",
+      },
+    },
+  },
+};
+
+// Stories pour la pagination
+export const PaginationWithKnownTotal: Story = {
+  args: {
+    files: Array.from({ length: 1000 }, (_, i) => ({
+      id: `file-${i}`,
+      file_name: `fichier-${i.toString().padStart(4, "0")}.txt`,
+      parent_path: "/",
+      file_size: Math.floor(Math.random() * 10000000),
+      mime_type: "text/plain",
+      is_directory: i % 10 === 0,
+      created_at: new Date(2024, 0, i + 1).toISOString(),
+      updated_at: new Date(2024, 0, i + 5).toISOString(),
+    })),
+    currentPath: "/",
+    labelRootFolder: "Mes fichiers",
+    showUploadButton: true,
+    totalFiles: 5432,
+    hasMore: true,
+    isLoadingMore: false,
+    maxFilesLimit: 10000,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: "Pagination avec total connu : 1000 fichiers chargés sur 5432 au total. Le compteur affiche '5432 fichiers' et un bouton 'Afficher les éléments suivants' est présent.",
+      },
+    },
+  },
+};
+
+export const PaginationWithUnknownTotal: Story = {
+  args: {
+    files: Array.from({ length: 1000 }, (_, i) => ({
+      id: `file-${i}`,
+      file_name: `fichier-${i.toString().padStart(4, "0")}.txt`,
+      parent_path: "/",
+      file_size: Math.floor(Math.random() * 10000000),
+      mime_type: "text/plain",
+      is_directory: i % 10 === 0,
+      created_at: new Date(2024, 0, i + 1).toISOString(),
+      updated_at: new Date(2024, 0, i + 5).toISOString(),
+    })),
+    currentPath: "/",
+    labelRootFolder: "Mes fichiers",
+    showUploadButton: true,
+    totalFiles: null,
+    hasMore: true,
+    isLoadingMore: false,
+    maxFilesLimit: 10000,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: "Pagination avec total inconnu : 1000 fichiers chargés, total inconnu. Le compteur affiche '1 000 fichiers et plus...' et un bouton 'Afficher les éléments suivants' est présent.",
+      },
+    },
+  },
+};
+
+export const PaginationLoading: Story = {
+  args: {
+    files: Array.from({ length: 847 }, (_, i) => ({
+      id: `file-${i}`,
+      file_name: `fichier-${i.toString().padStart(4, "0")}.txt`,
+      parent_path: "/",
+      file_size: Math.floor(Math.random() * 10000000),
+      mime_type: "text/plain",
+      is_directory: i % 10 === 0,
+      created_at: new Date(2024, 0, i + 1).toISOString(),
+      updated_at: new Date(2024, 0, i + 5).toISOString(),
+    })),
+    currentPath: "/",
+    labelRootFolder: "Mes fichiers",
+    showUploadButton: true,
+    totalFiles: null,
+    hasMore: true,
+    isLoadingMore: true,
+    maxFilesLimit: 10000,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: "Pagination en cours de chargement : 847 fichiers chargés, chargement en cours. Le bouton affiche 'Chargement...' avec un spinner.",
+      },
+    },
+  },
+};
+
+export const PaginationLimitReached: Story = {
+  args: {
+    files: Array.from({ length: 10000 }, (_, i) => ({
+      id: `file-${i}`,
+      file_name: `fichier-${i.toString().padStart(5, "0")}.txt`,
+      parent_path: "/",
+      file_size: Math.floor(Math.random() * 10000000),
+      mime_type: "text/plain",
+      is_directory: i % 10 === 0,
+      created_at: new Date(2024, 0, i + 1).toISOString(),
+      updated_at: new Date(2024, 0, i + 5).toISOString(),
+    })),
+    currentPath: "/",
+    labelRootFolder: "Mes fichiers",
+    showUploadButton: true,
+    totalFiles: 15000,
+    hasMore: true,
+    isLoadingMore: false,
+    maxFilesLimit: 10000,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: "Limite atteinte : 10000 fichiers chargés (limite maximale). Le compteur affiche '10 000 fichiers (limite atteinte)' avec un bandeau d'avertissement, mais PAS de bouton 'Afficher les éléments suivants'.",
+      },
+    },
+  },
+};
+
+export const PaginationComplete: Story = {
+  args: {
+    files: Array.from({ length: 543 }, (_, i) => ({
+      id: `file-${i}`,
+      file_name: `fichier-${i.toString().padStart(3, "0")}.txt`,
+      parent_path: "/",
+      file_size: Math.floor(Math.random() * 10000000),
+      mime_type: "text/plain",
+      is_directory: i % 10 === 0,
+      created_at: new Date(2024, 0, i + 1).toISOString(),
+      updated_at: new Date(2024, 0, i + 5).toISOString(),
+    })),
+    currentPath: "/",
+    labelRootFolder: "Mes fichiers",
+    showUploadButton: true,
+    totalFiles: 543,
+    hasMore: false,
+    isLoadingMore: false,
+    maxFilesLimit: 10000,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: "Pagination terminée : 543 fichiers chargés, tous les fichiers sont affichés. Le compteur affiche '543 fichiers' et aucun bouton 'Afficher les éléments suivants'.",
+      },
+    },
+  },
+};
+
+export const InteractivePagination: Story = {
+  render: (args) => {
+    const BATCH_SIZE = 500;
+    const TOTAL_FILES = 5432;
+
+    const [files, setFiles] = React.useState<FileItem[]>(
+      Array.from({ length: BATCH_SIZE }, (_, i) => ({
+        id: `file-${i}`,
+        file_name: `fichier-${i.toString().padStart(5, "0")}.txt`,
+        parent_path: "/",
+        file_size: Math.floor(Math.random() * 10000000),
+        mime_type: "text/plain",
+        is_directory: i % 10 === 0,
+        created_at: new Date(2024, 0, i + 1).toISOString(),
+        updated_at: new Date(2024, 0, i + 5).toISOString(),
+      }))
+    );
+    const [isLoadingMore, setIsLoadingMore] = React.useState(false);
+
+    const handleLoadMore = () => {
+      setIsLoadingMore(true);
+
+      // Simuler un délai de chargement
+      setTimeout(() => {
+        const currentLength = files.length;
+        const newFiles = Array.from({ length: BATCH_SIZE }, (_, i) => ({
+          id: `file-${currentLength + i}`,
+          file_name: `fichier-${(currentLength + i).toString().padStart(5, "0")}.txt`,
+          parent_path: "/",
+          file_size: Math.floor(Math.random() * 10000000),
+          mime_type: "text/plain",
+          is_directory: (currentLength + i) % 10 === 0,
+          created_at: new Date(2024, 0, currentLength + i + 1).toISOString(),
+          updated_at: new Date(2024, 0, currentLength + i + 5).toISOString(),
+        }));
+
+        setFiles([...files, ...newFiles]);
+        setIsLoadingMore(false);
+      }, 1500);
+    };
+
+    const hasMore = files.length < TOTAL_FILES;
+
+    return (
+      <FileBrowser
+        {...args}
+        files={files}
+        totalFiles={TOTAL_FILES}
+        hasMore={hasMore}
+        isLoadingMore={isLoadingMore}
+        onLoadMore={handleLoadMore}
+      />
+    );
+  },
+  args: {
+    currentPath: "/",
+    labelRootFolder: "Mes fichiers",
+    showUploadButton: true,
+    maxFilesLimit: 10000,
+    onRefresh: fn(),
+    onUpload: fn(),
+    onCreateFolder: fn(),
+    onImportFiles: fn(),
+    onImportFolders: fn(),
+    onRename: fn(),
+    onMove: fn(),
+    onDownload: fn(),
+    onShare: fn(),
+    onDelete: fn(),
+    onDateFilterChange: fn(),
+    onSortChange: fn(),
+    onSelectionChange: fn(),
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: "Pagination interactive : Cliquez sur 'Afficher les éléments suivants' pour charger plus de fichiers par lots de 500. Le total est de 5432 fichiers.",
       },
     },
   },
