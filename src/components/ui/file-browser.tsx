@@ -46,7 +46,7 @@ export interface FileBrowserProps {
   onCreateFolder?: () => void;
   onImportFiles?: () => void;
   onImportFolders?: () => void;
-  onFileDrop?: (files: FileList) => void;
+  onFileDrop?: (event: React.DragEvent<HTMLDivElement>) => void | Promise<void>;
   onRename?: (items: FileItem[]) => void;
   onMove?: (items: FileItem[]) => void;
   onDownload?: (items: FileItem[]) => void;
@@ -531,16 +531,15 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
     }
   }, []);
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
+  const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
 
     dragCounter.current = 0;
     setIsDraggingOver(false);
 
-    const files = e.dataTransfer.files;
-    if (files.length > 0 && onFileDrop) {
-      onFileDrop(files);
+    if (onFileDrop) {
+      onFileDrop(e);
     }
   }, [onFileDrop]);
 
