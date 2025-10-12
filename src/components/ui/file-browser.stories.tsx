@@ -295,15 +295,27 @@ export const WithDragAndDrop: Story = {
     labelRootFolder: "Mes fichiers",
     showUploadButton: true,
     debug: false,
-    onFileDrop: (files: FileList) => {
+    onFileDrop: (event: React.DragEvent<HTMLDivElement>) => {
+      const files = event.dataTransfer.files;
+      const items = event.dataTransfer.items;
+
+      console.log("Événement drop:", event);
       console.log("Fichiers déposés:", Array.from(files).map(f => f.name));
-      alert(`${files.length} fichier(s) déposé(s): ${Array.from(files).map(f => f.name).join(", ")}`);
+      console.log("Items:", items);
+
+      // Exemple de détection de dossiers
+      const hasDirectories = Array.from(items).some(item => {
+        const entry = item.webkitGetAsEntry();
+        return entry?.isDirectory;
+      });
+
+      alert(`${files.length} fichier(s) déposé(s)${hasDirectories ? " (dont des dossiers)" : ""}: ${Array.from(files).map(f => f.name).join(", ")}`);
     },
   },
   parameters: {
     docs: {
       description: {
-        story: "Story pour tester le drag & drop. Déposez des fichiers depuis votre explorateur pour voir l'overlay et déclencher l'action onFileDrop.",
+        story: "Story pour tester le drag & drop. Déposez des fichiers ou dossiers depuis votre explorateur pour voir l'overlay et déclencher l'action onFileDrop. Le callback reçoit maintenant l'événement complet pour supporter l'upload de dossiers via webkitGetAsEntry().",
       },
     },
   },

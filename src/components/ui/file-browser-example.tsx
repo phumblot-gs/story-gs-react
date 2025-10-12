@@ -172,7 +172,20 @@ export function FileBrowserExample() {
           onImportFolders={() => console.log('[Example] Importer dossiers')}
           onDownload={(items) => console.log('[Example] Télécharger:', items)}
           onShare={(items) => console.log('[Example] Partager:', items)}
-          onFileDrop={(files) => console.log('[Example] Fichiers déposés:', files)}
+          onFileDrop={(event) => {
+            const files = event.dataTransfer.files;
+            const items = event.dataTransfer.items;
+            console.log('[Example] Fichiers déposés:', Array.from(files).map(f => f.name));
+            console.log('[Example] Items:', items);
+            // Exemple de détection de dossiers
+            const hasDirectories = Array.from(items).some(item => {
+              const entry = item.webkitGetAsEntry();
+              return entry?.isDirectory;
+            });
+            if (hasDirectories) {
+              console.log('[Example] Des dossiers ont été déposés - vous pouvez les traiter via webkitGetAsEntry()');
+            }
+          }}
           onDateFilterChange={(filter) => console.log('[Example] Filtre date:', filter)}
           onSortChange={(config) => console.log('[Example] Tri:', config)}
           onSelectionChange={(items) => console.log('[Example] Sélection:', items)}
