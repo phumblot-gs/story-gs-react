@@ -4,11 +4,23 @@ Bienvenue dans la documentation de la librairie de composants GS.
 
 ## 📚 Guide de navigation
 
-- [Guide de démarrage rapide](./quick-start.md)
-- [Guide de développement](./development-guide.md)
-- [Guide de déploiement](./deployment-guide.md)
-- [Composants disponibles](./components/README.md)
-- [Workflow de publication](./publishing-workflow.md)
+### 🚀 Démarrage
+- [Guide de démarrage rapide](./quick-start.md) - Installation et premiers pas
+- [Imports modulaires](./modular-imports.md) - **🆕 Optimisation du bundle avec tree-shaking**
+
+### 💻 Développement
+- [Guide de développement](./development-guide.md) - Contribuer au projet
+- [Architecture](./architecture.md) - Structure et design patterns
+- [Intégration Figma](./figma-integration.md) - Tokens et design system
+
+### 📖 Référence
+- [Composants disponibles](./components/README.md) - Catalogue complet
+- [Providers](./providers.md) - ThemeProvider, TranslationProvider
+- [API Reference](./api-reference.md) - Documentation détaillée
+
+### 🚢 Déploiement
+- [Guide de déploiement](./deployment-guide.md) - Mise en production
+- [Workflow de publication](./publishing-workflow.md) - Process de release
 
 ## 🚀 Vue d'ensemble
 
@@ -33,19 +45,35 @@ npm install @gs/gs-components-library@beta
 
 ## 🎯 Utilisation rapide
 
+### Import monolithique (compatibilité)
 ```tsx
 import { Button, FileBrowser, Select } from '@gs/gs-components-library';
+```
+
+### Import modulaire (recommandé - 80% plus léger!)
+```tsx
+import { Button } from '@gs/gs-components-library/button';
+import { FileBrowser } from '@gs/gs-components-library/file-browser';
+import { Select } from '@gs/gs-components-library/select';
+```
+
+### Exemple complet
+```tsx
+import { ThemeProvider } from '@gs/gs-components-library/providers/theme';
+import { Button } from '@gs/gs-components-library/button';
 
 function App() {
   return (
-    <div>
-      <Button variant="primary">Mon bouton</Button>
-      <FileBrowser files={files} onFilesSelected={handleSelection} />
-      <Select options={options} onValueChange={handleChange} />
-    </div>
+    <ThemeProvider>
+      <Button size="large" featured>
+        Mon bouton optimisé
+      </Button>
+    </ThemeProvider>
   );
 }
 ```
+
+📘 Voir le [guide des imports modulaires](./modular-imports.md) pour plus de détails.
 
 ## 🔗 Liens utiles
 

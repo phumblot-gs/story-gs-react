@@ -91,11 +91,11 @@ const SelectTrigger = React.forwardRef<
   const [isHovered, setIsHovered] = React.useState(false);
   const [isPressed, setIsPressed] = React.useState(false);
   const [isOpen, setIsOpen] = React.useState(false);
-  const triggerRef = React.useRef<HTMLButtonElement>(null);
+  const [triggerNode, setTriggerNode] = React.useState<HTMLButtonElement | null>(null);
 
   // Observer pour détecter l'état ouvert/fermé du Select
   React.useEffect(() => {
-    const element = triggerRef.current;
+    const element = triggerNode;
     if (!element) return;
 
     const observer = new MutationObserver((mutations) => {
@@ -113,7 +113,7 @@ const SelectTrigger = React.forwardRef<
     });
 
     return () => observer.disconnect();
-  }, []);
+  }, [triggerNode]);
   // Styles basés sur la maquette Figma
   // background indique la couleur du fond sur lequel le composant s'affiche
   const getBackgroundStyles = () => {
@@ -162,7 +162,7 @@ const SelectTrigger = React.forwardRef<
   return (
     <SelectPrimitive.Trigger
       ref={(node) => {
-        triggerRef.current = node;
+        setTriggerNode(node);
         if (typeof ref === 'function') {
           ref(node);
         } else if (ref) {

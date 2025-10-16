@@ -18,6 +18,7 @@ export interface FolderItem {
   is_directory: boolean;
   created_at: string;
   updated_at: string;
+  disabled?: boolean;
 }
 
 export type SortDirection = "asc" | "desc";
@@ -204,32 +205,41 @@ export const FolderBrowser: React.FC<FolderBrowserProps> = ({
                 ) : (
                   sortedFolders.map((folder) => {
                     const isHovered = hoveredRow === folder.id;
+                    const isDisabled = folder.disabled === true;
 
                     return (
                       <tr
                         key={folder.id}
                         className={cn(
-                          "h-12 cursor-pointer transition-colors duration-150",
-                          isHovered ? "bg-gray-50" : ""
+                          "h-12 transition-colors duration-150",
+                          isDisabled
+                            ? "cursor-not-allowed"
+                            : "cursor-pointer",
+                          !isDisabled && isHovered ? "bg-gray-50" : ""
                         )}
-                        onDoubleClick={() => handleRowDoubleClick(folder)}
-                        onMouseEnter={() => setHoveredRow(folder.id)}
-                        onMouseLeave={() => setHoveredRow(null)}
+                        onDoubleClick={() => !isDisabled && handleRowDoubleClick(folder)}
+                        onMouseEnter={() => !isDisabled && setHoveredRow(folder.id)}
+                        onMouseLeave={() => !isDisabled && setHoveredRow(null)}
                       >
                         <td className="px-4 py-2">
                           <div className="flex items-center space-x-3">
                             <IconProvider
                               icon="Folder"
                               size={16}
-                              className="text-gray-500"
+                              className={cn(
+                                isDisabled ? "text-[#c1c1c1]" : "text-gray-500"
+                              )}
                             />
-                            <span className="text-sm font-medium truncate text-gray-900">
+                            <span className={cn(
+                              "text-sm font-medium truncate",
+                              isDisabled ? "text-[#c1c1c1]" : "text-gray-900"
+                            )}>
                               {folder.file_name}
                             </span>
                           </div>
                         </td>
                         <td className="px-4 py-2">
-                          {isHovered && (
+                          {isHovered && !isDisabled && (
                             <div className="flex items-center justify-end space-x-1">
                               <Tooltip>
                                 <TooltipTrigger asChild>

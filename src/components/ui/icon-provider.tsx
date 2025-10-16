@@ -24,5 +24,3 @@ export const IconProvider: React.FC<IconProviderProps> = ({
     </span>
   );
 };
-
-export default IconProvider;

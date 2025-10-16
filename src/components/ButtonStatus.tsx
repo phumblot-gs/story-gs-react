@@ -84,5 +84,3 @@ export const ButtonStatus: React.FC<ButtonStatusProps> = ({
     />
   );
 };
-
-export default ButtonStatus;

@@ -1048,5 +1048,3 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
     </TooltipProvider>
   );
 };
-
-export default FileBrowser;

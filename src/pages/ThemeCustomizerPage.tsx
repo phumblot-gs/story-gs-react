@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ArrowLeft, Upload, FileImage } from 'lucide-react';
-import ColorInput from '@/components/ColorInput';
+import { ColorInput } from '@/components/ColorInput';
 import PageHeader from '@/components/PageHeader';
 import { toast } from '@/components/ui/use-toast';
 import BrandLogo from '@/components/PageHeader/BrandLogo';

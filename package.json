@@ -1,6 +1,6 @@
 {
   "name": "@gs/gs-components-library",
-  "version": "0.3.0-beta.18",
+  "version": "1.0.0-beta.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -9,6 +9,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "build:lib": "vite build --config vite.lib.config.ts",
+    "analyze:bundle": "node scripts/analyze-bundle.cjs",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "prepublishOnly": "npm run build:lib"
@@ -86,22 +87,140 @@
     "eslint": "^9.9.0",
     "eslint-plugin-react-hooks": "^5.1.0-rc.0",
     "eslint-plugin-react-refresh": "^0.4.9",
+    "glob": "^11.0.3",
     "globals": "^15.9.0",
     "lovable-tagger": "^1.1.7",
     "postcss": "^8.4.47",
     "storybook": "^8.6.12",
     "tailwindcss": "^3.4.11",
+    "terser": "^5.44.0",
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.0.1",
     "vite": "^5.4.1"
   },
   "description": "A modern UI component library",
-  "main": "dist/gs-components.umd.js",
-  "module": "dist/gs-components.es.js",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "style": "dist/style.css",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
+    "./button": {
+      "types": "./dist/components/button.d.ts",
+      "import": "./dist/components/button.mjs",
+      "require": "./dist/components/button.cjs"
+    },
+    "./button-circle": {
+      "types": "./dist/components/button-circle.d.ts",
+      "import": "./dist/components/button-circle.mjs",
+      "require": "./dist/components/button-circle.cjs"
+    },
+    "./file-browser": {
+      "types": "./dist/components/file-browser.d.ts",
+      "import": "./dist/components/file-browser.mjs",
+      "require": "./dist/components/file-browser.cjs"
+    },
+    "./folder-browser": {
+      "types": "./dist/components/folder-browser.d.ts",
+      "import": "./dist/components/folder-browser.mjs",
+      "require": "./dist/components/folder-browser.cjs"
+    },
+    "./select": {
+      "types": "./dist/components/select.d.ts",
+      "import": "./dist/components/select.mjs",
+      "require": "./dist/components/select.cjs"
+    },
+    "./tabs": {
+      "types": "./dist/components/tabs.d.ts",
+      "import": "./dist/components/tabs.mjs",
+      "require": "./dist/components/tabs.cjs"
+    },
+    "./modal-layer": {
+      "types": "./dist/components/modal-layer.d.ts",
+      "import": "./dist/components/modal-layer.mjs",
+      "require": "./dist/components/modal-layer.cjs"
+    },
+    "./page-header": {
+      "types": "./dist/components/PageHeader.d.ts",
+      "import": "./dist/components/PageHeader.mjs",
+      "require": "./dist/components/PageHeader.cjs"
+    },
+    "./button-notifications": {
+      "types": "./dist/components/ButtonNotifications.d.ts",
+      "import": "./dist/components/ButtonNotifications.mjs",
+      "require": "./dist/components/ButtonNotifications.cjs"
+    },
+    "./button-status": {
+      "types": "./dist/components/ButtonStatus.d.ts",
+      "import": "./dist/components/ButtonStatus.mjs",
+      "require": "./dist/components/ButtonStatus.cjs"
+    },
+    "./status-indicator": {
+      "types": "./dist/components/StatusIndicator.d.ts",
+      "import": "./dist/components/StatusIndicator.mjs",
+      "require": "./dist/components/StatusIndicator.cjs"
+    },
+    "./media-status": {
+      "types": "./dist/components/MediaStatus.d.ts",
+      "import": "./dist/components/MediaStatus.mjs",
+      "require": "./dist/components/MediaStatus.cjs"
+    },
+    "./providers/theme": {
+      "types": "./dist/providers/theme.d.ts",
+      "import": "./dist/providers/theme.mjs",
+      "require": "./dist/providers/theme.cjs"
+    },
+    "./providers/translation": {
+      "types": "./dist/providers/translation.d.ts",
+      "import": "./dist/providers/translation.mjs",
+      "require": "./dist/providers/translation.cjs"
+    },
+    "./providers/activity-status": {
+      "types": "./dist/providers/activity-status.d.ts",
+      "import": "./dist/providers/activity-status.mjs",
+      "require": "./dist/providers/activity-status.cjs"
+    },
+    "./icons": {
+      "types": "./dist/icons.d.ts",
+      "import": "./dist/icons.mjs",
+      "require": "./dist/icons.cjs"
+    },
+    "./utils": {
+      "types": "./dist/utils.d.ts",
+      "import": "./dist/utils.mjs",
+      "require": "./dist/utils.cjs"
+    },
+    "./utils/translations": {
+      "types": "./dist/utils/translations.d.ts",
+      "import": "./dist/utils/translations.mjs",
+      "require": "./dist/utils/translations.cjs"
+    },
+    "./utils/media-status": {
+      "types": "./dist/utils/media-status.d.ts",
+      "import": "./dist/utils/media-status.mjs",
+      "require": "./dist/utils/media-status.cjs"
+    },
+    "./utils/color": {
+      "types": "./dist/utils/color.d.ts",
+      "import": "./dist/utils/color.mjs",
+      "require": "./dist/utils/color.cjs"
+    },
+    "./utils/notifications": {
+      "types": "./dist/utils/notifications.d.ts",
+      "import": "./dist/utils/notifications.mjs",
+      "require": "./dist/utils/notifications.cjs"
+    },
+    "./style.css": "./dist/style.css"
+  },
   "files": [
     "dist"
+  ],
+  "sideEffects": [
+    "*.css"
   ],
   "peerDependencies": {
     "react": "^18.0.0",

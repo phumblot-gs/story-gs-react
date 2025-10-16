@@ -19,7 +19,7 @@ interface ColorInputProps {
   onChange: (key: string, value: string) => void;
 }
 
-const ColorInput = memo(({ 
+export const ColorInput = memo(({ 
   label, 
   colorKey, 
   defaultValue, 
@@ -89,5 +89,3 @@ const ColorInput = memo(({
 });
 
 ColorInput.displayName = "ColorInput";
-
-export default ColorInput;

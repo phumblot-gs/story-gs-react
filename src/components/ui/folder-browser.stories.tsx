@@ -196,3 +196,36 @@ export const InModal: Story = {
     },
   },
 };
+
+export const WithDisabledFolders: Story = {
+  args: {
+    folders: [
+      mockFolders[0],
+      {
+        ...mockFolders[1],
+        disabled: true,
+      },
+      mockFolders[2],
+      {
+        ...mockFolders[3],
+        disabled: true,
+      },
+      mockFolders[4],
+    ],
+    currentPath: "/clients",
+    labelRootFolder: "Mes fichiers",
+    debug: false,
+  },
+  render: (args) => (
+    <div className="w-[600px]">
+      <FolderBrowser {...args} />
+    </div>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story: "Certains dossiers sont désactivés (disabled). Ils apparaissent en gris clair et ne sont pas cliquables. Le bouton de sélection ne s'affiche pas au survol.",
+      },
+    },
+  },
+};

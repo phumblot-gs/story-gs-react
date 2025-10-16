@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
-import ColorInput from './ColorInput';
+import { ColorInput } from './ColorInput';
 import BrandLogo from './PageHeader/BrandLogo';
 import { toast } from './ui/use-toast';
 
@@ -417,5 +417,3 @@ export const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({
     </div>
   );
 };
-
-export default ThemeCustomizer;
