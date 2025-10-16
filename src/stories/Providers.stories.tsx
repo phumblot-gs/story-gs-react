@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
-import { ThemeProvider, useTheme } from '../contexts/ThemeContext';
+import { ThemeProvider } from '../contexts/ThemeContext';
+import { useTheme } from 'next-themes';
 import { TranslationProvider, useTranslation } from '../contexts/TranslationContext';
 import { Button } from '../components/ui/button';
 import { Card } from '../components/ui/card';
