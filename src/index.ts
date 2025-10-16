@@ -133,3 +133,10 @@ export * from "./components/StatusIndicator";
 // Export utilities
 export * from "./utils/mediaStatus";
 export * from "./lib/utils";
+
+// Export Contexts and Providers
+export { ThemeProvider, useCustomTheme } from "./contexts/ThemeContext";
+export type { ThemeCustomization, ThemeProviderProps } from "./contexts/ThemeContext";
+
+export { TranslationProvider, useTranslation } from "./contexts/TranslationContext";
+export type { Language as TranslationLanguage, TranslationProviderProps } from "./contexts/TranslationContext";
