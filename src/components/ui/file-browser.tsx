@@ -8,6 +8,7 @@ import { IconProvider } from "@/components/ui/icon-provider";
 import { IconName } from "@/components/ui/icons/types";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useTranslation } from "@/contexts/TranslationContext";
 
 // Types basés sur le schéma BDD
 export interface FileItem {
@@ -104,6 +105,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
   onSortChange,
   onSelectionChange,
 }) => {
+  const { t } = useTranslation();
   const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
   const [hoveredRow, setHoveredRow] = useState<string | null>(null);
   const [lastSelectedIndex, setLastSelectedIndex] = useState<number | null>(null);
@@ -171,36 +173,36 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
     const isLimitReached = currentCount >= maxFilesLimit;
 
     if (currentCount === 0) {
-      return "Aucun fichier";
+      return t('fileBrowser.noFiles');
     }
 
     if (isLimitReached) {
-      return `${formatNumber(currentCount)} fichier${currentCount > 1 ? "s" : ""} (limite atteinte)`;
+      return t('fileBrowser.filesLimitReached', { count: formatNumber(currentCount) });
     }
 
     if (hasMore && (totalFiles === null || totalFiles === undefined || totalFiles > currentCount)) {
-      return `${formatNumber(currentCount)} fichier${currentCount > 1 ? "s" : ""} et plus...`;
+      return t('fileBrowser.filesAndMore', { count: formatNumber(currentCount) });
     }
 
     if (totalFiles !== null && totalFiles !== undefined && totalFiles !== currentCount) {
-      return `${formatNumber(totalFiles)} fichier${totalFiles > 1 ? "s" : ""}`;
+      return t('fileBrowser.filesCount', { count: formatNumber(totalFiles) });
     }
 
-    return `${formatNumber(currentCount)} fichier${currentCount > 1 ? "s" : ""}`;
+    return t('fileBrowser.filesCount', { count: formatNumber(currentCount) });
   };
 
   // Formate la date avec validation
   const formatDate = (dateString: string): string => {
     if (!dateString) {
       console.error("[FileBrowser] Date invalide: valeur vide ou null");
-      return "Date invalide";
+      return t('common.invalidDate');
     }
 
     const date = new Date(dateString);
 
     if (isNaN(date.getTime())) {
       console.error(`[FileBrowser] Date invalide: impossible de parser "${dateString}"`);
-      return "Date invalide";
+      return t('common.invalidDate');
     }
 
     return new Intl.DateTimeFormat("fr-FR", {
@@ -455,21 +457,21 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
 
     switch (filter) {
       case "all":
-        return "Toutes les dates";
+        return t('fileBrowser.dateFilter.all');
       case "today":
-        return "Aujourd'hui";
+        return t('fileBrowser.dateFilter.today');
       case "7days":
-        return "7 derniers jours";
+        return t('fileBrowser.dateFilter.last7Days');
       case "30days":
-        return "30 derniers jours";
+        return t('fileBrowser.dateFilter.last30Days');
       case "thisYear":
-        return `Cette année (${currentYear})`;
+        return t('fileBrowser.dateFilter.thisYear', { year: currentYear.toString() });
       case "lastYear":
-        return `Année dernière (${lastYear})`;
+        return t('fileBrowser.dateFilter.lastYear', { year: lastYear.toString() });
       case "beforeLastYear":
-        return `Avant ${lastYear}`;
+        return t('fileBrowser.dateFilter.beforeYear', { year: lastYear.toString() });
       default:
-        return "Toutes les dates";
+        return t('fileBrowser.dateFilter.all');
     }
   };
 
@@ -549,7 +551,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
     return segments[segments.length - 1].name;
   }, [getPathSegments]);
 
-  // Fermer le menu d'ajout quand on clique en dehors
+  // Close add menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (addMenuRef.current && !addMenuRef.current.contains(event.target as Node)) {
@@ -644,7 +646,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
               <div className="flex flex-col items-center space-y-3">
                 <IconProvider icon="Plus" size={48} className="text-white" />
                 <div className="text-base font-normal text-white text-center">
-                  Déposez les fichiers pour les importer dans {getCurrentFolderName()}
+                  {t('fileBrowser.dropToImport', { folder: getCurrentFolderName() })}
                 </div>
               </div>
             </div>
@@ -705,7 +707,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
           {/* Filtre par date */}
           <Select value={dateFilter} onValueChange={handleDateFilterChange}>
             <SelectTrigger className="w-48">
-              <SelectValue placeholder="Filtrer par date" />
+              <SelectValue placeholder={t('fileBrowser.filterByDate')} />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">{getDateFilterLabel("all")}</SelectItem>
@@ -736,7 +738,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
                 background="white"
               />
             </TooltipTrigger>
-            <TooltipContent>Actualiser</TooltipContent>
+            <TooltipContent>{t('fileBrowser.refresh')}</TooltipContent>
           </Tooltip>
           {showUploadButton && (
             <div className="relative" ref={addMenuRef}>
@@ -758,7 +760,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
                       }}
                       className="w-full px-4 py-2 text-left text-sm whitespace-nowrap bg-black-secondary text-white hover:bg-white hover:text-black active:bg-white active:text-blue-primary transition-colors duration-200"
                     >
-                      Nouveau dossier
+                      {t('fileBrowser.newFolder')}
                     </button>
                     <button
                       onClick={() => {
@@ -767,7 +769,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
                       }}
                       className="w-full px-4 py-2 text-left text-sm whitespace-nowrap bg-black-secondary text-white hover:bg-white hover:text-black active:bg-white active:text-blue-primary transition-colors duration-200"
                     >
-                      Importer des fichiers
+                      {t('fileBrowser.importFiles')}
                     </button>
                     <button
                       onClick={() => {
@@ -776,7 +778,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
                       }}
                       className="w-full px-4 py-2 text-left text-sm whitespace-nowrap bg-black-secondary text-white hover:bg-white hover:text-black active:bg-white active:text-blue-primary transition-colors duration-200"
                     >
-                      Importer des dossiers
+                      {t('fileBrowser.importFolders')}
                     </button>
                   </div>
                 </div>
@@ -795,7 +797,10 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
               }}
             >
               <SelectTrigger className="w-48">
-                <SelectValue placeholder={`${selectedItems.size} sélectionné${selectedItems.size > 1 ? "s" : ""}`} />
+                <SelectValue placeholder={t('fileBrowser.selected', {
+                  count: selectedItems.size.toString(),
+                  plural: selectedItems.size > 1 ? 's' : ''
+                })} />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem
@@ -803,12 +808,12 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
                   disabled={selectedItems.size > 1}
                   className={selectedItems.size > 1 ? "opacity-50 cursor-not-allowed" : ""}
                 >
-                  Renommer
+                  {t('fileBrowser.rename')}
                 </SelectItem>
-                <SelectItem value="move">Déplacer vers</SelectItem>
-                <SelectItem value="download">Télécharger</SelectItem>
-                <SelectItem value="share">Partager</SelectItem>
-                <SelectItem value="delete">Supprimer</SelectItem>
+                <SelectItem value="move">{t('fileBrowser.moveTo')}</SelectItem>
+                <SelectItem value="download">{t('fileBrowser.download')}</SelectItem>
+                <SelectItem value="share">{t('fileBrowser.share')}</SelectItem>
+                <SelectItem value="delete">{t('fileBrowser.delete')}</SelectItem>
               </SelectContent>
             </Select>
           )}
@@ -821,7 +826,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
           <div className="flex items-center">
             <IconProvider icon="AlertTriangle" size={16} className="text-yellow-600 mr-3" />
             <p className="text-sm text-yellow-800">
-              Limite de {formatNumber(maxFilesLimit)} fichiers atteinte. Utilisez la recherche ou les filtres pour affiner les résultats.
+              {t('fileBrowser.limitWarning', { limit: formatNumber(maxFilesLimit) })}
             </p>
           </div>
         </div>
@@ -843,7 +848,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
                   onClick={() => handleSort("file_name")}
                   className="flex items-center space-x-1 hover:text-gray-900 transition-colors uppercase"
                 >
-                  <span>NOM</span>
+                  <span>{t('fileBrowser.columnName')}</span>
                   {getSortIcon("file_name") && (
                     <IconProvider icon={getSortIcon("file_name")!} size={12} />
                   )}
@@ -854,7 +859,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
                   onClick={() => handleSort("updated_at")}
                   className="flex items-center space-x-1 hover:text-gray-900 transition-colors uppercase"
                 >
-                  <span>DERNIÈRE MODIFICATION</span>
+                  <span>{t('fileBrowser.columnModified')}</span>
                   {getSortIcon("updated_at") && (
                     <IconProvider icon={getSortIcon("updated_at")!} size={12} />
                   )}
@@ -865,7 +870,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
                   onClick={() => handleSort("file_size")}
                   className="flex items-center space-x-1 hover:text-gray-900 transition-colors uppercase"
                 >
-                  <span>TAILLE</span>
+                  <span>{t('fileBrowser.columnSize')}</span>
                   {getSortIcon("file_size") && (
                     <IconProvider icon={getSortIcon("file_size")!} size={12} />
                   )}
@@ -947,7 +952,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
                               }}
                             />
                           </TooltipTrigger>
-                          <TooltipContent>Renommer</TooltipContent>
+                          <TooltipContent>{t('fileBrowser.rename')}</TooltipContent>
                         </Tooltip>
                         <Tooltip>
                           <TooltipTrigger asChild>
@@ -961,7 +966,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
                               }}
                             />
                           </TooltipTrigger>
-                          <TooltipContent>Déplacer vers</TooltipContent>
+                          <TooltipContent>{t('fileBrowser.moveTo')}</TooltipContent>
                         </Tooltip>
                         <Tooltip>
                           <TooltipTrigger asChild>
@@ -975,7 +980,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
                               }}
                             />
                           </TooltipTrigger>
-                          <TooltipContent>Télécharger</TooltipContent>
+                          <TooltipContent>{t('fileBrowser.download')}</TooltipContent>
                         </Tooltip>
                         <Tooltip>
                           <TooltipTrigger asChild>
@@ -989,7 +994,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
                               }}
                             />
                           </TooltipTrigger>
-                          <TooltipContent>Partager</TooltipContent>
+                          <TooltipContent>{t('fileBrowser.share')}</TooltipContent>
                         </Tooltip>
                         <Tooltip>
                           <TooltipTrigger asChild>
@@ -1003,7 +1008,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
                               }}
                             />
                           </TooltipTrigger>
-                          <TooltipContent>Supprimer</TooltipContent>
+                          <TooltipContent>{t('fileBrowser.delete')}</TooltipContent>
                         </Tooltip>
                       </div>
                     )}
@@ -1016,7 +1021,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
         </div>
       </div>
 
-      {/* Bouton "Afficher les éléments suivants" */}
+      {/* Show more items button */}
       {hasMore && sortedFiles.length < maxFilesLimit && (
         <div className="bg-white border-t border-gray-200 px-4 py-3 flex justify-center">
           <Button
@@ -1028,10 +1033,10 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
             {isLoadingMore ? (
               <span className="flex items-center space-x-2">
                 <IconProvider icon="Loader" size={16} className="animate-spin" />
-                <span>Chargement...</span>
+                <span>{t('fileBrowser.loading')}</span>
               </span>
             ) : (
-              "Afficher les éléments suivants"
+              {t('fileBrowser.showMoreItems')}
             )}
           </Button>
         </div>
@@ -1040,7 +1045,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
       {sortedFiles.length === 0 && (
         <div className="text-center py-12 text-gray-500 bg-white border-t border-b border-gray-200">
           <IconProvider icon="Folder" size={48} className="mx-auto mb-4 text-gray-300" />
-          <p className="text-sm">Aucun fichier dans ce dossier</p>
+          <p className="text-sm">{t('fileBrowser.noFilesInFolder')}</p>
         </div>
       )}
 

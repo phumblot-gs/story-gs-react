@@ -1,6 +1,7 @@
 
 import { format as formatDate } from "date-fns";
 import { fr, enUS, es, it } from "date-fns/locale";
+import { componentTranslations } from './component-translations';
 
 // Type for translation entries
 export interface TranslationMap {
@@ -33,6 +34,9 @@ export const formatDateForLocale = (date: Date, formatStr: string, langCode: str
 
 // Default translations for all components
 export const defaultTranslations: TranslationMap = {
+  // Merge component translations
+  ...componentTranslations,
+
   // ActivityPanel translations
   "notifications.upToDate": {
     EN: "You are up to date",

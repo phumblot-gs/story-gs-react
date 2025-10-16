@@ -7,6 +7,7 @@ import { ButtonCircle } from "@/components/ui/button-circle";
 import { IconProvider } from "@/components/ui/icon-provider";
 import { IconName } from "@/components/ui/icons/types";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useTranslation } from "@/contexts/TranslationContext";
 
 // Types réutilisés de FileBrowser
 export interface FolderItem {
@@ -47,6 +48,7 @@ export const FolderBrowser: React.FC<FolderBrowserProps> = ({
   onNavigate,
   onFolderSelect,
 }) => {
+  const { t } = useTranslation();
   const [hoveredRow, setHoveredRow] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
 
@@ -188,7 +190,7 @@ export const FolderBrowser: React.FC<FolderBrowserProps> = ({
                       onClick={handleSort}
                       className="flex items-center space-x-1 hover:text-gray-900 transition-colors uppercase"
                     >
-                      <span>NOM</span>
+                      <span>{t('folderBrowser.columnName')}</span>
                       <IconProvider icon={getSortIcon()} size={12} />
                     </button>
                   </th>
@@ -199,7 +201,7 @@ export const FolderBrowser: React.FC<FolderBrowserProps> = ({
                 {sortedFolders.length === 0 ? (
                   <tr>
                     <td colSpan={2} className="text-center py-12 text-gray-500">
-                      <p className="text-sm">Dossier vide</p>
+                      <p className="text-sm">{t('folderBrowser.emptyFolder')}</p>
                     </td>
                   </tr>
                 ) : (
@@ -250,7 +252,7 @@ export const FolderBrowser: React.FC<FolderBrowserProps> = ({
                                     onClick={(e) => handleSelectFolder(folder, e)}
                                   />
                                 </TooltipTrigger>
-                                <TooltipContent>Sélectionner</TooltipContent>
+                                <TooltipContent>{t('folderBrowser.select')}</TooltipContent>
                               </Tooltip>
                             </div>
                           )}
