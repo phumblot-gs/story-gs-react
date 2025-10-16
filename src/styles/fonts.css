@@ -1,0 +1,82 @@
+/**
+ * Font definitions for GS Components Library
+ * These fonts can be overridden by the host application
+ */
+
+/* Avenir Next LT Pro Font Family */
+@font-face {
+  font-family: 'AvenirNextLTPro';
+  src: url('../fonts/AvenirNextLTPro-Regular.woff') format('woff'),
+       url('../fonts/AvenirNextLTPro-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'AvenirNextLTPro';
+  src: url('../fonts/AvenirNextLTPro-Italics.woff') format('woff'),
+       url('../fonts/AvenirNextLTPro-Italics.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'AvenirNextLTPro';
+  src: url('../fonts/AvenirNextLTPro-Medium.woff') format('woff'),
+       url('../fonts/AvenirNextLTPro-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'AvenirNextLTPro';
+  src: url('../fonts/AvenirNextLTPro-Bold.woff') format('woff'),
+       url('../fonts/AvenirNextLTPro-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'AvenirNextLTPro';
+  src: url('../fonts/AvenirNextLTPro-BoldIt.woff') format('woff'),
+       url('../fonts/AvenirNextLTPro-BoldIt.ttf') format('truetype');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* CSS Custom Properties for font configuration */
+:root {
+  --gs-font-sans: 'AvenirNextLTPro', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  --gs-font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Consolas, 'Liberation Mono', Menlo, monospace;
+}
+
+/* Base styles that can be applied globally */
+.gs-font-base {
+  font-family: var(--gs-font-sans);
+  font-feature-settings: 'kern' 1, 'liga' 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Component-specific font application */
+.gs-components {
+  font-family: var(--gs-font-sans);
+}
+
+/* Utility classes for font weights */
+.gs-font-normal { font-weight: 400; }
+.gs-font-medium { font-weight: 500; }
+.gs-font-bold { font-weight: 700; }
+
+/* Optional: Global application styles */
+.gs-global-styles {
+  font-family: var(--gs-font-sans);
+  line-height: 1.5;
+  color: rgb(var(--foreground));
+  background-color: rgb(var(--background));
+}

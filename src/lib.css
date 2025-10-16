@@ -1,4 +1,6 @@
+@import './styles/fonts.css';
 @import './styles/figma-tokens.css';
+@import './styles/theme-variables.css';
 
 @tailwind base;
 @tailwind components;

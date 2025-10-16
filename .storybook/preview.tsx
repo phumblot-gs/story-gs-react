@@ -2,8 +2,11 @@ import React from "react";
 import type { Preview } from "@storybook/react";
 import { ThemeProvider } from "../src/contexts/ThemeContext";
 import { TranslationProvider } from "../src/contexts/TranslationContext";
+import { StyleProvider } from "../src/contexts/StyleProvider";
 import "../src/index.css"; // Import your tailwind styles
 import "../src/styles/figma-tokens.css"; // Import Figma tokens
+import "../src/styles/fonts.css"; // Import Avenir Next fonts
+import "../src/styles/theme-variables.css"; // Import theme variables
 
 const preview: Preview = {
   parameters: {
@@ -33,11 +36,19 @@ const preview: Preview = {
   },
   decorators: [
     (Story) => (
-      <ThemeProvider>
-        <TranslationProvider defaultLanguage="FR">
-          <Story />
-        </TranslationProvider>
-      </ThemeProvider>
+      <StyleProvider
+        config={{
+          applyGlobalStyles: true,
+          loadFonts: true,
+          customFontFamily: '"AvenirNextLTPro", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+        }}
+      >
+        <ThemeProvider>
+          <TranslationProvider defaultLanguage="FR">
+            <Story />
+          </TranslationProvider>
+        </ThemeProvider>
+      </StyleProvider>
     ),
   ],
 };

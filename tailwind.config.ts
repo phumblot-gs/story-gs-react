@@ -58,7 +58,10 @@ export default {
 		extend: {
 			// Ajout des polices personnalisées
 			fontFamily: {
+				'sans': ['var(--gs-font-sans, AvenirNextLTPro)', 'ui-sans-serif', 'system-ui', 'sans-serif'],
 				'custom': ['AvenirNextLTPro', 'sans-serif'],
+				'avenir': ['AvenirNextLTPro', 'sans-serif'],
+				'mono': ['var(--gs-font-mono)', 'ui-monospace', 'monospace'],
 			},
 			colors: {
 				border: 'hsl(var(--border))',

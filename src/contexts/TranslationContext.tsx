@@ -3,16 +3,21 @@ import React, { createContext, useContext, useState, useMemo } from "react";
 import { defaultTranslations, TranslationMap } from "@/utils/translations";
 import { Language } from "@/components/ui/language-switcher";
 
-interface TranslationContextType {
+// Re-export Language for convenience
+export type { Language } from "@/components/ui/language-switcher";
+
+export interface TranslationContextType {
   currentLanguage: Language;
+  language: Language; // Alias for backward compatibility
   setLanguage: (language: Language) => void;
   availableLanguages: Language[];
   t: (key: string, params?: Record<string, string | number>) => string;
 }
 
-interface TranslationProviderProps {
+export interface TranslationProviderProps {
   children: React.ReactNode;
   initialLanguage?: Language;
+  defaultLanguage?: string; // For backward compatibility
   customTranslations?: TranslationMap;
   languages?: Language[];
 }
@@ -29,9 +34,14 @@ const TranslationContext = createContext<TranslationContextType | undefined>(und
 export const TranslationProvider: React.FC<TranslationProviderProps> = ({
   children,
   initialLanguage,
+  defaultLanguage, // For backward compatibility
   customTranslations = {},
   languages = defaultLanguages
 }) => {
+  // Handle backward compatibility for defaultLanguage prop
+  const effectiveInitialLanguage = initialLanguage ||
+    (defaultLanguage ? languages.find(l => l.code === defaultLanguage) : undefined);
+
   // Get initial language from localStorage or use provided initialLanguage or default to first language
   const [currentLanguage, setCurrentLanguage] = useState<Language>(() => {
     // Try to get from localStorage
@@ -48,8 +58,8 @@ export const TranslationProvider: React.FC<TranslationProviderProps> = ({
         }
       }
     }
-    
-    return initialLanguage || languages[0];
+
+    return effectiveInitialLanguage || languages[0];
   });
 
   // Merge default translations with custom translations
@@ -105,6 +115,7 @@ export const TranslationProvider: React.FC<TranslationProviderProps> = ({
 
   const contextValue = {
     currentLanguage,
+    language: currentLanguage, // Alias for backward compatibility
     setLanguage,
     availableLanguages: languages,
     t

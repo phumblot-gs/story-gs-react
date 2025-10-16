@@ -140,3 +140,10 @@ export type { ThemeCustomization, ThemeProviderProps } from "./contexts/ThemeCon
 
 export { TranslationProvider, useTranslation } from "./contexts/TranslationContext";
 export type { Language as TranslationLanguage, TranslationProviderProps } from "./contexts/TranslationContext";
+
+export { StyleProvider, useStyles, useGlobalStyles } from "./contexts/StyleProvider";
+export type { StyleConfig } from "./contexts/StyleProvider";
+
+// Export root components for easy setup
+export { GSComponentsRoot, GSGlobalStyles } from "./components/GSComponentsRoot";
+export type { GSComponentsRootProps } from "./components/GSComponentsRoot";

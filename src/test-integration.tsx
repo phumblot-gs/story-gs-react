@@ -57,7 +57,13 @@ const ThemeTestPanel: React.FC = () => {
 const TranslationTestPanel: React.FC = () => {
   const { t, language, setLanguage } = useTranslation();
 
-  const languages: Language[] = ['EN', 'FR', 'ES', 'IT', 'DE'];
+  const languages: Language[] = [
+    { code: 'EN', name: 'English' },
+    { code: 'FR', name: 'Français' },
+    { code: 'ES', name: 'Español' },
+    { code: 'IT', name: 'Italiano' },
+    { code: 'DE', name: 'Deutsch' }
+  ];
 
   return (
     <div className="p-4 border rounded">
@@ -65,16 +71,16 @@ const TranslationTestPanel: React.FC = () => {
       <div className="space-x-2 mb-4">
         {languages.map(lang => (
           <Button
-            key={lang}
+            key={lang.code}
             onClick={() => setLanguage(lang)}
-            featured={language === lang}
+            featured={language.code === lang.code}
           >
-            {lang}
+            {lang.code}
           </Button>
         ))}
       </div>
       <div className="space-y-1 text-sm">
-        <p>Current language: {language}</p>
+        <p>Current language: {language.code}</p>
         <p>Test translation: {t('fileBrowser.refresh')}</p>
         <p>Column name: {t('fileBrowser.columnName')}</p>
         <p>No files: {t('fileBrowser.noFiles')}</p>

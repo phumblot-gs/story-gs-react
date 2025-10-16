@@ -1,0 +1,64 @@
+<!-- Configuration globale des fonts Avenir Next pour Storybook -->
+<style>
+  /* Application de la police Avenir Next à tout Storybook */
+  body,
+  #storybook-root {
+    font-family: "AvenirNextLTPro", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* S'assurer que les stories utilisent la bonne police */
+  .sb-show-main {
+    font-family: "AvenirNextLTPro", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+  }
+
+  /* Appliquer aussi aux éléments de l'UI Storybook */
+  .sb-bar,
+  .sb-preview,
+  [role="main"] {
+    font-family: "AvenirNextLTPro", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+
+  /* Variables CSS pour les polices */
+  :root {
+    --gs-font-sans: "AvenirNextLTPro", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --gs-font-base: "AvenirNextLTPro", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+
+  /* Classes utilitaires pour forcer l'utilisation d'Avenir */
+  .font-avenir {
+    font-family: "AvenirNextLTPro", sans-serif !important;
+  }
+
+  /* Poids de police pour Avenir Next */
+  .font-ultralight {
+    font-family: "AvenirNextLTPro", sans-serif;
+    font-weight: 200;
+  }
+
+  .font-regular {
+    font-family: "AvenirNextLTPro", sans-serif;
+    font-weight: 400;
+  }
+
+  .font-medium {
+    font-family: "AvenirNextLTPro", sans-serif;
+    font-weight: 500;
+  }
+
+  .font-bold {
+    font-family: "AvenirNextLTPro", sans-serif;
+    font-weight: 700;
+  }
+
+  /* Fix pour les composants Tailwind */
+  .font-sans {
+    font-family: "AvenirNextLTPro", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+  }
+</style>
+
+<!-- Préchargement des fonts pour améliorer les performances -->
+<link rel="preload" href="/fonts/AvenirNextLTPro-Regular.woff" as="font" type="font/woff" crossorigin="anonymous">
+<link rel="preload" href="/fonts/AvenirNextLTPro-Medium.woff" as="font" type="font/woff" crossorigin="anonymous">
+<link rel="preload" href="/fonts/AvenirNextLTPro-Bold.woff" as="font" type="font/woff" crossorigin="anonymous">

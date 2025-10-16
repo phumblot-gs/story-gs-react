@@ -186,6 +186,10 @@ export default defineConfig({
         // Éviter de bundler les dépendances externes
         assetFileNames: (assetInfo) => {
           if (assetInfo.name === 'style.css') return 'style.css';
+          // Gérer les fonts
+          if (assetInfo.name?.match(/\.(woff|woff2|ttf|eot)$/)) {
+            return 'fonts/[name][extname]';
+          }
           return assetInfo.name || '';
         },
       },
