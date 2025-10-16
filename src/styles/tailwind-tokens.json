@@ -1,0 +1,50 @@
+{
+  "colors": {
+    "-black": "var(--color-black)",
+    "-grey-light": "var(--color-grey-light)",
+    "-white": "var(--color-white)",
+    "-blue-primary": "var(--color-blue-primary)",
+    "-green-primary": "var(--color-green-primary)",
+    "-pastel-yellow": "var(--color-pastel-yellow)",
+    "-yellow": "var(--color-yellow)",
+    "-green": "var(--color-green)",
+    "-blue": "var(--color-blue)",
+    "-red-strong": "var(--color-red-strong)",
+    "-grey-strongest": "var(--color-grey-strongest)",
+    "-black-secondary": "var(--color-black-secondary)",
+    "-overlay20": "var(--color-overlay20)",
+    "-orange": "var(--color-orange)",
+    "-pink": "var(--color-pink)",
+    "-purple": "var(--color-purple)",
+    "-pastel-yellow-secondary": "var(--color-pastel-yellow-secondary)",
+    "-grey": "var(--color-grey)",
+    "-khaki": "var(--color-khaki)",
+    "-grey-lighter": "var(--color-grey-lighter)",
+    "-pastel-blue": "var(--color-pastel-blue)",
+    "-pastel-green": "var(--color-pastel-green)",
+    "-pastel-blue-secondary": "var(--color-pastel-blue-secondary)",
+    "-overlay80": "var(--color-overlay80)",
+    "-grey-strong": "var(--color-grey-strong)",
+    "-overlay60": "var(--color-overlay60)",
+    "-braun": "var(--color-braun)",
+    "-grey-stronger": "var(--color-grey-stronger)",
+    "-overlay-invert20": "var(--color-overlay-invert20)",
+    "-overlay-invert60": "var(--color-overlay-invert60)",
+    "-overlay-invert80": "var(--color-overlay-invert80)"
+  },
+  "spacing": {
+    "-large-standard": "20px",
+    "-medium": "10px",
+    "-small": "5px",
+    "-xlarge": "30px",
+    "-xxlarge": "40px",
+    "-xxxlarge": "50px"
+  },
+  "fontSize": {
+    "base": "13px",
+    "lg": "16px",
+    "xl": "18px",
+    "sm": "11px",
+    "xs": "7px"
+  }
+}

@@ -1,0 +1,172 @@
+/**
+ * Variables CSS générées automatiquement depuis les tokens Figma
+ * NE PAS MODIFIER DIRECTEMENT - Généré par scripts/generate-css-tokens.cjs
+ * Date: 2025-10-16T08:53:25.094Z
+ */
+
+:root {
+  --color-black: #292828;
+  --color-grey-light: #efefef;
+  --color-white: #ffffff;
+  --color-blue-primary: #cdedff;
+  --color-green-primary: #9edeab;
+  --color-pastel-yellow: #ebed8c;
+  --color-yellow: #ffd331;
+  --color-green: #89cc52;
+  --color-blue: #74d4da;
+  --color-red-strong: #dd3733;
+  --color-grey-strongest: #595959;
+  --color-black-secondary: #3a3a3a;
+  --color-overlay20: #29282833;
+  --color-orange: #ff9900;
+  --color-pink: #ffaad4;
+  --color-purple: #a44c9f;
+  --color-pastel-yellow-secondary: #fff8d0;
+  --color-grey: #eaeaea;
+  --color-khaki: #b7bb28;
+  --font-size-base: 13px;
+  --spacing-large-standard: 20px;
+  --spacing-medium: 10px;
+  --spacing-small: 5px;
+  --spacing-xlarge: 30px;
+  --spacing-xxlarge: 40px;
+  --spacing-xxxlarge: 50px;
+  --font-size-lg: 16px;
+  --font-size-xl: 18px;
+  --font-size-sm: 11px;
+  --font-size-xs: 7px;
+  --font-tag-text: 13px;
+  --font-tag-grade: 9px;
+  --font-tag-text-lh: 16px;
+  --font-tag-text-ls: 0px;
+  --font-tag-grade-lh: 9px;
+  --font-tag-grade-ls: 0px;
+  --font-pagination-input: 11px;
+  --font-pagination-input-lh: 16px;
+  --font-pagination-input-ls: 0px;
+  --color-grey-lighter: #f3f3f3;
+  --color-pastel-blue: #74d4da;
+  --color-pastel-green: #a0e0ad;
+  --color-pastel-blue-secondary: #92d6c9;
+  --color-overlay80: #292828cc;
+  --color-grey-strong: #d9d7d7;
+  --color-overlay60: #29282899;
+  --color-braun: #b8802a;
+  --color-grey-stronger: #c1c1c1;
+  --color-overlay-invert20: #ffffff33;
+  --color-overlay-invert60: #ffffff99;
+  --color-overlay-invert80: #ffffffcc;
+  --color: #ffffff;
+
+  /* Alias pour compatibilité */
+  --bg-white: var(--color-white);
+  --bg-black: var(--color-black);
+  --bg-grey: var(--color-grey);
+  --bg-grey-lighter: var(--color-grey-lighter);
+  --bg-grey-strongest: var(--color-grey-strongest);
+  --text-grey-stronger: var(--color-grey-stronger);
+  --text-black: var(--color-black);
+  --text-white: var(--color-white);
+  --text-blue-primary: var(--color-blue-primary);
+  --text-blue: var(--color-blue);
+
+  /* Status colors */
+  --status-ignored-color: var(--color-grey-stronger);
+  --status-reshoot-color: var(--color-orange);
+  --status-not-selected-color: var(--color-grey);
+  --status-selected-color: var(--color-green);
+  --status-refused-color: var(--color-red-strong);
+  --status-for-approval-color: var(--color-yellow);
+  --status-validated-color: var(--color-green-primary);
+  --status-to-publish-color: var(--color-pastel-blue);
+  --status-error-color: var(--color-red-strong);
+  --status-published-color: var(--color-blue);
+}
+
+[data-theme="dark"] {
+  --color-black: #292828;
+  --color-grey-light: #efefef;
+  --color-white: #ffffff;
+  --color-blue-primary: #cdedff;
+  --color-green-primary: #9edeab;
+  --color-pastel-yellow: #e9eb8a;
+  --color-yellow: #ffd331;
+  --color-green: #89cc52;
+  --color-blue: #74d4da;
+  --color-red-strong: #dd3733;
+  --color-grey-strongest: #595959;
+  --color-black-secondary: #3a3a3a;
+  --color-overlay20: #29282833;
+  --color-orange: #ff9900;
+  --color-pink: #ffaad4;
+  --color-purple: #a44c9f;
+  --color-pastel-yellow-secondary: #fff8d0;
+  --color-grey: #eaeaea;
+  --color-khaki: #bbbf28;
+  --font-size-base: 13px;
+  --spacing-large-standard: 20px;
+  --spacing-medium: 10px;
+  --spacing-small: 5px;
+  --spacing-xlarge: 30px;
+  --spacing-xxlarge: 40px;
+  --spacing-xxxlarge: 50px;
+  --font-size-lg: 16px;
+  --font-size-xl: 18px;
+  --font-size-sm: 11px;
+  --font-size-xs: 7px;
+  --font-tag-text: 13px;
+  --font-tag-grade: 9px;
+  --font-tag-text-lh: 16px;
+  --font-tag-text-ls: 0px;
+  --font-tag-grade-lh: 9px;
+  --font-tag-grade-ls: 0px;
+  --font-pagination-input: 11px;
+  --font-pagination-input-lh: 16px;
+  --font-pagination-input-ls: 0px;
+  --color-grey-lighter: #f3f3f3;
+  --color-pastel-blue: #74d4da;
+  --color-pastel-green: #a0e0ad;
+  --color-pastel-blue-secondary: #92d6c9;
+  --color-overlay80: #292828cc;
+  --color-grey-strong: #d9d7d7;
+  --color-overlay60: #29282899;
+  --color-braun: #b8802a;
+  --color-grey-stronger: #c1c1c1;
+  --color-overlay-invert20: #ffffff33;
+  --color-overlay-invert60: #ffffff99;
+  --color-overlay-invert80: #ffffffcc;
+  --color: #ffffff;
+
+  /* Alias pour compatibilité */
+  --bg-white: var(--color-white);
+  --bg-black: var(--color-black);
+  --bg-grey: var(--color-grey);
+  --bg-grey-lighter: var(--color-grey-lighter);
+  --bg-grey-strongest: var(--color-grey-strongest);
+  --text-grey-stronger: var(--color-grey-stronger);
+  --text-black: var(--color-black);
+  --text-white: var(--color-white);
+  --text-blue-primary: var(--color-blue-primary);
+  --text-blue: var(--color-blue);
+
+  /* Status colors */
+  --status-ignored-color: var(--color-grey-stronger);
+  --status-reshoot-color: var(--color-orange);
+  --status-not-selected-color: var(--color-grey);
+  --status-selected-color: var(--color-green);
+  --status-refused-color: var(--color-red-strong);
+  --status-for-approval-color: var(--color-yellow);
+  --status-validated-color: var(--color-green-primary);
+  --status-to-publish-color: var(--color-pastel-blue);
+  --status-error-color: var(--color-red-strong);
+  --status-published-color: var(--color-blue);
+}
+
+/* Classes de thème */
+.theme-light {
+  color-scheme: light;
+}
+
+.theme-dark {
+  color-scheme: dark;
+}
