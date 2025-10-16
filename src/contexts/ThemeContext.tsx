@@ -1,6 +1,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useTheme as useNextTheme } from "next-themes";
+import { hexToRgb, isHexColor } from "@/utils/color-utils";
 
 // Define the theme customization options
 export interface ThemeCustomization {
@@ -237,6 +238,13 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
     setCustomization(defaultCustomization);
   };
 
+  // Helper function to set CSS variable with RGB conversion
+  const setCSSVariable = (name: string, value: string | undefined) => {
+    if (!value) return;
+    const cssValue = isHexColor(value) ? hexToRgb(value) : value;
+    document.documentElement.style.setProperty(name, cssValue);
+  };
+
   // Apply CSS variables for theme colors
   useEffect(() => {
     if (typeof window !== "undefined" && document.documentElement) {
@@ -270,78 +278,34 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
       
       // Now apply only the custom colors that are defined
       // Apply background colors
-      if (customization.colors.bgWhite) {
-        document.documentElement.style.setProperty('--bg-white', customization.colors.bgWhite);
-      }
-      if (customization.colors.bgBlack) {
-        document.documentElement.style.setProperty('--bg-black', customization.colors.bgBlack);
-      }
-      if (customization.colors.bgGrey) {
-        document.documentElement.style.setProperty('--bg-grey', customization.colors.bgGrey);
-      }
-      if (customization.colors.bgGreyLighter) {
-        document.documentElement.style.setProperty('--bg-grey-lighter', customization.colors.bgGreyLighter);
-      }
-      if (customization.colors.bgGreyStrongest) {
-        document.documentElement.style.setProperty('--bg-grey-strongest', customization.colors.bgGreyStrongest);
-      }
-      
+      setCSSVariable('--bg-white', customization.colors.bgWhite);
+      setCSSVariable('--bg-black', customization.colors.bgBlack);
+      setCSSVariable('--bg-grey', customization.colors.bgGrey);
+      setCSSVariable('--bg-grey-lighter', customization.colors.bgGreyLighter);
+      setCSSVariable('--bg-grey-strongest', customization.colors.bgGreyStrongest);
+
       // Apply text colors
-      if (customization.colors.textGreyStronger) {
-        document.documentElement.style.setProperty('--text-grey-stronger', customization.colors.textGreyStronger);
-      }
-      if (customization.colors.textBlack) {
-        document.documentElement.style.setProperty('--text-black', customization.colors.textBlack);
-      }
-      if (customization.colors.textWhite) {
-        document.documentElement.style.setProperty('--text-white', customization.colors.textWhite);
-      }
-      if (customization.colors.textBluePrimary) {
-        document.documentElement.style.setProperty('--text-blue-primary', customization.colors.textBluePrimary);
-      }
-      if (customization.colors.textBlue) {
-        document.documentElement.style.setProperty('--text-blue', customization.colors.textBlue);
-      }
+      setCSSVariable('--text-grey-stronger', customization.colors.textGreyStronger);
+      setCSSVariable('--text-black', customization.colors.textBlack);
+      setCSSVariable('--text-white', customization.colors.textWhite);
+      setCSSVariable('--text-blue-primary', customization.colors.textBluePrimary);
+      setCSSVariable('--text-blue', customization.colors.textBlue);
       
-      // Apply status colors
-      if (customization.colors.statusIgnored) {
-        document.documentElement.style.setProperty('--status-ignored-color', customization.colors.statusIgnored);
-      }
-      if (customization.colors.statusReshoot) {
-        document.documentElement.style.setProperty('--status-reshoot-color', customization.colors.statusReshoot);
-      }
-      if (customization.colors.statusNotSelected) {
-        document.documentElement.style.setProperty('--status-not-selected-color', customization.colors.statusNotSelected);
-      }
-      if (customization.colors.statusSelected) {
-        document.documentElement.style.setProperty('--status-selected-color', customization.colors.statusSelected);
-      }
-      if (customization.colors.statusRefused) {
-        document.documentElement.style.setProperty('--status-refused-color', customization.colors.statusRefused);
-      }
-      if (customization.colors.statusForApproval) {
-        document.documentElement.style.setProperty('--status-for-approval-color', customization.colors.statusForApproval);
-      }
-      if (customization.colors.statusValidated) {
-        document.documentElement.style.setProperty('--status-validated-color', customization.colors.statusValidated);
-      }
-      if (customization.colors.statusToPublish) {
-        document.documentElement.style.setProperty('--status-to-publish-color', customization.colors.statusToPublish);
-      }
-      if (customization.colors.statusError) {
-        document.documentElement.style.setProperty('--status-error-color', customization.colors.statusError);
-      }
-      if (customization.colors.statusPublished) {
-        document.documentElement.style.setProperty('--status-published-color', customization.colors.statusPublished);
-      }
-      
-      // Apply header gradient colors
-      if (customization.colors.headerGradientStart) {
-        document.documentElement.style.setProperty('--header-gradient-start', customization.colors.headerGradientStart);
-      }
-      if (customization.colors.headerGradientEnd) {
-        document.documentElement.style.setProperty('--header-gradient-end', customization.colors.headerGradientEnd);
-      }
+      // Apply status colors (keeping original format for status colors as they're hex)
+      setCSSVariable('--status-ignored-color', customization.colors.statusIgnored);
+      setCSSVariable('--status-reshoot-color', customization.colors.statusReshoot);
+      setCSSVariable('--status-not-selected-color', customization.colors.statusNotSelected);
+      setCSSVariable('--status-selected-color', customization.colors.statusSelected);
+      setCSSVariable('--status-refused-color', customization.colors.statusRefused);
+      setCSSVariable('--status-for-approval-color', customization.colors.statusForApproval);
+      setCSSVariable('--status-validated-color', customization.colors.statusValidated);
+      setCSSVariable('--status-to-publish-color', customization.colors.statusToPublish);
+      setCSSVariable('--status-error-color', customization.colors.statusError);
+      setCSSVariable('--status-published-color', customization.colors.statusPublished);
+
+      // Apply header gradient colors (keeping hex format for gradients)
+      setCSSVariable('--header-gradient-start', customization.colors.headerGradientStart);
+      setCSSVariable('--header-gradient-end', customization.colors.headerGradientEnd);
     }
   }, [customization.colors]);
 
