@@ -3,6 +3,7 @@ import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import dts from "vite-plugin-dts";
 import fs from "fs";
+import { visualizer } from "rollup-plugin-visualizer";
 
 // Fonction pour obtenir tous les points d'entrée
 const getEntryPoints = () => {
@@ -126,6 +127,12 @@ export default defineConfig({
       insertTypesEntry: true,
       copyDtsFiles: true,
     }),
+    visualizer({
+      filename: 'dist/bundle-stats.html',
+      open: false,
+      gzipSize: true,
+      brotliSize: true,
+    }),
   ],
   build: {
     lib: {
@@ -143,13 +150,27 @@ export default defineConfig({
         'react',
         'react-dom',
         'react/jsx-runtime',
-        // Ajouter les dépendances peer qui ne doivent pas être bundlées
-        'tailwindcss',
+        // Externaliser toutes les dépendances lourdes
+        /^@radix-ui/,
+        /^@tanstack/,
+        /^@hookform/,
         'next-themes',
-        '@radix-ui/react-*',
         'class-variance-authority',
         'clsx',
         'tailwind-merge',
+        'cmdk',
+        'date-fns',
+        'embla-carousel-react',
+        'input-otp',
+        'lucide-react',
+        'react-day-picker',
+        'react-hook-form',
+        'react-resizable-panels',
+        'react-router-dom',
+        'recharts',
+        'sonner',
+        'vaul',
+        'zod',
       ],
       output: {
         globals: {
