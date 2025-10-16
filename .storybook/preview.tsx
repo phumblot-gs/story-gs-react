@@ -1,6 +1,9 @@
-
+import React from "react";
 import type { Preview } from "@storybook/react";
+import { ThemeProvider } from "../src/contexts/ThemeContext";
+import { TranslationProvider } from "../src/contexts/TranslationContext";
 import "../src/index.css"; // Import your tailwind styles
+import "../src/styles/figma-tokens.css"; // Import Figma tokens
 
 const preview: Preview = {
   parameters: {
@@ -28,6 +31,15 @@ const preview: Preview = {
       ]
     }
   },
+  decorators: [
+    (Story) => (
+      <ThemeProvider>
+        <TranslationProvider defaultLanguage="FR">
+          <Story />
+        </TranslationProvider>
+      </ThemeProvider>
+    ),
+  ],
 };
 
 export default preview;
