@@ -1036,7 +1036,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
                 <span>{t('fileBrowser.loading')}</span>
               </span>
             ) : (
-              {t('fileBrowser.showMoreItems')}
+              t('fileBrowser.showMoreItems')
             )}
           </Button>
         </div>
