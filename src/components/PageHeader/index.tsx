@@ -6,6 +6,7 @@ import { IconName } from "@/components/ui/icons/types";
 import { useThemeValues } from "@/hooks/useThemeValues";
 import BrandLogo from "./BrandLogo";
 import { ButtonCircle } from "@/components/ui/button-circle";
+import { Layout, HStack } from "@/components/layout";
 
 export interface PageHeaderProps {
   logo?: React.ReactNode;
@@ -37,51 +38,59 @@ const PageHeader: React.FC<PageHeaderProps> = ({
   const { logo: themeLogo } = useThemeValues();
 
   return (
-    <header
+    <Layout
+      bg="white"
+      as="header"
       className={cn(
-        "box-border flex flex-row justify-between items-center px-5 py-[10px] pb-[13px] gap-5 w-full h-[53px] bg-white relative",
+        "box-border w-full relative",
         className
       )}
     >
-      {/* Left Side - with flex-shrink to allow truncation */}
-      <div className="flex items-center gap-5 flex-shrink overflow-hidden">
-        {logo ? (
-          <div className="w-[25px] flex-shrink-0">{logo}</div>
-        ) : (
-          <BrandLogo logo={themeLogo} width={25} height={14} className="flex-shrink-0" />
+      <HStack
+        justify="between"
+        align="center"
+        padding={3}
+      >
+        {/* Left Side - with flex-shrink to allow truncation */}
+        <HStack gap={4} align="center" className="flex-shrink overflow-hidden">
+          {logo ? (
+            <div className="w-5 flex-shrink-0">{logo}</div>
+          ) : (
+            <BrandLogo logo={themeLogo} width={25} height={14} className="flex-shrink-0" />
+          )}
+          <PageTitle
+            title={title}
+            showButton={showTitleButton}
+            buttonIcon={titleButtonIcon}
+            onButtonClick={onTitleButtonClick}
+            featured={true}
+            className="flex-shrink min-w-0"
+            showBackButton={showBackButton}
+            onBackButtonClick={onBackButtonClick}
+          />
+        </HStack>
+
+        {/* Center Side */}
+        {centerContent && (
+          <div className="flex justify-center flex-shrink-0">
+            {centerContent}
+          </div>
         )}
-        <PageTitle 
-          title={title} 
-          showButton={showTitleButton} 
-          buttonIcon={titleButtonIcon}
-          onButtonClick={onTitleButtonClick}
-          featured={true}
-          className="flex-shrink min-w-0"
-          showBackButton={showBackButton}
-          onBackButtonClick={onBackButtonClick}
-        />
-      </div>
-      
-      {/* Center Side */}
-      {centerContent && (
-        <div className="flex justify-center flex-shrink-0">
-          {centerContent}
-        </div>
-      )}
-      
-      {/* Right Side */}
-      {rightContent && (
-        <div className="flex items-center gap-3 flex-shrink-0">
-          {rightContent}
-        </div>
-      )}
+
+        {/* Right Side */}
+        {rightContent && (
+          <HStack gap={2} align="center" className="flex-shrink-0">
+            {rightContent}
+          </HStack>
+        )}
+      </HStack>
 
       {/* Gradient border at bottom using CSS variables for customization */}
       <div className={cn(
-        "absolute bottom-0 left-0 right-0 h-[3px] bg-gradient-to-r from-header-gradient-start to-header-gradient-end",
+        "absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-header-gradient-start to-header-gradient-end",
         isIdle && "bg-size-200 animate-gradient-flow"
-      )}></div>
-    </header>
+      )} />
+    </Layout>
   );
 };
 

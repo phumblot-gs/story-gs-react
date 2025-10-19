@@ -4,6 +4,7 @@ import { ButtonCircle } from "@/components/ui/button-circle";
 import { IconName } from "@/components/ui/icons/types";
 import { cn } from "@/lib/utils";
 import { TruncatedText } from "@/components/ui/truncated-text";
+import { HStack } from "@/components/layout";
 
 export interface PageTitleProps {
   title: string;
@@ -35,11 +36,18 @@ const PageTitle: React.FC<PageTitleProps> = ({
   };
 
   return (
-    <div className={cn("flex items-center gap-2", featured && "pl-5 border-l border-[#EAEAEA]", className)}>
+    <HStack
+      gap={2}
+      align="center"
+      className={cn(
+        featured && "pl-5 border-l border-grey",
+        className
+      )}
+    >
       {showBackButton && (
-        <ButtonCircle 
-          icon="ArrowLeft" 
-          size="large" 
+        <ButtonCircle
+          icon="ArrowLeft"
+          size="large"
           onClick={handleBackButtonClick}
           featured={featured}
           background="white"
@@ -49,7 +57,7 @@ const PageTitle: React.FC<PageTitleProps> = ({
         <TruncatedText text={title} as="h2" className="gs-typo-h2 whitespace-nowrap" tooltipSide="bottom" />
       </div>
       {showButton && <ButtonCircle icon={buttonIcon} size="large" onClick={onButtonClick} featured={featured} />}
-    </div>
+    </HStack>
   );
 };
 
