@@ -75,6 +75,10 @@ import type {
   FolderBrowserProps
 } from "./components/ui/folder-browser";
 
+// Export layout components
+export { Layout, HStack, VStack } from "./components/layout";
+export type { LayoutProps, HStackProps, VStackProps } from "./components/layout";
+
 // Export icons
 export * from "./components/ui/icons";
 export * from "./components/ui/icon-provider";

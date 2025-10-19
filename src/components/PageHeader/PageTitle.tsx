@@ -46,7 +46,7 @@ const PageTitle: React.FC<PageTitleProps> = ({
         />
       )}
       <div className="flex-1 min-w-0 overflow-hidden">
-        <TruncatedText text={title} as="h2" className="text-base font-light text-black whitespace-nowrap" tooltipSide="bottom" />
+        <TruncatedText text={title} as="h2" className="gs-typo-h2 whitespace-nowrap" tooltipSide="bottom" />
       </div>
       {showButton && <ButtonCircle icon={buttonIcon} size="large" onClick={onButtonClick} featured={featured} />}
     </div>

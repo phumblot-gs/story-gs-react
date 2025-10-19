@@ -1,0 +1,120 @@
+/**
+ * Styles typographiques générés depuis les primitives Figma
+ * Définit les styles pour les titres h1-h4 et autres typographies
+ */
+
+/* ============================================
+   Typography Primitives - Utility Classes
+   ============================================ */
+
+/* Titres */
+.gs-typo-h1 {
+  font-size: var(--font-size-xxl);
+  line-height: var(--font-lh-none);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+  font-family: var(--gs-font-sans);
+}
+
+.gs-typo-h2 {
+  font-size: var(--font-size-lg);
+  line-height: var(--font-lh-tight);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-black);
+  font-family: var(--gs-font-sans);
+}
+
+.gs-typo-h3 {
+  font-size: var(--font-size-base);
+  line-height: var(--font-lh-normal);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-black);
+  font-family: var(--gs-font-sans);
+  text-transform: uppercase;
+}
+
+.gs-typo-h4 {
+  font-size: var(--font-size-base);
+  line-height: var(--font-lh-normal);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-black);
+  font-family: var(--gs-font-sans);
+}
+
+/* Hero */
+.gs-typo-hero-title {
+  font-size: var(--font-size-xxl);
+  line-height: var(--font-lh-none);
+  font-weight: var(--font-weight-bold);
+  font-family: var(--gs-font-sans);
+}
+
+.gs-typo-hero-subtitle {
+  font-size: var(--font-size-lg);
+  line-height: var(--font-lh-none);
+  font-weight: var(--font-weight-regular);
+  font-family: var(--gs-font-sans);
+}
+
+/* Texte par défaut */
+.gs-typo-text-default {
+  font-size: var(--font-size-base);
+  line-height: var(--font-lh-none);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-black);
+  font-family: var(--gs-font-sans);
+}
+
+/* ============================================
+   Native HTML Elements Styling
+   ============================================ */
+
+h1 {
+  font-size: var(--font-size-xxl);
+  line-height: var(--font-lh-none);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+  font-family: var(--gs-font-sans);
+}
+
+h2 {
+  font-size: var(--font-size-lg);
+  line-height: var(--font-lh-tight);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-black);
+  font-family: var(--gs-font-sans);
+}
+
+h3 {
+  font-size: var(--font-size-base);
+  line-height: var(--font-lh-normal);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-black);
+  font-family: var(--gs-font-sans);
+  text-transform: uppercase;
+}
+
+h4 {
+  font-size: var(--font-size-base);
+  line-height: var(--font-lh-normal);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-black);
+  font-family: var(--gs-font-sans);
+}
+
+/* Body text par défaut */
+body {
+  font-size: var(--font-size-base);
+  line-height: var(--font-lh-none);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-black);
+  font-family: var(--gs-font-sans);
+}
+
+p {
+  font-size: var(--font-size-base);
+  line-height: var(--font-lh-none);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-black);
+  font-family: var(--gs-font-sans);
+}

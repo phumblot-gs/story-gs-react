@@ -111,17 +111,17 @@ const ActivityPanel: React.FC<ActivityPanelProps> = ({
           {/* Header with adjusted paddings - removed pt-[50px] */}
           <div className="flex items-center justify-between pl-[50px] pr-[20px]">
             <div className="flex items-center">
-              <h3 className="text-white text-base font-normal m-0">
-                {unreadCount === 0 
+              <h2 className="gs-typo-h2 text-white m-0">
+                {unreadCount === 0
                   ? t("notifications.upToDate")
                   : unreadCount === 1
                     ? t("notifications.oneUnread")
                     : t("notifications.multipleUnread", { count: unreadCount })
                 }
-              </h3>
+              </h2>
             </div>
-            
-            {unreadCount > 0 && <button onClick={markAllAsRead} className="text-white hover:underline text-xs">
+
+            {unreadCount > 0 && <button onClick={markAllAsRead} className="text-white hover:underline text-[length:var(--font-size-xs)]">
                 {t("notifications.markAsRead")}
               </button>}
           </div>
@@ -129,7 +129,7 @@ const ActivityPanel: React.FC<ActivityPanelProps> = ({
           {/* Notification list with flexbox layout */}
           <div className="flex-1 overflow-auto pl-[50px] pr-[20px] pt-[20px] pb-[50px]">
             {Object.entries(notificationsByDate).map(([dateStr, dateNotifications]) => <div key={dateStr} className="mb-4">
-                <div className="py-2 text-grey-stronger text-sm opacity-75">
+                <div className="py-2 text-grey-stronger text-[length:var(--font-size-sm)] opacity-75">
                   {dateStr}
                 </div>
                 <div className="flex flex-col gap-[10px]">

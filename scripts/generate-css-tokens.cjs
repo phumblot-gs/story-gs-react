@@ -4,26 +4,87 @@ const fs = require('fs');
 const path = require('path');
 
 // Charger les tokens
-const primitives = require('../src/styles/figma-primitives.json');
-const tokens = require('../src/styles/figma-tokens.json');
+const figmaData = require('../src/styles/figma-primitives.json');
+const primitives = figmaData;
+const tokens = figmaData;
+
+/**
+ * Convertit px en rem (base 16px)
+ */
+function pxToRem(px) {
+  return `${(px / 16).toFixed(4).replace(/\.?0+$/, '')}rem`;
+}
 
 /**
  * Convertit les noms de tokens Figma en noms de variables CSS
  */
 function tokenToCSSVar(tokenName) {
-  // colorsBlack -> --colors-black
-  // fontFtSizeBase -> --font-size-base
+  // colorsBlack -> --color-black
+  // textBase -> --font-size-base
+  // fontBold -> --font-weight-bold
+  // leadingNormal -> --font-lh-normal
   // paddingSmall -> --spacing-small
+  // spacing1 -> --spacing-1
+  // shadcnPrimary -> --primary
+  // shadcnPrimaryW -> ignoré (géré séparément)
 
   let cssName = tokenName;
 
   // Gérer les différents préfixes
   if (tokenName.startsWith('colors')) {
     cssName = tokenName.replace(/^colors/, '');
-    // Convertir camelCase en kebab-case
     cssName = cssName.replace(/([A-Z])/g, '-$1').toLowerCase();
     cssName = '--color' + cssName;
+  } else if (tokenName.startsWith('text')) {
+    // textXs -> --font-size-xs
+    cssName = tokenName.replace(/^text/, '');
+    cssName = cssName.replace(/([A-Z])/g, '-$1').toLowerCase();
+    cssName = '--font-size' + cssName;
+  } else if (tokenName.startsWith('font') && !tokenName.includes('Ft')) {
+    // fontBold -> --font-weight-bold
+    cssName = tokenName.replace(/^font/, '');
+    cssName = cssName.replace(/([A-Z])/g, '-$1').toLowerCase();
+    cssName = '--font-weight' + cssName;
+  } else if (tokenName.startsWith('leading')) {
+    // leadingNormal -> --font-lh-normal
+    cssName = tokenName.replace(/^leading/, '');
+    cssName = cssName.replace(/([A-Z])/g, '-$1').toLowerCase();
+    cssName = '--font-lh' + cssName;
+  } else if (tokenName.startsWith('spacing')) {
+    // spacing1 -> --spacing-1
+    cssName = tokenName.replace(/^spacing/, '');
+    cssName = cssName.replace(/([A-Z])/g, '-$1').toLowerCase();
+    cssName = '--spacing-' + cssName;
+  } else if (tokenName.startsWith('radius')) {
+    // radiusBase -> --border-radius-base
+    cssName = tokenName.replace(/^radius/, '');
+    cssName = cssName.replace(/([A-Z])/g, '-$1').toLowerCase();
+    cssName = '--border-radius' + cssName;
+  } else if (tokenName.startsWith('border')) {
+    // borderBase -> --border-width-base
+    cssName = tokenName.replace(/^border/, '');
+    cssName = cssName.replace(/([A-Z])/g, '-$1').toLowerCase();
+    cssName = '--border-width' + cssName;
+  } else if (tokenName.startsWith('shadow')) {
+    // shadowSm -> --box-shadow-sm
+    cssName = tokenName.replace(/^shadow/, '');
+    cssName = cssName.replace(/([A-Z])/g, '-$1').toLowerCase();
+    cssName = '--box-shadow' + cssName;
+  } else if (tokenName.startsWith('opacity')) {
+    // opacity50 -> --opacity-50
+    cssName = tokenName.replace(/^opacity/, '');
+    cssName = '--opacity-' + cssName;
+  } else if (tokenName.startsWith('z')) {
+    // z10 -> --z-index-10
+    cssName = tokenName.replace(/^z/, '');
+    cssName = '--z-index-' + cssName;
+  } else if (tokenName.startsWith('shadcn') && !tokenName.match(/[WGB]$/)) {
+    // shadcnPrimary -> --primary (base shadcn tokens)
+    cssName = tokenName.replace(/^shadcn/, '');
+    cssName = cssName.replace(/([A-Z])/g, '-$1').toLowerCase();
+    cssName = '--' + cssName.replace(/^-/, '');
   } else if (tokenName.startsWith('font')) {
+    // Old format: fontFtSizeBase -> --font-size-base
     cssName = tokenName.replace(/^font/, '');
     cssName = cssName.replace(/([A-Z])/g, '-$1').toLowerCase();
     cssName = '--font' + cssName;
@@ -48,19 +109,72 @@ function tokenToCSSVar(tokenName) {
 function generateThemeCSS(theme, tokens, selector) {
   let css = `${selector} {\n`;
 
-  // Parcourir tous les tokens
+  // Parcourir tous les tokens (sauf les tokens shadcn contextuels W/G/B)
   for (const [key, value] of Object.entries(tokens)) {
+    // Ignorer les tokens shadcn contextuels (avec suffixes W, G, B)
+    if (key.startsWith('shadcn') && key.match(/[WGB]$/)) {
+      continue;
+    }
+
     const cssVar = tokenToCSSVar(key);
 
     if (typeof value === 'string') {
       css += `  ${cssVar}: ${value};\n`;
     } else if (typeof value === 'number') {
-      // Pour les tailles de font et spacing
-      if (key.includes('font') || key.includes('Font')) {
+      // Font weights: valeurs sans unité (300, 400, 500, 700, 900)
+      if (key.startsWith('font') && !key.includes('Ft')) {
+        css += `  ${cssVar}: ${value};\n`;
+      }
+      // Line heights: valeurs relatives sans unité (1, 1.25, 1.5, etc.)
+      else if (key.startsWith('leading')) {
+        css += `  ${cssVar}: ${value};\n`;
+      }
+      // Font sizes: conversion px -> rem
+      else if (key.startsWith('text')) {
+        css += `  ${cssVar}: ${pxToRem(value)};\n`;
+      }
+      // Spacing: conversion px -> rem
+      else if (key.startsWith('spacing')) {
+        css += `  ${cssVar}: ${pxToRem(value)};\n`;
+      }
+      // Border radius: conversion px -> rem
+      else if (key.startsWith('radius') && value !== 9999) {
+        css += `  ${cssVar}: ${pxToRem(value)};\n`;
+      }
+      // Border radius full
+      else if (key.startsWith('radius') && value === 9999) {
         css += `  ${cssVar}: ${value}px;\n`;
-      } else if (key.includes('padding') || key.includes('Padding')) {
+      }
+      // Border width: px
+      else if (key.startsWith('border')) {
         css += `  ${cssVar}: ${value}px;\n`;
-      } else {
+      }
+      // Opacity: sans unité
+      else if (key.startsWith('opacity')) {
+        css += `  ${cssVar}: ${value};\n`;
+      }
+      // Z-index: sans unité
+      else if (key.startsWith('z')) {
+        css += `  ${cssVar}: ${value};\n`;
+      }
+      // Old format font-weight
+      else if (key.includes('Weight')) {
+        css += `  ${cssVar}: ${value};\n`;
+      }
+      // Old format line-height (valeurs < 10 = relatif)
+      else if (key.includes('Lh') && value < 10) {
+        css += `  ${cssVar}: ${value};\n`;
+      }
+      // Old format font sizes
+      else if (key.includes('font') || key.includes('Font')) {
+        css += `  ${cssVar}: ${pxToRem(value)};\n`;
+      }
+      // Spacing/padding -> conversion en rem
+      else if (key.includes('padding') || key.includes('Padding')) {
+        css += `  ${cssVar}: ${pxToRem(value)};\n`;
+      }
+      // Autres valeurs numériques
+      else {
         css += `  ${cssVar}: ${value};\n`;
       }
     }
@@ -98,6 +212,30 @@ function generateThemeCSS(theme, tokens, selector) {
 }
 
 /**
+ * Génère les variables CSS contextuelles shadcn pour un fond spécifique
+ */
+function generateShadcnContextCSS(tokens, context) {
+  const suffix = context === 'white' ? 'W' : context === 'grey' ? 'G' : 'B';
+  let css = `[data-bg="${context}"] {\n`;
+
+  // Extraire uniquement les tokens shadcn avec le bon suffixe
+  for (const [key, value] of Object.entries(tokens)) {
+    if (key.startsWith('shadcn') && key.endsWith(suffix)) {
+      // shadcnPrimaryW -> --primary
+      const baseName = key.replace(/^shadcn/, '').replace(new RegExp(suffix + '$'), '');
+      const cssVar = '--' + baseName.replace(/([A-Z])/g, '-$1').toLowerCase().replace(/^-/, '');
+
+      if (typeof value === 'string') {
+        css += `  ${cssVar}: ${value};\n`;
+      }
+    }
+  }
+
+  css += `}\n`;
+  return css;
+}
+
+/**
  * Génère le fichier CSS complet
  */
 function generateCSS() {
@@ -110,11 +248,20 @@ function generateCSS() {
 `;
 
   // Thème light (par défaut)
-  css += generateThemeCSS('light', primitives.light, ':root');
+  css += generateThemeCSS('light', primitives.primitives.light, ':root');
   css += '\n';
 
   // Thème dark
-  css += generateThemeCSS('dark', primitives.dark, '[data-theme="dark"]');
+  css += generateThemeCSS('dark', primitives.primitives.dark, '[data-theme="dark"]');
+  css += '\n';
+
+  // Variables contextuelles shadcn (fond white, grey, black)
+  css += `/* Variables shadcn contextuelles par type de fond */\n`;
+  css += generateShadcnContextCSS(tokens.tokens.light, 'white');
+  css += '\n';
+  css += generateShadcnContextCSS(tokens.tokens.light, 'grey');
+  css += '\n';
+  css += generateShadcnContextCSS(tokens.tokens.light, 'black');
   css += '\n';
 
   // Classes pour les thèmes
@@ -139,28 +286,41 @@ function generateTailwindConfig() {
     fontSize: {},
   };
 
+  const prims = primitives.primitives.light;
+
   // Extraire les couleurs
-  for (const [key, value] of Object.entries(primitives.light)) {
+  for (const [key, value] of Object.entries(prims)) {
     if (key.startsWith('colors') && typeof value === 'string') {
-      const name = key.replace('colors', '').replace(/([A-Z])/g, '-$1').toLowerCase();
+      const name = key.replace('colors', '').replace(/([A-Z])/g, '-$1').toLowerCase().replace(/^-/, '');
       const varName = tokenToCSSVar(key);
       config.colors[name] = `var(${varName})`;
     }
   }
 
-  // Extraire les spacings
-  for (const [key, value] of Object.entries(primitives.light)) {
-    if (key.startsWith('padding') && typeof value === 'number') {
-      const name = key.replace('padding', '').replace(/([A-Z])/g, '-$1').toLowerCase();
-      config.spacing[name] = `${value}px`;
+  // Extraire les spacings (nouvelle convention spacing1, spacing2, etc.)
+  for (const [key, value] of Object.entries(prims)) {
+    if (key.startsWith('spacing') && typeof value === 'number') {
+      const name = key.replace('spacing', '');
+      config.spacing[name] = pxToRem(value);
+    }
+    // Old format padding pour rétrocompatibilité
+    else if (key.startsWith('padding') && typeof value === 'number') {
+      const name = key.replace('padding', '').replace(/([A-Z])/g, '-$1').toLowerCase().replace(/^-/, '');
+      config.spacing[name] = pxToRem(value);
     }
   }
 
-  // Extraire les font sizes
-  for (const [key, value] of Object.entries(primitives.light)) {
-    if (key.startsWith('font') && key.includes('Size') && typeof value === 'number') {
+  // Extraire les font sizes (conversion en rem)
+  for (const [key, value] of Object.entries(prims)) {
+    // New format: textXs, textSm, etc.
+    if (key.startsWith('text') && typeof value === 'number') {
+      const name = key.replace('text', '').replace(/([A-Z])/g, '-$1').toLowerCase().replace(/^-/, '');
+      config.fontSize[name] = pxToRem(value);
+    }
+    // Old format: fontFtSizeXs, fontFtSizeSm, etc.
+    else if (key.startsWith('font') && key.includes('Size') && typeof value === 'number') {
       const name = key.replace('fontFtSize', '').toLowerCase();
-      config.fontSize[name] = `${value}px`;
+      config.fontSize[name] = pxToRem(value);
     }
   }
 

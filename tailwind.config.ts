@@ -17,45 +17,62 @@ export default {
 				'2xl': '1400px'
 			}
 		},
-		// Redefine base spacing using 5px multiples
-		spacing: {
-			'0': '0px',
-			'px': '1px',
-			'0.5': '2.5px',
-			'1': '5px',
-			'1.5': '7.5px',
-			'2': '10px',
-			'2.5': '12.5px',
-			'3': '15px',
-			'3.5': '17.5px',
-			'4': '20px',
-			'5': '25px',
-			'6': '30px',
-			'7': '35px',
-			'8': '40px',
-			'9': '45px',
-			'10': '50px',
-			'11': '55px',
-			'12': '60px',
-			'14': '70px',
-			'16': '80px',
-			'20': '100px',
-			'24': '120px',
-			'28': '140px',
-			'32': '160px',
-			'36': '180px',
-			'40': '200px',
-			'44': '220px',
-			'48': '240px',
-			'52': '260px',
-			'56': '280px',
-			'60': '300px',
-			'64': '320px',
-			'72': '360px',
-			'80': '400px',
-			'96': '480px',
-		},
 		extend: {
+			// Spacing personnalisé basé sur la charte (5px increments)
+			// Ces valeurs écrasent les valeurs par défaut de Tailwind tout en gardant les autres (px, 0.5, 1.5, etc.)
+			spacing: {
+				'0': '0rem',
+				'1': '0.3125rem',     // 5px (écrase Tailwind 4px)
+				'2': '0.625rem',      // 10px (écrase Tailwind 8px)
+				'3': '0.9375rem',     // 15px (écrase Tailwind 12px)
+				'4': '1.25rem',       // 20px (écrase Tailwind 16px)
+				'5': '1.5625rem',     // 25px (écrase Tailwind 20px)
+				'6': '1.875rem',      // 30px (écrase Tailwind 24px)
+				'8': '2.5rem',        // 40px (écrase Tailwind 32px)
+				'10': '3.125rem',     // 50px (écrase Tailwind 40px)
+				'12': '3.75rem',      // 60px (écrase Tailwind 48px)
+				'16': '5rem',         // 80px (écrase Tailwind 64px)
+				'20': '6.25rem',      // 100px (écrase Tailwind 80px)
+				'24': '7.5rem',       // 120px (écrase Tailwind 96px)
+				'28': '8.75rem',      // 140px (nouveau)
+				'30': '9.375rem',     // 150px (nouveau)
+				'32': '10rem',        // 160px (écrase Tailwind 128px)
+				'36': '11.25rem',     // 180px (écrase Tailwind 144px)
+				'40': '12.5rem',      // 200px (écrase Tailwind 160px)
+				'44': '13.75rem',     // 220px (nouveau)
+				'48': '15rem',        // 240px (écrase Tailwind 192px)
+				'50': '15.625rem',    // 250px (nouveau)
+				'52': '16.25rem',     // 260px (écrase Tailwind 208px)
+				'56': '17.5rem',      // 280px (écrase Tailwind 224px)
+				'60': '18.75rem',     // 300px (écrase Tailwind 240px)
+				'64': '20rem',        // 320px (écrase Tailwind 256px)
+				'68': '21.25rem',     // 340px (nouveau)
+				'70': '21.875rem',    // 350px (nouveau)
+				'72': '22.5rem',      // 360px (écrase Tailwind 288px)
+				'80': '25rem',        // 400px (écrase Tailwind 320px)
+				'90': '28.125rem',    // 450px (nouveau)
+				'100': '31.25rem',    // 500px (nouveau)
+				// Valeurs sémantiques spécifiques
+				'header': {
+					'height': 'var(--header-height)',
+					'pd-main-h': 'var(--header-pd-main-h)',
+					'pd-main-v': 'var(--header-pd-main-v)',
+					'pd-bloc-h': 'var(--header-pd-bloc-h)'
+				},
+				'button': {
+					'header-size': 'var(--button-header-size)',
+					'pd-header': 'var(--button-pd-header)',
+					'radius-header': 'var(--button-radius-header)'
+				},
+				'padding': {
+					'small': 'var(--padding-small)',
+					'medium': 'var(--padding-medium)',
+					'large': 'var(--padding-large)',
+					'xlarge': 'var(--padding-xlarge)',
+					'xxlarge': 'var(--padding-xxlarge)',
+					'xxxlarge': 'var(--padding-xxxlarge)'
+				}
+			},
 			// Ajout des polices personnalisées
 			fontFamily: {
 				'sans': ['var(--gs-font-sans, AvenirNextLTPro)', 'ui-sans-serif', 'system-ui', 'sans-serif'],
@@ -195,35 +212,29 @@ export default {
 				sm: 'calc(var(--radius) - 4px)'
 			},
 			fontSize: {
-				'xs': 'var(--font-size-xs)',
-				'sm': 'var(--font-size-sm)',
-				'base': 'var(--font-size-base)',
-				'lg': 'var(--font-size-lg)',
-				'xl': 'var(--font-size-xl)',
+				'xs': 'var(--font-size-xs)',      // 9px (0.5625rem)
+				'sm': 'var(--font-size-sm)',      // 11px (0.6875rem)
+				'base': 'var(--font-size-base)',  // 13px (0.8125rem)
+				'lg': 'var(--font-size-lg)',      // 16px (1rem)
+				'xl': 'var(--font-size-xl)',      // 18px (1.125rem)
+				'xxl': 'var(--font-size-xxl)',    // 20px (1.25rem)
 				'header-title': 'var(--header-fs-title)',
 				'button-header': 'var(--button-fs-header)'
 			},
-			// Custom spacing that overrides the base spacing are preserved in extend
-			spacing: {
-				'header': {
-					'height': 'var(--header-height)',
-					'pd-main-h': 'var(--header-pd-main-h)',
-					'pd-main-v': 'var(--header-pd-main-v)',
-					'pd-bloc-h': 'var(--header-pd-bloc-h)'
-				},
-				'button': {
-					'header-size': 'var(--button-header-size)',
-					'pd-header': 'var(--button-pd-header)',
-					'radius-header': 'var(--button-radius-header)'
-				},
-				'padding': {
-					'small': 'var(--padding-small)',
-					'medium': 'var(--padding-medium)',
-					'large': 'var(--padding-large)',
-					'xlarge': 'var(--padding-xlarge)',
-					'xxlarge': 'var(--padding-xxlarge)',
-					'xxxlarge': 'var(--padding-xxxlarge)'
-				}
+			fontWeight: {
+				'light': 'var(--font-weight-light)',      // 300
+				'regular': 'var(--font-weight-regular)',  // 400 (alias de normal)
+				'normal': 'var(--font-weight-regular)',   // 400
+				'medium': 'var(--font-weight-medium)',    // 500
+				'semibold': 'var(--font-weight-bold)',    // 700 (pas de 600 dans nos fonts)
+				'bold': 'var(--font-weight-bold)',        // 700
+				'heavy': 'var(--font-weight-heavy)',      // 900
+			},
+			lineHeight: {
+				'tight': 'var(--font-lh-tight)',      // 1
+				'125': 'var(--font-lh125)',           // 1.25
+				'normal': 'var(--font-lh-normal)',    // 1.5
+				'relaxed': 'var(--font-lh-relaxed)',  // 1.75
 			},
 			keyframes: {
 				'accordion-down': {
