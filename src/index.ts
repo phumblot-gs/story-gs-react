@@ -21,7 +21,7 @@ import {
   TabsTrigger,
   TabsContent,
 } from "./components/ui/tabs";
-import { ModalLayer } from "./components/ui/modal-layer";
+import { Modal } from "./components/layout/Modal";
 import { FolderBrowser } from "./components/ui/folder-browser";
 import ButtonNotifications from "./components/ButtonNotifications";
 import { ButtonNotificationsRef } from "./components/notifications/types";
@@ -67,8 +67,8 @@ import type {
 } from "./components/PageHeader";
 
 import type {
-  ModalLayerProps
-} from "./components/ui/modal-layer";
+  ModalProps
+} from "./components/layout/Modal";
 
 import type {
   FolderItem,
@@ -76,8 +76,8 @@ import type {
 } from "./components/ui/folder-browser";
 
 // Export layout components
-export { Layout, HStack, VStack } from "./components/layout";
-export type { LayoutProps, HStackProps, VStackProps } from "./components/layout";
+export { Layout, HStack, VStack, Modal } from "./components/layout";
+export type { LayoutProps, HStackProps, VStackProps, ModalProps } from "./components/layout";
 
 // Export icons
 export * from "./components/ui/icons";
@@ -91,8 +91,10 @@ export { LanguageSwitcher };
 export { FileBrowser };
 export { Select, SelectTrigger, SelectContent, SelectItem, SelectValue };
 export { Tabs, TabsList, TabsTrigger, TabsContent };
-export { ModalLayer };
 export { FolderBrowser };
+
+// Backward compatibility - ModalLayer is now Modal in layout
+export { Modal as ModalLayer };
 export { ButtonNotifications };
 export type { ButtonNotificationsRef };
 export { PageHeader };
@@ -116,7 +118,6 @@ export type {
   SortDirection,
   SelectBackground,
   PageHeaderProps,
-  ModalLayerProps,
   FolderItem,
   FolderBrowserProps
 };
@@ -129,6 +130,9 @@ export const ButtonSmall = (props: Omit<ButtonProps, "size">) => {
 };
 
 export type ButtonSmallProps = Omit<ButtonProps, "size">;
+
+// Backward compatibility type
+export type { ModalProps as ModalLayerProps };
 
 // Export status components
 export * from "./components/ButtonStatus";

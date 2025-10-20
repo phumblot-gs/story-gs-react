@@ -6,3 +6,6 @@ export type { HStackProps } from './HStack';
 
 export { VStack } from './VStack';
 export type { VStackProps } from './VStack';
+
+export { Modal } from './Modal';
+export type { ModalProps } from './Modal';

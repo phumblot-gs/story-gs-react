@@ -1,7 +1,8 @@
 import React, { useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
+import { Layout, VStack, HStack } from "@/components/layout";
 
-export interface ModalLayerProps {
+export interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   children: React.ReactNode;
@@ -12,9 +13,11 @@ export interface ModalLayerProps {
   footerClassName?: string;
   closeOnOverlayClick?: boolean;
   closeOnEscape?: boolean;
+  maxHeight?: string;
+  maxWidth?: string;
 }
 
-export const ModalLayer: React.FC<ModalLayerProps> = ({
+export const Modal: React.FC<ModalProps> = ({
   isOpen,
   onClose,
   children,
@@ -25,6 +28,8 @@ export const ModalLayer: React.FC<ModalLayerProps> = ({
   footerClassName,
   closeOnOverlayClick = true,
   closeOnEscape = true,
+  maxHeight = "90vh",
+  maxWidth = "90vw",
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
 
@@ -76,35 +81,33 @@ export const ModalLayer: React.FC<ModalLayerProps> = ({
       <div className="absolute inset-0 bg-overlay-20" />
 
       {/* Modal content */}
-      <div
+      <VStack
         ref={modalRef}
-        className={cn(
-          "relative z-10 flex flex-col bg-white shadow-lg max-h-[90vh] max-w-[90vw]",
-          className
-        )}
+        bg="white"
+        className={cn("relative z-10 shadow-lg", className)}
+        style={{ maxHeight, maxWidth }}
       >
         {/* Main content */}
-        <div
-          className={cn(
-            "flex-1 overflow-auto",
-            contentClassName
-          )}
+        <Layout
+          scroll="vertical"
+          className={cn("flex-1", contentClassName)}
         >
           {children}
-        </div>
+        </Layout>
 
         {/* Footer */}
         {footer && (
-          <div
-            className={cn(
-              "border-t border-gray-200 px-6 py-4 flex items-center justify-end gap-3",
-              footerClassName
-            )}
+          <HStack
+            justify="end"
+            align="center"
+            gap={3}
+            padding={4}
+            className={cn("border-t border-grey", footerClassName)}
           >
-            {footer}
-          </div>
+            {typeof footer === 'function' ? footer() : footer}
+          </HStack>
         )}
-      </div>
+      </VStack>
     </div>
   );
 };
