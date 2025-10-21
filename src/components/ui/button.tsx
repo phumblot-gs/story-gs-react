@@ -134,7 +134,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       >
         {children}
         {indicator && (
-          <span className="absolute bottom-0 right-0 w-1 h-1 rounded-full bg-yellow" />
+          <span className="absolute bottom-0 right-0 w-[7px] h-[7px] rounded-full bg-yellow" />
         )}
         {debug && (
           <span className="absolute -top-6 left-0 text-xs bg-pink text-white px-1 rounded whitespace-nowrap">
