@@ -80,9 +80,35 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  render: () => (
+  args: {
+    variant: 'normal',
+    size: 'large',
+    children: 'Enregistrer',
+  },
+  render: (args) => (
     <Layout bg="white" padding={6}>
-      <Button variant="normal">Enregistrer</Button>
+      <Button {...args} />
+    </Layout>
+  ),
+};
+
+export const Playground: Story = {
+  args: {
+    variant: 'normal',
+    size: 'large',
+    indicator: false,
+    debug: false,
+    disabled: false,
+    children: 'Bouton interactif',
+  },
+  render: (args) => (
+    <Layout bg="white" padding={6}>
+      <VStack gap={4}>
+        <p className="text-sm text-grey-stronger">
+          Utilisez les controls ci-dessous pour tester toutes les combinaisons de props
+        </p>
+        <Button {...args} />
+      </VStack>
     </Layout>
   ),
 };
