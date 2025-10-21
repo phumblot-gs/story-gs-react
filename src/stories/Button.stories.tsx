@@ -158,6 +158,94 @@ export const WithIcon: Story = {
   ),
 };
 
+export const IconsOnly: Story = {
+  render: () => (
+    <Layout bg="white" padding={6}>
+      <VStack gap={6}>
+        <div>
+          <h3 className="gs-typo-h3 mb-2">Boutons icône uniquement</h3>
+          <p className="text-sm text-grey-stronger">
+            Boutons sans texte, utilisant uniquement des icônes. Idéal pour les barres d'outils et interfaces compactes.
+          </p>
+        </div>
+
+        {/* Size Large */}
+        <VStack gap={3}>
+          <h4 className="text-sm font-medium">Size Large (défaut)</h4>
+          <HStack gap={3} align="center">
+            <Button variant="normal">{renderIcon("Plus")}</Button>
+            <Button variant="secondary">{renderIcon("Settings")}</Button>
+            <Button variant="ghost">{renderIcon("Trash")}</Button>
+            <Button variant="outline">{renderIcon("Edit")}</Button>
+            <Button variant="destructive">{renderIcon("Close")}</Button>
+            <Button variant="link">{renderIcon("ChevronRight")}</Button>
+          </HStack>
+        </VStack>
+
+        {/* Size Small */}
+        <VStack gap={3}>
+          <h4 className="text-sm font-medium">Size Small</h4>
+          <HStack gap={3} align="center">
+            <Button variant="normal" size="small">{renderIcon("Plus")}</Button>
+            <Button variant="secondary" size="small">{renderIcon("Settings")}</Button>
+            <Button variant="ghost" size="small">{renderIcon("Trash")}</Button>
+            <Button variant="outline" size="small">{renderIcon("Edit")}</Button>
+            <Button variant="destructive" size="small">{renderIcon("Close")}</Button>
+            <Button variant="link" size="small">{renderIcon("ChevronRight")}</Button>
+          </HStack>
+        </VStack>
+
+        {/* Avec Indicator */}
+        <VStack gap={3}>
+          <h4 className="text-sm font-medium">Avec Indicator (notifications, alertes)</h4>
+          <HStack gap={3} align="center">
+            <Button variant="normal" indicator>{renderIcon("Bell")}</Button>
+            <Button variant="secondary" indicator>{renderIcon("Mail")}</Button>
+            <Button variant="ghost" indicator size="small">{renderIcon("Bell")}</Button>
+            <Button variant="outline" indicator size="small">{renderIcon("Mail")}</Button>
+          </HStack>
+        </VStack>
+
+        {/* Disabled */}
+        <VStack gap={3}>
+          <h4 className="text-sm font-medium">États désactivés</h4>
+          <HStack gap={3} align="center">
+            <Button variant="normal" disabled>{renderIcon("Plus")}</Button>
+            <Button variant="secondary" disabled>{renderIcon("Settings")}</Button>
+            <Button variant="ghost" disabled>{renderIcon("Trash")}</Button>
+            <Button variant="normal" size="small" disabled>{renderIcon("Plus")}</Button>
+          </HStack>
+        </VStack>
+
+        {/* Différents backgrounds */}
+        <VStack gap={3}>
+          <h4 className="text-sm font-medium">Sur différents backgrounds</h4>
+          <HStack gap={4}>
+            <Layout bg="white" padding={3} className="border border-grey rounded">
+              <HStack gap={2}>
+                <Button variant="normal">{renderIcon("Plus")}</Button>
+                <Button variant="ghost">{renderIcon("Settings")}</Button>
+              </HStack>
+            </Layout>
+            <Layout bg="grey" padding={3} className="border border-grey rounded">
+              <HStack gap={2}>
+                <Button variant="normal">{renderIcon("Plus")}</Button>
+                <Button variant="ghost">{renderIcon("Settings")}</Button>
+              </HStack>
+            </Layout>
+            <Layout bg="black" padding={3} className="border border-grey rounded">
+              <HStack gap={2}>
+                <Button variant="normal">{renderIcon("Plus")}</Button>
+                <Button variant="ghost">{renderIcon("Settings")}</Button>
+              </HStack>
+            </Layout>
+          </HStack>
+        </VStack>
+      </VStack>
+    </Layout>
+  ),
+};
+
 export const WithIndicator: Story = {
   render: () => (
     <Layout bg="white" padding={6}>
