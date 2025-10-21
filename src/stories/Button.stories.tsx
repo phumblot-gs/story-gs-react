@@ -183,8 +183,8 @@ export const IconsOnly: Story = {
             <Button variant="normal" className="p-0 w-6 h-6">{renderIcon("Plus")}</Button>
             <Button variant="secondary" className="p-0 w-6 h-6">{renderIcon("Settings")}</Button>
             <Button variant="ghost" className="p-0 w-6 h-6">{renderIcon("Trash")}</Button>
-            <Button variant="outline" className="p-0 w-6 h-6">{renderIcon("Edit")}</Button>
-            <Button variant="destructive" className="p-0 w-6 h-6">{renderIcon("Close")}</Button>
+            <Button variant="outline" className="p-0 w-6 h-6">{renderIcon("Pencil")}</Button>
+            <Button variant="destructive" className="p-0 w-6 h-6">{renderIcon("X")}</Button>
           </HStack>
         </VStack>
 
@@ -195,8 +195,8 @@ export const IconsOnly: Story = {
             <Button variant="normal" size="small" className="p-1 w-4 h-4">{renderIcon("Plus")}</Button>
             <Button variant="secondary" size="small" className="p-1 w-4 h-4">{renderIcon("Settings")}</Button>
             <Button variant="ghost" size="small" className="p-1 w-4 h-4">{renderIcon("Trash")}</Button>
-            <Button variant="outline" size="small" className="p-1 w-4 h-4">{renderIcon("Edit")}</Button>
-            <Button variant="destructive" size="small" className="p-1 w-4 h-4">{renderIcon("Close")}</Button>
+            <Button variant="outline" size="small" className="p-1 w-4 h-4">{renderIcon("Pencil")}</Button>
+            <Button variant="destructive" size="small" className="p-1 w-4 h-4">{renderIcon("X")}</Button>
           </HStack>
         </VStack>
 
