@@ -101,25 +101,23 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const normalizedSize = normalizeSize(size);
 
     return (
-      <div className="relative inline-flex">
-        <Comp
-          ref={ref}
-          className={cn(
-            buttonVariants({
-              variant: normalizedVariant,
-              size: normalizedSize
-            }),
-            className
-          )}
-          {...props}
-        >
-          {children}
-        </Comp>
-
-        {indicator && (
-          <div className="absolute bottom-0 right-0 w-1 h-1 rounded-full bg-yellow" />
+      <Comp
+        ref={ref}
+        className={cn(
+          buttonVariants({
+            variant: normalizedVariant,
+            size: normalizedSize
+          }),
+          indicator && "relative", // Position relative seulement si indicator
+          className
         )}
-      </div>
+        {...props}
+      >
+        {children}
+        {indicator && (
+          <span className="absolute bottom-0 right-0 w-1 h-1 rounded-full bg-yellow" />
+        )}
+      </Comp>
     );
   }
 );
