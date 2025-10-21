@@ -7,3 +7,4 @@ export * from './status-icons';
 export * from './utility-icons';
 
 export * from './types';
+export * from './icon-renderer';
