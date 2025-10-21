@@ -87,6 +87,11 @@ export const MyLanguageSwitcher = () => {
   },
   tags: ["autodocs"],
   argTypes: {
+    size: {
+      control: "select",
+      options: ["small", "large"],
+      description: "Taille du bouton (small: w-4 h-4, large: w-6 h-6)",
+    },
     disabled: {
       control: "boolean",
       description: "Disables the language switcher",
@@ -94,6 +99,10 @@ export const MyLanguageSwitcher = () => {
     debug: {
       control: "boolean",
       description: "Enables debug logging to the console",
+    },
+    className: {
+      control: "text",
+      description: "Classes CSS Tailwind additionnelles",
     },
     languages: {
       description: "Array of language options",
