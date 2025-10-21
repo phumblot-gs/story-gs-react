@@ -73,7 +73,7 @@ const buttonVariants = cva(
         ghost: "btn-ghost",
         outline: "btn-outline",
         destructive: "btn-destructive",
-        link: "btn-link",
+        link: "btn-link hover:underline active:underline",
       },
       size: {
         small: "px-2 py-[4px] h-5 text-xs gap-1",  // 10px horizontal, 4px vertical, 20px height (12px content + 8px padding), gap 5px, font 9px

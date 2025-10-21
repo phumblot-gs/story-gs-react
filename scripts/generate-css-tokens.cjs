@@ -354,6 +354,10 @@ function generateButtonClassesCSS(tokens) {
           css += `  color: var(--button-${bg.name.charAt(0)}-${variant}-fg-pressed);\n`;
         }
 
+        if (variant === 'link') {
+          css += `  text-decoration: underline;\n`;
+        }
+
         css += `}\n\n`;
       }
 
