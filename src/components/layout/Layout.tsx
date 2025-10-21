@@ -84,7 +84,7 @@ const paddingClasses: Record<SpacingValue, string> = {
 };
 
 export function Layout({
-  bg = 'white',
+  bg,
   children,
   className,
   padding,
@@ -93,9 +93,9 @@ export function Layout({
 }: LayoutProps) {
   return (
     <Component
-      data-bg={bg}
+      {...(bg && { 'data-bg': bg })}
       className={cn(
-        // Couleur de fond selon le contexte
+        // Couleur de fond selon le contexte (seulement si bg est spécifié)
         bg === 'white' && 'bg-white',
         bg === 'grey' && 'bg-grey',
         bg === 'black' && 'bg-black',
