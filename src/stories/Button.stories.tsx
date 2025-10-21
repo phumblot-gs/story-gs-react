@@ -231,3 +231,61 @@ export const ShadcnCompatibility: Story = {
     </Layout>
   ),
 };
+
+export const NestedLayouts: Story = {
+  render: () => (
+    <VStack gap={4} padding={6}>
+      <h2 className="gs-typo-h2">Layouts imbriqués - Chaque niveau écrase le contexte parent</h2>
+
+      {/* Niveau 1: White */}
+      <Layout bg="white" padding={4} className="border-2 border-blue">
+        <VStack gap={3}>
+          <p className="text-sm font-medium">Layout bg="white" (niveau 1)</p>
+          <HStack gap={2}>
+            <Button variant="normal">Normal</Button>
+            <Button variant="ghost">Ghost</Button>
+          </HStack>
+
+          {/* Niveau 2: Grey - écrase white */}
+          <Layout bg="grey" padding={4} className="border-2 border-green">
+            <VStack gap={3}>
+              <p className="text-sm font-medium">Layout bg="grey" (niveau 2 - écrase white)</p>
+              <HStack gap={2}>
+                <Button variant="normal">Normal</Button>
+                <Button variant="ghost">Ghost</Button>
+              </HStack>
+
+              {/* Niveau 3: Black - écrase grey */}
+              <Layout bg="black" padding={4} className="border-2 border-yellow">
+                <VStack gap={3}>
+                  <p className="text-sm font-medium text-white">Layout bg="black" (niveau 3 - écrase grey)</p>
+                  <HStack gap={2}>
+                    <Button variant="normal">Normal (styles black)</Button>
+                    <Button variant="ghost">Ghost (styles black)</Button>
+                  </HStack>
+                </VStack>
+              </Layout>
+
+              <p className="text-sm text-grey-stronger">↑ Buttons ci-dessus utilisent styles BLACK (contexte le plus proche)</p>
+            </VStack>
+          </Layout>
+
+          <p className="text-sm text-grey-stronger">↑ Zone grise utilise styles GREY</p>
+        </VStack>
+      </Layout>
+
+      <div className="p-4 bg-blue-primary rounded">
+        <p className="text-sm font-medium">💡 Règle importante :</p>
+        <ul className="text-xs mt-2 space-y-1 list-disc list-inside">
+          <li>Chaque Layout avec <code>bg</code> crée un nouveau BgProvider React</li>
+          <li>Le contexte enfant <strong>écrase</strong> toujours le contexte parent</li>
+          <li>CSS utilise <code>[data-bg="..."]</code> de l'ancêtre le plus proche</li>
+          <li>Aucun héritage en cascade - chaque niveau est isolé</li>
+        </ul>
+      </div>
+    </VStack>
+  ),
+  parameters: {
+    layout: 'fullscreen',
+  },
+};
