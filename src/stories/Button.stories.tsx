@@ -73,6 +73,10 @@ import { renderIcon } from '@story-gs-react';
       action: 'clicked',
       description: 'Fonction appelée au clic (hérite de ButtonHTMLAttributes)',
     },
+    className: {
+      control: 'text',
+      description: 'Classes CSS Tailwind additionnelles (ex: "p-0 w-6 h-6" pour icône uniquement)',
+    },
   },
 } satisfies Meta<typeof Button>;
 
