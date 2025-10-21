@@ -170,10 +170,8 @@ export const IconsOnly: Story = {
           <div className="p-4 bg-blue-primary rounded">
             <p className="text-sm font-medium mb-2">💡 Dimensions recommandées pour icône uniquement :</p>
             <ul className="text-xs space-y-1 list-disc list-inside">
-              <li><code>size="large"</code> : Ajouter <code>className="p-0 w-6 h-6"</code> pour un bouton carré 24×24px (padding 0)</li>
-              <li><code>size="small"</code> : Ajouter <code>className="p-1 w-4 h-4"</code> pour un bouton carré 16×16px (padding 5px)</li>
-              <li>Sans dimensions spécifiées, le padding par défaut crée un rectangle</li>
-              <li>Les dimensions carrées sont recommandées pour une meilleure cohérence visuelle</li>
+              <li><code>size="large"</code> : Ajouter <code>className="p-0 w-6 h-6"</code></li>
+              <li><code>size="small"</code> : Ajouter <code>className="p-1 w-4 h-4"</code></li>
             </ul>
           </div>
         </div>
