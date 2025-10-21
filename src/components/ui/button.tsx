@@ -1,201 +1,129 @@
+import * as React from "react";
+import { Slot } from "@radix-ui/react-slot";
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "@/lib/utils";
 
-import * as React from "react"
-import { cn } from "@/lib/utils"
-import { Button as ButtonBase, buttonVariants, type ButtonProps as ButtonBaseProps } from "@/components/ui/button-base"
-import { cva, type VariantProps } from "class-variance-authority"
+// Types
+export type ButtonVariant = "normal" | "secondary" | "ghost" | "outline" | "destructive" | "link";
+export type ButtonSize = "small" | "large";
 
-export type ButtonBackground = "white" | "black" | "grey"
+// Mapping pour compatibilité shadcn
+type ShadcnVariant = "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
+type ShadcnSize = "sm" | "lg" | "default" | "icon";
 
-// Create a size variant using CVA
-const sizeVariants = cva('', {
-  variants: {
-    size: {
-      small: "text-xs py-[8px] px-[12px] h-[24px]",
-      large: "text-sm py-[10px] px-[15px] h-[30px]",
-      // Compatibility aliases
-      sm: "text-xs py-[8px] px-[12px] h-[24px]",
-      default: "text-sm py-[10px] px-[15px] h-[30px]",
-      lg: "text-sm py-[12px] px-[18px] h-[32px]",
-      icon: "p-0 h-8 w-8",
+/**
+ * Normalise les variants shadcn vers notre design system
+ */
+function normalizeVariant(variant?: ButtonVariant | ShadcnVariant): ButtonVariant {
+  switch (variant) {
+    case "default":
+    case "normal":
+    case undefined:
+      return "normal";
+
+    case "secondary":
+      return "secondary";
+
+    case "ghost":
+      return "ghost";
+
+    case "outline":
+      return "outline";
+
+    case "destructive":
+      return "destructive";
+
+    case "link":
+      return "link";
+
+    default:
+      return "normal";
+  }
+}
+
+/**
+ * Normalise les sizes shadcn vers notre design system
+ */
+function normalizeSize(size?: ButtonSize | ShadcnSize): ButtonSize {
+  switch (size) {
+    case "sm":
+    case "small":
+    case "icon":
+      return "small";
+
+    case "lg":
+    case "large":
+    case "default":
+    case undefined:
+      return "large";
+
+    default:
+      return "large";
+  }
+}
+
+// CVA variants
+const buttonVariants = cva(
+  "rounded-full font-regular inline-flex items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none",
+  {
+    variants: {
+      variant: {
+        normal: "btn-normal",
+        secondary: "btn-secondary",
+        ghost: "btn-ghost",
+        outline: "btn-outline",
+        destructive: "btn-destructive",
+        link: "btn-link",
+      },
+      size: {
+        small: "p-1 text-sm gap-1",  // 5px padding, gap 5px, font 11px
+        large: "p-1 text-base gap-2", // 5px padding, gap 10px, font 13px
+      },
     },
-  },
-  defaultVariants: { size: "large" },
-});
+    defaultVariants: {
+      variant: "normal",
+      size: "large",
+    },
+  }
+);
 
-export type ButtonSize = "small" | "large" | "sm" | "default" | "lg" | "icon"
-
-// Fix the interface to avoid circular reference
-export interface ButtonProps extends Omit<ButtonBaseProps, 'size'>, VariantProps<typeof sizeVariants> {
-  background?: ButtonBackground
-  indicator?: boolean
-  disabled?: boolean
-  featured?: boolean
-  isActive?: boolean
-  debug?: boolean
-  // Accept variant prop but type it properly to match the base component's variant options
-  variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link"
-  onClick?: React.MouseEventHandler<HTMLButtonElement>
-  onFocus?: React.FocusEventHandler<HTMLButtonElement>
-  onBlur?: React.FocusEventHandler<HTMLButtonElement>
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: ButtonVariant | ShadcnVariant;
+  size?: ButtonSize | ShadcnSize;
+  indicator?: boolean;
+  asChild?: boolean;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({
-    className,
-    background = "white",
-    indicator,
-    disabled,
-    featured = true,
-    isActive = false,
-    size,
-    children,
-    variant,
-    debug = false,
-    onClick,
-    onFocus,
-    onBlur,
-    ...props
-  }, ref) => {
-    // Get size-specific classes using CVA
-    const sizeClasses = sizeVariants({ size });
-
-    // Determine button styling based on background and states
-    const getButtonStyles = () => {
-      if (disabled) {
-        if (background === "white") {
-          return "bg-white text-grey-stronger"
-        } else if (background === "black") {
-          return "bg-black text-grey-stronger"
-        } else {
-          return "bg-grey text-grey-stronger"
-        }
-      }
-
-      // When isActive is true, apply black-secondary background with hover state based on original background
-      if (isActive) {
-        if (featured) {
-          switch (background) {
-            case "white":
-              return "bg-black-secondary text-white hover:bg-grey-lighter hover:text-black active:bg-black active:text-blue-primary"
-            case "black":
-              return "bg-black-secondary text-white hover:bg-grey-strongest hover:text-white active:bg-black active:text-blue-primary"
-            case "grey":
-              return "bg-black-secondary text-white hover:bg-white hover:text-black active:bg-black active:text-blue-primary"
-            default:
-              return "bg-black-secondary text-white hover:bg-grey-lighter hover:text-black active:bg-black active:text-blue-primary"
-          }
-        } else {
-          switch (background) {
-            case "white":
-              return "bg-black-secondary text-white hover:bg-white hover:text-black active:bg-black active:text-blue-primary"
-            case "black":
-              return "bg-black-secondary text-white hover:bg-black hover:text-white active:bg-black active:text-blue-primary"
-            case "grey":
-              return "bg-black-secondary text-white hover:bg-grey hover:text-black active:bg-black active:text-blue-primary"
-            default:
-              return "bg-black-secondary text-white hover:bg-white hover:text-black"
-          }
-        }
-      }
-
-      // For featured buttons, apply special background based on context
-      if (featured) {
-        switch (background) {
-          case "white":
-            return "bg-grey-lighter text-black hover:bg-black hover:text-white active:bg-black active:text-blue-primary"
-          case "black":
-            return "bg-grey-strongest text-white hover:bg-white hover:text-black active:bg-black active:text-blue-primary"
-          case "grey":
-            return "bg-white text-black hover:bg-black hover:text-white active:bg-black active:text-blue-primary"
-          default:
-            // Default to white background behavior
-            return "bg-grey-lighter text-black hover:bg-black hover:text-white active:bg-black active:text-blue-primary"
-        }
-      }
-
-      // Default styles (non-featured)
-      switch (background) {
-        case "white":
-          return "bg-white text-black hover:bg-black hover:text-white active:bg-black active:text-blue-primary"
-        case "black":
-          return "bg-black text-white hover:bg-white hover:text-black active:bg-black active:text-blue-primary"
-        case "grey":
-          return "bg-grey text-black hover:bg-black hover:text-white active:bg-black active:text-blue-primary"
-        default:
-          return "bg-white text-black hover:bg-black hover:text-white"
-      }
-    }
-
-    // Event handlers with debug mode
-    const handleClick: React.MouseEventHandler<HTMLButtonElement> = (e) => {
-      if (debug) console.log("Button: onClick triggered");
-      onClick?.(e);
-    };
-
-    const handleFocus: React.FocusEventHandler<HTMLButtonElement> = (e) => {
-      if (debug) console.log("Button: onFocus triggered");
-      onFocus?.(e);
-    };
-
-    const handleBlur: React.FocusEventHandler<HTMLButtonElement> = (e) => {
-      if (debug) console.log("Button: onBlur triggered");
-      onBlur?.(e);
-    };
-
-    // Handle variant prop for compatibility (map old variant props to appropriate styling)
-    let compatibilityClasses = "";
-    if (variant) {
-      switch(variant) {
-        case "outline":
-          compatibilityClasses = "border border-input bg-background hover:bg-accent hover:text-accent-foreground";
-          break;
-        case "ghost":
-          compatibilityClasses = "hover:bg-accent hover:text-accent-foreground";
-          break;
-        case "link":
-          compatibilityClasses = "text-primary underline-offset-4 hover:underline";
-          break;
-        case "destructive":
-          compatibilityClasses = "bg-destructive text-destructive-foreground hover:bg-destructive/90";
-          break;
-        case "secondary":
-          compatibilityClasses = "bg-secondary text-secondary-foreground hover:bg-secondary/80";
-          break;
-        default:
-          // Default variant styling already handled by other props
-          break;
-      }
-    }
+  ({ variant, size, indicator, className, children, asChild = false, ...props }, ref) => {
+    const Comp = asChild ? Slot : "button";
+    const normalizedVariant = normalizeVariant(variant);
+    const normalizedSize = normalizeSize(size);
 
     return (
-      <div className="relative">
-        <ButtonBase
+      <div className="relative inline-flex">
+        <Comp
           ref={ref}
           className={cn(
-            "relative rounded-full font-light flex items-center leading-none justify-center font-custom transition-colors duration-200",
-            sizeClasses,
-            getButtonStyles(),
-            compatibilityClasses,
+            buttonVariants({
+              variant: normalizedVariant,
+              size: normalizedSize
+            }),
             className
           )}
-          disabled={disabled}
-          onClick={handleClick}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
-          variant={variant}
           {...props}
         >
           {children}
-        </ButtonBase>
-        
+        </Comp>
+
         {indicator && (
-          <div className="absolute bottom-0 right-0 w-[7px] h-[7px] rounded-full bg-yellow"></div>
+          <div className="absolute bottom-0 right-0 w-1 h-1 rounded-full bg-yellow" />
         )}
       </div>
-    )
+    );
   }
-)
+);
 
-Button.displayName = "Button"
+Button.displayName = "Button";
 
-export { Button, buttonVariants }
+export { Button, buttonVariants };

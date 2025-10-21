@@ -236,6 +236,154 @@ function generateShadcnContextCSS(tokens, context) {
 }
 
 /**
+ * Génère les variables CSS Button pour :root
+ */
+function generateButtonTokensCSS(tokens) {
+  let css = '';
+
+  // Extraire tous les tokens button
+  const buttonTokens = {};
+  for (const [key, value] of Object.entries(tokens)) {
+    if (key.startsWith('button')) {
+      buttonTokens[key] = value;
+    }
+  }
+
+  // Générer les variables CSS
+  for (const [key, value] of Object.entries(buttonTokens)) {
+    // buttonWNormalBgDefault -> --button-w-normal-bg-default
+    const cssVar = '--' + key.replace(/([A-Z])/g, '-$1').toLowerCase().replace(/^--/, '--');
+
+    if (typeof value === 'string') {
+      css += `  ${cssVar}: ${value};\n`;
+    } else if (value === null) {
+      // Pour le variant link qui n'a pas de background
+      css += `  ${cssVar}: transparent;\n`;
+    }
+  }
+
+  return css;
+}
+
+/**
+ * Génère les classes CSS Button contextuelles pour chaque variant
+ */
+function generateButtonClassesCSS(tokens) {
+  const variants = ['normal', 'secondary', 'ghost', 'outline', 'destructive', 'link'];
+  const backgrounds = [
+    { name: 'white', prefix: 'W' },
+    { name: 'grey', prefix: 'G' },
+    { name: 'black', prefix: 'B' }
+  ];
+  const states = ['default', 'hover', 'pressed', 'disabled'];
+
+  let css = '';
+
+  for (const bg of backgrounds) {
+    css += `\n/* Button variants pour background ${bg.name} */\n`;
+
+    for (const variant of variants) {
+      const capitalizedVariant = variant.charAt(0).toUpperCase() + variant.slice(1);
+
+      css += `[data-bg="${bg.name}"] .btn-${variant} {\n`;
+
+      // Background
+      const bgToken = `button${bg.prefix}${capitalizedVariant}BgDefault`;
+      if (tokens[bgToken] !== undefined) {
+        if (tokens[bgToken] === null) {
+          css += `  background: transparent;\n`;
+        } else {
+          css += `  background: var(--button-${bg.name.charAt(0)}-${variant}-bg-default);\n`;
+        }
+      }
+
+      // Foreground
+      const fgToken = `button${bg.prefix}${capitalizedVariant}FgDefault`;
+      if (tokens[fgToken] !== undefined) {
+        css += `  color: var(--button-${bg.name.charAt(0)}-${variant}-fg-default);\n`;
+      }
+
+      // Border pour outline
+      if (variant === 'outline') {
+        css += `  border: 1px solid var(--button-${bg.name.charAt(0)}-${variant}-fg-default);\n`;
+      }
+
+      // Underline pour link
+      if (variant === 'link') {
+        css += `  text-decoration: none;\n`;
+      }
+
+      css += `}\n\n`;
+
+      // Hover
+      const bgHoverToken = `button${bg.prefix}${capitalizedVariant}BgHover`;
+      if (tokens[bgHoverToken] !== undefined) {
+        css += `[data-bg="${bg.name}"] .btn-${variant}:hover:not(:disabled) {\n`;
+
+        if (tokens[bgHoverToken] === null) {
+          css += `  background: transparent;\n`;
+        } else {
+          css += `  background: var(--button-${bg.name.charAt(0)}-${variant}-bg-hover);\n`;
+        }
+
+        const fgHoverToken = `button${bg.prefix}${capitalizedVariant}FgHover`;
+        if (tokens[fgHoverToken] !== undefined) {
+          css += `  color: var(--button-${bg.name.charAt(0)}-${variant}-fg-hover);\n`;
+        }
+
+        if (variant === 'link') {
+          css += `  text-decoration: underline;\n`;
+        }
+
+        css += `}\n\n`;
+      }
+
+      // Pressed (active)
+      const bgPressedToken = `button${bg.prefix}${capitalizedVariant}BgPressed`;
+      if (tokens[bgPressedToken] !== undefined) {
+        css += `[data-bg="${bg.name}"] .btn-${variant}:active:not(:disabled) {\n`;
+
+        if (tokens[bgPressedToken] === null) {
+          css += `  background: transparent;\n`;
+        } else {
+          css += `  background: var(--button-${bg.name.charAt(0)}-${variant}-bg-pressed);\n`;
+        }
+
+        const fgPressedToken = `button${bg.prefix}${capitalizedVariant}FgPressed`;
+        if (tokens[fgPressedToken] !== undefined) {
+          css += `  color: var(--button-${bg.name.charAt(0)}-${variant}-fg-pressed);\n`;
+        }
+
+        css += `}\n\n`;
+      }
+
+      // Disabled
+      const bgDisabledToken = `button${bg.prefix}${capitalizedVariant}BgDisabled`;
+      if (tokens[bgDisabledToken] !== undefined) {
+        css += `[data-bg="${bg.name}"] .btn-${variant}:disabled {\n`;
+
+        if (tokens[bgDisabledToken] === null) {
+          css += `  background: transparent;\n`;
+        } else {
+          css += `  background: var(--button-${bg.name.charAt(0)}-${variant}-bg-disabled);\n`;
+        }
+
+        const fgDisabledToken = `button${bg.prefix}${capitalizedVariant}FgDisabled`;
+        if (tokens[fgDisabledToken] !== undefined) {
+          css += `  color: var(--button-${bg.name.charAt(0)}-${variant}-fg-disabled);\n`;
+        }
+
+        css += `  cursor: not-allowed;\n`;
+        css += `  opacity: 0.5;\n`;
+        css += `}\n\n`;
+      }
+    }
+  }
+
+  return css;
+}
+
+/**
  * Génère le fichier CSS complet
  */
 function generateCSS() {
@@ -255,6 +403,12 @@ function generateCSS() {
   css += generateThemeCSS('dark', primitives.primitives.dark, '[data-theme="dark"]');
   css += '\n';
 
+  // Variables Button tokens
+  css += `/* Button tokens */\n`;
+  css += ':root {\n';
+  css += generateButtonTokensCSS(tokens.tokens.light);
+  css += '}\n\n';
+
   // Variables contextuelles shadcn (fond white, grey, black)
   css += `/* Variables shadcn contextuelles par type de fond */\n`;
   css += generateShadcnContextCSS(tokens.tokens.light, 'white');
@@ -263,6 +417,10 @@ function generateCSS() {
   css += '\n';
   css += generateShadcnContextCSS(tokens.tokens.light, 'black');
   css += '\n';
+
+  // Classes Button contextuelles
+  css += `/* Classes Button contextuelles */\n`;
+  css += generateButtonClassesCSS(tokens.tokens.light);
 
   // Classes pour les thèmes
   css += `/* Classes de thème */\n`;

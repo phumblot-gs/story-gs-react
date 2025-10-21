@@ -28,10 +28,10 @@ import { ButtonNotificationsRef } from "./components/notifications/types";
 import PageHeader from "./components/PageHeader";
 
 // Import types for re-export
-import type { 
-  ButtonBackground,
+import type {
   ButtonProps,
-  ButtonSize
+  ButtonSize,
+  ButtonVariant
 } from "./components/ui/button";
 
 import type {
@@ -101,9 +101,9 @@ export { PageHeader };
 
 // Export types
 export type {
-  ButtonBackground,
   ButtonProps,
   ButtonSize,
+  ButtonVariant,
   ButtonCircleBackground,
   ButtonCircleProps,
   ButtonCircleSize,
@@ -121,6 +121,9 @@ export type {
   FolderItem,
   FolderBrowserProps
 };
+
+// Backward compatibility types
+export type ButtonBackground = "white" | "grey" | "black";  // Deprecated, use Layout bg instead
 
 // For backward compatibility, export ButtonSmall as a type alias
 // and create a simple function that returns Button with size="small"

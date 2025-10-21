@@ -1,7 +1,7 @@
 /**
  * Variables CSS générées automatiquement depuis les tokens Figma
  * NE PAS MODIFIER DIRECTEMENT - Généré par scripts/generate-css-tokens.cjs
- * Date: 2025-10-19T17:05:42.151Z
+ * Date: 2025-10-21T08:41:19.731Z
  */
 
 :root {
@@ -310,6 +310,553 @@
   --status-published-color: var(--color-blue);
 }
 
+/* Button tokens */
+:root {
+  --button-w-ghost-bg-default: #ffffff;
+  --button-w-ghost-bg-pressed: #292828;
+  --button-w-ghost-bg-disabled: #ffffff;
+  --button-w-ghost-fg-default: #292828;
+  --button-w-ghost-fg-pressed: #cdedff;
+  --button-w-ghost-bg-hover: #292828;
+  --button-w-ghost-fg-hover: #ffffff;
+  --button-w-ghost-fg-disabled: #c1c1c1;
+  --button-w-indicator: #ffd331;
+  --button-w-secondary-bg-default: #f3f3f3;
+  --button-w-secondary-fg-default: #292828;
+  --button-g-ghost-bg-default: #eaeaea;
+  --button-g-ghost-bg-pressed: #292828;
+  --button-g-ghost-bg-disabled: #eaeaea;
+  --button-g-ghost-fg-default: #292828;
+  --button-g-ghost-fg-pressed: #cdedff;
+  --button-g-ghost-fg-disabled: #c1c1c1;
+  --button-g-indicator: #ffd331;
+  --button-b-secondary-bg-default: #3a3a3a;
+  --button-b-secondary-bg-pressed: #3a3a3a;
+  --button-b-secondary-bg-disabled: #3a3a3a;
+  --button-b-secondary-fg-default: #ffffff;
+  --button-b-secondary-fg-pressed: #cdedff;
+  --button-b-secondary-fg-disabled: #c1c1c1;
+  --button-b-indicator: #ffd331;
+  --button-status-w-validated-bg-default: #f3f3f3;
+  --button-status-w-validated-fg-default: #292828;
+  --button-status-w-validated-bg-hover: #89cc52;
+  --button-status-w-validated-fg-hover: #ffffff;
+  --button-status-w-validated-bg-pressed: #292828;
+  --button-status-w-validated-fg-pressed: #cdedff;
+  --button-status-w-validated-bg-disabled: #f3f3f3;
+  --button-status-w-validated-fg-disabled: #c1c1c1;
+  --button-status-w-validated-bg-active: #89cc52;
+  --button-status-w-validated-fg-active: #ffffff;
+  --button-status-w-reshoot-bg-default: #f3f3f3;
+  --button-status-w-reshoot-fg-default: #292828;
+  --button-status-w-reshoot-bg-hover: #a44c9f;
+  --button-status-w-reshoot-fg-hover: #ffffff;
+  --button-status-w-reshoot-bg-pressed: #292828;
+  --button-status-w-reshoot-fg-pressed: #cdedff;
+  --button-status-w-reshoot-bg-disabled: #f3f3f3;
+  --button-status-w-reshoot-fg-disabled: #c1c1c1;
+  --button-status-w-reshoot-bg-active: #a44c9f;
+  --button-status-w-reshoot-fg-active: #ffffff;
+  --button-status-w-ignored-bg-default: #f3f3f3;
+  --button-status-w-ignored-fg-default: #292828;
+  --button-status-w-ignored-bg-hover: #eaeaea;
+  --button-status-w-ignored-fg-hover: #ffffff;
+  --button-status-w-ignored-bg-pressed: #292828;
+  --button-status-w-ignored-fg-pressed: #cdedff;
+  --button-status-w-ignored-bg-disabled: #f3f3f3;
+  --button-status-w-ignored-fg-disabled: #c1c1c1;
+  --button-status-w-ignored-bg-active: #eaeaea;
+  --button-status-w-ignored-fg-active: #ffffff;
+  --button-status-w-selected-bg-default: #f3f3f3;
+  --button-status-w-selected-fg-default: #292828;
+  --button-status-w-selected-bg-hover: #74d4da;
+  --button-status-w-selected-fg-hover: #ffffff;
+  --button-status-w-selected-bg-pressed: #292828;
+  --button-status-w-selected-fg-pressed: #cdedff;
+  --button-status-w-selected-bg-disabled: #f3f3f3;
+  --button-status-w-selected-fg-disabled: #c1c1c1;
+  --button-status-w-selected-bg-active: #74d4da;
+  --button-status-w-selected-fg-active: #ffffff;
+  --button-status-w-forapproval-bg-default: #f3f3f3;
+  --button-status-w-forapproval-fg-default: #292828;
+  --button-status-w-forapproval-bg-hover: #ffd331;
+  --button-status-w-forapproval-fg-hover: #ffffff;
+  --button-status-w-forapproval-bg-pressed: #292828;
+  --button-status-w-forapproval-fg-pressed: #cdedff;
+  --button-status-w-forapproval-bg-disabled: #f3f3f3;
+  --button-status-w-forapproval-fg-disabled: #c1c1c1;
+  --button-status-w-forapproval-bg-active: #ffd331;
+  --button-status-w-forapproval-fg-active: #ffffff;
+  --button-status-w-refused-bg-default: #f3f3f3;
+  --button-status-w-refused-fg-default: #292828;
+  --button-status-w-refused-bg-hover: #595959;
+  --button-status-w-refused-fg-hover: #ffffff;
+  --button-status-w-refused-bg-pressed: #292828;
+  --button-status-w-refused-fg-pressed: #cdedff;
+  --button-status-w-refused-bg-disabled: #f3f3f3;
+  --button-status-w-refused-fg-disabled: #c1c1c1;
+  --button-status-w-refused-bg-active: #595959;
+  --button-status-w-refused-fg-active: #ffffff;
+  --button-status-w-topublish-bg-default: #f3f3f3;
+  --button-status-w-topublish-fg-default: #292828;
+  --button-status-w-topublish-bg-hover: #b7bb28;
+  --button-status-w-topublish-fg-hover: #ffffff;
+  --button-status-w-topublish-bg-pressed: #292828;
+  --button-status-w-topublish-fg-pressed: #cdedff;
+  --button-status-w-topublish-bg-disabled: #f3f3f3;
+  --button-status-w-topublish-fg-disabled: #c1c1c1;
+  --button-status-w-topublish-bg-active: #b7bb28;
+  --button-status-w-topublish-fg-active: #ffffff;
+  --button-status-w-published-bg-default: #f3f3f3;
+  --button-status-w-published-fg-default: #292828;
+  --button-status-w-published-bg-hover: #b8802a;
+  --button-status-w-published-fg-hover: #ffffff;
+  --button-status-w-published-bg-pressed: #292828;
+  --button-status-w-published-fg-pressed: #cdedff;
+  --button-status-w-published-bg-disabled: #f3f3f3;
+  --button-status-w-published-fg-disabled: #c1c1c1;
+  --button-status-w-published-bg-active: #b8802a;
+  --button-status-w-published-fg-active: #ffffff;
+  --button-status-w-error-bg-default: #f3f3f3;
+  --button-status-w-error-fg-default: #292828;
+  --button-status-w-error-bg-hover: #dd3733;
+  --button-status-w-error-fg-hover: #ffffff;
+  --button-status-w-error-bg-pressed: #292828;
+  --button-status-w-error-fg-pressed: #cdedff;
+  --button-status-w-error-bg-disabled: #f3f3f3;
+  --button-status-w-error-fg-disabled: #c1c1c1;
+  --button-status-w-error-bg-active: #dd3733;
+  --button-status-w-error-fg-active: #ffffff;
+  --button-status-g-validated-bg-default: #ffffff;
+  --button-status-g-validated-fg-default: #292828;
+  --button-status-g-validated-bg-hover: #89cc52;
+  --button-status-g-validated-fg-hover: #ffffff;
+  --button-status-g-validated-bg-pressed: #292828;
+  --button-status-g-validated-fg-pressed: #cdedff;
+  --button-status-g-validated-bg-disabled: #ffffff;
+  --button-status-g-validated-fg-disabled: #c1c1c1;
+  --button-status-g-validated-bg-active: #89cc52;
+  --button-status-g-validated-fg-active: #ffffff;
+  --button-status-g-reshoot-bg-default: #ffffff;
+  --button-status-g-reshoot-fg-default: #292828;
+  --button-status-g-reshoot-bg-hover: #a44c9f;
+  --button-status-g-reshoot-fg-hover: #ffffff;
+  --button-status-g-reshoot-bg-pressed: #292828;
+  --button-status-g-reshoot-fg-pressed: #cdedff;
+  --button-status-g-reshoot-bg-disabled: #ffffff;
+  --button-status-g-reshoot-fg-disabled: #c1c1c1;
+  --button-status-g-reshoot-bg-active: #a44c9f;
+  --button-status-g-reshoot-fg-active: #ffffff;
+  --button-status-g-ignored-bg-default: #ffffff;
+  --button-status-g-ignored-fg-default: #292828;
+  --button-status-g-ignored-bg-hover: #eaeaea;
+  --button-status-g-ignored-fg-hover: #ffffff;
+  --button-status-g-ignored-bg-pressed: #292828;
+  --button-status-g-ignored-fg-pressed: #cdedff;
+  --button-status-g-ignored-bg-disabled: #ffffff;
+  --button-status-g-ignored-fg-disabled: #c1c1c1;
+  --button-status-g-ignored-bg-active: #eaeaea;
+  --button-status-g-ignored-fg-active: #ffffff;
+  --button-status-g-selected-bg-default: #ffffff;
+  --button-status-g-selected-fg-default: #292828;
+  --button-status-g-selected-bg-hover: #74d4da;
+  --button-status-g-selected-fg-hover: #ffffff;
+  --button-status-g-selected-bg-pressed: #292828;
+  --button-status-g-selected-fg-pressed: #cdedff;
+  --button-status-g-selected-bg-disabled: #ffffff;
+  --button-status-g-selected-fg-disabled: #c1c1c1;
+  --button-status-g-selected-bg-active: #74d4da;
+  --button-status-g-selected-fg-active: #ffffff;
+  --button-status-g-forapproval-bg-default: #ffffff;
+  --button-status-g-forapproval-fg-default: #292828;
+  --button-status-g-forapproval-bg-hover: #ffd331;
+  --button-status-g-forapproval-fg-hover: #ffffff;
+  --button-status-g-forapproval-bg-pressed: #292828;
+  --button-status-g-forapproval-fg-pressed: #cdedff;
+  --button-status-g-forapproval-bg-disabled: #ffffff;
+  --button-status-g-forapproval-fg-disabled: #c1c1c1;
+  --button-status-g-forapproval-bg-active: #ffd331;
+  --button-status-g-forapproval-fg-active: #ffffff;
+  --button-status-g-refused-bg-default: #ffffff;
+  --button-status-g-refused-fg-default: #292828;
+  --button-status-g-refused-bg-hover: #595959;
+  --button-status-g-refused-fg-hover: #ffffff;
+  --button-status-g-refused-bg-pressed: #292828;
+  --button-status-g-refused-fg-pressed: #cdedff;
+  --button-status-g-refused-bg-disabled: #ffffff;
+  --button-status-g-refused-fg-disabled: #c1c1c1;
+  --button-status-g-refused-bg-active: #595959;
+  --button-status-g-refused-fg-active: #ffffff;
+  --button-status-g-topublish-bg-default: #ffffff;
+  --button-status-g-topublish-fg-default: #292828;
+  --button-status-g-topublish-bg-hover: #b7bb28;
+  --button-status-g-topublish-fg-hover: #ffffff;
+  --button-status-g-topublish-bg-pressed: #292828;
+  --button-status-g-topublish-fg-pressed: #cdedff;
+  --button-status-g-topublish-bg-disabled: #ffffff;
+  --button-status-g-topublish-fg-disabled: #c1c1c1;
+  --button-status-g-topublish-bg-active: #b7bb28;
+  --button-status-g-topublish-fg-active: #ffffff;
+  --button-status-g-published-bg-default: #ffffff;
+  --button-status-g-published-fg-default: #292828;
+  --button-status-g-published-bg-hover: #b8802a;
+  --button-status-g-published-fg-hover: #ffffff;
+  --button-status-g-published-bg-pressed: #292828;
+  --button-status-g-published-fg-pressed: #cdedff;
+  --button-status-g-published-bg-disabled: #ffffff;
+  --button-status-g-published-fg-disabled: #c1c1c1;
+  --button-status-g-published-bg-active: #b8802a;
+  --button-status-g-published-fg-active: #ffffff;
+  --button-status-g-error-bg-default: #ffffff;
+  --button-status-g-error-fg-default: #292828;
+  --button-status-g-error-bg-hover: #dd3733;
+  --button-status-g-error-fg-hover: #ffffff;
+  --button-status-g-error-bg-pressed: #292828;
+  --button-status-g-error-fg-pressed: #cdedff;
+  --button-status-g-error-bg-disabled: #ffffff;
+  --button-status-g-error-fg-disabled: #c1c1c1;
+  --button-status-g-error-bg-active: #dd3733;
+  --button-status-g-error-fg-active: #ffffff;
+  --button-status-b-validated-bg-default: #3a3a3a;
+  --button-status-b-validated-fg-default: #ffffff;
+  --button-status-b-validated-bg-hover: #89cc52;
+  --button-status-b-validated-fg-hover: #ffffff;
+  --button-status-b-validated-bg-pressed: #292828;
+  --button-status-b-validated-fg-pressed: #cdedff;
+  --button-status-b-validated-bg-disabled: #3a3a3a;
+  --button-status-b-validated-fg-disabled: #c1c1c1;
+  --button-status-b-validated-bg-active: #89cc52;
+  --button-status-b-validated-fg-active: #ffffff;
+  --button-status-b-reshoot-bg-default: #3a3a3a;
+  --button-status-b-reshoot-fg-default: #ffffff;
+  --button-status-b-reshoot-bg-hover: #a44c9f;
+  --button-status-b-reshoot-fg-hover: #ffffff;
+  --button-status-b-reshoot-bg-pressed: #292828;
+  --button-status-b-reshoot-fg-pressed: #cdedff;
+  --button-status-b-reshoot-bg-disabled: #3a3a3a;
+  --button-status-b-reshoot-fg-disabled: #c1c1c1;
+  --button-status-b-reshoot-bg-active: #a44c9f;
+  --button-status-b-reshoot-fg-active: #ffffff;
+  --button-status-b-ignored-bg-default: #3a3a3a;
+  --button-status-b-ignored-fg-default: #ffffff;
+  --button-status-b-ignored-bg-hover: #eaeaea;
+  --button-status-b-ignored-fg-hover: #ffffff;
+  --button-status-b-ignored-bg-pressed: #292828;
+  --button-status-b-ignored-fg-pressed: #cdedff;
+  --button-status-b-ignored-bg-disabled: #3a3a3a;
+  --button-status-b-ignored-fg-disabled: #c1c1c1;
+  --button-status-b-ignored-bg-active: #eaeaea;
+  --button-status-b-ignored-fg-active: #ffffff;
+  --button-status-b-selected-bg-default: #3a3a3a;
+  --button-status-b-selected-fg-default: #ffffff;
+  --button-status-b-selected-bg-hover: #74d4da;
+  --button-status-b-selected-fg-hover: #ffffff;
+  --button-status-b-selected-bg-pressed: #292828;
+  --button-status-b-selected-fg-pressed: #cdedff;
+  --button-status-b-selected-bg-disabled: #3a3a3a;
+  --button-status-b-selected-fg-disabled: #c1c1c1;
+  --button-status-b-selected-bg-active: #74d4da;
+  --button-status-b-selected-fg-active: #ffffff;
+  --button-status-b-forapproval-bg-default: #3a3a3a;
+  --button-status-b-forapproval-fg-default: #ffffff;
+  --button-status-b-forapproval-bg-hover: #ffd331;
+  --button-status-b-forapproval-fg-hover: #ffffff;
+  --button-status-b-forapproval-bg-pressed: #292828;
+  --button-status-b-forapproval-fg-pressed: #cdedff;
+  --button-status-b-forapproval-bg-disabled: #3a3a3a;
+  --button-status-b-forapproval-fg-disabled: #c1c1c1;
+  --button-status-b-forapproval-bg-active: #ffd331;
+  --button-status-b-forapproval-fg-active: #ffffff;
+  --button-status-b-refused-bg-default: #3a3a3a;
+  --button-status-b-refused-fg-default: #ffffff;
+  --button-status-b-refused-bg-hover: #595959;
+  --button-status-b-refused-fg-hover: #ffffff;
+  --button-status-b-refused-bg-pressed: #292828;
+  --button-status-b-refused-fg-pressed: #cdedff;
+  --button-status-b-refused-bg-disabled: #3a3a3a;
+  --button-status-b-refused-fg-disabled: #c1c1c1;
+  --button-status-b-refused-bg-active: #595959;
+  --button-status-b-refused-fg-active: #ffffff;
+  --button-status-b-topublish-bg-default: #3a3a3a;
+  --button-status-b-topublish-fg-default: #ffffff;
+  --button-status-b-topublish-bg-hover: #b7bb28;
+  --button-status-b-topublish-fg-hover: #ffffff;
+  --button-status-b-topublish-bg-pressed: #292828;
+  --button-status-b-topublish-fg-pressed: #cdedff;
+  --button-status-b-topublish-bg-disabled: #3a3a3a;
+  --button-status-b-topublish-fg-disabled: #c1c1c1;
+  --button-status-b-topublish-bg-active: #b7bb28;
+  --button-status-b-topublish-fg-active: #ffffff;
+  --button-status-b-published-bg-default: #3a3a3a;
+  --button-status-b-published-fg-default: #ffffff;
+  --button-status-b-published-bg-hover: #b8802a;
+  --button-status-b-published-fg-hover: #ffffff;
+  --button-status-b-published-bg-pressed: #292828;
+  --button-status-b-published-fg-pressed: #cdedff;
+  --button-status-b-published-bg-disabled: #3a3a3a;
+  --button-status-b-published-fg-disabled: #c1c1c1;
+  --button-status-b-published-bg-active: #b8802a;
+  --button-status-b-published-fg-active: #ffffff;
+  --button-status-b-error-bg-default: #3a3a3a;
+  --button-status-b-error-fg-default: #ffffff;
+  --button-status-b-error-bg-hover: #dd3733;
+  --button-status-b-error-fg-hover: #ffffff;
+  --button-status-b-error-bg-pressed: #292828;
+  --button-status-b-error-fg-pressed: #cdedff;
+  --button-status-b-error-bg-disabled: #3a3a3a;
+  --button-status-b-error-fg-disabled: #c1c1c1;
+  --button-status-b-error-bg-active: #dd3733;
+  --button-status-b-error-fg-active: #ffffff;
+  --button-label-w-color-bg-default: #efefef;
+  --button-label-w-color-bg-hover: #292828;
+  --button-label-w-color-bg-pressed: #292828;
+  --button-label-w-color-bg-disabled: #efefef;
+  --button-label-g-color-bg-default: #ffffff;
+  --button-label-g-color-bg-hover: #292828;
+  --button-label-g-color-bg-pressed: #292828;
+  --button-label-g-color-bg-disabled: #ffffff;
+  --button-label-b-color-bg-default: #3a3a3a;
+  --button-label-b-color-bg-hover: #ffffff;
+  --button-label-b-color-bg-pressed: #3a3a3a;
+  --button-label-b-color-bg-disabled: #3a3a3a;
+  --button-label-w-color-fg-default: #292828;
+  --button-label-w-color-fg-hover: #ffffff;
+  --button-label-w-color-fg-pressed: #cdedff;
+  --button-label-w-color-fg-disabled: #c1c1c1;
+  --button-label-g-color-fg-default: #292828;
+  --button-label-g-color-fg-hover: #ffffff;
+  --button-label-g-color-fg-pressed: #cdedff;
+  --button-label-g-color-fg-disabled: #c1c1c1;
+  --button-label-b-color-fg-default: #ffffff;
+  --button-label-b-color-fg-hover: #292828;
+  --button-label-b-color-fg-pressed: #cdedff;
+  --button-label-b-color-fg-disabled: #c1c1c1;
+  --button-urgent-w-color-bg-default: #f3f3f3;
+  --button-urgent-w-color-fg-default: #292828;
+  --button-urgent-w-color-bg-hover: #ff9900;
+  --button-urgent-w-color-fg-hover: #ffffff;
+  --button-urgent-w-color-bg-pressed: #ff9900;
+  --button-urgent-w-color-fg-pressed: #ffffff;
+  --button-urgent-w-color-bg-active: #ff9900;
+  --button-urgent-w-color-fg-active: #ffffff;
+  --button-urgent-w-color-bg-disabled: #f3f3f3;
+  --button-urgent-w-color-fg-disabled: #c1c1c1;
+  --button-urgent-g-color-bg-default: #ffffff;
+  --button-urgent-g-color-fg-default: #292828;
+  --button-urgent-g-color-bg-hover: #ff9900;
+  --button-urgent-g-color-fg-hover: #ffffff;
+  --button-urgent-g-color-bg-pressed: #ff9900;
+  --button-urgent-g-color-fg-pressed: #ffffff;
+  --button-urgent-g-color-bg-active: #ff9900;
+  --button-urgent-g-color-fg-active: #ffffff;
+  --button-urgent-g-color-bg-disabled: #ffffff;
+  --button-urgent-g-color-fg-disabled: #c1c1c1;
+  --button-urgent-b-color-bg-default: #3a3a3a;
+  --button-urgent-b-color-fg-default: #ffffff;
+  --button-urgent-b-color-bg-hover: #ff9900;
+  --button-urgent-b-color-fg-hover: #ffffff;
+  --button-urgent-b-color-bg-pressed: #ff9900;
+  --button-urgent-b-color-fg-pressed: #ffffff;
+  --button-urgent-b-color-bg-active: #ff9900;
+  --button-urgent-b-color-fg-active: #ffffff;
+  --button-urgent-b-color-bg-disabled: #3a3a3a;
+  --button-urgent-b-color-fg-disabled: #c1c1c1;
+  --button-scroll-w-color-bg-default: #29282833;
+  --button-scroll-w-color-fg-default: #ffffff;
+  --button-scroll-w-color-bg-hover: #292828cc;
+  --button-scroll-w-color-fg-hover: #ffffff;
+  --button-scroll-w-color-bg-pressed: #292828cc;
+  --button-scroll-w-color-fg-pressed: #cdedff;
+  --button-scroll-w-color-bg-disabled: #29282833;
+  --button-scroll-w-color-fg-disabled: #292828;
+  --button-scroll-g-color-bg-default: #ffffff33;
+  --button-scroll-g-color-fg-default: #292828;
+  --button-scroll-g-color-bg-hover: #ffffff99;
+  --button-scroll-g-color-fg-hover: #292828;
+  --button-scroll-g-color-bg-pressed: #ffffff99;
+  --button-scroll-g-color-fg-pressed: #cdedff;
+  --button-scroll-g-color-bg-disabled: #ffffff33;
+  --button-scroll-g-color-fg-disabled: #c1c1c1;
+  --button-scroll-b-color-bg-default: #ffffff33;
+  --button-scroll-b-color-fg-default: #ffffff;
+  --button-scroll-b-color-bg-hover: #ffffff99;
+  --button-scroll-b-color-fg-hover: #ffffff;
+  --button-scroll-b-color-bg-pressed: #ffffff99;
+  --button-scroll-b-color-fg-pressed: #cdedff;
+  --button-scroll-b-color-bg-disabled: #ffffff33;
+  --button-scroll-b-color-fg-disabled: #292828;
+  --button-action-w-color-bg-default: #cdedff;
+  --button-action-w-color-fg-default: #292828;
+  --button-action-w-color-bg-hover: #292828;
+  --button-action-w-color-fg-hover: #ffffff;
+  --button-action-w-color-bg-pressed: #292828;
+  --button-action-w-color-fg-pressed: #cdedff;
+  --button-action-w-color-bg-disabled: #f3f3f3;
+  --button-action-w-color-fg-disabled: #c1c1c1;
+  --button-action-g-color-bg-default: #cdedff;
+  --button-action-g-color-fg-default: #292828;
+  --button-action-g-color-bg-hover: #292828;
+  --button-action-g-color-fg-hover: #ffffff;
+  --button-action-g-color-bg-pressed: #292828;
+  --button-action-g-color-fg-pressed: #cdedff;
+  --button-action-g-color-bg-disabled: #ffffff;
+  --button-action-g-color-fg-disabled: #c1c1c1;
+  --button-action-b-color-bg-default: #cdedff;
+  --button-action-b-color-fg-default: #292828;
+  --button-action-b-color-bg-hover: #ffffff;
+  --button-action-b-color-fg-hover: #292828;
+  --button-action-b-color-bg-pressed: #3a3a3a;
+  --button-action-b-color-fg-pressed: #cdedff;
+  --button-action-b-color-bg-disabled: #3a3a3a;
+  --button-action-b-color-fg-disabled: #c1c1c1;
+  --button-action-plus-w-color-bg-default: #292828;
+  --button-action-plus-w-color-fg-default: #ffffff;
+  --button-action-plus-w-color-bg-hover: #292828;
+  --button-action-plus-w-color-fg-hover: #ffffff;
+  --button-action-plus-w-color-bg-pressed: #292828;
+  --button-action-plus-w-color-fg-pressed: #cdedff;
+  --button-action-plus-w-color-bg-disabled: #292828;
+  --button-action-plus-w-color-fg-disabled: #c1c1c1;
+  --button-action-plus-w-color-plus-default: #cdedff;
+  --button-action-plus-w-color-plus-hover: #595959;
+  --button-action-plus-w-color-plus-pressed: #595959;
+  --button-action-plus-w-color-plus-disabled: #595959;
+  --button-action-plus-g-color-bg-default: #292828;
+  --button-action-plus-g-color-plus-default: #cdedff;
+  --button-action-plus-g-color-fg-default: #ffffff;
+  --button-action-plus-g-color-bg-hover: #292828;
+  --button-action-plus-g-color-plus-hover: #595959;
+  --button-action-plus-g-color-fg-hover: #ffffff;
+  --button-action-plus-g-color-bg-pressed: #292828;
+  --button-action-plus-g-color-plus-pressed: #595959;
+  --button-action-plus-g-color-fg-pressed: #cdedff;
+  --button-action-plus-g-color-bg-disabled: #292828;
+  --button-action-plus-g-color-plus-disabled: #595959;
+  --button-action-plus-g-color-fg-disabled: #c1c1c1;
+  --button-action-plus-b-color-bg-default: #ffffff;
+  --button-action-plus-b-color-plus-default: #cdedff;
+  --button-action-plus-b-color-fg-default: #292828;
+  --button-action-plus-b-color-bg-hover: #ffffff;
+  --button-action-plus-b-color-plus-hover: #292828;
+  --button-action-plus-b-color-fg-hover: #292828;
+  --button-action-plus-b-color-bg-pressed: #ffffff;
+  --button-action-plus-b-color-plus-pressed: #292828;
+  --button-action-plus-b-color-fg-pressed: #cdedff;
+  --button-action-plus-b-color-bg-disabled: #ffffff;
+  --button-action-plus-b-color-plus-disabled: #595959;
+  --button-action-plus-b-color-fg-disabled: #c1c1c1;
+  --button-w-secondary-bg-hover: #292828;
+  --button-w-secondary-fg-hover: #ffffff;
+  --button-g-ghost-bg-hover: #292828;
+  --button-g-ghost-fg-hover: #ffffff;
+  --button-b-secondary-bg-hover: #ffffff;
+  --button-b-secondary-fg-hover: #292828;
+  --button-w-secondary-bg-pressed: #292828;
+  --button-w-secondary-fg-pressed: #cdedff;
+  --button-w-secondary-bg-disabled: #f3f3f3;
+  --button-w-secondary-fg-disabled: #c1c1c1;
+  --button-w-normal-fg-hover: #ffffff;
+  --button-w-normal-bg-disabled: #f3f3f3;
+  --button-w-normal-fg-disabled: #c1c1c1;
+  --button-w-normal-bg-default: #cdedff;
+  --button-w-normal-fg-default: #292828;
+  --button-w-normal-bg-pressed: #292828;
+  --button-w-normal-fg-pressed: #cdedff;
+  --button-w-normal-bg-hover: #292828;
+  --button-w-outline-bg-default: #ffffff;
+  --button-w-outline-fg-default: #292828;
+  --button-w-outline-bg-pressed: #292828;
+  --button-w-outline-fg-pressed: #cdedff;
+  --button-w-outline-bg-hover: #292828;
+  --button-w-outline-fg-hover: #ffffff;
+  --button-w-outline-bg-disabled: #ffffff;
+  --button-w-outline-fg-disabled: #c1c1c1;
+  --button-g-normal-bg-default: #cdedff;
+  --button-g-normal-fg-default: #292828;
+  --button-g-normal-bg-hover: #292828;
+  --button-g-normal-fg-hover: #ffffff;
+  --button-g-normal-bg-pressed: #292828;
+  --button-g-normal-fg-pressed: #cdedff;
+  --button-g-normal-bg-disabled: #ffffff;
+  --button-g-normal-fg-disabled: #c1c1c1;
+  --button-g-secondary-bg-default: #ffffff;
+  --button-g-secondary-fg-default: #292828;
+  --button-g-secondary-bg-hover: #292828;
+  --button-g-secondary-fg-hover: #ffffff;
+  --button-g-secondary-bg-pressed: #292828;
+  --button-g-secondary-fg-pressed: #cdedff;
+  --button-g-secondary-bg-disabled: #ffffff;
+  --button-g-secondary-fg-disabled: #c1c1c1;
+  --button-g-outline-bg-default: #eaeaea;
+  --button-g-outline-fg-default: #292828;
+  --button-g-outline-bg-hover: #292828;
+  --button-g-outline-fg-hover: #ffffff;
+  --button-g-outline-bg-pressed: #292828;
+  --button-g-outline-fg-pressed: #cdedff;
+  --button-g-outline-bg-disabled: #eaeaea;
+  --button-g-outline-fg-disabled: #c1c1c1;
+  --button-b-normal-bg-default: #cdedff;
+  --button-b-normal-fg-default: #292828;
+  --button-b-normal-bg-hover: #ffffff;
+  --button-b-normal-fg-hover: #292828;
+  --button-b-normal-bg-pressed: #3a3a3a;
+  --button-b-normal-fg-pressed: #cdedff;
+  --button-b-normal-bg-disabled: #3a3a3a;
+  --button-b-normal-fg-disabled: #c1c1c1;
+  --button-b-ghost-bg-default: #292828;
+  --button-b-ghost-fg-default: #ffffff;
+  --button-b-ghost-bg-hover: #ffffff;
+  --button-b-ghost-fg-hover: #292828;
+  --button-b-ghost-bg-pressed: #3a3a3a;
+  --button-b-ghost-fg-pressed: #cdedff;
+  --button-b-ghost-bg-disabled: #3a3a3a;
+  --button-b-ghost-fg-disabled: #c1c1c1;
+  --button-b-outline-bg-default: #292828;
+  --button-b-outline-fg-default: #ffffff;
+  --button-b-outline-bg-hover: #ffffff;
+  --button-b-outline-fg-hover: #292828;
+  --button-b-outline-bg-pressed: #3a3a3a;
+  --button-b-outline-fg-pressed: #cdedff;
+  --button-b-outline-bg-disabled: #3a3a3a;
+  --button-b-outline-fg-disabled: #c1c1c1;
+  --button-w-destructive-bg-default: #dd3733;
+  --button-w-destructive-fg-default: #ffffff;
+  --button-w-destructive-bg-pressed: #292828;
+  --button-w-destructive-fg-pressed: #dd3733;
+  --button-w-destructive-bg-hover: #292828;
+  --button-w-destructive-fg-hover: #ffffff;
+  --button-w-destructive-bg-disabled: #ffffff;
+  --button-w-destructive-fg-disabled: #c1c1c1;
+  --button-g-destructive-bg-default: #dd3733;
+  --button-g-destructive-fg-default: #ffffff;
+  --button-g-destructive-bg-pressed: #292828;
+  --button-g-destructive-fg-pressed: #dd3733;
+  --button-g-destructive-bg-hover: #292828;
+  --button-g-destructive-fg-hover: #ffffff;
+  --button-g-destructive-bg-disabled: #ffffff;
+  --button-g-destructive-fg-disabled: #c1c1c1;
+  --button-b-destructive-bg-default: #dd3733;
+  --button-b-destructive-fg-default: #ffffff;
+  --button-b-destructive-bg-pressed: #292828;
+  --button-b-destructive-fg-pressed: #dd3733;
+  --button-b-destructive-bg-hover: #ffffff;
+  --button-b-destructive-fg-hover: #292828;
+  --button-b-destructive-bg-disabled: #3a3a3a;
+  --button-b-destructive-fg-disabled: #c1c1c1;
+  --button-w-link-fg-default: #292828;
+  --button-w-link-fg-hover: #292828;
+  --button-w-link-fg-pressed: #292828;
+  --button-w-link-fg-disabled: #c1c1c1;
+  --button-g-link-fg-default: #292828;
+  --button-g-link-fg-hover: #292828;
+  --button-g-link-fg-pressed: #292828;
+  --button-g-link-fg-disabled: #c1c1c1;
+  --button-b-link-fg-default: #292828;
+  --button-b-link-fg-hover: #292828;
+  --button-b-link-fg-pressed: #292828;
+  --button-b-link-fg-disabled: #c1c1c1;
+}
+
 /* Variables shadcn contextuelles par type de fond */
 [data-bg="white"] {
   --background: #ffffff;
@@ -374,6 +921,361 @@
   --ring: #ffffff;
   --border: #d9d7d7;
   --input: #d9d7d7;
+}
+
+/* Classes Button contextuelles */
+
+/* Button variants pour background white */
+[data-bg="white"] .btn-normal {
+  background: var(--button-w-normal-bg-default);
+  color: var(--button-w-normal-fg-default);
+}
+
+[data-bg="white"] .btn-normal:hover:not(:disabled) {
+  background: var(--button-w-normal-bg-hover);
+  color: var(--button-w-normal-fg-hover);
+}
+
+[data-bg="white"] .btn-normal:active:not(:disabled) {
+  background: var(--button-w-normal-bg-pressed);
+  color: var(--button-w-normal-fg-pressed);
+}
+
+[data-bg="white"] .btn-normal:disabled {
+  background: var(--button-w-normal-bg-disabled);
+  color: var(--button-w-normal-fg-disabled);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+[data-bg="white"] .btn-secondary {
+  background: var(--button-w-secondary-bg-default);
+  color: var(--button-w-secondary-fg-default);
+}
+
+[data-bg="white"] .btn-secondary:hover:not(:disabled) {
+  background: var(--button-w-secondary-bg-hover);
+  color: var(--button-w-secondary-fg-hover);
+}
+
+[data-bg="white"] .btn-secondary:active:not(:disabled) {
+  background: var(--button-w-secondary-bg-pressed);
+  color: var(--button-w-secondary-fg-pressed);
+}
+
+[data-bg="white"] .btn-secondary:disabled {
+  background: var(--button-w-secondary-bg-disabled);
+  color: var(--button-w-secondary-fg-disabled);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+[data-bg="white"] .btn-ghost {
+  background: var(--button-w-ghost-bg-default);
+  color: var(--button-w-ghost-fg-default);
+}
+
+[data-bg="white"] .btn-ghost:hover:not(:disabled) {
+  background: var(--button-w-ghost-bg-hover);
+  color: var(--button-w-ghost-fg-hover);
+}
+
+[data-bg="white"] .btn-ghost:active:not(:disabled) {
+  background: var(--button-w-ghost-bg-pressed);
+  color: var(--button-w-ghost-fg-pressed);
+}
+
+[data-bg="white"] .btn-ghost:disabled {
+  background: var(--button-w-ghost-bg-disabled);
+  color: var(--button-w-ghost-fg-disabled);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+[data-bg="white"] .btn-outline {
+  background: var(--button-w-outline-bg-default);
+  color: var(--button-w-outline-fg-default);
+  border: 1px solid var(--button-w-outline-fg-default);
+}
+
+[data-bg="white"] .btn-outline:hover:not(:disabled) {
+  background: var(--button-w-outline-bg-hover);
+  color: var(--button-w-outline-fg-hover);
+}
+
+[data-bg="white"] .btn-outline:active:not(:disabled) {
+  background: var(--button-w-outline-bg-pressed);
+  color: var(--button-w-outline-fg-pressed);
+}
+
+[data-bg="white"] .btn-outline:disabled {
+  background: var(--button-w-outline-bg-disabled);
+  color: var(--button-w-outline-fg-disabled);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+[data-bg="white"] .btn-destructive {
+  background: var(--button-w-destructive-bg-default);
+  color: var(--button-w-destructive-fg-default);
+}
+
+[data-bg="white"] .btn-destructive:hover:not(:disabled) {
+  background: var(--button-w-destructive-bg-hover);
+  color: var(--button-w-destructive-fg-hover);
+}
+
+[data-bg="white"] .btn-destructive:active:not(:disabled) {
+  background: var(--button-w-destructive-bg-pressed);
+  color: var(--button-w-destructive-fg-pressed);
+}
+
+[data-bg="white"] .btn-destructive:disabled {
+  background: var(--button-w-destructive-bg-disabled);
+  color: var(--button-w-destructive-fg-disabled);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+[data-bg="white"] .btn-link {
+  color: var(--button-w-link-fg-default);
+  text-decoration: none;
+}
+
+
+/* Button variants pour background grey */
+[data-bg="grey"] .btn-normal {
+  background: var(--button-g-normal-bg-default);
+  color: var(--button-g-normal-fg-default);
+}
+
+[data-bg="grey"] .btn-normal:hover:not(:disabled) {
+  background: var(--button-g-normal-bg-hover);
+  color: var(--button-g-normal-fg-hover);
+}
+
+[data-bg="grey"] .btn-normal:active:not(:disabled) {
+  background: var(--button-g-normal-bg-pressed);
+  color: var(--button-g-normal-fg-pressed);
+}
+
+[data-bg="grey"] .btn-normal:disabled {
+  background: var(--button-g-normal-bg-disabled);
+  color: var(--button-g-normal-fg-disabled);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+[data-bg="grey"] .btn-secondary {
+  background: var(--button-g-secondary-bg-default);
+  color: var(--button-g-secondary-fg-default);
+}
+
+[data-bg="grey"] .btn-secondary:hover:not(:disabled) {
+  background: var(--button-g-secondary-bg-hover);
+  color: var(--button-g-secondary-fg-hover);
+}
+
+[data-bg="grey"] .btn-secondary:active:not(:disabled) {
+  background: var(--button-g-secondary-bg-pressed);
+  color: var(--button-g-secondary-fg-pressed);
+}
+
+[data-bg="grey"] .btn-secondary:disabled {
+  background: var(--button-g-secondary-bg-disabled);
+  color: var(--button-g-secondary-fg-disabled);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+[data-bg="grey"] .btn-ghost {
+  background: var(--button-g-ghost-bg-default);
+  color: var(--button-g-ghost-fg-default);
+}
+
+[data-bg="grey"] .btn-ghost:hover:not(:disabled) {
+  background: var(--button-g-ghost-bg-hover);
+  color: var(--button-g-ghost-fg-hover);
+}
+
+[data-bg="grey"] .btn-ghost:active:not(:disabled) {
+  background: var(--button-g-ghost-bg-pressed);
+  color: var(--button-g-ghost-fg-pressed);
+}
+
+[data-bg="grey"] .btn-ghost:disabled {
+  background: var(--button-g-ghost-bg-disabled);
+  color: var(--button-g-ghost-fg-disabled);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+[data-bg="grey"] .btn-outline {
+  background: var(--button-g-outline-bg-default);
+  color: var(--button-g-outline-fg-default);
+  border: 1px solid var(--button-g-outline-fg-default);
+}
+
+[data-bg="grey"] .btn-outline:hover:not(:disabled) {
+  background: var(--button-g-outline-bg-hover);
+  color: var(--button-g-outline-fg-hover);
+}
+
+[data-bg="grey"] .btn-outline:active:not(:disabled) {
+  background: var(--button-g-outline-bg-pressed);
+  color: var(--button-g-outline-fg-pressed);
+}
+
+[data-bg="grey"] .btn-outline:disabled {
+  background: var(--button-g-outline-bg-disabled);
+  color: var(--button-g-outline-fg-disabled);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+[data-bg="grey"] .btn-destructive {
+  background: var(--button-g-destructive-bg-default);
+  color: var(--button-g-destructive-fg-default);
+}
+
+[data-bg="grey"] .btn-destructive:hover:not(:disabled) {
+  background: var(--button-g-destructive-bg-hover);
+  color: var(--button-g-destructive-fg-hover);
+}
+
+[data-bg="grey"] .btn-destructive:active:not(:disabled) {
+  background: var(--button-g-destructive-bg-pressed);
+  color: var(--button-g-destructive-fg-pressed);
+}
+
+[data-bg="grey"] .btn-destructive:disabled {
+  background: var(--button-g-destructive-bg-disabled);
+  color: var(--button-g-destructive-fg-disabled);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+[data-bg="grey"] .btn-link {
+  color: var(--button-g-link-fg-default);
+  text-decoration: none;
+}
+
+
+/* Button variants pour background black */
+[data-bg="black"] .btn-normal {
+  background: var(--button-b-normal-bg-default);
+  color: var(--button-b-normal-fg-default);
+}
+
+[data-bg="black"] .btn-normal:hover:not(:disabled) {
+  background: var(--button-b-normal-bg-hover);
+  color: var(--button-b-normal-fg-hover);
+}
+
+[data-bg="black"] .btn-normal:active:not(:disabled) {
+  background: var(--button-b-normal-bg-pressed);
+  color: var(--button-b-normal-fg-pressed);
+}
+
+[data-bg="black"] .btn-normal:disabled {
+  background: var(--button-b-normal-bg-disabled);
+  color: var(--button-b-normal-fg-disabled);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+[data-bg="black"] .btn-secondary {
+  background: var(--button-b-secondary-bg-default);
+  color: var(--button-b-secondary-fg-default);
+}
+
+[data-bg="black"] .btn-secondary:hover:not(:disabled) {
+  background: var(--button-b-secondary-bg-hover);
+  color: var(--button-b-secondary-fg-hover);
+}
+
+[data-bg="black"] .btn-secondary:active:not(:disabled) {
+  background: var(--button-b-secondary-bg-pressed);
+  color: var(--button-b-secondary-fg-pressed);
+}
+
+[data-bg="black"] .btn-secondary:disabled {
+  background: var(--button-b-secondary-bg-disabled);
+  color: var(--button-b-secondary-fg-disabled);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+[data-bg="black"] .btn-ghost {
+  background: var(--button-b-ghost-bg-default);
+  color: var(--button-b-ghost-fg-default);
+}
+
+[data-bg="black"] .btn-ghost:hover:not(:disabled) {
+  background: var(--button-b-ghost-bg-hover);
+  color: var(--button-b-ghost-fg-hover);
+}
+
+[data-bg="black"] .btn-ghost:active:not(:disabled) {
+  background: var(--button-b-ghost-bg-pressed);
+  color: var(--button-b-ghost-fg-pressed);
+}
+
+[data-bg="black"] .btn-ghost:disabled {
+  background: var(--button-b-ghost-bg-disabled);
+  color: var(--button-b-ghost-fg-disabled);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+[data-bg="black"] .btn-outline {
+  background: var(--button-b-outline-bg-default);
+  color: var(--button-b-outline-fg-default);
+  border: 1px solid var(--button-b-outline-fg-default);
+}
+
+[data-bg="black"] .btn-outline:hover:not(:disabled) {
+  background: var(--button-b-outline-bg-hover);
+  color: var(--button-b-outline-fg-hover);
+}
+
+[data-bg="black"] .btn-outline:active:not(:disabled) {
+  background: var(--button-b-outline-bg-pressed);
+  color: var(--button-b-outline-fg-pressed);
+}
+
+[data-bg="black"] .btn-outline:disabled {
+  background: var(--button-b-outline-bg-disabled);
+  color: var(--button-b-outline-fg-disabled);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+[data-bg="black"] .btn-destructive {
+  background: var(--button-b-destructive-bg-default);
+  color: var(--button-b-destructive-fg-default);
+}
+
+[data-bg="black"] .btn-destructive:hover:not(:disabled) {
+  background: var(--button-b-destructive-bg-hover);
+  color: var(--button-b-destructive-fg-hover);
+}
+
+[data-bg="black"] .btn-destructive:active:not(:disabled) {
+  background: var(--button-b-destructive-bg-pressed);
+  color: var(--button-b-destructive-fg-pressed);
+}
+
+[data-bg="black"] .btn-destructive:disabled {
+  background: var(--button-b-destructive-bg-disabled);
+  color: var(--button-b-destructive-fg-disabled);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+[data-bg="black"] .btn-link {
+  color: var(--button-b-link-fg-default);
+  text-decoration: none;
 }
 
 /* Classes de thème */
