@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Button } from "@/components/ui/button";
 import { Layout, VStack, HStack } from "@/components/layout";
-import { Icon } from "@/components/ui/icons";
+import { renderIcon } from "@/components/ui/icons";
 
 const meta = {
   title: "UI/Button",
@@ -27,8 +27,10 @@ import { Button, Layout } from '@story-gs-react';
 ### Avec icône
 
 \`\`\`tsx
+import { renderIcon } from '@story-gs-react';
+
 <Button variant="secondary">
-  <Icon name="Plus" />
+  {renderIcon("Plus")}
   Ajouter
 </Button>
 \`\`\`
@@ -133,15 +135,15 @@ export const WithIcon: Story = {
     <Layout bg="white" padding={6}>
       <HStack gap={3}>
         <Button variant="normal">
-          <Icon name="Plus" />
+          {renderIcon("Plus")}
           Ajouter
         </Button>
         <Button variant="secondary">
-          <Icon name="Settings" />
+          {renderIcon("Settings")}
           Paramètres
         </Button>
         <Button variant="ghost">
-          <Icon name="Trash" />
+          {renderIcon("Trash")}
           Supprimer
         </Button>
       </HStack>
@@ -177,11 +179,11 @@ export const Sizes: Story = {
         </HStack>
         <HStack gap={3} align="center">
           <Button size="small">
-            <Icon name="Plus" />
+            {renderIcon("Plus")}
             Small avec icon
           </Button>
           <Button size="large">
-            <Icon name="Plus" />
+            {renderIcon("Plus")}
             Large avec icon
           </Button>
         </HStack>
