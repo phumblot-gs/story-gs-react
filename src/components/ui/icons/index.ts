@@ -8,3 +8,4 @@ export * from './utility-icons';
 
 export * from './types';
 export * from './icon-renderer';
+export * from './Icon';

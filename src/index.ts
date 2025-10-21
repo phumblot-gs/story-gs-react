@@ -92,6 +92,7 @@ export { FileBrowser };
 export { Select, SelectTrigger, SelectContent, SelectItem, SelectValue };
 export { Tabs, TabsList, TabsTrigger, TabsContent };
 export { FolderBrowser };
+export { Icon } from "./components/ui/icons";
 
 // Backward compatibility - ModalLayer is now Modal in layout
 export { Modal as ModalLayer };
@@ -121,6 +122,8 @@ export type {
   FolderItem,
   FolderBrowserProps
 };
+
+export type { IconProps } from "./components/ui/icons";
 
 // Backward compatibility types
 export type ButtonBackground = "white" | "grey" | "black";  // Deprecated, use Layout bg instead
