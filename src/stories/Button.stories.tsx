@@ -169,25 +169,30 @@ export const WithIndicator: Story = {
   ),
 };
 
-export const Sizes: Story = {
+export const Small: Story = {
   render: () => (
     <Layout bg="white" padding={6}>
-      <VStack gap={4}>
-        <HStack gap={3} align="center">
-          <Button size="small">Small Button</Button>
-          <Button size="large">Large Button</Button>
-        </HStack>
-        <HStack gap={3} align="center">
-          <Button size="small">
-            {renderIcon("Plus")}
-            Small avec icon
-          </Button>
-          <Button size="large">
-            {renderIcon("Plus")}
-            Large avec icon
-          </Button>
-        </HStack>
-      </VStack>
+      <HStack gap={3} align="center">
+        <Button size="small">Small Button</Button>
+        <Button size="small">
+          {renderIcon("Plus")}
+          Avec icon
+        </Button>
+      </HStack>
+    </Layout>
+  ),
+};
+
+export const Large: Story = {
+  render: () => (
+    <Layout bg="white" padding={6}>
+      <HStack gap={3} align="center">
+        <Button size="large">Large Button</Button>
+        <Button size="large">
+          {renderIcon("Plus")}
+          Avec icon
+        </Button>
+      </HStack>
     </Layout>
   ),
 };

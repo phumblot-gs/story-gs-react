@@ -105,12 +105,7 @@
   --spacing-xl: var(--spacing-xl, 30px);
   --spacing-2xl: var(--spacing-2xl, 40px);
 
-  /* Font sizes from Figma tokens */
-  --font-size-xs: var(--font-size-xs, 0.6875rem);
-  --font-size-sm: var(--font-size-sm, 0.813rem);
-  --font-size-base: var(--font-size-base, 1rem);
-  --font-size-lg: var(--font-size-lg, 1.125rem);
-  --font-size-xl: var(--font-size-xl, 1.25rem);
+  /* Font sizes are defined in figma-tokens.css - removed duplicate definitions that were overriding correct values */
 }
 
 .dark {

@@ -4,9 +4,6 @@ import { ThemeProvider } from "../src/contexts/ThemeContext";
 import { TranslationProvider } from "../src/contexts/TranslationContext";
 import { StyleProvider } from "../src/contexts/StyleProvider";
 import "../src/index.css"; // Import your tailwind styles
-import "../src/styles/figma-tokens.css"; // Import Figma tokens
-import "../src/styles/fonts.css"; // Import Avenir Next fonts
-import "../src/styles/theme-variables.css"; // Import theme variables
 
 const preview: Preview = {
   parameters: {
