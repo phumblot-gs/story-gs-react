@@ -1,7 +1,7 @@
 /**
  * Variables CSS générées automatiquement depuis les tokens Figma
  * NE PAS MODIFIER DIRECTEMENT - Généré par scripts/generate-css-tokens.cjs
- * Date: 2025-10-21T20:31:49.040Z
+ * Date: 2025-10-21T22:32:02.920Z
  */
 
 :root {
@@ -851,9 +851,9 @@
   --button-g-link-fg-hover: #292828;
   --button-g-link-fg-pressed: #292828;
   --button-g-link-fg-disabled: #c1c1c1;
-  --button-b-link-fg-default: #292828;
-  --button-b-link-fg-hover: #292828;
-  --button-b-link-fg-pressed: #292828;
+  --button-b-link-fg-default: #ffffff;
+  --button-b-link-fg-hover: #ffffff;
+  --button-b-link-fg-pressed: #cdedff;
   --button-b-link-fg-disabled: #c1c1c1;
 }
 

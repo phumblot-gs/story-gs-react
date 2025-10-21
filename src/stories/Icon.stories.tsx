@@ -61,6 +61,10 @@ import { Icon } from '@story-gs-react';
       control: 'color',
       description: 'Couleur de l\'icône (utilise currentColor par défaut)',
     },
+    debug: {
+      control: 'boolean',
+      description: 'Mode debug : affiche un border rose et log les clics dans la console',
+    },
   },
 } satisfies Meta<typeof Icon>;
 
@@ -252,6 +256,39 @@ export const Clickable: Story = {
             size={16}
             onClick={() => alert('Paramètres!')}
             className="cursor-pointer hover:text-grey-strongest"
+          />
+        </HStack>
+      </VStack>
+    </Layout>
+  ),
+};
+
+export const DebugMode: Story = {
+  render: () => (
+    <Layout bg="white" padding={6}>
+      <VStack gap={4}>
+        <h3 className="gs-typo-h3">Mode Debug</h3>
+        <p className="text-sm text-grey-stronger">
+          Le mode debug affiche un border rose et log les clics dans la console
+        </p>
+        <HStack gap={3}>
+          <Icon
+            name="Plus"
+            size={16}
+            debug
+            onClick={() => console.log('Plus clicked')}
+          />
+          <Icon
+            name="Settings"
+            size={16}
+            debug
+            onClick={() => console.log('Settings clicked')}
+          />
+          <Icon
+            name="Trash"
+            size={16}
+            debug
+            onClick={() => console.log('Trash clicked')}
           />
         </HStack>
       </VStack>

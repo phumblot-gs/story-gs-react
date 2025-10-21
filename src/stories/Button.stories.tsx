@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Button } from "@/components/ui/button";
 import { Layout, VStack, HStack } from "@/components/layout";
-import { renderIcon } from "@/components/ui/icons";
+import { Icon } from "@/components/ui/icons";
 
 const meta = {
   title: "UI/Button",
@@ -27,10 +27,10 @@ import { Button, Layout } from '@story-gs-react';
 ### Avec icône
 
 \`\`\`tsx
-import { renderIcon } from '@story-gs-react';
+import { Icon } from '@story-gs-react';
 
 <Button variant="secondary">
-  {renderIcon("Plus")}
+  <Icon name="Plus" />
   Ajouter
 </Button>
 \`\`\`
@@ -146,15 +146,15 @@ export const WithIcon: Story = {
     <Layout bg="white" padding={6}>
       <HStack gap={3}>
         <Button variant="normal">
-          {renderIcon("Plus")}
+          <Icon name="Plus" />
           Ajouter
         </Button>
         <Button variant="secondary">
-          {renderIcon("Settings")}
+          <Icon name="Settings" />
           Paramètres
         </Button>
         <Button variant="ghost">
-          {renderIcon("Trash")}
+          <Icon name="Trash" />
           Supprimer
         </Button>
       </HStack>
@@ -184,11 +184,11 @@ export const IconsOnly: Story = {
         <VStack gap={3}>
           <h4 className="text-sm font-medium">Size Large (défaut) - Recommandé : className="p-0 w-6 h-6"</h4>
           <HStack gap={3} align="center">
-            <Button variant="normal" className="p-0 w-6 h-6">{renderIcon("Plus")}</Button>
-            <Button variant="secondary" className="p-0 w-6 h-6">{renderIcon("Settings")}</Button>
-            <Button variant="ghost" className="p-0 w-6 h-6">{renderIcon("Trash")}</Button>
-            <Button variant="outline" className="p-0 w-6 h-6">{renderIcon("Pencil")}</Button>
-            <Button variant="destructive" className="p-0 w-6 h-6">{renderIcon("X")}</Button>
+            <Button variant="normal" className="p-0 w-6 h-6"><Icon name="Plus" /></Button>
+            <Button variant="secondary" className="p-0 w-6 h-6"><Icon name="Settings" /></Button>
+            <Button variant="ghost" className="p-0 w-6 h-6"><Icon name="Trash" /></Button>
+            <Button variant="outline" className="p-0 w-6 h-6"><Icon name="Pencil" /></Button>
+            <Button variant="destructive" className="p-0 w-6 h-6"><Icon name="X" /></Button>
           </HStack>
         </VStack>
 
@@ -196,11 +196,11 @@ export const IconsOnly: Story = {
         <VStack gap={3}>
           <h4 className="text-sm font-medium">Size Small - Recommandé : className="p-1 w-4 h-4"</h4>
           <HStack gap={3} align="center">
-            <Button variant="normal" size="small" className="p-1 w-4 h-4">{renderIcon("Plus")}</Button>
-            <Button variant="secondary" size="small" className="p-1 w-4 h-4">{renderIcon("Settings")}</Button>
-            <Button variant="ghost" size="small" className="p-1 w-4 h-4">{renderIcon("Trash")}</Button>
-            <Button variant="outline" size="small" className="p-1 w-4 h-4">{renderIcon("Pencil")}</Button>
-            <Button variant="destructive" size="small" className="p-1 w-4 h-4">{renderIcon("X")}</Button>
+            <Button variant="normal" size="small" className="p-1 w-4 h-4"><Icon name="Plus" /></Button>
+            <Button variant="secondary" size="small" className="p-1 w-4 h-4"><Icon name="Settings" /></Button>
+            <Button variant="ghost" size="small" className="p-1 w-4 h-4"><Icon name="Trash" /></Button>
+            <Button variant="outline" size="small" className="p-1 w-4 h-4"><Icon name="Pencil" /></Button>
+            <Button variant="destructive" size="small" className="p-1 w-4 h-4"><Icon name="X" /></Button>
           </HStack>
         </VStack>
 
@@ -208,10 +208,10 @@ export const IconsOnly: Story = {
         <VStack gap={3}>
           <h4 className="text-sm font-medium">Avec Indicator (notifications, alertes)</h4>
           <HStack gap={3} align="center">
-            <Button variant="normal" indicator className="p-0 w-6 h-6">{renderIcon("Bell")}</Button>
-            <Button variant="secondary" indicator className="p-0 w-6 h-6">{renderIcon("Mail")}</Button>
-            <Button variant="ghost" indicator size="small" className="p-1 w-4 h-4">{renderIcon("Bell")}</Button>
-            <Button variant="outline" indicator size="small" className="p-1 w-4 h-4">{renderIcon("Mail")}</Button>
+            <Button variant="normal" indicator className="p-0 w-6 h-6"><Icon name="Bell" /></Button>
+            <Button variant="secondary" indicator className="p-0 w-6 h-6"><Icon name="Mail" /></Button>
+            <Button variant="ghost" indicator size="small" className="p-1 w-4 h-4"><Icon name="Bell" /></Button>
+            <Button variant="outline" indicator size="small" className="p-1 w-4 h-4"><Icon name="Mail" /></Button>
           </HStack>
         </VStack>
 
@@ -219,10 +219,10 @@ export const IconsOnly: Story = {
         <VStack gap={3}>
           <h4 className="text-sm font-medium">États désactivés</h4>
           <HStack gap={3} align="center">
-            <Button variant="normal" disabled className="p-0 w-6 h-6">{renderIcon("Plus")}</Button>
-            <Button variant="secondary" disabled className="p-0 w-6 h-6">{renderIcon("Settings")}</Button>
-            <Button variant="ghost" disabled className="p-0 w-6 h-6">{renderIcon("Trash")}</Button>
-            <Button variant="normal" size="small" disabled className="p-1 w-4 h-4">{renderIcon("Plus")}</Button>
+            <Button variant="normal" disabled className="p-0 w-6 h-6"><Icon name="Plus" /></Button>
+            <Button variant="secondary" disabled className="p-0 w-6 h-6"><Icon name="Settings" /></Button>
+            <Button variant="ghost" disabled className="p-0 w-6 h-6"><Icon name="Trash" /></Button>
+            <Button variant="normal" size="small" disabled className="p-1 w-4 h-4"><Icon name="Plus" /></Button>
           </HStack>
         </VStack>
 
@@ -232,20 +232,20 @@ export const IconsOnly: Story = {
           <HStack gap={4}>
             <Layout bg="white" padding={3} className="border border-grey rounded">
               <HStack gap={2}>
-                <Button variant="normal" className="p-0 w-6 h-6">{renderIcon("Plus")}</Button>
-                <Button variant="ghost" className="p-0 w-6 h-6">{renderIcon("Settings")}</Button>
+                <Button variant="normal" className="p-0 w-6 h-6"><Icon name="Plus" /></Button>
+                <Button variant="ghost" className="p-0 w-6 h-6"><Icon name="Settings" /></Button>
               </HStack>
             </Layout>
             <Layout bg="grey" padding={3} className="border border-grey rounded">
               <HStack gap={2}>
-                <Button variant="normal" className="p-0 w-6 h-6">{renderIcon("Plus")}</Button>
-                <Button variant="ghost" className="p-0 w-6 h-6">{renderIcon("Settings")}</Button>
+                <Button variant="normal" className="p-0 w-6 h-6"><Icon name="Plus" /></Button>
+                <Button variant="ghost" className="p-0 w-6 h-6"><Icon name="Settings" /></Button>
               </HStack>
             </Layout>
             <Layout bg="black" padding={3} className="border border-grey rounded">
               <HStack gap={2}>
-                <Button variant="normal" className="p-0 w-6 h-6">{renderIcon("Plus")}</Button>
-                <Button variant="ghost" className="p-0 w-6 h-6">{renderIcon("Settings")}</Button>
+                <Button variant="normal" className="p-0 w-6 h-6"><Icon name="Plus" /></Button>
+                <Button variant="ghost" className="p-0 w-6 h-6"><Icon name="Settings" /></Button>
               </HStack>
             </Layout>
           </HStack>
@@ -279,7 +279,7 @@ export const Small: Story = {
       <HStack gap={3} align="center">
         <Button size="small">Small Button</Button>
         <Button size="small">
-          {renderIcon("Plus")}
+          <Icon name="Plus" />
           Avec icon
         </Button>
       </HStack>
@@ -293,7 +293,7 @@ export const Large: Story = {
       <HStack gap={3} align="center">
         <Button size="large">Large Button</Button>
         <Button size="large">
-          {renderIcon("Plus")}
+          <Icon name="Plus" />
           Avec icon
         </Button>
       </HStack>

@@ -18,6 +18,9 @@ export interface IconProps {
 
   /** Handler pour le clic */
   onClick?: (e: React.MouseEvent<HTMLSpanElement>) => void;
+
+  /** Mode debug : affiche un border rose et log les clics dans la console */
+  debug?: boolean;
 }
 
 /**
@@ -53,6 +56,7 @@ export const Icon: React.FC<IconProps> = ({
   className,
   color,
   onClick,
+  debug = false,
 }) => {
   const iconElement = renderIcon(name, size);
 
@@ -61,11 +65,28 @@ export const Icon: React.FC<IconProps> = ({
     return null;
   }
 
+  const handleClick = React.useCallback(
+    (e: React.MouseEvent<HTMLSpanElement>) => {
+      if (debug) {
+        console.log("[Icon Click]", {
+          name,
+          size,
+          className,
+          color,
+          event: e,
+        });
+      }
+      onClick?.(e);
+    },
+    [debug, name, size, className, color, onClick]
+  );
+
   return (
     <span
       className={cn(
         "inline-flex items-center justify-center flex-shrink-0 [&_svg]:w-full [&_svg]:h-full",
         onClick && "cursor-pointer",
+        debug && "ring-2 ring-pink",
         className
       )}
       style={{
@@ -73,7 +94,7 @@ export const Icon: React.FC<IconProps> = ({
         height: `${size}px`,
         color: color || undefined,
       }}
-      onClick={onClick}
+      onClick={debug || onClick ? handleClick : undefined}
       role={onClick ? "button" : undefined}
       tabIndex={onClick ? 0 : undefined}
     >
