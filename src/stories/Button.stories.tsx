@@ -61,9 +61,17 @@ import { renderIcon } from '@story-gs-react';
       control: 'boolean',
       description: 'Affiche une pastille jaune indicateur',
     },
+    debug: {
+      control: 'boolean',
+      description: 'Mode debug : affiche un label et log les props dans la console',
+    },
     disabled: {
       control: 'boolean',
       description: 'Bouton désactivé',
+    },
+    onClick: {
+      action: 'clicked',
+      description: 'Fonction appelée au clic (hérite de ButtonHTMLAttributes)',
     },
   },
 } satisfies Meta<typeof Button>;
@@ -288,4 +296,43 @@ export const NestedLayouts: Story = {
   parameters: {
     layout: 'fullscreen',
   },
+};
+
+export const DebugMode: Story = {
+  render: () => (
+    <Layout bg="white" padding={6}>
+      <VStack gap={6}>
+        <div>
+          <h3 className="gs-typo-h3 mb-3">Mode Debug</h3>
+          <p className="text-sm text-grey-stronger mb-4">
+            La prop <code>debug</code> affiche un label au-dessus du bouton et log les props dans la console.
+          </p>
+        </div>
+
+        <VStack gap={4}>
+          <HStack gap={3}>
+            <Button variant="normal" size="large" debug onClick={() => alert('Clicked!')}>
+              Normal Large
+            </Button>
+            <Button variant="secondary" size="small" debug onClick={() => console.log('Secondary clicked')}>
+              Secondary Small
+            </Button>
+            <Button variant="ghost" debug indicator>
+              Ghost + Indicator
+            </Button>
+          </HStack>
+
+          <div className="p-4 bg-grey-lighter rounded">
+            <p className="text-xs font-medium mb-2">Caractéristiques du mode debug :</p>
+            <ul className="text-xs space-y-1 list-disc list-inside text-grey-stronger">
+              <li>Bordure rose (ring-2 ring-pink) autour du bouton</li>
+              <li>Label au-dessus affichant variant/size normalisés</li>
+              <li>Log dans la console avec toutes les props</li>
+              <li>onClick fonctionne normalement (hérite de ButtonHTMLAttributes)</li>
+            </ul>
+          </div>
+        </VStack>
+      </VStack>
+    </Layout>
+  ),
 };
