@@ -64,11 +64,15 @@ export const Icon: React.FC<IconProps> = ({
   return (
     <span
       className={cn(
-        "inline-flex items-center justify-center flex-shrink-0",
+        "inline-flex items-center justify-center flex-shrink-0 [&_svg]:w-full [&_svg]:h-full",
         onClick && "cursor-pointer",
         className
       )}
-      style={color ? { color } : undefined}
+      style={{
+        width: `${size}px`,
+        height: `${size}px`,
+        color: color || undefined,
+      }}
       onClick={onClick}
       role={onClick ? "button" : undefined}
       tabIndex={onClick ? 0 : undefined}
