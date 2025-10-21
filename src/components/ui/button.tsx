@@ -76,8 +76,8 @@ const buttonVariants = cva(
         link: "btn-link",
       },
       size: {
-        small: "p-1 text-sm gap-1",        // 5px padding, gap 5px, font 11px
-        large: "px-4 py-1 text-base gap-2", // 20px horizontal, 5px vertical, gap 10px, font 13px
+        small: "px-2 py-[4px] h-5 text-xs gap-1",  // 10px horizontal, 4px vertical, 20px height (12px content + 8px padding), gap 5px, font 9px
+        large: "px-4 py-1 text-base gap-2",        // 20px horizontal, 5px vertical, gap 10px, font 13px
       },
     },
     defaultVariants: {
