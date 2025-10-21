@@ -30,12 +30,7 @@
     --ring: 221.2 83.2% 53.3%;
     --radius: 0.5rem;
 
-    /* Font size variables */
-    --font-size-xs: 0.6875rem;
-    --font-size-sm: 0.813rem;
-    --font-size-base: 1rem;
-    --font-size-lg: 1.125rem;
-    --font-size-xl: 1.25rem;
+    /* Font size variables - now defined in figma-tokens.css */
 
     /* Header variables */
     --header-fs-title: 1.5rem;
