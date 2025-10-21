@@ -82,47 +82,41 @@ export const Default: Story = {
 export const AllVariants: Story = {
   render: () => (
     <VStack gap={6} padding={6}>
-      <Layout bg="white" padding={6} className="border border-grey rounded">
-        <VStack gap={4}>
-          <h3 className="gs-typo-h3">Background White</h3>
-          <HStack gap={3}>
-            <Button variant="normal">Normal</Button>
-            <Button variant="secondary">Secondary</Button>
-            <Button variant="ghost">Ghost</Button>
-            <Button variant="outline">Outline</Button>
-            <Button variant="destructive">Destructive</Button>
-            <Button variant="link">Link</Button>
-          </HStack>
-        </VStack>
-      </Layout>
+      <VStack as={Layout} bg="white" padding={6} gap={4} className="border border-grey rounded">
+        <h3 className="gs-typo-h3">Background White</h3>
+        <HStack gap={3}>
+          <Button variant="normal">Normal</Button>
+          <Button variant="secondary">Secondary</Button>
+          <Button variant="ghost">Ghost</Button>
+          <Button variant="outline">Outline</Button>
+          <Button variant="destructive">Destructive</Button>
+          <Button variant="link">Link</Button>
+        </HStack>
+      </VStack>
 
-      <Layout bg="grey" padding={6} className="border border-grey rounded">
-        <VStack gap={4}>
-          <h3 className="gs-typo-h3">Background Grey</h3>
-          <HStack gap={3}>
-            <Button variant="normal">Normal</Button>
-            <Button variant="secondary">Secondary</Button>
-            <Button variant="ghost">Ghost</Button>
-            <Button variant="outline">Outline</Button>
-            <Button variant="destructive">Destructive</Button>
-            <Button variant="link">Link</Button>
-          </HStack>
-        </VStack>
-      </Layout>
+      <VStack as={Layout} bg="grey" padding={6} gap={4} className="border border-grey rounded">
+        <h3 className="gs-typo-h3">Background Grey</h3>
+        <HStack gap={3}>
+          <Button variant="normal">Normal</Button>
+          <Button variant="secondary">Secondary</Button>
+          <Button variant="ghost">Ghost</Button>
+          <Button variant="outline">Outline</Button>
+          <Button variant="destructive">Destructive</Button>
+          <Button variant="link">Link</Button>
+        </HStack>
+      </VStack>
 
-      <Layout bg="black" padding={6} className="border border-grey rounded">
-        <VStack gap={4}>
-          <h3 className="gs-typo-h3 text-white">Background Black</h3>
-          <HStack gap={3}>
-            <Button variant="normal">Normal</Button>
-            <Button variant="secondary">Secondary</Button>
-            <Button variant="ghost">Ghost</Button>
-            <Button variant="outline">Outline</Button>
-            <Button variant="destructive">Destructive</Button>
-            <Button variant="link">Link</Button>
-          </HStack>
-        </VStack>
-      </Layout>
+      <VStack as={Layout} bg="black" padding={6} gap={4} className="border border-grey rounded">
+        <h3 className="gs-typo-h3 text-white">Background Black</h3>
+        <HStack gap={3}>
+          <Button variant="normal">Normal</Button>
+          <Button variant="secondary">Secondary</Button>
+          <Button variant="ghost">Ghost</Button>
+          <Button variant="outline">Outline</Button>
+          <Button variant="destructive">Destructive</Button>
+          <Button variant="link">Link</Button>
+        </HStack>
+      </VStack>
     </VStack>
   ),
   parameters: {
