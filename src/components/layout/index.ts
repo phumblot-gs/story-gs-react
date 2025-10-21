@@ -9,3 +9,5 @@ export type { VStackProps } from './VStack';
 
 export { Modal } from './Modal';
 export type { ModalProps } from './Modal';
+
+export { useBgContext, BgProvider } from './BgContext';

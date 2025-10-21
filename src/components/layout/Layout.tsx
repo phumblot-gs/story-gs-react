@@ -1,5 +1,6 @@
 import { ReactNode, ElementType } from 'react';
 import { cn } from '@/lib/utils';
+import { useBgContext, BgProvider } from './BgContext';
 
 type BgContext = 'white' | 'grey' | 'black';
 type ScrollBehavior = 'none' | 'auto' | 'always' | 'vertical' | 'horizontal' | 'both';
@@ -91,9 +92,15 @@ export function Layout({
   scroll = 'auto',
   as: Component = 'div',
 }: LayoutProps) {
-  return (
+  // Récupère le bg du parent via Context
+  const parentBg = useBgContext();
+
+  // Utilise bg spécifié, sinon hérite du parent
+  const effectiveBg = bg || parentBg;
+
+  const content = (
     <Component
-      {...(bg && { 'data-bg': bg })}
+      data-bg={effectiveBg || undefined}
       className={cn(
         // Couleur de fond selon le contexte (seulement si bg est spécifié)
         bg === 'white' && 'bg-white',
@@ -118,4 +125,12 @@ export function Layout({
       {children}
     </Component>
   );
+
+  // Si un nouveau bg est spécifié, on crée un nouveau contexte
+  // Sinon on laisse passer le contexte parent
+  return bg ? (
+    <BgProvider value={bg}>
+      {content}
+    </BgProvider>
+  ) : content;
 }
