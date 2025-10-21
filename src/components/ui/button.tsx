@@ -96,26 +96,26 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ variant, size, indicator, debug, className, children, asChild = false, ...props }, ref) => {
+  ({ variant, size, indicator, debug, className, children, asChild = false, onClick, ...props }, ref) => {
     const Comp = asChild ? Slot : "button";
     const normalizedVariant = normalizeVariant(variant);
     const normalizedSize = normalizeSize(size);
 
-    // Debug mode : log les props
-    React.useEffect(() => {
+    // Debug mode : wrapper pour onClick avec log
+    const handleClick = React.useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
       if (debug) {
-        console.log('[Button Debug]', {
+        console.log('[Button Click]', {
           variant: variant,
           normalizedVariant,
           size: size,
           normalizedSize,
           indicator,
-          asChild,
-          className,
-          props,
+          event: e,
         });
       }
-    }, [debug, variant, normalizedVariant, size, normalizedSize, indicator, asChild, className, props]);
+      // Appelle le onClick original s'il existe
+      onClick?.(e);
+    }, [debug, variant, normalizedVariant, size, normalizedSize, indicator, onClick]);
 
     return (
       <Comp
@@ -129,6 +129,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           debug && "ring-2 ring-pink ring-offset-2", // Bordure visuelle en debug
           className
         )}
+        onClick={debug ? handleClick : onClick}
         {...props}
       >
         {children}

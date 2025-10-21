@@ -92,27 +92,6 @@ export const Default: Story = {
   ),
 };
 
-export const Playground: Story = {
-  args: {
-    variant: 'normal',
-    size: 'large',
-    indicator: false,
-    debug: false,
-    disabled: false,
-    children: 'Bouton interactif',
-  },
-  render: (args) => (
-    <Layout bg="white" padding={6}>
-      <VStack gap={4}>
-        <p className="text-sm text-grey-stronger">
-          Utilisez les controls ci-dessous pour tester toutes les combinaisons de props
-        </p>
-        <Button {...args} />
-      </VStack>
-    </Layout>
-  ),
-};
-
 export const AllVariants: Story = {
   render: () => (
     <VStack gap={6} padding={6}>
