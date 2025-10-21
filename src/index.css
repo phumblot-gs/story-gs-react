@@ -1,6 +1,18 @@
-@import './styles/theme-variables.css';
+/**
+ * Point d'entrée CSS pour Storybook et applications
+ * ORDRE CRITIQUE : figma-tokens AVANT shadcn-theme
+ */
+
+/* 1. Variables design system (SOURCE DE VÉRITÉ) */
+@import './styles/figma-tokens.css';
+
+/* 2. Variables shadcn/ui (dépend de figma-tokens) */
+@import './styles/shadcn-theme.css';
+
+/* 3. Typographie */
 @import './styles/typography.css';
 
+/* 4. Tailwind CSS */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

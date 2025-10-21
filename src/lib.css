@@ -1,7 +1,18 @@
-@import './styles/fonts.css';
-@import './styles/figma-tokens.css';
-@import './styles/theme-variables.css';
+/**
+ * Point d'entrée CSS pour la librairie
+ * ORDRE CRITIQUE : figma-tokens AVANT shadcn-theme
+ */
 
+/* 1. Polices custom */
+@import './styles/fonts.css';
+
+/* 2. Variables design system (SOURCE DE VÉRITÉ) */
+@import './styles/figma-tokens.css';
+
+/* 3. Variables shadcn/ui (dépend de figma-tokens) */
+@import './styles/shadcn-theme.css';
+
+/* 4. Tailwind CSS */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
