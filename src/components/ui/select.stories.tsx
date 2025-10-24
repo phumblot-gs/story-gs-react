@@ -6,6 +6,7 @@ import {
   SelectItem,
   SelectValue,
 } from "./select";
+import { Layout, VStack } from "@/components/layout";
 
 const meta: Meta<typeof Select> = {
   title: "Components/Select",
@@ -14,16 +15,11 @@ const meta: Meta<typeof Select> = {
     layout: "centered",
     docs: {
       description: {
-        component: "Composant Select personnalisé basé sur les maquettes Figma avec variants de background.",
+        component: "Composant Select personnalisé basé sur les maquettes Figma. Hérite automatiquement du contexte de couleur via `data-bg` du Layout parent.",
       },
     },
   },
   argTypes: {
-    background: {
-      control: { type: "select" },
-      options: ["white", "black", "grey"],
-      description: "Variant de background selon le design system",
-    },
     debug: {
       control: "boolean",
       description: "Mode debug pour afficher les logs console",
@@ -36,6 +32,10 @@ const meta: Meta<typeof Select> = {
       control: "text",
       description: "Texte de placeholder",
     },
+    allowClear: {
+      control: "boolean",
+      description: "Permet d'effacer la sélection avec une icône X",
+    },
   },
 };
 
@@ -44,79 +44,96 @@ type Story = StoryObj<typeof Select>;
 
 // Template de base
 const SelectTemplate = (args: any) => (
-  <Select {...args}>
-    <SelectTrigger background={args.background} debug={args.debug} disabled={args.disabled}>
-      <SelectValue placeholder={args.placeholder || "Sélectionner une option"} />
-    </SelectTrigger>
-    <SelectContent background={args.background} debug={args.debug}>
-      <SelectItem value="option1" background={args.background} debug={args.debug}>Option 1</SelectItem>
-      <SelectItem value="option2" background={args.background} debug={args.debug}>Option 2</SelectItem>
-      <SelectItem value="option3" background={args.background} debug={args.debug}>Option 3</SelectItem>
-      <SelectItem value="option4" background={args.background} debug={args.debug}>Option très longue qui peut dépasser</SelectItem>
-    </SelectContent>
-  </Select>
+  <Layout bg="white" padding={6}>
+    <Select {...args}>
+      <SelectTrigger debug={args.debug} disabled={args.disabled}>
+        <SelectValue placeholder={args.placeholder || "Sélectionner une option"} />
+      </SelectTrigger>
+      <SelectContent debug={args.debug}>
+        <SelectItem value="option1" debug={args.debug}>Option 1</SelectItem>
+        <SelectItem value="option2" debug={args.debug}>Option 2</SelectItem>
+        <SelectItem value="option3" debug={args.debug}>Option 3</SelectItem>
+        <SelectItem value="option4" debug={args.debug}>Option très longue qui peut dépasser</SelectItem>
+      </SelectContent>
+    </Select>
+  </Layout>
 );
 
 export const Default: Story = {
-  render: SelectTemplate,
   args: {
-    background: "white",
     debug: false,
     disabled: false,
     placeholder: "Choisir une option",
+    allowClear: false,
   },
+  render: (args) => (
+    <Layout bg="white" padding={6}>
+      <Select debug={args.debug} disabled={args.disabled} allowClear={args.allowClear}>
+        <SelectTrigger>
+          <SelectValue placeholder={args.placeholder} />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="option1">Option 1</SelectItem>
+          <SelectItem value="option2">Option 2</SelectItem>
+          <SelectItem value="option3">Option 3</SelectItem>
+          <SelectItem value="option4">Option très longue qui peut dépasser</SelectItem>
+        </SelectContent>
+      </Select>
+    </Layout>
+  ),
 };
 
 export const BackgroundVariants: Story = {
   render: () => (
-    <div className="flex flex-col space-y-6 p-4">
-      <div className="space-y-2">
+    <VStack gap={6} padding={6}>
+      <VStack as={Layout} bg="white" padding={6} gap={3} className="border border-grey rounded">
         <h3 className="text-sm font-medium">Background White</h3>
-        <Select background="white">
-          <SelectTrigger background="white">
+        <Select>
+          <SelectTrigger>
             <SelectValue placeholder="Select white background" />
           </SelectTrigger>
-          <SelectContent background="white">
-            <SelectItem value="white1" background="white">Option 1</SelectItem>
-            <SelectItem value="white2" background="white">Option 2</SelectItem>
-            <SelectItem value="white3" background="white">Option 3</SelectItem>
+          <SelectContent>
+            <SelectItem value="white1">Option 1</SelectItem>
+            <SelectItem value="white2">Option 2</SelectItem>
+            <SelectItem value="white3">Option 3</SelectItem>
           </SelectContent>
         </Select>
-      </div>
+      </VStack>
 
-      <div className="space-y-2 p-4 bg-white rounded">
+      <VStack as={Layout} bg="black" padding={6} gap={3} className="border border-grey rounded">
         <h3 className="text-sm font-medium text-white">Background Black</h3>
-        <Select background="black">
-          <SelectTrigger background="black">
+        <Select>
+          <SelectTrigger>
             <SelectValue placeholder="Select black background" />
           </SelectTrigger>
-          <SelectContent background="black">
-            <SelectItem value="black1" background="black">Option 1</SelectItem>
-            <SelectItem value="black2" background="black">Option 2</SelectItem>
-            <SelectItem value="black3" background="black">Option 3</SelectItem>
+          <SelectContent>
+            <SelectItem value="black1">Option 1</SelectItem>
+            <SelectItem value="black2">Option 2</SelectItem>
+            <SelectItem value="black3">Option 3</SelectItem>
           </SelectContent>
         </Select>
-      </div>
+      </VStack>
 
-      <div className="space-y-2">
+      <VStack as={Layout} bg="grey" padding={6} gap={3} className="border border-grey rounded">
         <h3 className="text-sm font-medium">Background Grey</h3>
-        <Select background="grey">
-          <SelectTrigger background="grey">
+        <Select>
+          <SelectTrigger>
             <SelectValue placeholder="Select grey background" />
           </SelectTrigger>
-          <SelectContent background="grey">
-            <SelectItem value="grey1" background="grey">Option 1</SelectItem>
-            <SelectItem value="grey2" background="grey">Option 2</SelectItem>
-            <SelectItem value="grey3" background="grey">Option 3</SelectItem>
+          <SelectContent>
+            <SelectItem value="grey1">Option 1</SelectItem>
+            <SelectItem value="grey2">Option 2</SelectItem>
+            <SelectItem value="grey3">Option 3</SelectItem>
           </SelectContent>
         </Select>
-      </div>
-    </div>
+      </VStack>
+    </VStack>
   ),
   parameters: {
+    layout: 'fullscreen',
     docs: {
       description: {
-        story: "Comparaison des différents variants de background disponibles.",
+        story: "Le Select hérite automatiquement du background du Layout parent via BgContext.",
       },
     },
   },
@@ -124,45 +141,47 @@ export const BackgroundVariants: Story = {
 
 export const States: Story = {
   render: () => (
-    <div className="flex flex-col space-y-6 p-4">
-      <div className="space-y-2">
-        <h3 className="text-sm font-medium">État Normal</h3>
-        <Select>
-          <SelectTrigger>
-            <SelectValue placeholder="Select normal" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="normal1">Option normale</SelectItem>
-            <SelectItem value="normal2">Autre option</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
+    <Layout bg="white" padding={6}>
+      <VStack gap={6}>
+        <VStack gap={3}>
+          <h3 className="text-sm font-medium">État Normal</h3>
+          <Select>
+            <SelectTrigger>
+              <SelectValue placeholder="Select normal" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="normal1">Option normale</SelectItem>
+              <SelectItem value="normal2">Autre option</SelectItem>
+            </SelectContent>
+          </Select>
+        </VStack>
 
-      <div className="space-y-2">
-        <h3 className="text-sm font-medium">État Désactivé</h3>
-        <Select disabled>
-          <SelectTrigger disabled>
-            <SelectValue placeholder="Select désactivé" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="disabled1">Option désactivée</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
+        <VStack gap={3}>
+          <h3 className="text-sm font-medium">État Désactivé</h3>
+          <Select disabled>
+            <SelectTrigger disabled>
+              <SelectValue placeholder="Select désactivé" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="disabled1">Option désactivée</SelectItem>
+            </SelectContent>
+          </Select>
+        </VStack>
 
-      <div className="space-y-2">
-        <h3 className="text-sm font-medium">Avec Valeur Sélectionnée</h3>
-        <Select defaultValue="selected">
-          <SelectTrigger>
-            <SelectValue placeholder="Aucune sélection" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="selected">Option sélectionnée</SelectItem>
-            <SelectItem value="other">Autre option</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-    </div>
+        <VStack gap={3}>
+          <h3 className="text-sm font-medium">Avec Valeur Sélectionnée</h3>
+          <Select defaultValue="selected">
+            <SelectTrigger>
+              <SelectValue placeholder="Aucune sélection" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="selected">Option sélectionnée</SelectItem>
+              <SelectItem value="other">Autre option</SelectItem>
+            </SelectContent>
+          </Select>
+        </VStack>
+      </VStack>
+    </Layout>
   ),
   parameters: {
     docs: {
@@ -175,23 +194,25 @@ export const States: Story = {
 
 export const LongContent: Story = {
   render: () => (
-    <Select>
-      <SelectTrigger>
-        <SelectValue placeholder="Select avec beaucoup d'options" />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectItem value="short">Court</SelectItem>
-        <SelectItem value="medium">Option moyenne</SelectItem>
-        <SelectItem value="long">Option avec un texte très long qui pourrait dépasser</SelectItem>
-        <SelectItem value="extra-long">Option avec un texte extrêmement long qui teste la gestion de l'overflow et du wrapping</SelectItem>
-        <SelectItem value="numbers">123456789012345678901234567890</SelectItem>
-        <SelectItem value="special">Caractères spéciaux: àéèïôç!</SelectItem>
-        <SelectItem value="option7">Option 7</SelectItem>
-        <SelectItem value="option8">Option 8</SelectItem>
-        <SelectItem value="option9">Option 9</SelectItem>
-        <SelectItem value="option10">Option 10</SelectItem>
-      </SelectContent>
-    </Select>
+    <Layout bg="white" padding={6}>
+      <Select>
+        <SelectTrigger>
+          <SelectValue placeholder="Select avec beaucoup d'options" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="short">Court</SelectItem>
+          <SelectItem value="medium">Option moyenne</SelectItem>
+          <SelectItem value="long">Option avec un texte très long qui pourrait dépasser</SelectItem>
+          <SelectItem value="extra-long">Option avec un texte extrêmement long qui teste la gestion de l'overflow et du wrapping</SelectItem>
+          <SelectItem value="numbers">123456789012345678901234567890</SelectItem>
+          <SelectItem value="special">Caractères spéciaux: àéèïôç!</SelectItem>
+          <SelectItem value="option7">Option 7</SelectItem>
+          <SelectItem value="option8">Option 8</SelectItem>
+          <SelectItem value="option9">Option 9</SelectItem>
+          <SelectItem value="option10">Option 10</SelectItem>
+        </SelectContent>
+      </Select>
+    </Layout>
   ),
   parameters: {
     docs: {
@@ -205,7 +226,6 @@ export const LongContent: Story = {
 export const WithDebug: Story = {
   render: SelectTemplate,
   args: {
-    background: "white",
     debug: true,
     disabled: false,
     placeholder: "Select avec debug activé",
@@ -221,39 +241,38 @@ export const WithDebug: Story = {
 
 export const WithAllowClear: Story = {
   render: (args: any) => (
-    <div className="space-y-4">
-      <div className="space-y-2">
-        <h3 className="text-sm font-medium">Allow Clear - Sans valeur par défaut</h3>
-        <Select allowClear background={args.background}>
-          <SelectTrigger background={args.background}>
-            <SelectValue placeholder="Sélectionner une option (effaçable)" />
-          </SelectTrigger>
-          <SelectContent background={args.background}>
-            <SelectItem value="option1" background={args.background}>Option 1</SelectItem>
-            <SelectItem value="option2" background={args.background}>Option 2</SelectItem>
-            <SelectItem value="option3" background={args.background}>Option 3</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
+    <Layout bg="white" padding={6}>
+      <VStack gap={4}>
+        <VStack gap={2}>
+          <h3 className="text-sm font-medium">Allow Clear - Sans valeur par défaut</h3>
+          <Select allowClear>
+            <SelectTrigger>
+              <SelectValue placeholder="Sélectionner une option (effaçable)" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="option1">Option 1</SelectItem>
+              <SelectItem value="option2">Option 2</SelectItem>
+              <SelectItem value="option3">Option 3</SelectItem>
+            </SelectContent>
+          </Select>
+        </VStack>
 
-      <div className="space-y-2">
-        <h3 className="text-sm font-medium">Allow Clear - Avec valeur par défaut</h3>
-        <Select allowClear defaultValue="option2" background={args.background}>
-          <SelectTrigger background={args.background}>
-            <SelectValue placeholder="Sélectionner une option" />
-          </SelectTrigger>
-          <SelectContent background={args.background}>
-            <SelectItem value="option1" background={args.background}>Option 1</SelectItem>
-            <SelectItem value="option2" background={args.background}>Option 2</SelectItem>
-            <SelectItem value="option3" background={args.background}>Option 3</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-    </div>
+        <VStack gap={2}>
+          <h3 className="text-sm font-medium">Allow Clear - Avec valeur par défaut</h3>
+          <Select allowClear defaultValue="option2">
+            <SelectTrigger>
+              <SelectValue placeholder="Sélectionner une option" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="option1">Option 1</SelectItem>
+              <SelectItem value="option2">Option 2</SelectItem>
+              <SelectItem value="option3">Option 3</SelectItem>
+            </SelectContent>
+          </Select>
+        </VStack>
+      </VStack>
+    </Layout>
   ),
-  args: {
-    background: "white",
-  },
   parameters: {
     docs: {
       description: {

@@ -3,9 +3,8 @@
 import * as React from "react";
 import * as SelectPrimitive from "@radix-ui/react-select";
 import { cn } from "@/lib/utils";
-import { IconProvider } from "@/components/ui/icon-provider";
-
-export type SelectBackground = "white" | "black" | "grey";
+import { Icon } from "@/components/ui/icons";
+import { useBgContext } from "@/components/layout/BgContext";
 
 export interface SelectProps {
   children: React.ReactNode;
@@ -13,7 +12,6 @@ export interface SelectProps {
   defaultValue?: string;
   onValueChange?: (value: string) => void;
   disabled?: boolean;
-  background?: SelectBackground;
   debug?: boolean;
   placeholder?: string;
   className?: string;
@@ -21,7 +19,6 @@ export interface SelectProps {
 }
 
 export interface SelectTriggerProps extends React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger> {
-  background?: SelectBackground;
   debug?: boolean;
   allowClear?: boolean;
   hasValue?: boolean;
@@ -29,19 +26,17 @@ export interface SelectTriggerProps extends React.ComponentPropsWithoutRef<typeo
 }
 
 export interface SelectContentProps extends React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content> {
-  background?: SelectBackground;
   debug?: boolean;
 }
 
 export interface SelectItemProps extends React.ComponentPropsWithoutRef<typeof SelectPrimitive.Item> {
-  background?: SelectBackground;
   debug?: boolean;
 }
 
 const Select = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Root>,
   SelectProps
->(({ children, background = "white", debug = false, className, allowClear = false, value, onValueChange, ...props }, ref) => {
+>(({ children, debug = false, className, allowClear = false, value, onValueChange, ...props }, ref) => {
   const [internalValue, setInternalValue] = React.useState(props.defaultValue || "");
   const currentValue = value !== undefined ? value : internalValue;
   const hasValue = Boolean(currentValue);
@@ -61,7 +56,7 @@ const Select = React.forwardRef<
   };
 
   if (debug) {
-    console.log("Select: props", { background, debug, allowClear, hasValue, currentValue, ...props });
+    console.log("Select: props", { debug, allowClear, hasValue, currentValue, ...props });
   }
 
   return (
@@ -70,7 +65,6 @@ const Select = React.forwardRef<
         {React.Children.map(children, (child) => {
           if (React.isValidElement(child) && child.type === SelectTrigger) {
             return React.cloneElement(child, {
-              background,
               allowClear,
               hasValue,
               onClear: handleClear,
@@ -87,7 +81,8 @@ const Select = React.forwardRef<
 const SelectTrigger = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Trigger>,
   SelectTriggerProps
->(({ className, children, background = "white", debug = false, disabled, allowClear = false, hasValue = false, onClear, ...props }, ref) => {
+>(({ className, children, debug = false, disabled, allowClear = false, hasValue = false, onClear, ...props }, ref) => {
+  const bg = useBgContext();
   const [isHovered, setIsHovered] = React.useState(false);
   const [isPressed, setIsPressed] = React.useState(false);
   const [isOpen, setIsOpen] = React.useState(false);
@@ -114,24 +109,25 @@ const SelectTrigger = React.forwardRef<
 
     return () => observer.disconnect();
   }, [triggerNode]);
+
   // Styles basés sur la maquette Figma
-  // background indique la couleur du fond sur lequel le composant s'affiche
+  // Hérite du contexte bg via useBgContext()
   const getBackgroundStyles = () => {
     if (disabled) {
       // État désactivé - toujours gris peu importe le fond
       return "bg-grey-lighter text-grey-stronger border-grey-lighter";
     }
 
-    switch (background) {
+    switch (bg) {
       case "white":
         // Le composant s'affiche sur fond blanc
         // Couleur du composant: inputSelectSingle/w/color-bg-default (gris)
         return "bg-grey-lighter text-black border-grey-lighter hover:border-black focus:border-black";
       case "black":
-        // Le composant s'affiche sur fond noir (à définir)
+        // Le composant s'affiche sur fond noir
         return "bg-black text-white border-grey-strongest hover:border-white focus:border-white";
       case "grey":
-        // Le composant s'affiche sur fond gris (à définir)
+        // Le composant s'affiche sur fond gris
         return "bg-grey text-black border-grey-stronger hover:border-black focus:border-black";
       default:
         return "bg-grey-lighter text-black border-grey-lighter hover:border-black focus:border-black";
@@ -156,7 +152,7 @@ const SelectTrigger = React.forwardRef<
   };
 
   if (debug) {
-    console.log("SelectTrigger: props", { background, disabled, debug, allowClear, hasValue, isOpen, icon: getIcon() });
+    console.log("SelectTrigger: props", { bg, disabled, debug, allowClear, hasValue, isOpen, icon: getIcon() });
   }
 
   return (
@@ -171,7 +167,7 @@ const SelectTrigger = React.forwardRef<
       }}
       className={cn(
         // Base styles selon Figma
-        "flex h-[30px] w-full items-center justify-between rounded-full border pl-[10px] pr-[2px] py-[10px]",
+        "flex h-8 w-full items-center justify-between rounded-full border px-3 py-2",
         "text-sm font-light transition-colors duration-200",
         "focus:outline-none focus:ring-0",
         "disabled:cursor-not-allowed disabled:opacity-50",
@@ -187,7 +183,7 @@ const SelectTrigger = React.forwardRef<
       {...props}
     >
       <span className="flex-1 text-left">{children}</span>
-      <div className="ml-[5px]">
+      <div className="ml-2">
         <SelectPrimitive.Icon asChild>
           <div
             className={cn(
@@ -201,7 +197,7 @@ const SelectTrigger = React.forwardRef<
             onPointerDown={handleClearPointerDown}
             data-icon-clear={allowClear && hasValue && !isOpen ? "true" : "false"}
           >
-            <IconProvider icon={getIcon()} size={12} />
+            <Icon name={getIcon()} size={12} />
           </div>
         </SelectPrimitive.Icon>
       </div>
@@ -212,18 +208,20 @@ const SelectTrigger = React.forwardRef<
 const SelectContent = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Content>,
   SelectContentProps
->(({ className, children, background = "white", debug = false, ...props }, ref) => {
+>(({ className, children, debug = false, ...props }, ref) => {
+  const bg = useBgContext();
+
   // Styles basés sur la maquette Figma selon le background
   const getContentStyles = () => {
-    switch (background) {
+    switch (bg) {
       case "white":
         // Quand le composant s'affiche sur fond blanc, la dropdown a fond noir avec texte blanc
         return "bg-black text-white border-grey-strongest";
       case "black":
-        // Quand le composant s'affiche sur fond noir, la dropdown reste blanche (à définir)
+        // Quand le composant s'affiche sur fond noir, la dropdown reste blanche
         return "bg-white text-black border-grey-lighter";
       case "grey":
-        // Quand le composant s'affiche sur fond gris, la dropdown reste blanche (à définir)
+        // Quand le composant s'affiche sur fond gris, la dropdown reste blanche
         return "bg-white text-black border-grey-lighter";
       default:
         return "bg-white text-black border-grey-lighter";
@@ -231,7 +229,7 @@ const SelectContent = React.forwardRef<
   };
 
   if (debug) {
-    console.log("SelectContent: rendering content", { background });
+    console.log("SelectContent: rendering content", { bg });
   }
 
   return (
@@ -264,20 +262,22 @@ const SelectContent = React.forwardRef<
 const SelectItem = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Item>,
   SelectItemProps
->(({ className, children, background = "white", debug = false, ...props }, ref) => {
+>(({ className, children, debug = false, ...props }, ref) => {
+  const bg = useBgContext();
+
   // Styles basés sur la maquette Figma selon le background
   const getItemStyles = () => {
-    switch (background) {
+    switch (bg) {
       case "white":
       case "grey":
-        // Quand le dropdown a fond noir (background="white" ou "grey")
+        // Quand le dropdown a fond noir (bg="white" ou "grey")
         // Défaut: fond black-secondary, texte white
         // Hover: fond white, texte black
         // Focus: fond white, texte black
         // Pressed: fond white, texte blue-primary
         return "bg-black-secondary text-white hover:bg-white hover:text-black focus:bg-white focus:text-black active:bg-white active:text-blue-primary";
       case "black":
-        // Quand le dropdown a fond noir (background="black")
+        // Quand le dropdown a fond noir (bg="black")
         // Défaut: fond black-secondary, texte white
         // Hover: fond white, texte black
         // Focus: fond white, texte black
@@ -290,7 +290,7 @@ const SelectItem = React.forwardRef<
   };
 
   if (debug) {
-    console.log("SelectItem: props", { background, ...props });
+    console.log("SelectItem: props", { bg, ...props });
   }
 
   return (
@@ -298,8 +298,8 @@ const SelectItem = React.forwardRef<
       ref={ref}
       className={cn(
         // Styles des items selon Figma
-        "relative flex h-[30px] w-full cursor-default select-none items-center",
-        "px-[10px] py-[10px] text-sm font-light",
+        "relative flex h-8 w-full cursor-default select-none items-center",
+        "px-3 py-2 text-sm font-light",
         "focus:outline-none focus:ring-0 focus:border-none",
         "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
         "transition-colors duration-150",

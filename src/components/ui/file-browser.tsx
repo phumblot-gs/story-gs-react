@@ -1044,7 +1044,6 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
 
       {sortedFiles.length === 0 && (
         <div className="text-center py-12 text-gray-500 bg-white border-t border-b border-gray-200">
-          <IconProvider icon="Folder" size={48} className="mx-auto mb-4 text-gray-300" />
           <p className="text-sm">{t('fileBrowser.noFilesInFolder')}</p>
         </div>
       )}
