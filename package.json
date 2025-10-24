@@ -1,6 +1,6 @@
 {
   "name": "@gs/gs-components-library",
-  "version": "1.0.0-beta.6",
+  "version": "1.1.0-beta.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -219,6 +219,8 @@
       "import": "./dist/utils/notifications.mjs",
       "require": "./dist/utils/notifications.cjs"
     },
+    "./styles": "./dist/lib.css",
+    "./lib.css": "./dist/lib.css",
     "./style.css": "./dist/style.css"
   },
   "files": [
