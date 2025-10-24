@@ -8,7 +8,8 @@ import { IconProvider } from "@/components/ui/icon-provider";
 import { IconName } from "@/components/ui/icons/types";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useTranslation } from "@/contexts/TranslationContext";
+import { useTranslationSafe } from "@/contexts/TranslationContext";
+import { TranslationMap } from "@/utils/translations";
 
 // Types basés sur le schéma BDD
 export interface FileItem {
@@ -35,6 +36,9 @@ export interface FileBrowserProps {
   initialSort?: SortConfig;
   heightMode?: HeightMode;
   maxHeight?: string;
+  // Translation props (optional - works without TranslationProvider)
+  language?: string;                          // Language code (e.g., "fr", "en", "es", "it")
+  translations?: Partial<TranslationMap>;     // Custom translations to override defaults
   // Pagination
   totalFiles?: number | null;    // Nombre total de fichiers (null si inconnu)
   hasMore?: boolean;             // Indique s'il y a plus de fichiers à charger
@@ -83,6 +87,9 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
   initialSort = { field: "file_name", direction: "asc" },
   heightMode = "auto",
   maxHeight = "600px",
+  // Translation props
+  language,
+  translations,
   // Pagination
   totalFiles = null,
   hasMore = false,
@@ -105,7 +112,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
   onSortChange,
   onSelectionChange,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslationSafe(translations, language);
   const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
   const [hoveredRow, setHoveredRow] = useState<string | null>(null);
   const [lastSelectedIndex, setLastSelectedIndex] = useState<number | null>(null);

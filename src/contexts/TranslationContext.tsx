@@ -3,8 +3,9 @@ import React, { createContext, useContext, useState, useMemo } from "react";
 import { defaultTranslations, TranslationMap } from "@/utils/translations";
 import { Language } from "@/components/ui/language-switcher";
 
-// Re-export Language for convenience
+// Re-export for convenience
 export type { Language } from "@/components/ui/language-switcher";
+export type { TranslationMap } from "@/utils/translations";
 
 export interface TranslationContextType {
   currentLanguage: Language;
@@ -131,10 +132,80 @@ export const TranslationProvider: React.FC<TranslationProviderProps> = ({
 // Custom hook to use the translation context
 export const useTranslation = () => {
   const context = useContext(TranslationContext);
-  
+
   if (!context) {
     throw new Error("useTranslation must be used within a TranslationProvider");
   }
-  
+
   return context;
+};
+
+// Safe hook that works with or without TranslationProvider
+export const useTranslationSafe = (
+  customTranslations?: Partial<TranslationMap>,
+  customLanguage?: string
+) => {
+  const context = useContext(TranslationContext);
+
+  // If context exists, use it
+  if (context) {
+    return context;
+  }
+
+  // Fallback: use default translations and custom language
+  const fallbackLanguage: Language = {
+    code: customLanguage?.toUpperCase() || "EN",
+    name: customLanguage || "English"
+  };
+
+  const t = (key: string, params?: Record<string, string | number>): string => {
+    // Try custom translations first
+    if (customTranslations?.[key]?.[fallbackLanguage.code]) {
+      let text = customTranslations[key][fallbackLanguage.code];
+
+      // Replace parameters
+      if (params) {
+        Object.entries(params).forEach(([paramKey, paramValue]) => {
+          const regex = new RegExp(`{${paramKey}}`, 'g');
+          text = text.replace(regex, String(paramValue));
+        });
+      }
+
+      return text;
+    }
+
+    // Try default translations
+    if (defaultTranslations[key]?.[fallbackLanguage.code]) {
+      let text = defaultTranslations[key][fallbackLanguage.code];
+
+      // Replace parameters
+      if (params) {
+        Object.entries(params).forEach(([paramKey, paramValue]) => {
+          const regex = new RegExp(`{${paramKey}}`, 'g');
+          text = text.replace(regex, String(paramValue));
+        });
+      }
+
+      return text;
+    }
+
+    // Fallback to EN
+    if (defaultTranslations[key]?.["EN"]) {
+      return defaultTranslations[key]["EN"];
+    }
+
+    // Last resort: return the key
+    console.warn(`Translation key not found: ${key}`);
+    return key;
+  };
+
+  return {
+    currentLanguage: fallbackLanguage,
+    language: fallbackLanguage,
+    setLanguage: () => {
+      console.warn("setLanguage is not available without TranslationProvider");
+    },
+    availableLanguages: [fallbackLanguage],
+    t
+  };
 };

@@ -153,8 +153,8 @@ export { ThemeProvider, useCustomTheme } from "./contexts/ThemeContext";
 export type { ThemeCustomization, ThemeProviderProps } from "./contexts/ThemeContext";
 export { useTheme } from "next-themes";
 
-export { TranslationProvider, useTranslation } from "./contexts/TranslationContext";
-export type { Language as TranslationLanguage, TranslationProviderProps } from "./contexts/TranslationContext";
+export { TranslationProvider, useTranslation, useTranslationSafe } from "./contexts/TranslationContext";
+export type { Language as TranslationLanguage, TranslationProviderProps, TranslationMap } from "./contexts/TranslationContext";
 
 export { StyleProvider, useStyles, useGlobalStyles } from "./contexts/StyleProvider";
 export type { StyleConfig } from "./contexts/StyleProvider";
