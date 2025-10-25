@@ -81,17 +81,23 @@ export const TranslationProvider: React.FC<TranslationProviderProps> = ({
 
   // Translation function
   const t = (key: string, params?: Record<string, string | number>): string => {
-    if (!translations[key]) {
-      console.warn(`Translation key not found: ${key}`);
-      return key;
+    // Handle pluralization if count parameter exists
+    let effectiveKey = key;
+    if (params?.count !== undefined) {
+      effectiveKey = getPluralKey(key, Number(params.count), translations);
+    }
+
+    if (!translations[effectiveKey]) {
+      console.warn(`Translation key not found: ${effectiveKey}`);
+      return effectiveKey;
     }
 
     // Get translation for current language or fall back to English or key itself
-    const langTranslations = translations[key];
-    let text = langTranslations[currentLanguage.code] || 
-               langTranslations["EN"] || 
-               key;
-    
+    const langTranslations = translations[effectiveKey];
+    let text = langTranslations[currentLanguage.code] ||
+               langTranslations["EN"] ||
+               effectiveKey;
+
     // Replace parameters
     if (params) {
       Object.entries(params).forEach(([paramKey, paramValue]) => {
@@ -99,7 +105,7 @@ export const TranslationProvider: React.FC<TranslationProviderProps> = ({
         text = text.replace(regex, String(paramValue));
       });
     }
-    
+
     return text;
   };
 
@@ -140,6 +146,27 @@ export const useTranslation = () => {
   return context;
 };
 
+// Helper function to handle pluralization
+// Simple FR/EN rules: count === 0 or 1 → singular, else → plural
+const getPluralKey = (
+  baseKey: string,
+  count: number,
+  translations: TranslationMap
+): string => {
+  // Check for explicit _zero key
+  if (count === 0 && translations[`${baseKey}_zero`]) {
+    return `${baseKey}_zero`;
+  }
+
+  // Check for _plural key
+  if (count !== 1 && translations[`${baseKey}_plural`]) {
+    return `${baseKey}_plural`;
+  }
+
+  // Return base key (singular form)
+  return baseKey;
+};
+
 // Safe hook that works with or without TranslationProvider
 // Priority: Props (customTranslations/customLanguage) > Context > Default EN
 export const useTranslationSafe = (
@@ -150,21 +177,6 @@ export const useTranslationSafe = (
 
   // If props are provided, they take priority over context
   const hasCustomProps = customTranslations !== undefined || customLanguage !== undefined;
-
-  // DEBUG
-  React.useEffect(() => {
-    console.log("[useTranslationSafe] Called with:", {
-      hasCustomTranslations: customTranslations !== undefined,
-      customTranslationsKeys: customTranslations ? Object.keys(customTranslations).slice(0, 5) : "undefined",
-      customLanguage,
-      hasContext: context !== undefined,
-      contextLanguage: context?.currentLanguage.code,
-      hasCustomProps,
-      willUsePropMode: hasCustomProps,
-      willUseContextMode: !hasCustomProps && context !== undefined,
-      willUseFallbackMode: !hasCustomProps && !context,
-    });
-  }, [customTranslations, customLanguage, context, hasCustomProps]);
 
   if (hasCustomProps) {
     // Use props with higher priority
@@ -195,28 +207,22 @@ export const useTranslationSafe = (
     }, [customTranslations]);
 
     const t = (key: string, params?: Record<string, string | number>): string => {
-      // DEBUG: Log each translation call
-      if (key.startsWith("fileBrowser")) {
-        console.log("[useTranslationSafe.t] Translation call:", {
-          key,
-          hasKeyInMerged: !!mergedTranslations[key],
-          languageCode: propsLanguage.code,
-          availableLanguagesForKey: mergedTranslations[key] ? Object.keys(mergedTranslations[key]) : "KEY_NOT_FOUND",
-          valueForLanguage: mergedTranslations[key]?.[propsLanguage.code],
-          params,
-        });
+      // Handle pluralization if count parameter exists
+      let effectiveKey = key;
+      if (params?.count !== undefined) {
+        effectiveKey = getPluralKey(key, Number(params.count), mergedTranslations);
       }
 
-      if (!mergedTranslations[key]) {
-        console.warn(`Translation key not found: ${key}`);
-        return key;
+      if (!mergedTranslations[effectiveKey]) {
+        console.warn(`Translation key not found: ${effectiveKey}`);
+        return effectiveKey;
       }
 
       // Get translation for current language or fall back to English or key itself
-      const langTranslations = mergedTranslations[key];
+      const langTranslations = mergedTranslations[effectiveKey];
       let text = langTranslations[propsLanguage.code] ||
                  langTranslations["EN"] ||
-                 key;
+                 effectiveKey;
 
       // Replace parameters
       if (params) {
@@ -252,13 +258,19 @@ export const useTranslationSafe = (
   };
 
   const t = (key: string, params?: Record<string, string | number>): string => {
-    if (!defaultTranslations[key]) {
-      console.warn(`Translation key not found: ${key}`);
-      return key;
+    // Handle pluralization if count parameter exists
+    let effectiveKey = key;
+    if (params?.count !== undefined) {
+      effectiveKey = getPluralKey(key, Number(params.count), defaultTranslations);
+    }
+
+    if (!defaultTranslations[effectiveKey]) {
+      console.warn(`Translation key not found: ${effectiveKey}`);
+      return effectiveKey;
     }
 
     // Get translation for EN or key itself
-    let text = defaultTranslations[key]["EN"] || key;
+    let text = defaultTranslations[effectiveKey]["EN"] || effectiveKey;
 
     // Replace parameters
     if (params) {

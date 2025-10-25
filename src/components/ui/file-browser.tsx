@@ -112,26 +112,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
   onSortChange,
   onSelectionChange,
 }) => {
-  const translationContext = useTranslationSafe(translations, language);
-  const { t } = translationContext;
-
-  // DEBUG: Log translation setup
-  useEffect(() => {
-    console.log("[FileBrowser] Translation Debug:", {
-      propsLanguage: language,
-      propsTranslations: translations,
-      propsTranslationsKeys: translations ? Object.keys(translations) : "undefined",
-      contextLanguage: translationContext.currentLanguage,
-      contextAvailableLanguages: translationContext.availableLanguages,
-      // Test a specific translation
-      testKey: "fileBrowser.filesCount",
-      testResult: t("fileBrowser.filesCount", { count: 5 }),
-      // Check if translations prop has this key
-      hasKeyInProps: translations?.["fileBrowser.filesCount"] !== undefined,
-      propsKeyValue: translations?.["fileBrowser.filesCount"],
-    });
-  }, [language, translations, translationContext, t]);
-
+  const { t } = useTranslationSafe(translations, language);
   const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
   const [hoveredRow, setHoveredRow] = useState<string | null>(null);
   const [lastSelectedIndex, setLastSelectedIndex] = useState<number | null>(null);
