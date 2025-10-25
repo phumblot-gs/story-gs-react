@@ -141,62 +141,107 @@ export const useTranslation = () => {
 };
 
 // Safe hook that works with or without TranslationProvider
+// Priority: Props (customTranslations/customLanguage) > Context > Default EN
 export const useTranslationSafe = (
   customTranslations?: Partial<TranslationMap>,
   customLanguage?: string
 ) => {
   const context = useContext(TranslationContext);
 
-  // If context exists, use it
+  // If props are provided, they take priority over context
+  const hasCustomProps = customTranslations !== undefined || customLanguage !== undefined;
+
+  if (hasCustomProps) {
+    // Use props with higher priority
+    const propsLanguage: Language = {
+      code: customLanguage?.toUpperCase() || context?.currentLanguage.code || "EN",
+      name: customLanguage || context?.currentLanguage.name || "English"
+    };
+
+    // Merge translations: customTranslations > context translations (if exists) > defaultTranslations
+    const mergedTranslations = useMemo(() => {
+      const base = { ...defaultTranslations };
+
+      // Add context custom translations if context exists
+      // Note: context already has merged translations from TranslationProvider
+
+      // Add custom translations from props (highest priority)
+      if (customTranslations) {
+        Object.keys(customTranslations).forEach(key => {
+          if (!base[key]) {
+            base[key] = { ...customTranslations[key] };
+          } else {
+            base[key] = { ...base[key], ...customTranslations[key] };
+          }
+        });
+      }
+
+      return base;
+    }, [customTranslations]);
+
+    const t = (key: string, params?: Record<string, string | number>): string => {
+      if (!mergedTranslations[key]) {
+        console.warn(`Translation key not found: ${key}`);
+        return key;
+      }
+
+      // Get translation for current language or fall back to English or key itself
+      const langTranslations = mergedTranslations[key];
+      let text = langTranslations[propsLanguage.code] ||
+                 langTranslations["EN"] ||
+                 key;
+
+      // Replace parameters
+      if (params) {
+        Object.entries(params).forEach(([paramKey, paramValue]) => {
+          const regex = new RegExp(`{${paramKey}}`, 'g');
+          text = text.replace(regex, String(paramValue));
+        });
+      }
+
+      return text;
+    };
+
+    return {
+      currentLanguage: propsLanguage,
+      language: propsLanguage,
+      setLanguage: context?.setLanguage || (() => {
+        console.warn("setLanguage is not available without TranslationProvider");
+      }),
+      availableLanguages: context?.availableLanguages || [propsLanguage],
+      t
+    };
+  }
+
+  // If no props and context exists, use context
   if (context) {
     return context;
   }
 
-  // Fallback: use default translations and custom language
+  // Fallback: No props, no context - use default EN
   const fallbackLanguage: Language = {
-    code: customLanguage?.toUpperCase() || "EN",
-    name: customLanguage || "English"
+    code: "EN",
+    name: "English"
   };
 
   const t = (key: string, params?: Record<string, string | number>): string => {
-    // Try custom translations first
-    if (customTranslations?.[key]?.[fallbackLanguage.code]) {
-      let text = customTranslations[key][fallbackLanguage.code];
-
-      // Replace parameters
-      if (params) {
-        Object.entries(params).forEach(([paramKey, paramValue]) => {
-          const regex = new RegExp(`{${paramKey}}`, 'g');
-          text = text.replace(regex, String(paramValue));
-        });
-      }
-
-      return text;
+    if (!defaultTranslations[key]) {
+      console.warn(`Translation key not found: ${key}`);
+      return key;
     }
 
-    // Try default translations
-    if (defaultTranslations[key]?.[fallbackLanguage.code]) {
-      let text = defaultTranslations[key][fallbackLanguage.code];
+    // Get translation for EN or key itself
+    let text = defaultTranslations[key]["EN"] || key;
 
-      // Replace parameters
-      if (params) {
-        Object.entries(params).forEach(([paramKey, paramValue]) => {
-          const regex = new RegExp(`{${paramKey}}`, 'g');
-          text = text.replace(regex, String(paramValue));
-        });
-      }
-
-      return text;
+    // Replace parameters
+    if (params) {
+      Object.entries(params).forEach(([paramKey, paramValue]) => {
+        const regex = new RegExp(`{${paramKey}}`, 'g');
+        text = text.replace(regex, String(paramValue));
+      });
     }
 
-    // Fallback to EN
-    if (defaultTranslations[key]?.["EN"]) {
-      return defaultTranslations[key]["EN"];
-    }
-
-    // Last resort: return the key
-    console.warn(`Translation key not found: ${key}`);
-    return key;
+    return text;
   };
 
   return {
