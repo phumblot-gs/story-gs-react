@@ -7,7 +7,7 @@ import { ButtonCircle } from "@/components/ui/button-circle";
 import { IconProvider } from "@/components/ui/icon-provider";
 import { IconName } from "@/components/ui/icons/types";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { useTranslation } from "@/contexts/TranslationContext";
+import { useTranslationSafe, TranslationMap } from "@/contexts/TranslationContext";
 
 // Types réutilisés de FileBrowser
 export interface FolderItem {
@@ -32,6 +32,10 @@ export interface FolderBrowserProps {
   className?: string;
   onNavigate?: (path: string) => void;
   onFolderSelect?: (folder: FolderItem) => void;
+
+  // Translation props (optional - works without TranslationProvider)
+  language?: string;                          // Language code (e.g., "fr", "en", "es", "it")
+  translations?: Partial<TranslationMap>;     // Custom translations to override defaults
 }
 
 interface PathSegment {
@@ -47,8 +51,10 @@ export const FolderBrowser: React.FC<FolderBrowserProps> = ({
   className,
   onNavigate,
   onFolderSelect,
+  language,
+  translations,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslationSafe(translations, language);
   const [hoveredRow, setHoveredRow] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
 
