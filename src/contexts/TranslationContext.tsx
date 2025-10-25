@@ -156,19 +156,6 @@ const getPluralKey = (
   const zeroKey = `${baseKey}_zero`;
   const pluralKey = `${baseKey}_plural`;
 
-  // DEBUG: Log for filesCount
-  if (baseKey === "fileBrowser.filesCount") {
-    console.log("[getPluralKey] Debug:", {
-      baseKey,
-      count,
-      zeroKey,
-      pluralKey,
-      hasZeroKey: !!translations[zeroKey],
-      hasPluralKey: !!translations[pluralKey],
-      allKeysWithFilesCount: Object.keys(translations).filter(k => k.includes("filesCount"))
-    });
-  }
-
   // Check for explicit _zero key
   if (count === 0 && translations[zeroKey]) {
     return zeroKey;
