@@ -151,6 +151,21 @@ export const useTranslationSafe = (
   // If props are provided, they take priority over context
   const hasCustomProps = customTranslations !== undefined || customLanguage !== undefined;
 
+  // DEBUG
+  React.useEffect(() => {
+    console.log("[useTranslationSafe] Called with:", {
+      hasCustomTranslations: customTranslations !== undefined,
+      customTranslationsKeys: customTranslations ? Object.keys(customTranslations).slice(0, 5) : "undefined",
+      customLanguage,
+      hasContext: context !== undefined,
+      contextLanguage: context?.currentLanguage.code,
+      hasCustomProps,
+      willUsePropMode: hasCustomProps,
+      willUseContextMode: !hasCustomProps && context !== undefined,
+      willUseFallbackMode: !hasCustomProps && !context,
+    });
+  }, [customTranslations, customLanguage, context, hasCustomProps]);
+
   if (hasCustomProps) {
     // Use props with higher priority
     const propsLanguage: Language = {
@@ -180,6 +195,18 @@ export const useTranslationSafe = (
     }, [customTranslations]);
 
     const t = (key: string, params?: Record<string, string | number>): string => {
+      // DEBUG: Log each translation call
+      if (key.startsWith("fileBrowser")) {
+        console.log("[useTranslationSafe.t] Translation call:", {
+          key,
+          hasKeyInMerged: !!mergedTranslations[key],
+          languageCode: propsLanguage.code,
+          availableLanguagesForKey: mergedTranslations[key] ? Object.keys(mergedTranslations[key]) : "KEY_NOT_FOUND",
+          valueForLanguage: mergedTranslations[key]?.[propsLanguage.code],
+          params,
+        });
+      }
+
       if (!mergedTranslations[key]) {
         console.warn(`Translation key not found: ${key}`);
         return key;
