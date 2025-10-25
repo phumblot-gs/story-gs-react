@@ -295,8 +295,6 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
       // Construire le nouveau chemin en préservant le format (avec ou sans "/" au début)
       let newPath: string;
 
-      console.log('[FileBrowser] handleItemDoubleClick - currentPath:', currentPath, 'file_name:', item.file_name);
-
       if (!currentPath || currentPath === "") {
         newPath = item.file_name;
       } else if (currentPath === "/") {
@@ -305,7 +303,6 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
         newPath = `${currentPath}/${item.file_name}`;
       }
 
-      console.log('[FileBrowser] handleItemDoubleClick - constructed newPath:', newPath);
       onNavigate(newPath);
 
       // Désélectionner tous les items après navigation
@@ -572,49 +569,6 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
     }
   }, [isAddMenuOpen]);
 
-  // Validation des données en mode debug
-  useEffect(() => {
-    if (debug && files.length > 0) {
-      console.log("[FileBrowser] Debug: Validation des données");
-
-      files.forEach((file, index) => {
-        const errors: string[] = [];
-
-        if (!file.file_name) errors.push("file_name manquant");
-        if (!file.updated_at) errors.push("updated_at manquant");
-        if (file.file_size === undefined) errors.push("file_size manquant");
-        if (file.is_directory === undefined) errors.push("is_directory manquant");
-
-        if (errors.length > 0) {
-          console.error(`[FileBrowser] Fichier invalide à l'index ${index}:`, {
-            fichier: file,
-            erreurs: errors,
-            format_attendu: {
-              id: "string",
-              file_name: "string",
-              parent_path: "string | null",
-              file_size: "number",
-              mime_type: "string | null",
-              is_directory: "boolean",
-              created_at: "string (ISO 8601)",
-              updated_at: "string (ISO 8601)"
-            }
-          });
-        }
-      });
-    }
-  }, [files, debug]);
-
-  if (debug) {
-    console.log("FileBrowser Debug:", {
-      files,
-      sortedFiles,
-      sortConfig,
-      currentPath,
-      selectedItems: Array.from(selectedItems),
-      pathSegments,
-    });
-  }
 
   // Calculer les classes CSS selon le heightMode
   const containerClasses = cn(
