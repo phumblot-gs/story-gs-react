@@ -2,6 +2,7 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 import { WorkflowStep, WorkflowStepProps } from "./workflow-step";
+import { useBgContext } from "@/components/layout/BgContext";
 
 export interface WorkflowProps {
   steps: (Omit<WorkflowStepProps, "className" | "bench_root_id"> & { bench_id: string })[];
@@ -11,8 +12,10 @@ export interface WorkflowProps {
 }
 
 const Workflow: React.FC<WorkflowProps> = ({ steps, bench_root_id, className, debug = false }) => {
+  const bg = useBgContext();
+
   return (
-    <div className={cn("flex flex-row items-center bg-white", className)}>
+    <div data-bg={bg || undefined} className={cn("flex flex-row items-center bg-white", className)}>
       {steps.map((step, index) => (
         <React.Fragment key={step.bench_id}>
           {index > 0 && (

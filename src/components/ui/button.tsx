@@ -2,6 +2,7 @@ import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
+import { useBgContext } from "@/components/layout/BgContext";
 
 // Types
 export type ButtonVariant = "normal" | "secondary" | "ghost" | "outline" | "destructive" | "link";
@@ -100,6 +101,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const Comp = asChild ? Slot : "button";
     const normalizedVariant = normalizeVariant(variant);
     const normalizedSize = normalizeSize(size);
+    const bg = useBgContext();
 
     // Debug mode : wrapper pour onClick avec log
     const handleClick = React.useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
@@ -110,16 +112,18 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           size: size,
           normalizedSize,
           indicator,
+          bg,
           event: e,
         });
       }
       // Appelle le onClick original s'il existe
       onClick?.(e);
-    }, [debug, variant, normalizedVariant, size, normalizedSize, indicator, onClick]);
+    }, [debug, variant, normalizedVariant, size, normalizedSize, indicator, bg, onClick]);
 
     return (
       <Comp
         ref={ref}
+        data-bg={bg || undefined}
         className={cn(
           buttonVariants({
             variant: normalizedVariant,
