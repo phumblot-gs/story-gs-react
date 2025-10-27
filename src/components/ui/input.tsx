@@ -1,37 +1,52 @@
 
 import * as React from "react"
-import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
+import { useBgContext } from "@/components/layout/BgContext"
 
-const inputVariants = cva(
-  "flex w-full border-none px-2.5 h-[30px] ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-grey-stronger focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
-  {
-    variants: {
-      background: {
-        white: "bg-grey-lighter text-black",
-        black: "bg-black text-white",
-        grey: "bg-grey text-black",
-      },
-    },
-    defaultVariants: {
-      background: "white",
-    },
-  }
-)
-
-export interface InputProps
-  extends React.InputHTMLAttributes<HTMLInputElement>,
-    VariantProps<typeof inputVariants> {
-  background?: "white" | "black" | "grey"
-}
+export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {}
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, background, type, ...props }, ref) => {
+  ({ className, type, disabled, ...props }, ref) => {
+    const bg = useBgContext()
+
+    // Styles basés sur le Select - même logique
+    const getBackgroundStyles = () => {
+      if (disabled) {
+        // État désactivé - toujours gris peu importe le fond
+        return "bg-grey-lighter text-grey-stronger border-grey-lighter"
+      }
+
+      switch (bg) {
+        case "white":
+          // Le composant s'affiche sur fond blanc
+          return "bg-grey-lighter text-black border-grey-lighter hover:border-black focus:border-black"
+        case "black":
+          // Le composant s'affiche sur fond noir - le champ doit être black-secondary
+          return "bg-black-secondary text-white border-grey-strongest hover:border-white focus:border-white"
+        case "grey":
+          // Le composant s'affiche sur fond gris - le champ doit être blanc
+          return "bg-white text-black border-grey-stronger hover:border-black focus:border-black"
+        default:
+          return "bg-grey-lighter text-black border-grey-lighter hover:border-black focus:border-black"
+      }
+    }
+
     return (
       <input
         type={type}
-        className={cn(inputVariants({ background, className }))}
+        className={cn(
+          // Base styles - même que Select sans le rounded-full
+          "flex h-8 w-full items-center rounded-sm border px-3 py-2",
+          "text-sm font-light transition-colors duration-200",
+          "focus:outline-none focus:ring-0",
+          "disabled:cursor-not-allowed disabled:opacity-50",
+          "placeholder:text-grey-stronger",
+          "file:border-0 file:bg-transparent file:text-sm file:font-medium",
+          getBackgroundStyles(),
+          className
+        )}
         ref={ref}
+        disabled={disabled}
         {...props}
       />
     )
@@ -39,4 +54,4 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 )
 Input.displayName = "Input"
 
-export { Input, inputVariants }
+export { Input }

@@ -46,8 +46,8 @@
   --input: 0 0% 76%;
   --ring: 195 100% 90%; /* blue-primary */
 
-  /* Border radius */
-  --radius: 0;
+  /* Border radius - basé sur radiusBase (4px) des tokens Figma */
+  --radius: 0.25rem; /* 4px */
 
   /* Chart colors for data visualization */
   --chart-1: 183 74% 65%; /* blue */

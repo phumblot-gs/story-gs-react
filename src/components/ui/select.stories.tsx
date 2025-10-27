@@ -9,7 +9,7 @@ import {
 import { Layout, VStack } from "@/components/layout";
 
 const meta: Meta<typeof Select> = {
-  title: "Components/Select",
+  title: "UI/Select",
   component: Select,
   parameters: {
     layout: "centered",

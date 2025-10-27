@@ -263,7 +263,7 @@ const SelectContent = React.forwardRef<
         ref={ref}
         className={cn(
           // Styles de base de la liste déroulante selon Figma
-          "relative z-50 max-h-96 overflow-hidden rounded-none border shadow-lg",
+          "relative z-50 max-h-96 overflow-hidden rounded-none shadow-lg",
           "data-[state=open]:animate-in data-[state=closed]:animate-out",
           "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
           "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
@@ -273,6 +273,7 @@ const SelectContent = React.forwardRef<
           className
         )}
         position="popper"
+        sideOffset={5}
         style={{ minWidth: "var(--radix-select-trigger-width)" }}
         {...props}
       >
@@ -294,8 +295,14 @@ const SelectItem = React.forwardRef<
   const getItemStyles = () => {
     switch (bg) {
       case "white":
+        // Quand le dropdown a fond noir (bg="white")
+        // Défaut: fond black-secondary, texte white
+        // Hover: fond grey-lighter, texte black
+        // Focus: fond grey-lighter, texte black
+        // Pressed: fond grey-lighter, texte blue-primary
+        return "bg-black-secondary text-white hover:bg-grey-lighter hover:text-black focus:bg-grey-lighter focus:text-black active:bg-grey-lighter active:text-blue-primary";
       case "grey":
-        // Quand le dropdown a fond noir (bg="white" ou "grey")
+        // Quand le dropdown a fond noir (bg="grey")
         // Défaut: fond black-secondary, texte white
         // Hover: fond white, texte black
         // Focus: fond white, texte black

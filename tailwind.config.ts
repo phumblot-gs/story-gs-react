@@ -207,9 +207,15 @@ export default {
 				}
 			},
 			borderRadius: {
-				lg: 'var(--radius)',
-				md: 'calc(var(--radius) - 2px)',
-				sm: 'calc(var(--radius) - 4px)'
+				'none': '0px',           // radiusNone
+				'sm': '2px',             // radiusSm
+				'DEFAULT': '4px',        // radiusBase
+				'md': '6px',             // radiusMd
+				'lg': '8px',             // radiusLg
+				'xl': '12px',            // radiusXl
+				'2xl': '16px',           // radius2xl
+				'3xl': '24px',           // radius3xl
+				'full': '9999px'         // radiusFull
 			},
 			fontSize: {
 				'xs': 'var(--font-size-xs)',      // 9px (0.5625rem)
