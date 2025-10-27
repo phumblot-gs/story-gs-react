@@ -124,8 +124,8 @@ const SelectTrigger = React.forwardRef<
         // Couleur du composant: inputSelectSingle/w/color-bg-default (gris)
         return "bg-grey-lighter text-black border-grey-lighter hover:border-black focus:border-black";
       case "black":
-        // Le composant s'affiche sur fond noir
-        return "bg-black text-white border-grey-strongest hover:border-white focus:border-white";
+        // Le composant s'affiche sur fond noir - le champ doit être black-secondary
+        return "bg-black-secondary text-white border-grey-strongest hover:border-white focus:border-white";
       case "grey":
         // Le composant s'affiche sur fond gris - le champ doit être blanc
         return "bg-white text-black border-grey-stronger hover:border-black focus:border-black";
@@ -140,6 +140,34 @@ const SelectTrigger = React.forwardRef<
       return "X";
     }
     return isOpen ? "ArrowUp" : "ArrowDown";
+  };
+
+  // Détermine les styles du bouton circulaire selon le bg et l'état
+  const getIconButtonStyles = () => {
+    // État ouvert (liste déroulée) - même pour tous les backgrounds
+    if (isOpen) {
+      return "bg-blue-primary text-black";
+    }
+
+    // État pressé - même pour tous les backgrounds
+    if (isPressed) {
+      return "bg-black text-blue-primary";
+    }
+
+    // État hover - même pour tous les backgrounds
+    if (isHovered) {
+      return "bg-black text-white";
+    }
+
+    // État par défaut selon le background
+    switch (bg) {
+      case "grey":
+        return "bg-grey-lighter text-black";
+      case "white":
+      case "black":
+      default:
+        return "bg-white text-black";
+    }
   };
 
   // Gère le clic sur l'icône X pour effacer
@@ -167,7 +195,7 @@ const SelectTrigger = React.forwardRef<
       }}
       className={cn(
         // Base styles selon Figma
-        "flex h-8 w-full items-center justify-between rounded-full border px-3 py-2",
+        "flex h-8 w-full items-center justify-between rounded-full border pl-3 pr-1 py-2",
         "text-sm font-light transition-colors duration-200",
         "focus:outline-none focus:ring-0",
         "disabled:cursor-not-allowed disabled:opacity-50",
@@ -187,11 +215,8 @@ const SelectTrigger = React.forwardRef<
         <SelectPrimitive.Icon asChild>
           <div
             className={cn(
-              // Base styles from ButtonCircle small size
-              "flex h-5 w-5 items-center justify-center rounded-full",
-              "bg-white transition-all duration-200",
-              (isHovered || isOpen) && "!bg-black [&_svg]:text-white",
-              isPressed && "brightness-90 scale-95",
+              "flex h-5 w-5 items-center justify-center rounded-full transition-colors duration-200",
+              getIconButtonStyles(),
               allowClear && hasValue && !isOpen ? "cursor-pointer" : ""
             )}
             onPointerDown={handleClearPointerDown}
