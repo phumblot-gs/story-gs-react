@@ -127,8 +127,8 @@ const SelectTrigger = React.forwardRef<
         // Le composant s'affiche sur fond noir
         return "bg-black text-white border-grey-strongest hover:border-white focus:border-white";
       case "grey":
-        // Le composant s'affiche sur fond gris
-        return "bg-grey text-black border-grey-stronger hover:border-black focus:border-black";
+        // Le composant s'affiche sur fond gris - le champ doit être blanc
+        return "bg-white text-black border-grey-stronger hover:border-black focus:border-black";
       default:
         return "bg-grey-lighter text-black border-grey-lighter hover:border-black focus:border-black";
     }
