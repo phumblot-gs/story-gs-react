@@ -285,7 +285,7 @@ function generateButtonClassesCSS(tokens) {
     for (const variant of variants) {
       const capitalizedVariant = variant.charAt(0).toUpperCase() + variant.slice(1);
 
-      css += `[data-bg="${bg.name}"] .btn-${variant} {\n`;
+      css += `[data-bg="${bg.name}"].btn-${variant} {\n`;
 
       // Background
       const bgToken = `button${bg.prefix}${capitalizedVariant}BgDefault`;
@@ -318,7 +318,7 @@ function generateButtonClassesCSS(tokens) {
       // Hover
       const bgHoverToken = `button${bg.prefix}${capitalizedVariant}BgHover`;
       if (tokens[bgHoverToken] !== undefined) {
-        css += `[data-bg="${bg.name}"] .btn-${variant}:hover:not(:disabled) {\n`;
+        css += `[data-bg="${bg.name}"].btn-${variant}:hover:not(:disabled) {\n`;
 
         if (tokens[bgHoverToken] === null) {
           css += `  background: transparent;\n`;
@@ -341,7 +341,7 @@ function generateButtonClassesCSS(tokens) {
       // Pressed (active)
       const bgPressedToken = `button${bg.prefix}${capitalizedVariant}BgPressed`;
       if (tokens[bgPressedToken] !== undefined) {
-        css += `[data-bg="${bg.name}"] .btn-${variant}:active:not(:disabled) {\n`;
+        css += `[data-bg="${bg.name}"].btn-${variant}:active:not(:disabled) {\n`;
 
         if (tokens[bgPressedToken] === null) {
           css += `  background: transparent;\n`;
@@ -364,7 +364,7 @@ function generateButtonClassesCSS(tokens) {
       // Disabled
       const bgDisabledToken = `button${bg.prefix}${capitalizedVariant}BgDisabled`;
       if (tokens[bgDisabledToken] !== undefined) {
-        css += `[data-bg="${bg.name}"] .btn-${variant}:disabled {\n`;
+        css += `[data-bg="${bg.name}"].btn-${variant}:disabled {\n`;
 
         if (tokens[bgDisabledToken] === null) {
           css += `  background: transparent;\n`;
