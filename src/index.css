@@ -130,3 +130,11 @@ button:disabled .status-error {
     background-size: 200% 200%;
   }
 }
+
+/* Masquer les boutons natifs du navigateur pour input type="search" */
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration {
+  -webkit-appearance: none;
+  appearance: none;
+  display: none;
+}

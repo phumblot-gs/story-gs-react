@@ -7,6 +7,19 @@ import "../src/index.css"; // Import your tailwind styles
 
 const preview: Preview = {
   parameters: {
+    options: {
+      storySort: {
+        order: [
+          'Design System',
+          'Layout',
+          'Context',
+          'UI',
+          'Components'
+        ],
+        method: 'alphabetical',
+        locales: 'en-US',
+      },
+    },
     actions: { argTypesRegex: "^on[A-Z].*" },
     controls: {
       matchers: {
