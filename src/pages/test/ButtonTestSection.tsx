@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { IconProvider } from "@/components/ui/icon-provider";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ButtonCircle } from "@/components/ui/button-circle";
 
 const ButtonTestSection: React.FC = () => {
   const [buttonText, setButtonText] = useState("Button");
@@ -184,14 +184,17 @@ const ButtonTestSection: React.FC = () => {
 
             <div className="flex flex-col space-y-4 items-center justify-center bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
               <h3 className="text-lg font-medium">Preview</h3>
-              <ButtonCircle
-                size={circleButtonSize}
-                background={circleButtonBackground}
-                featured={circleButtonFeatured}
-                disabled={circleButtonDisabled}
-                indicator={circleButtonIndicator}
-                icon="Check"
-              />
+              <div className="relative">
+                <Button
+                  className={circleButtonSize === "small" ? "p-1 w-4 h-4" : "p-0 w-6 h-6"}
+                  disabled={circleButtonDisabled}
+                >
+                  <IconProvider icon="Check" />
+                </Button>
+                {circleButtonIndicator && (
+                  <span className="absolute bottom-0 right-0 w-[7px] h-[7px] rounded-full bg-yellow" />
+                )}
+              </div>
             </div>
           </div>
         </CardContent>

@@ -16,7 +16,6 @@ const getEntryPoints = () => {
   const uiComponents = [
     'button',
     'button-base',
-    'button-circle',
     'select',
     'tabs',
     'input',

@@ -34,8 +34,8 @@ const meta: Meta<typeof ButtonStatus> = {
       control: "boolean",
     },
     size: {
-      options: ["small", "large"],
-      control: { type: "radio" },
+      options: ["small", "medium", "large"],
+      control: { type: "select" },
     },
   },
 };
@@ -88,18 +88,36 @@ export const SmallSize: Story = {
   },
 };
 
+export const MediumSize: Story = {
+  args: {
+    status: MediaStatus.SUBMITTED_FOR_APPROVAL,
+    icon: "Check",
+    size: "medium",
+  },
+};
+
+export const LargeSize: Story = {
+  args: {
+    status: MediaStatus.SUBMITTED_FOR_APPROVAL,
+    icon: "Check",
+    size: "large",
+  },
+};
+
 // Show all status variations
 export const StatusButtonMatrix: Story = {
   render: () => (
     <div className="p-4 bg-white">
       <h3 className="text-lg font-bold mb-4">Status Button Matrix</h3>
-      <div className="grid grid-cols-6 gap-4">
+      <div className="grid grid-cols-8 gap-4">
         <div></div>
         <div className="font-medium">Default</div>
         <div className="font-medium">Active</div>
         <div className="font-medium">Disabled</div>
         <div className="font-medium">Small</div>
         <div className="font-medium">Small Active</div>
+        <div className="font-medium">Medium</div>
+        <div className="font-medium">Large</div>
         
         {Object.entries(MediaStatus)
           .filter(([key, value]) => typeof value === 'number')
@@ -125,6 +143,14 @@ export const StatusButtonMatrix: Story = {
               <div className="flex gap-2">
                 <ButtonStatus status={statusValue as MediaStatus} icon="Check" size="small" isActive={true} />
                 <ButtonStatus status={statusValue as MediaStatus} icon="X" size="small" isActive={true} />
+              </div>
+              <div className="flex gap-2">
+                <ButtonStatus status={statusValue as MediaStatus} icon="Check" size="medium" />
+                <ButtonStatus status={statusValue as MediaStatus} icon="X" size="medium" />
+              </div>
+              <div className="flex gap-2">
+                <ButtonStatus status={statusValue as MediaStatus} icon="Check" size="large" />
+                <ButtonStatus status={statusValue as MediaStatus} icon="X" size="large" />
               </div>
             </React.Fragment>
           ))}

@@ -1,8 +1,8 @@
 
 import React from "react"
 import { Button } from "@/components/ui/button"
-import { ButtonSmall } from "@/index" 
-import { ButtonCircle } from "@/components/ui/button-circle"
+import { IconProvider } from "@/components/ui/icon-provider"
+import { ButtonSmall } from "@/index"
 
 const ButtonVariantsExample = () => {
   return (
@@ -35,27 +35,27 @@ const ButtonVariantsExample = () => {
           <div className="flex flex-col items-center gap-2 bg-white p-4 rounded-lg">
             <span className="text-sm text-muted-foreground">White Background</span>
             <div className="flex gap-4">
-              <ButtonCircle background="white" icon="Plus" />
-              <ButtonCircle background="white" icon="Minus" />
-              <ButtonCircle background="white" icon="Check" />
+              <Button className="p-0 w-6 h-6"><IconProvider icon="Plus" /></Button>
+              <Button className="p-0 w-6 h-6"><IconProvider icon="Minus" /></Button>
+              <Button className="p-0 w-6 h-6"><IconProvider icon="Check" /></Button>
             </div>
           </div>
           
           <div className="flex flex-col items-center gap-2 bg-black p-4 rounded-lg">
             <span className="text-sm text-white">Black Background</span>
             <div className="flex gap-4">
-              <ButtonCircle background="black" icon="Plus" />
-              <ButtonCircle background="black" icon="Minus" />
-              <ButtonCircle background="black" icon="Check" />
+              <Button className="p-0 w-6 h-6"><IconProvider icon="Plus" /></Button>
+              <Button className="p-0 w-6 h-6"><IconProvider icon="Minus" /></Button>
+              <Button className="p-0 w-6 h-6"><IconProvider icon="Check" /></Button>
             </div>
           </div>
           
           <div className="flex flex-col items-center gap-2 bg-grey p-4 rounded-lg">
             <span className="text-sm text-muted-foreground">Grey Background</span>
             <div className="flex gap-4">
-              <ButtonCircle background="grey" icon="Plus" />
-              <ButtonCircle background="grey" icon="Minus" />
-              <ButtonCircle background="grey" icon="Check" />
+              <Button className="p-0 w-6 h-6"><IconProvider icon="Plus" /></Button>
+              <Button className="p-0 w-6 h-6"><IconProvider icon="Minus" /></Button>
+              <Button className="p-0 w-6 h-6"><IconProvider icon="Check" /></Button>
             </div>
           </div>
         </div>
@@ -67,27 +67,27 @@ const ButtonVariantsExample = () => {
           <div className="flex flex-col items-center gap-2 bg-white p-4 rounded-lg">
             <span className="text-sm text-muted-foreground">White Background</span>
             <div className="flex gap-4">
-              <ButtonCircle background="white">A</ButtonCircle>
-              <ButtonCircle background="white">B</ButtonCircle>
-              <ButtonCircle background="white">C</ButtonCircle>
+              <Button className="p-0 w-6 h-6">A</Button>
+              <Button className="p-0 w-6 h-6">B</Button>
+              <Button className="p-0 w-6 h-6">C</Button>
             </div>
           </div>
           
           <div className="flex flex-col items-center gap-2 bg-black p-4 rounded-lg">
             <span className="text-sm text-white">Black Background</span>
             <div className="flex gap-4">
-              <ButtonCircle background="black">A</ButtonCircle>
-              <ButtonCircle background="black">B</ButtonCircle>
-              <ButtonCircle background="black">C</ButtonCircle>
+              <Button className="p-0 w-6 h-6">A</Button>
+              <Button className="p-0 w-6 h-6">B</Button>
+              <Button className="p-0 w-6 h-6">C</Button>
             </div>
           </div>
           
           <div className="flex flex-col items-center gap-2 bg-grey p-4 rounded-lg">
             <span className="text-sm text-muted-foreground">Grey Background</span>
             <div className="flex gap-4">
-              <ButtonCircle background="grey">A</ButtonCircle>
-              <ButtonCircle background="grey">B</ButtonCircle>
-              <ButtonCircle background="grey">C</ButtonCircle>
+              <Button className="p-0 w-6 h-6">A</Button>
+              <Button className="p-0 w-6 h-6">B</Button>
+              <Button className="p-0 w-6 h-6">C</Button>
             </div>
           </div>
         </div>
@@ -99,24 +99,24 @@ const ButtonVariantsExample = () => {
           <div className="flex flex-col items-center gap-2 bg-white p-4 rounded-lg">
             <span className="text-sm text-muted-foreground">White Background</span>
             <div className="flex gap-4">
-              <ButtonCircle background="white" size="small" icon="Plus" />
-              <ButtonCircle background="white" size="small">A</ButtonCircle>
+              <Button className="p-1 w-4 h-4"><IconProvider icon="Plus" /></Button>
+              <Button className="p-1 w-4 h-4">A</Button>
             </div>
           </div>
           
           <div className="flex flex-col items-center gap-2 bg-black p-4 rounded-lg">
             <span className="text-sm text-white">Black Background</span>
             <div className="flex gap-4">
-              <ButtonCircle background="black" size="small" icon="Plus" />
-              <ButtonCircle background="black" size="small">A</ButtonCircle>
+              <Button className="p-1 w-4 h-4"><IconProvider icon="Plus" /></Button>
+              <Button className="p-1 w-4 h-4">A</Button>
             </div>
           </div>
           
           <div className="flex flex-col items-center gap-2 bg-grey p-4 rounded-lg">
             <span className="text-sm text-muted-foreground">Grey Background</span>
             <div className="flex gap-4">
-              <ButtonCircle background="grey" size="small" icon="Plus" />
-              <ButtonCircle background="grey" size="small">A</ButtonCircle>
+              <Button className="p-1 w-4 h-4"><IconProvider icon="Plus" /></Button>
+              <Button className="p-1 w-4 h-4">A</Button>
             </div>
           </div>
         </div>
@@ -130,11 +130,17 @@ const ButtonVariantsExample = () => {
           </div>
           
           <div className="flex flex-col items-center gap-2">
-            <ButtonCircle icon="Bell" indicator={true} />
+            <div className="relative">
+              <Button className="p-0 w-6 h-6"><IconProvider icon="Bell" /></Button>
+              <span className="absolute bottom-0 right-0 w-[7px] h-[7px] rounded-full bg-yellow" />
+            </div>
           </div>
           
           <div className="flex flex-col items-center gap-2">
-            <ButtonCircle indicator={true}>N</ButtonCircle>
+            <div className="relative">
+              <Button className="p-0 w-6 h-6">N</Button>
+              <span className="absolute bottom-0 right-0 w-[7px] h-[7px] rounded-full bg-yellow" />
+            </div>
           </div>
         </div>
       </div>

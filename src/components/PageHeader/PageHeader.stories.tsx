@@ -1,10 +1,16 @@
 
 import type { Meta, StoryObj } from "@storybook/react";
 import PageHeader from "./index";
-import { ButtonCircle } from "@/components/ui/button-circle";
+import { Button } from "@/components/ui/button";
+import { IconProvider } from "@/components/ui/icon-provider";
 import { useState, useEffect } from "react";
 import { ThemeProvider } from "@/contexts/ThemeContext";
+import { TranslationProvider } from "@/contexts/TranslationContext";
+import { MemoryRouter } from "react-router-dom";
+import { ActivityStatusProvider, useActivityStatusContext } from "@/contexts/ActivityStatusContext";
 import { Workflow } from "@/components/ui/workflow";
+import { LanguageSwitcher } from "@/components/ui/language-switcher";
+import ButtonNotifications from "@/components/ButtonNotifications";
 
 const meta: Meta<typeof PageHeader> = {
   title: "Components/PageHeader",
@@ -14,58 +20,17 @@ const meta: Meta<typeof PageHeader> = {
     docs: {
       description: {
         component: `
-# PageHeader Component
-
 A header component for application pages with customizable sections for logo, title, central content, and right side actions.
 
-## Activity State Animation
-
-The PageHeader component includes a gradient border animation that can be triggered to indicate loading or background activity in the application.
-
-### Implementation with ActivityStatusContext
-
-To use the activity state animation throughout your application:
-
-1. Wrap your application with the \`ActivityStatusProvider\`:
-
-\`\`\`tsx
-// In your App.tsx
-import { ActivityStatusProvider } from '@/contexts/ActivityStatusContext';
-
-const App = () => (
-  <ActivityStatusProvider>
-    {/* Your app components */}
-  </ActivityStatusProvider>
-);
-\`\`\`
-
-2. Use the \`useActivityStatusContext\` hook in your components:
-
-\`\`\`tsx
-import { useActivityStatusContext } from '@/contexts/ActivityStatusContext';
-
-const YourComponent = () => {
-  const { isIdle, startRequest, endRequest } = useActivityStatusContext();
-  
-  // Pass the isIdle state to PageHeader
-  return <PageHeader title="Your Page" isIdle={isIdle} />;
-};
-\`\`\`
-
-3. Trigger the animation when starting and ending requests:
-
-\`\`\`tsx
-const handleFetchData = async () => {
-  startRequest(); // Start animation
-  try {
-    await fetchSomeData();
-  } finally {
-    endRequest(); // End animation
-  }
-};
-\`\`\`
-
-This provides a visual indication when background operations are in progress.
+## Features
+- Brand logo integration with ThemeProvider support
+- Customizable logo display (default, custom, or theme-based)
+- Activity state animation with gradient border indicator
+- Flexible content areas (left, center, right sections)
+- Back button and title button support
+- Workflow integration in center section
+- Button integration in right section
+- Context-aware styling via Layout component
 
 ## Brand Logo Integration
 
@@ -85,6 +50,261 @@ The PageHeader component can display a logo in one of these ways:
   logo={<YourCustomLogoComponent />}
 />
 \`\`\`
+
+## Activity State Animation
+
+The PageHeader component includes a gradient border animation that can be triggered to indicate loading or background activity in the application.
+
+**How the animation works:**
+
+- **\`isIdle={true}\`** → Animation **ACTIVATED** (animated gradient) - Indicates a request is in progress
+- **\`isIdle={false}\`** → Animation **DEACTIVATED** (static gradient) - Indicates no request is in progress
+
+**Important note**: The name \`isIdle\` can be misleading. In this context, \`isIdle={true}\` means "activity in progress" and activates the animation.
+
+**Implementation with ActivityStatusContext:**
+
+To use the activity state animation throughout your application:
+
+1. **Wrap your application with \`ActivityStatusProvider\`**:
+
+\`\`\`tsx
+// In your App.tsx
+import { ActivityStatusProvider } from '@/contexts/ActivityStatusContext';
+
+const App = () => (
+  <ActivityStatusProvider>
+    {/* Your app components */}
+  </ActivityStatusProvider>
+);
+\`\`\`
+
+2. **Use the \`useActivityStatusContext\` hook in your component**:
+
+\`\`\`tsx
+import { useActivityStatusContext } from '@/contexts/ActivityStatusContext';
+import PageHeader from '@/components/PageHeader';
+
+const YourComponent = () => {
+  const { isIdle } = useActivityStatusContext();
+  
+  // Pass isIdle to PageHeader
+  return <PageHeader title="Your Page" isIdle={isIdle} />;
+};
+\`\`\`
+
+3. **Trigger the animation when starting and ending requests**:
+
+\`\`\`tsx
+import { useActivityStatusContext } from '@/contexts/ActivityStatusContext';
+
+const YourComponent = () => {
+  const { startRequest, endRequest } = useActivityStatusContext();
+  
+  const handleFetchData = async () => {
+    startRequest(); // Start animation (isIdle becomes true)
+    try {
+      await fetchSomeData();
+    } finally {
+      endRequest(); // Stop animation (isIdle becomes false when all requests are finished)
+    }
+  };
+  
+  return <button onClick={handleFetchData}>Load data</button>;
+};
+\`\`\`
+
+**Example with multiple simultaneous requests:**
+
+\`ActivityStatusContext\` automatically handles multiple simultaneous requests:
+
+\`\`\`tsx
+const handleMultipleRequests = async () => {
+  // Start 3 requests
+  startRequest(); // pendingRequests = 1
+  startRequest(); // pendingRequests = 2
+  startRequest(); // pendingRequests = 3
+  
+  // Animation stays active as long as pendingRequests > 0
+  
+  await Promise.all([
+    fetchData1().finally(() => endRequest()), // pendingRequests = 2
+    fetchData2().finally(() => endRequest()), // pendingRequests = 1
+    fetchData3().finally(() => endRequest()), // pendingRequests = 0 → animation stops
+  ]);
+};
+\`\`\`
+
+**Manual usage (without ActivityStatusContext):**
+
+If you prefer to manage the state manually:
+
+\`\`\`tsx
+import { useState } from 'react';
+import PageHeader from '@/components/PageHeader';
+
+const YourComponent = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  
+  const handleFetchData = async () => {
+    setIsLoading(true); // Activate animation
+    try {
+      await fetchSomeData();
+    } finally {
+      setIsLoading(false); // Deactivate animation
+    }
+  };
+  
+  return (
+    <>
+      <PageHeader title="Your Page" isIdle={isLoading} />
+      <button onClick={handleFetchData}>Load</button>
+    </>
+  );
+};
+\`\`\`
+
+This approach provides a visual indication when background operations are in progress.
+
+## Buttons in rightContent
+
+The \`rightContent\` prop allows you to add custom buttons and components to the right side of the header. You can pass any React node, including buttons, language switchers, notifications, etc.
+
+\`\`\`tsx
+import PageHeader from '@/components/PageHeader';
+import { Button } from '@/components/ui/button';
+import { IconProvider } from '@/components/ui/icon-provider';
+import { LanguageSwitcher } from '@/components/ui/language-switcher';
+import ButtonNotifications from '@/components/ButtonNotifications';
+
+<PageHeader
+  title="My Page"
+  rightContent={
+    <>
+      <LanguageSwitcher 
+        languages={languages} 
+        currentLanguage={currentLanguage} 
+        onLanguageChange={setCurrentLanguage} 
+      />
+      <Button variant="ghost" className="p-0 w-6 h-6">
+        <IconProvider icon="User" />
+      </Button>
+      <Button variant="ghost" className="p-0 w-6 h-6">
+        <IconProvider icon="Settings" />
+      </Button>
+      <Button variant="ghost" className="p-0 w-6 h-6">
+        <IconProvider icon="Help" />
+      </Button>
+      <Button variant="ghost" className="p-0 w-6 h-6">
+        <IconProvider icon="Logout" />
+      </Button>
+      <ButtonNotifications />
+    </>
+  }
+/>
+\`\`\`
+
+**Recommended Button Variants:**
+
+- **Left side buttons** (back button and title button): Use \`variant="secondary"\`
+- **Right side buttons** (excluding ButtonNotifications and LanguageSwitcher): Use \`variant="ghost"\`
+- **ButtonNotifications**: Uses \`variant="secondary"\` internally
+- **LanguageSwitcher**: Uses \`variant="ghost"\` internally
+
+**Icon-Only Buttons:**
+
+For icon-only buttons, use the following className pattern:
+
+\`\`\`tsx
+<Button variant="ghost" className="p-0 w-6 h-6">
+  <IconProvider icon="Settings" />
+</Button>
+\`\`\`
+
+## Workflow in centerContent
+
+The \`centerContent\` prop allows you to add a workflow component (or any other content) in the center section of the header. The workflow component displays a series of steps with state indicators.
+
+\`\`\`tsx
+import PageHeader from '@/components/PageHeader';
+import { Workflow } from '@/components/ui/workflow';
+
+<PageHeader
+  title="My Page"
+  centerContent={
+    <Workflow
+      bench_root_id={1001}
+      steps={[
+        { bench_id: 1, label: "LIVE", state: "active", onClick: (rootId, stepId) => console.log(\`LIVE clicked - rootId: \${rootId}, stepId: \${stepId}\`) },
+        { bench_id: 2, label: "PHASE 1", state: "current", onClick: (rootId, stepId) => console.log(\`PHASE 1 clicked - rootId: \${rootId}, stepId: \${stepId}\`) },
+        { bench_id: 3, label: "EXPORTS", state: "active", onClick: (rootId, stepId) => console.log(\`EXPORTS clicked - rootId: \${rootId}, stepId: \${stepId}\`) },
+        { bench_id: 4, label: "VALIDATION", state: "inactive" },
+      ]}
+    />
+  }
+/>
+\`\`\`
+
+**Workflow Step States:**
+
+The workflow steps can have three states:
+
+- **\`state="active"\`**: Step is accessible and clickable (variant=secondary, disabled=false)
+- **\`state="current"\`**: Step is the most advanced active step (variant=outline, disabled=false)
+- **\`state="inactive"\`**: Step is not yet accessible (variant=secondary, disabled=true)
+
+**Dynamic Workflow Example:**
+
+\`\`\`tsx
+import { useState } from 'react';
+import PageHeader from '@/components/PageHeader';
+import { Workflow } from '@/components/ui/workflow';
+
+const YourComponent = () => {
+  const [currentStepId, setCurrentStepId] = useState(2);
+  const bench_root_id = 1001;
+  
+  const handleStepClick = (rootId: number, stepId: number) => {
+    console.log(\`Step clicked: rootId=\${rootId}, stepId=\${stepId}\`);
+    setCurrentStepId(stepId);
+  };
+  
+  const workflowSteps = [
+    { 
+      bench_id: 1, 
+      label: "STEP 1", 
+      state: currentStepId === 1 ? "current" : (currentStepId > 1 ? "active" : "inactive"),
+      onClick: handleStepClick
+    },
+    { 
+      bench_id: 2, 
+      label: "STEP 2", 
+      state: currentStepId === 2 ? "current" : (currentStepId > 2 ? "active" : "inactive"),
+      onClick: handleStepClick
+    },
+    { 
+      bench_id: 3, 
+      label: "STEP 3", 
+      state: currentStepId === 3 ? "current" : (currentStepId > 3 ? "active" : "inactive"),
+      onClick: handleStepClick
+    },
+  ];
+
+  return (
+    <PageHeader
+      title="My Page"
+      centerContent={
+        <Workflow 
+          steps={workflowSteps}
+          bench_root_id={bench_root_id}
+        />
+      }
+    />
+  );
+};
+\`\`\`
+
+For more details about the Workflow component, see the [Workflow documentation](/iframe.html?id=ui-workflow--default).
 `,
       },
     },
@@ -94,6 +314,10 @@ The PageHeader component can display a logo in one of these ways:
     title: {
       control: "text",
       description: "Title text displayed in the header"
+    },
+    showBackButton: {
+      control: "boolean",
+      description: "Whether to show the back button before the title"
     },
     showTitleButton: {
       control: "boolean",
@@ -122,14 +346,20 @@ The PageHeader component can display a logo in one of these ways:
     },
     isIdle: {
       control: "boolean",
-      description: "When true, activates the loading animation on the bottom border"
+      description: "When true, activates the loading animation on the bottom border (indicates a request is in progress). When false, the animation is deactivated.",
     }
   },
   decorators: [
     (Story) => (
-      <div className="w-full">
-        <Story />
-      </div>
+      <TranslationProvider>
+        <MemoryRouter>
+          <ThemeProvider>
+            <div className="w-full">
+              <Story />
+            </div>
+          </ThemeProvider>
+        </MemoryRouter>
+      </TranslationProvider>
     )
   ]
 };
@@ -155,116 +385,133 @@ const WorkflowTabs = () => (
 );
 
 // Right side content with buttons
-const RightSideButtons = () => (
-  <>
-    <span className="text-sm font-medium">FR</span>
-    <ButtonCircle icon="User" />
-    <ButtonCircle icon="Settings" />
-    <ButtonCircle icon="Help" />
-    <ButtonCircle icon="Bell" indicator={true} />
-    <ButtonCircle icon="Logout" />
-  </>
-);
+const RightSideButtons = () => {
+  const languages = [
+    { code: "FR", name: "Français" },
+    { code: "EN", name: "English" },
+    { code: "ES", name: "Español" },
+  ];
+  const [currentLanguage, setCurrentLanguage] = useState(languages[0]);
+
+  return (
+    <>
+      <LanguageSwitcher 
+        languages={languages} 
+        currentLanguage={currentLanguage} 
+        onLanguageChange={setCurrentLanguage} 
+      />
+      <Button variant="ghost" className="p-0 w-6 h-6"><IconProvider icon="User" /></Button>
+      <Button variant="ghost" className="p-0 w-6 h-6"><IconProvider icon="Settings" /></Button>
+      <Button variant="ghost" className="p-0 w-6 h-6"><IconProvider icon="Help" /></Button>
+      <Button variant="ghost" className="p-0 w-6 h-6"><IconProvider icon="Logout" /></Button>
+      <ButtonNotifications />
+    </>
+  );
+};
 
 export const Default: Story = {
-  render: () => (
-    <ThemeProvider>
-      <PageHeader
-        title="Collection Femme Printemps 2025"
-        showTitleButton={true}
-      />
-    </ThemeProvider>
-  )
+  args: {
+    title: "Collection Femme Printemps 2025",
+    showTitleButton: true,
+    showBackButton: false,
+  }
 };
 
 export const WithLogo: Story = {
-  render: () => (
-    <ThemeProvider>
-      <PageHeader
-        logo={<GsLogo />}
-        title="Collection Femme Printemps 2025"
-        showTitleButton={true}
-      />
-    </ThemeProvider>
+  args: {
+    title: "Collection Femme Printemps 2025",
+    showTitleButton: true,
+    showBackButton: false,
+  },
+  render: (args) => (
+    <PageHeader
+      {...args}
+      logo={<GsLogo />}
+    />
   )
 };
 
 export const Complete: Story = {
-  render: () => (
-    <ThemeProvider>
-      <PageHeader
-        logo={<GsLogo />}
-        title="Collection Femme Printemps 2025"
-        showTitleButton={true}
-        centerContent={
-          <Workflow
-            steps={[
-              { bench_id: "1", label: "LIVE", onClick: () => console.log("LIVE clicked") },
-              { bench_id: "2", label: "PHASE 1", onClick: () => console.log("PHASE 1 clicked") },
-              { bench_id: "3", label: "EXPORTS", onClick: () => console.log("EXPORTS clicked") },
-              { bench_id: "4", label: "VALIDATION", isActive: true },
-            ]}
-            bench_root_id={1001}
-          />
-        }
-        rightContent={<RightSideButtons />}
-      />
-    </ThemeProvider>
+  args: {
+    title: "Collection Femme Printemps 2025",
+    showTitleButton: true,
+    showBackButton: false,
+  },
+  render: (args) => (
+    <PageHeader
+      {...args}
+      logo={<GsLogo />}
+      rightContent={<RightSideButtons />}
+    />
   )
 };
 
 export const NoTitleButton: Story = {
-  render: () => (
-    <ThemeProvider>
-      <PageHeader
-        logo={<GsLogo />}
-        title="Collection Femme Printemps 2025"
-        showTitleButton={false}
-        centerContent={
-          <Workflow
-            steps={[
-              { bench_id: "1", label: "LIVE", onClick: () => console.log("LIVE clicked") },
-              { bench_id: "2", label: "PHASE 1", onClick: () => console.log("PHASE 1 clicked") },
-              { bench_id: "3", label: "EXPORTS", onClick: () => console.log("EXPORTS clicked") },
-              { bench_id: "4", label: "VALIDATION", isActive: true },
-            ]}
-            bench_root_id={1002}
-          />
-        }
-        rightContent={<RightSideButtons />}
-      />
-    </ThemeProvider>
+  args: {
+    title: "Collection Femme Printemps 2025",
+    showTitleButton: false,
+    showBackButton: false,
+  },
+  render: (args) => (
+    <PageHeader
+      {...args}
+      logo={<GsLogo />}
+      rightContent={<RightSideButtons />}
+    />
   )
 };
 
 export const CustomTitleButton: Story = {
-  render: () => (
-    <ThemeProvider>
-      <PageHeader
-        logo={<GsLogo />}
-        title="Collection Femme Printemps 2025"
-        showTitleButton={true}
-        titleButtonIcon="Plus"
-        centerContent={
-          <Workflow
-            steps={[
-              { bench_id: "1", label: "LIVE", onClick: () => console.log("LIVE clicked") },
-              { bench_id: "2", label: "PHASE 1", onClick: () => console.log("PHASE 1 clicked") },
-              { bench_id: "3", label: "EXPORTS", onClick: () => console.log("EXPORTS clicked") },
-              { bench_id: "4", label: "VALIDATION", isActive: true },
-            ]}
-            bench_root_id={1003}
-          />
-        }
-        rightContent={<RightSideButtons />}
-      />
-    </ThemeProvider>
+  args: {
+    title: "Collection Femme Printemps 2025",
+    showTitleButton: true,
+    showBackButton: false,
+    titleButtonIcon: "Plus",
+  },
+  render: (args) => (
+    <PageHeader
+      {...args}
+      logo={<GsLogo />}
+      rightContent={<RightSideButtons />}
+    />
+  )
+};
+
+// Add a story with workflow (same as Workflow Default story)
+export const WithWorkflow: Story = {
+  args: {
+    title: "Collection Femme Printemps 2025",
+    showTitleButton: true,
+    showBackButton: false,
+  },
+  render: (args) => (
+    <PageHeader
+      {...args}
+      logo={<GsLogo />}
+      centerContent={
+        <Workflow
+          bench_root_id={1001}
+          steps={[
+            { bench_id: 1, label: "LIVE", state: "active", onClick: (rootId, stepId) => console.log(`LIVE clicked - rootId: ${rootId}, stepId: ${stepId}`) },
+            { bench_id: 2, label: "PHASE 1", state: "current", onClick: (rootId, stepId) => console.log(`PHASE 1 clicked - rootId: ${rootId}, stepId: ${stepId}`) },
+            { bench_id: 3, label: "EXPORTS", state: "active", onClick: (rootId, stepId) => console.log(`EXPORTS clicked - rootId: ${rootId}, stepId: ${stepId}`) },
+            { bench_id: 4, label: "VALIDATION", state: "inactive" },
+          ]}
+        />
+      }
+      rightContent={<RightSideButtons />}
+    />
   )
 };
 
 // Add a story with active loading animation
 export const WithActivityAnimation: Story = {
-  render: () => {
+  args: {
+    title: "Loading Status Demonstration",
+    showTitleButton: true,
+    showBackButton: false,
+  },
+  render: (args) => {
     // Use useState to simulate activity status
     const [isIdle, setIsIdle] = useState(false);
     
@@ -278,40 +525,43 @@ export const WithActivityAnimation: Story = {
     }, []);
     
     return (
-      <ThemeProvider>
-        <div>
-          <PageHeader 
-            logo={<GsLogo />}
-            title="Loading Status Demonstration"
-            showTitleButton={true}
-            centerContent={<Workflow
-              steps={[
-                { bench_id: "1", label: "LIVE", onClick: () => console.log("LIVE clicked") },
-                { bench_id: "2", label: "PHASE 1", onClick: () => console.log("PHASE 1 clicked") },
-                { bench_id: "3", label: "EXPORTS", onClick: () => console.log("EXPORTS clicked") },
-                { bench_id: "4", label: "VALIDATION", isActive: true },
-              ]}
-              bench_root_id={1004}
-            />}
-            rightContent={<RightSideButtons />}
-            isIdle={isIdle}
-          />
-          <div className="p-4">
-            <p className="mb-2 text-center">
-              {isIdle 
-                ? "Activity in progress - notice the animated gradient border at the bottom" 
-                : "Idle state - border gradient is static"}
-            </p>
-          </div>
+      <div>
+        <PageHeader 
+          {...args}
+          logo={<GsLogo />}
+          rightContent={<RightSideButtons />}
+          isIdle={isIdle}
+        />
+        <div className="p-4">
+          <p className="mb-2 text-center">
+            {isIdle 
+              ? "✅ Animation ACTIVÉE (isIdle=true) - Requête en cours - bordure gradient animée" 
+              : "⏸️ Animation DÉSACTIVÉE (isIdle=false) - Aucune requête - bordure gradient statique"}
+          </p>
+          <p className="text-sm text-gray-500 text-center">
+            L'animation bascule automatiquement toutes les 3 secondes pour la démonstration.
+          </p>
         </div>
-      </ThemeProvider>
+      </div>
     );
   },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Cette story démontre l\'animation de la bordure gradient. Quand `isIdle=true`, l\'animation est activée (requête en cours). Quand `isIdle=false`, l\'animation est désactivée (aucune requête).'
+      }
+    }
+  }
 };
 
 // Add a story with the default theme logo
 export const WithThemeLogo: Story = {
-  render: () => {
+  args: {
+    title: "Using Default Logo from Theme",
+    showTitleButton: true,
+    showBackButton: false,
+  },
+  render: (args) => {
     return (
       <ThemeProvider
         initialCustomization={{
@@ -321,17 +571,7 @@ export const WithThemeLogo: Story = {
         }}
       >
         <PageHeader 
-          title="Using Default Logo from Theme"
-          showTitleButton={true}
-          centerContent={<Workflow
-            steps={[
-              { bench_id: "1", label: "LIVE", onClick: () => console.log("LIVE clicked") },
-              { bench_id: "2", label: "PHASE 1", onClick: () => console.log("PHASE 1 clicked") },
-              { bench_id: "3", label: "EXPORTS", onClick: () => console.log("EXPORTS clicked") },
-              { bench_id: "4", label: "VALIDATION", isActive: true },
-            ]}
-            bench_root_id={1005}
-          />}
+          {...args}
           rightContent={<RightSideButtons />}
         />
         <div className="p-4">
@@ -346,7 +586,12 @@ export const WithThemeLogo: Story = {
 
 // Add a story with a custom theme logo
 export const WithCustomThemeLogo: Story = {
-  render: () => {
+  args: {
+    title: "Using Custom Logo from Theme",
+    showTitleButton: true,
+    showBackButton: false,
+  },
+  render: (args) => {
     return (
       <ThemeProvider
         initialCustomization={{
@@ -362,17 +607,7 @@ export const WithCustomThemeLogo: Story = {
         }}
       >
         <PageHeader 
-          title="Using Custom Logo from Theme"
-          showTitleButton={true}
-          centerContent={<Workflow
-            steps={[
-              { bench_id: "1", label: "LIVE", onClick: () => console.log("LIVE clicked") },
-              { bench_id: "2", label: "PHASE 1", onClick: () => console.log("PHASE 1 clicked") },
-              { bench_id: "3", label: "EXPORTS", onClick: () => console.log("EXPORTS clicked") },
-              { bench_id: "4", label: "VALIDATION", isActive: true },
-            ]}
-            bench_root_id={1006}
-          />}
+          {...args}
           rightContent={<RightSideButtons />}
         />
         <div className="p-4">

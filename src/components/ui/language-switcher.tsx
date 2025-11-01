@@ -48,12 +48,12 @@ export const LanguageSwitcher = ({
     <Popover open={disabled ? false : isOpen} onOpenChange={disabled ? undefined : setIsOpen}>
       <PopoverTrigger asChild>
         <Button
-          variant="normal"
+          variant="ghost"
           size={size}
           className={cn(
             buttonSizeClasses,
             "rounded-full",
-            isOpen && "bg-blue-primary",
+            isOpen && "!bg-blue-primary !text-black",
             className
           )}
           disabled={disabled}

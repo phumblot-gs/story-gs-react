@@ -10,38 +10,84 @@ const meta = {
     layout: "centered",
     docs: {
       description: {
-        component: `Composant Button construit avec le design system Figma. Le Button hérite automatiquement du contexte de couleur via \`data-bg\` du Layout parent.
+        component: `Button component built with the Figma design system. The Button automatically inherits color context via \`data-bg\` from the parent Layout.
 
-### Utilisation simple
+## Features
+- Multiple visual variants (normal, secondary, ghost, outline, destructive, link)
+- Three sizes (small, medium, large)
+- Automatic context-aware styling based on parent background
+- Icon support with Icon component
+- Indicator badge for notifications and alerts
+- Polymorphic component support via \`asChild\` prop
+- Event handlers (onClick, onFocus, onBlur)
+- Debug mode for development
+- Shadcn UI compatibility
+
+## Basic Usage
 
 \`\`\`tsx
 import { Button, Layout } from '@story-gs-react';
 
 <Layout bg="white">
   <Button variant="normal">
-    Enregistrer
+    Save
   </Button>
 </Layout>
 \`\`\`
 
-### Avec icône
+## With Icon
 
 \`\`\`tsx
 import { Icon } from '@story-gs-react';
 
 <Button variant="secondary">
   <Icon name="Plus" />
-  Ajouter
+  Add
 </Button>
 \`\`\`
 
-### Avec indicator
+## With Indicator
 
 \`\`\`tsx
 <Button variant="normal" indicator>
   Notifications
 </Button>
-\`\`\``,
+\`\`\`
+
+## With asChild (Polymorphic Component)
+
+The \`asChild\` prop allows you to apply Button styles to another element (like a link \`<a>\`) instead of creating a \`<button>\` element.
+
+**How it works:**
+
+Without \`asChild\`, the Button always creates a \`<button>\`:
+\`\`\`tsx
+<Button variant="normal">Save</Button>
+\`\`\`
+→ HTML Result: \`<button>Save</button>\`
+
+With \`asChild={true}\`, the Button transfers its styles to the first child:
+\`\`\`tsx
+<Button asChild variant="normal">
+  <a href="/page">Go to page</a>
+</Button>
+\`\`\`
+→ HTML Result: \`<a href="/page" className="...Button styles">Go to page</a>\`
+
+**Use case: Create a button that is a link**
+\`\`\`tsx
+// With react-router-dom
+import { Link } from 'react-router-dom';
+
+<Button asChild variant="secondary">
+  <Link to="/dashboard">Dashboard</Link>
+</Button>
+\`\`\`
+
+**Advantages:**
+- ✅ Correct HTML semantics (uses \`<a>\` for links, \`<button>\` for actions)
+- ✅ Better accessibility (screen readers correctly interpret the element)
+- ✅ Native functionality (links work with right-click, Ctrl+click, etc.)`,
       },
     },
   },
@@ -50,32 +96,44 @@ import { Icon } from '@story-gs-react';
     variant: {
       control: 'select',
       options: ['normal', 'secondary', 'ghost', 'outline', 'destructive', 'link'],
-      description: 'Variant du bouton (normal, secondary, ghost, outline, destructive, link)',
+      description: 'Button variant (normal, secondary, ghost, outline, destructive, link)',
     },
     size: {
       control: 'select',
-      options: ['small', 'large'],
-      description: 'Taille du bouton (small = 5px padding, large = 5px padding)',
+      options: ['small', 'medium', 'large'],
+      description: 'Button size (small, medium, large)',
     },
     indicator: {
       control: 'boolean',
-      description: 'Affiche une pastille jaune indicateur',
+      description: 'Displays a yellow indicator badge',
     },
     debug: {
       control: 'boolean',
-      description: 'Mode debug : affiche un label et log les props dans la console',
+      description: 'Debug mode: displays a label and logs props to the console',
+    },
+    asChild: {
+      control: 'boolean',
+      description: 'If true, transfers Button styles and props to the first direct child instead of creating a <button> element. Useful for creating buttons that are actually links or other components.',
     },
     disabled: {
       control: 'boolean',
-      description: 'Bouton désactivé',
+      description: 'Disabled button',
     },
     onClick: {
       action: 'clicked',
-      description: 'Fonction appelée au clic (hérite de ButtonHTMLAttributes)',
+      description: 'Function called on click (inherits from ButtonHTMLAttributes)',
+    },
+    onFocus: {
+      action: 'focused',
+      description: 'Function called when the button receives focus (inherits from ButtonHTMLAttributes)',
+    },
+    onBlur: {
+      action: 'blurred',
+      description: 'Function called when the button loses focus (inherits from ButtonHTMLAttributes)',
     },
     className: {
       control: 'text',
-      description: 'Classes CSS Tailwind additionnelles (ex: "p-0 w-6 h-6" pour icône uniquement)',
+      description: 'Additional Tailwind CSS classes (e.g., "p-0 w-6 h-6" for icon-only buttons)',
     },
   },
 } satisfies Meta<typeof Button>;
@@ -86,8 +144,8 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     variant: 'normal',
-    size: 'large',
-    children: 'Enregistrer',
+    size: 'medium',
+    children: 'Save',
   },
   render: (args) => (
     <Layout bg="white" padding={6}>
@@ -174,15 +232,16 @@ export const IconsOnly: Story = {
           <div className="p-4 bg-blue-primary rounded">
             <p className="text-sm font-medium mb-2">💡 Dimensions recommandées pour icône uniquement :</p>
             <ul className="text-xs space-y-1 list-disc list-inside">
-              <li><code>size="large"</code> : Ajouter <code>className="p-0 w-6 h-6"</code></li>
+              <li><code>size="medium"</code> : Ajouter <code>className="p-0 w-6 h-6"</code></li>
+              <li><code>size="large"</code> : Ajouter <code>className="p-0 w-8 h-8"</code> (plus grand pour refléter la taille large)</li>
               <li><code>size="small"</code> : Ajouter <code>className="p-1 w-4 h-4"</code></li>
             </ul>
           </div>
         </div>
 
-        {/* Size Large */}
+        {/* Size Medium */}
         <VStack gap={3}>
-          <h4 className="text-sm font-medium">Size Large (défaut) - Recommandé : className="p-0 w-6 h-6"</h4>
+          <h4 className="text-sm font-medium">Size Medium (défaut) - Recommandé : className="p-0 w-6 h-6"</h4>
           <HStack gap={3} align="center">
             <Button variant="normal" className="p-0 w-6 h-6"><Icon name="Plus" /></Button>
             <Button variant="secondary" className="p-0 w-6 h-6"><Icon name="Settings" /></Button>
@@ -190,6 +249,21 @@ export const IconsOnly: Story = {
             <Button variant="outline" className="p-0 w-6 h-6"><Icon name="Pencil" /></Button>
             <Button variant="destructive" className="p-0 w-6 h-6"><Icon name="X" /></Button>
           </HStack>
+        </VStack>
+
+        {/* Size Large */}
+        <VStack gap={3}>
+          <h4 className="text-sm font-medium">Size Large - Recommandé : className="p-0 w-8 h-8"</h4>
+          <HStack gap={3} align="center">
+            <Button variant="normal" size="large" className="p-0 w-8 h-8"><Icon name="Plus" /></Button>
+            <Button variant="secondary" size="large" className="p-0 w-8 h-8"><Icon name="Settings" /></Button>
+            <Button variant="ghost" size="large" className="p-0 w-8 h-8"><Icon name="Trash" /></Button>
+            <Button variant="outline" size="large" className="p-0 w-8 h-8"><Icon name="Pencil" /></Button>
+            <Button variant="destructive" size="large" className="p-0 w-8 h-8"><Icon name="X" /></Button>
+          </HStack>
+          <div className="text-xs text-grey-stronger mt-2">
+            💡 Note : La taille large utilise <code>py-[15px]</code> (vs <code>py-1</code> pour medium), donc les boutons sont plus hauts.
+          </div>
         </VStack>
 
         {/* Size Small */}
@@ -273,12 +347,82 @@ export const WithIndicator: Story = {
   ),
 };
 
+export const AsChild: Story = {
+  render: () => (
+    <Layout bg="white" padding={6}>
+      <VStack gap={6}>
+        <div>
+          <h3 className="gs-typo-h3 mb-2">Utilisation de asChild</h3>
+          <p className="text-sm text-grey-stronger mb-4">
+            La prop <code>asChild</code> permet de transférer les styles du Button au premier enfant direct, 
+            au lieu de créer un élément <code>&lt;button&gt;</code>. C'est utile pour créer des boutons qui sont 
+            en réalité des liens ou d'autres composants.
+          </p>
+        </div>
+
+        <VStack gap={4}>
+          <div>
+            <h4 className="text-sm font-medium mb-2">Bouton normal (sans asChild)</h4>
+            <p className="text-xs text-grey-stronger mb-2">Résultat : &lt;button&gt;</p>
+            <Button variant="normal">Bouton normal</Button>
+          </div>
+
+          <div>
+            <h4 className="text-sm font-medium mb-2">Bouton avec asChild (lien HTML)</h4>
+            <p className="text-xs text-grey-stronger mb-2">Résultat : &lt;a&gt; avec les styles du Button</p>
+            <Button asChild variant="normal">
+              <a href="https://example.com" target="_blank" rel="noopener noreferrer">
+                Lien externe
+              </a>
+            </Button>
+          </div>
+
+          <div>
+            <h4 className="text-sm font-medium mb-2">Comparaison visuelle</h4>
+            <p className="text-xs text-grey-stronger mb-2">Les deux boutons ont le même style, mais des éléments HTML différents</p>
+            <HStack gap={3}>
+              <Button variant="secondary">Bouton standard</Button>
+              <Button asChild variant="secondary">
+                <a href="#example">Lien stylisé</a>
+              </Button>
+            </HStack>
+          </div>
+
+          <div className="p-4 bg-blue-primary rounded">
+            <p className="text-xs font-medium mb-2">💡 Avantages de asChild :</p>
+            <ul className="text-xs space-y-1 list-disc list-inside text-grey-stronger">
+              <li>Sémantique HTML correcte (utilise &lt;a&gt; pour les liens, &lt;button&gt; pour les actions)</li>
+              <li>Meilleure accessibilité (les lecteurs d'écran interprètent correctement l'élément)</li>
+              <li>Fonctionnalités natives (les liens fonctionnent avec clic droit, Ctrl+clic, etc.)</li>
+              <li>Réutilisabilité des styles Button sur n'importe quel composant</li>
+            </ul>
+          </div>
+        </VStack>
+      </VStack>
+    </Layout>
+  ),
+};
+
 export const Small: Story = {
   render: () => (
     <Layout bg="white" padding={6}>
       <HStack gap={3} align="center">
         <Button size="small">Small Button</Button>
         <Button size="small">
+          <Icon name="Plus" />
+          Avec icon
+        </Button>
+      </HStack>
+    </Layout>
+  ),
+};
+
+export const Medium: Story = {
+  render: () => (
+    <Layout bg="white" padding={6}>
+      <HStack gap={3} align="center">
+        <Button size="medium">Medium Button</Button>
+        <Button size="medium">
           <Icon name="Plus" />
           Avec icon
         </Button>
@@ -334,8 +478,10 @@ export const ShadcnCompatibility: Story = {
         </HStack>
         <HStack gap={3}>
           <Button size="sm">Small (sm)</Button>
-          <Button size="lg">Large (lg)</Button>
-          <Button size="default">Default</Button>
+          <Button size="medium">Medium</Button>
+          <Button size="lg">Medium (lg - compatibilité shadcn)</Button>
+          <Button size="large">Large</Button>
+          <Button size="default">Medium (default)</Button>
         </HStack>
       </VStack>
     </Layout>
@@ -413,11 +559,21 @@ export const DebugMode: Story = {
 
         <VStack gap={4}>
           <HStack gap={3}>
+            <Button variant="normal" size="medium" debug onClick={() => alert('Clicked!')}>
+              Normal Medium
+            </Button>
             <Button variant="normal" size="large" debug onClick={() => alert('Clicked!')}>
               Normal Large
             </Button>
-            <Button variant="secondary" size="small" debug onClick={() => console.log('Secondary clicked')}>
-              Secondary Small
+            <Button 
+              variant="secondary" 
+              size="small" 
+              debug 
+              onClick={() => console.log('Secondary clicked')}
+              onFocus={(e) => console.log('Secondary focused')}
+              onBlur={(e) => console.log('Secondary blurred')}
+            >
+              Secondary Small (avec onFocus/onBlur)
             </Button>
             <Button variant="ghost" debug indicator>
               Ghost + Indicator
@@ -430,7 +586,7 @@ export const DebugMode: Story = {
               <li>Bordure rose (ring-2 ring-pink) autour du bouton</li>
               <li>Label au-dessus affichant variant/size normalisés</li>
               <li>Log dans la console avec toutes les props</li>
-              <li>onClick fonctionne normalement (hérite de ButtonHTMLAttributes)</li>
+              <li>onClick, onFocus et onBlur fonctionnent normalement (hérite de ButtonHTMLAttributes)</li>
             </ul>
           </div>
         </VStack>

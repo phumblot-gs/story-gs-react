@@ -1,9 +1,11 @@
 
 import React from "react";
 import PageHeader from "@/components/PageHeader";
-import { ButtonCircle } from "@/components/ui/button-circle";
+import { Button } from "@/components/ui/button";
+import { IconProvider } from "@/components/ui/icon-provider";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
+import ButtonNotifications from "@/components/ButtonNotifications";
 
 // Custom logo component
 const GsLogo = () => (
@@ -39,11 +41,11 @@ const RightSideButtons = () => {
         currentLanguage={currentLanguage} 
         onLanguageChange={setCurrentLanguage} 
       />
-      <ButtonCircle icon="User" size="large" background="white" />
-      <ButtonCircle icon="Settings" size="large" background="white" />
-      <ButtonCircle icon="Help" size="large" background="white" />
-      <ButtonCircle icon="Bell" indicator={true} size="large" background="white" />
-      <ButtonCircle icon="Logout" size="large" background="white" />
+      <Button variant="ghost" className="p-0 w-6 h-6"><IconProvider icon="User" /></Button>
+      <Button variant="ghost" className="p-0 w-6 h-6"><IconProvider icon="Settings" /></Button>
+      <Button variant="ghost" className="p-0 w-6 h-6"><IconProvider icon="Help" /></Button>
+      <Button variant="ghost" className="p-0 w-6 h-6"><IconProvider icon="Logout" /></Button>
+      <ButtonNotifications />
     </>
   );
 };

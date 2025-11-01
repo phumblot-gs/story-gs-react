@@ -3,7 +3,6 @@
 import React, { useState, useCallback, useEffect, useRef, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { ButtonCircle } from "@/components/ui/button-circle";
 import { IconProvider } from "@/components/ui/icon-provider";
 import { IconName } from "@/components/ui/icons/types";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -692,25 +691,23 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
           {/* Boutons d'actions */}
           <Tooltip>
             <TooltipTrigger asChild>
-              <ButtonCircle
-                size="large"
-                icon="Refresh"
+              <Button
+                className="p-0 w-6 h-6"
                 onClick={onRefresh}
-                background="white"
-              />
+              >
+                <IconProvider icon="Refresh" />
+              </Button>
             </TooltipTrigger>
             <TooltipContent>{t('fileBrowser.refresh')}</TooltipContent>
           </Tooltip>
           {showUploadButton && (
             <div className="relative" ref={addMenuRef}>
-              <ButtonCircle
-                size="large"
-                icon="Plus"
+              <Button
+                className="p-0 w-6 h-6"
                 onClick={() => setIsAddMenuOpen(!isAddMenuOpen)}
-                background="white"
-                featured
-                isActive={isAddMenuOpen}
-              />
+              >
+                <IconProvider icon="Plus" />
+              </Button>
               {isAddMenuOpen && (
                 <div className="absolute right-0 top-full mt-1 z-50 overflow-hidden rounded-none border shadow-lg bg-black text-white border-grey-strongest">
                   <div className="p-0">
@@ -903,71 +900,71 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
                       <div className="flex items-center justify-end space-x-1">
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <ButtonCircle
-                              size="large"
-                              icon="Pencil"
-                              background="white"
+                            <Button
+                              className="p-0 w-6 h-6"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 handleAction("rename", [item]);
                               }}
-                            />
+                            >
+                              <IconProvider icon="Pencil" />
+                            </Button>
                           </TooltipTrigger>
                           <TooltipContent>{t('fileBrowser.rename')}</TooltipContent>
                         </Tooltip>
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <ButtonCircle
-                              size="large"
-                              icon="FolderMoved"
-                              background="white"
+                            <Button
+                              className="p-0 w-6 h-6"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 handleAction("move", [item]);
                               }}
-                            />
+                            >
+                              <IconProvider icon="FolderMoved" />
+                            </Button>
                           </TooltipTrigger>
                           <TooltipContent>{t('fileBrowser.moveTo')}</TooltipContent>
                         </Tooltip>
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <ButtonCircle
-                              size="large"
-                              icon="Download"
-                              background="white"
+                            <Button
+                              className="p-0 w-6 h-6"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 handleAction("download", [item]);
                               }}
-                            />
+                            >
+                              <IconProvider icon="Download" />
+                            </Button>
                           </TooltipTrigger>
                           <TooltipContent>{t('fileBrowser.download')}</TooltipContent>
                         </Tooltip>
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <ButtonCircle
-                              size="large"
-                              icon="Share"
-                              background="white"
+                            <Button
+                              className="p-0 w-6 h-6"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 handleAction("share", [item]);
                               }}
-                            />
+                            >
+                              <IconProvider icon="Share" />
+                            </Button>
                           </TooltipTrigger>
                           <TooltipContent>{t('fileBrowser.share')}</TooltipContent>
                         </Tooltip>
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <ButtonCircle
-                              size="large"
-                              icon="Trash"
-                              background="white"
+                            <Button
+                              className="p-0 w-6 h-6"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 handleAction("delete", [item]);
                               }}
-                            />
+                            >
+                              <IconProvider icon="Trash" />
+                            </Button>
                           </TooltipTrigger>
                           <TooltipContent>{t('fileBrowser.delete')}</TooltipContent>
                         </Tooltip>

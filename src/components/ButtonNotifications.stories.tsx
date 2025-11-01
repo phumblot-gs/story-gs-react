@@ -9,6 +9,7 @@ import { MemoryRouter } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { NotificationProps } from "./notifications/NotificationPanel";
 import type { ButtonNotificationsRef } from "./notifications/types";
+import { Layout } from "@/components/layout";
 
 const meta: Meta<typeof ButtonNotifications> = {
   title: "Components/ButtonNotifications",
@@ -18,20 +19,21 @@ const meta: Meta<typeof ButtonNotifications> = {
     docs: {
       description: {
         component: `
+A component that manages the display and interaction with notifications.
 
-Un composant qui gère l'affichage et l'interaction avec les notifications. Ce composant:
+## Features
+- Integrates ActivityPanel: Opens/closes the side notification panel
+- Multilingual support: Uses the TranslationProvider context to adapt texts to the selected language
+- Limit management: Limits the display to a configurable number of notifications (100 by default)
+- Ref API: Exposes methods to add notifications programmatically
+- onClick callback: Called when the user clicks on the notification button, in parallel with opening/closing the panel
 
-- **Intègre ActivityPanel** : Ouvre/ferme le panneau latéral de notifications
-- **Support multilingue** : Utilise le contexte TranslationProvider pour adapter les textes à la langue sélectionnée
-- **Gestion de limite** : Limite l'affichage à un nombre configurable de notifications (100 par défaut)
-- **API Ref** : Expose des méthodes pour ajouter des notifications programmatiquement
-- **Callback onClick** : Appelé lorsque l'utilisateur clique sur le bouton de notifications, en parallèle de l'ouverture/fermeture du panneau
+## Notification Limit Management Rules
 
-#### Règles de gestion des limites de notifications :
-- Lorsque la limite est atteinte, les notifications les plus anciennes sont supprimées en priorisant:
-  1. D'abord les notifications déjà lues (les plus anciennes)
-  2. Ensuite seulement les notifications non lues (les plus anciennes)
-- Le tri des notifications se fait par date (plus récentes en haut)
+When the limit is reached, the oldest notifications are removed by prioritizing:
+1. First, already read notifications (oldest first)
+2. Then only unread notifications (oldest first)
+- Notifications are sorted by date (newest first)
         `
       }
     }
@@ -41,9 +43,9 @@ Un composant qui gère l'affichage et l'interaction avec les notifications. Ce c
     (Story) => (
       <TranslationProvider>
         <MemoryRouter>
-          <div className="p-6 bg-white rounded-md">
+          <Layout bg="white" padding={6}>
             <Story />
-          </div>
+          </Layout>
         </MemoryRouter>
       </TranslationProvider>
     ),
@@ -51,48 +53,48 @@ Un composant qui gère l'affichage et l'interaction avec les notifications. Ce c
   argTypes: {
     onClick: { 
       action: "clicked",
-      description: 'Callback appelé lorsque l\'utilisateur clique sur le bouton de notifications pour ouvrir/fermer le panneau',
+      description: 'Callback called when the user clicks on the notification button to open/close the panel',
       table: {
         type: { summary: '() => void' }
       }
     },
     onMarkAllAsRead: { 
       action: "marked all as read",
-      description: 'Callback appelé lorsque l\'utilisateur clique sur "Marquer tout comme lu"',
+      description: 'Callback called when the user clicks on "Mark all as read"',
       table: {
         type: { summary: '(notifications: NotificationProps[]) => void' }
       }
     },
     onNotificationClick: { 
       action: "notification clicked",
-      description: 'Callback appelé lorsque l\'utilisateur clique sur une notification',
+      description: 'Callback called when the user clicks on a notification',
       table: {
         type: { summary: '(notification_id: string) => void' }
       }
     },
     debug: { 
       control: 'boolean',
-      description: 'Active le mode debug pour afficher les événements dans la console',
+      description: 'Enables debug mode to display events in the console',
       table: {
         defaultValue: { summary: false }
       }
     },
     limit: {
       control: { type: 'number', min: 5, max: 200, step: 5 },
-      description: 'Nombre maximum de notifications à afficher (défaut: 100)',
+      description: 'Maximum number of notifications to display (default: 100)',
       table: {
         defaultValue: { summary: 100 }
       }
     },
     notifications: {
-      description: 'Liste initiale des notifications à afficher',
+      description: 'Initial list of notifications to display',
       control: 'object',
       table: {
         type: { summary: 'NotificationProps[]' }
       }
     },
     count: {
-      description: 'Nombre de notifications non lues à afficher sur le badge (calculé automatiquement si non spécifié)',
+      description: 'Number of unread notifications to display on the badge (automatically calculated if not specified)',
       control: 'number',
       table: {
         type: { summary: 'number' }
@@ -113,7 +115,7 @@ export const Default: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Configuration par défaut avec des notifications simulées (mockNotifications)'
+        story: 'Default configuration with simulated notifications (mockNotifications)'
       }
     }
   }
@@ -149,7 +151,7 @@ export const WithoutUnreadNotifications: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Sans notifications non lues - le bouton n\'affiche pas de badge'
+        story: 'Without unread notifications - the button does not display a badge'
       }
     }
   }
@@ -185,7 +187,7 @@ export const WithUnreadNotifications: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Avec notifications non lues - le bouton affiche un badge'
+        story: 'With unread notifications - the button displays a badge'
       }
     }
   }
@@ -223,7 +225,7 @@ export const DebugMode: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Avec mode debug activé - les actions sont enregistrées dans la console. Utile pour développement et débogage.'
+        story: 'With debug mode enabled - actions are logged in the console. Useful for development and debugging.'
       }
     }
   }
@@ -251,12 +253,12 @@ export const WithSmallLimit: Story = {
     docs: {
       description: {
         story: `
-### Gestion des limites (10 notifications max)
+### Limit management (10 notifications max)
 
-Ce mode démontre la limitation à 10 notifications. Règles de suppression :
-1. Les notifications les plus anciennes sont supprimées en premier
-2. Les notifications déjà lues sont supprimées avant les non lues
-3. Quand de nouvelles notifications arrivent, les plus anciennes sont supprimées automatiquement
+This mode demonstrates the limitation to 10 notifications. Deletion rules:
+1. Oldest notifications are removed first
+2. Already read notifications are removed before unread ones
+3. When new notifications arrive, the oldest ones are automatically removed
         `
       }
     }
@@ -272,7 +274,7 @@ const IncrementalNotificationsTemplate = (args) => {
     
     const newNotification = {
       notification_id: `story-add-${Date.now()}`,
-      title: "Ajout dynamique de notifications (Ref API)",
+      title: "Dynamic notification addition (Ref API)",
       subtitle: `Added at ${new Date().toLocaleTimeString()}`,
       pictureStatus: MediaStatus.VALIDATED,
       type: "comment" as NotificationType,
@@ -291,7 +293,7 @@ const IncrementalNotificationsTemplate = (args) => {
       <div className="flex flex-col gap-2 items-center">
         <Button onClick={addNotification}>Add New Notification</Button>
         <p className="text-sm text-muted-foreground text-center max-w-xs mt-2">
-          Cliquez pour ajouter des notifications dynamiquement. Le composant gère automatiquement les limites.
+          Click to add notifications dynamically. The component automatically manages limits.
         </p>
       </div>
     </div>
@@ -322,23 +324,23 @@ export const IncrementalNotifications: Story = {
     docs: {
       description: {
         story: `
-Ce mode démontre l'ajout incrémental de notifications via la méthode \`addNotifications\` exposée par le composant.
+This mode demonstrates incremental notification addition via the \`addNotifications\` method exposed by the component.
 
-#### Code d'exemple:
+**Example code:**
 
 \`\`\`tsx
-// Créer une référence au composant ButtonNotifications
+// Create a reference to the ButtonNotifications component
 const notificationsRef = useRef<ButtonNotificationsRef>(null);
 
-// Plus tard dans le code, ajouter une notification
+// Later in the code, add a notification
 if (notificationsRef.current) {
   const newNotification = {
     notification_id: \`notification-\${Date.now()}\`,
-    title: "Nouvelle notification",
-    subtitle: "Détails de la notification",
+    title: "New notification",
+    subtitle: "Notification details",
     pictureStatus: MediaStatus.VALIDATED,
     type: "comment",
-    redirectLink: "/chemin-vers-page",
+    redirectLink: "/path-to-page",
     date: new Date(),
     unread: true
   };
@@ -359,7 +361,7 @@ const MultilingualTemplate = (args) => {
   return (
     <div className="flex flex-col items-center gap-6">
       <p className="text-sm text-center mb-4">
-        Changez de langue dans la barre latérale de Storybook pour voir la traduction automatique des textes du composant.
+        Change the language in Storybook's sidebar to see automatic translation of component texts.
       </p>
       <ButtonNotifications {...args} ref={notificationsRef} />
     </div>
@@ -389,33 +391,37 @@ export const MultilingualSupport: Story = {
     docs: {
       description: {
         story: `
-Le composant utilise le contexte \`TranslationContext\` pour traduire automatiquement :
-- Le texte du bouton et son aria-label
-- Les titres et descriptions du panneau de notifications
-- Les messages d'état ("Vous êtes à jour", "X notifications non lues", etc.)
-- Le bouton "marquer comme lu"
-- Le format des dates (selon la locale)
+The component uses the \`TranslationContext\` to automatically translate:
+- Button text and its aria-label
+- Notification panel titles and descriptions
+- Status messages ("You're up to date", "X unread notifications", etc.)
+- The "mark as read" button
+- Date format (according to locale)
 
-#### Comment ça fonctionne
+**How it works:**
 
-1. Le composant s'entoure d'un \`TranslationProvider\` :
+1. The component is wrapped with a \`TranslationProvider\`:
+
 \`\`\`tsx
 <TranslationProvider>
   <ButtonNotifications />
 </TranslationProvider>
 \`\`\`
 
-2. Il utilise le hook useTranslation pour accéder aux traductions :
+2. It uses the useTranslation hook to access translations:
+
 \`\`\`tsx
 const { t, currentLanguage } = useTranslation();
 \`\`\`
 
-3. Les clés de traduction sont utilisées via la fonction \`t()\` :
+3. Translation keys are used via the \`t()\` function:
+
 \`\`\`tsx
 aria-label={t("notifications.title")}
 \`\`\`
 
-4. Les dates sont formatées selon la langue courante :
+4. Dates are formatted according to the current language:
+
 \`\`\`tsx
 formatDateForLocale(date, 'format', currentLanguage.code)
 \`\`\`
@@ -427,16 +433,16 @@ formatDateForLocale(date, 'format', currentLanguage.code)
 
 // Callback handling example
 const CallbackHandlingTemplate = (args) => {
-  const [lastAction, setLastAction] = React.useState<string>("Aucune action");
+  const [lastAction, setLastAction] = React.useState<string>("No action");
   const [lastId, setLastId] = React.useState<string>("");
   
   const handleMarkAllAsRead = (notifications: NotificationProps[]) => {
-    setLastAction(`Marquer tout comme lu (${notifications.length} notifications)`);
+    setLastAction(`Mark all as read (${notifications.length} notifications)`);
     action("marked all as read")(notifications);
   };
 
   const handleNotificationClick = (id: string) => {
-    setLastAction(`Notification cliquée`);
+    setLastAction(`Notification clicked`);
     setLastId(id);
     action("notification clicked")(id);
   };
@@ -449,12 +455,12 @@ const CallbackHandlingTemplate = (args) => {
         onNotificationClick={handleNotificationClick}
       />
       <div className="border rounded p-4 mt-4 w-full max-w-md">
-        <h4 className="font-semibold mb-2">Journal d'actions :</h4>
-        <p>Dernière action : {lastAction}</p>
+        <h4 className="font-semibold mb-2">Action log:</h4>
+        <p>Last action: {lastAction}</p>
         {lastId && <p className="text-sm text-muted-foreground">ID: {lastId}</p>}
       </div>
       <p className="text-sm text-center">
-        Cliquez sur le bouton de notification, puis testez les actions dans le panneau qui s'ouvre.
+        Click on the notification button, then test the actions in the panel that opens.
       </p>
     </div>
   );
@@ -491,31 +497,35 @@ export const CallbackHandling: Story = {
     docs: {
       description: {
         story: `
-Ce composant expose deux callbacks principaux :
+This component exposes two main callbacks:
 
-#### 1. onNotificationClick
-Appelé lorsque l'utilisateur clique sur une notification individuelle :
+**1. onNotificationClick**
+
+Called when the user clicks on an individual notification:
+
 \`\`\`tsx
 const handleNotificationClick = (notificationId: string) => {
-  // Navigation vers la page liée à la notification
+  // Navigate to the page linked to the notification
   navigate(\`/details/\${notificationId}\`);
   
-  // Ou mise à jour d'un état dans votre application
+  // Or update a state in your application
   markAsReadInDatabase(notificationId);
 }
 \`\`\`
 
-#### 2. onMarkAllAsRead
-Appelé lorsque l'utilisateur clique sur "marquer tout comme lu" :
+**2. onMarkAllAsRead**
+
+Called when the user clicks on "mark all as read":
+
 \`\`\`tsx
 const handleMarkAllAsRead = (notifications: NotificationProps[]) => {
-  // Mise à jour dans la base de données
+  // Update in database
   updateAllNotificationsStatus(notifications);
   
-  // Affichage d'un toast de confirmation
+  // Display a confirmation toast
   toast({
-    title: "Notifications mises à jour",
-    description: "Toutes les notifications ont été marquées comme lues"
+    title: "Notifications updated",
+    description: "All notifications have been marked as read"
   });
 }
 \`\`\`
@@ -528,11 +538,11 @@ const handleMarkAllAsRead = (notifications: NotificationProps[]) => {
 // Add an example demonstrating the onClick callback functionality
 const OnClickCallbackTemplate = (args) => {
   const [clickCount, setClickCount] = React.useState<number>(0);
-  const [panelState, setPanelState] = React.useState<string>("fermé");
+  const [panelState, setPanelState] = React.useState<string>("closed");
   
   const handleButtonClick = () => {
     setClickCount(prevCount => prevCount + 1);
-    setPanelState(prev => prev === "fermé" ? "ouvert" : "fermé");
+    setPanelState(prev => prev === "closed" ? "open" : "closed");
     action("button clicked")();
   };
   
@@ -543,14 +553,14 @@ const OnClickCallbackTemplate = (args) => {
         onClick={handleButtonClick}
       />
       <div className="border rounded p-4 mt-4 w-full max-w-md">
-        <h4 className="font-semibold mb-2">Démonstration du callback onClick :</h4>
-        <p>Nombre de clics : {clickCount}</p>
-        <p>État du panneau : {panelState}</p>
+        <h4 className="font-semibold mb-2">onClick callback demonstration:</h4>
+        <p>Click count: {clickCount}</p>
+        <p>Panel state: {panelState}</p>
       </div>
       <p className="text-sm text-center max-w-md">
-        Cet exemple illustre comment le callback onClick est appelé à chaque clic sur le bouton de notifications, 
-        parallèlement à l'ouverture ou la fermeture du panneau. Le callback peut être utilisé pour effectuer 
-        des actions supplémentaires comme la journalisation, le suivi analytique, ou la mise à jour d'états.
+        This example illustrates how the onClick callback is called on each click on the notification button, 
+        in parallel with opening or closing the panel. The callback can be used to perform 
+        additional actions such as logging, analytics tracking, or state updates.
       </p>
     </div>
   );
@@ -577,34 +587,35 @@ export const OnClickCallbackExample: Story = {
     docs: {
       description: {
         story: `
-### Utilisation du callback onClick
+**Using the onClick callback**
 
-Le composant \`ButtonNotifications\` accepte un prop \`onClick\` qui est appelé à chaque fois que l'utilisateur clique sur le bouton de notifications, en parallèle de l'ouverture/fermeture du panneau.
+The \`ButtonNotifications\` component accepts an \`onClick\` prop that is called every time the user clicks on the notification button, in parallel with opening/closing the panel.
 
-#### Cas d'utilisation
-- Journalisation des interations utilisateur
-- Déclenchement d'analyses (analytics)
-- Mise à jour d'états externes
-- Toute autre action qui doit se produire lors du clic sur le bouton
+**Use cases:**
+- Logging user interactions
+- Triggering analytics
+- Updating external states
+- Any other action that should occur when clicking the button
 
-#### Exemple de code
+**Example code:**
+
 \`\`\`tsx
-// Dans votre composant parent
+// In your parent component
 const handleNotificationButtonClick = () => {
-  console.log("L'utilisateur a interagi avec les notifications");
+  console.log("User interacted with notifications");
   logUserInteraction("notifications_panel_toggle");
   
-  // Autres actions possibles comme afficher un toast, mettre à jour un état, etc.
+  // Other possible actions like displaying a toast, updating a state, etc.
 };
 
-// Puis dans le rendu
+// Then in the render
 <ButtonNotifications 
   onClick={handleNotificationButtonClick}
   notifications={myNotifications}
 />
 \`\`\`
 
-**Note importante**: Ce callback est indépendant de la fonctionnalité d'ouverture/fermeture du panneau qui se produit automatiquement. Le callback est simplement une façon pour le composant parent d'être informé et de réagir au clic sur le bouton.
+**Important note:** This callback is independent of the panel opening/closing functionality that occurs automatically. The callback is simply a way for the parent component to be informed and react to the button click.
         `
       }
     }

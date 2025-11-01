@@ -6,9 +6,11 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ButtonCircle } from "@/components/ui/button-circle";
+import { Button } from "@/components/ui/button";
+import { IconProvider } from "@/components/ui/icon-provider";
 import { Workflow } from "@/components/ui/workflow";
 import { LanguageSwitcher, type Language } from "@/components/ui/language-switcher";
+import ButtonNotifications from "@/components/ButtonNotifications";
 
 const PageHeaderConfigDemo: React.FC = () => {
   const [title, setTitle] = useState("Collection Femme Printemps 2025");
@@ -49,16 +51,16 @@ const PageHeaderConfigDemo: React.FC = () => {
   const WorkflowTabs = () => (
     <Workflow
       steps={[
-        { bench_id: "1", label: "LIVE", onClick: () => console.log("LIVE clicked") },
-        { bench_id: "2", label: "PHASE 1", onClick: () => console.log("PHASE 1 clicked") },
-        { bench_id: "3", label: "EXPORTS", onClick: () => console.log("EXPORTS clicked") },
-        { bench_id: "4", label: "VALIDATION", isActive: true },
+        { bench_id: 1, label: "LIVE", onClick: () => console.log("LIVE clicked") },
+        { bench_id: 2, label: "PHASE 1", onClick: () => console.log("PHASE 1 clicked") },
+        { bench_id: 3, label: "EXPORTS", onClick: () => console.log("EXPORTS clicked") },
+        { bench_id: 4, label: "VALIDATION", state: "current" },
       ]}
       bench_root_id={1001}
     />
   );
 
-  // Right side buttons component - Updated to use LanguageSwitcher
+  // Right side buttons component - Updated to use LanguageSwitcher and ButtonNotifications
   const RightSideButtons = () => (
     <>
       <LanguageSwitcher 
@@ -66,11 +68,11 @@ const PageHeaderConfigDemo: React.FC = () => {
         currentLanguage={currentLanguage} 
         onLanguageChange={handleLanguageChange} 
       />
-      <ButtonCircle icon="User" />
-      <ButtonCircle icon="Settings" />
-      <ButtonCircle icon="Help" />
-      <ButtonCircle icon="Bell" indicator={true} />
-      <ButtonCircle icon="Logout" />
+      <Button variant="ghost" className="p-0 w-6 h-6"><IconProvider icon="User" /></Button>
+      <Button variant="ghost" className="p-0 w-6 h-6"><IconProvider icon="Settings" /></Button>
+      <Button variant="ghost" className="p-0 w-6 h-6"><IconProvider icon="Help" /></Button>
+      <Button variant="ghost" className="p-0 w-6 h-6"><IconProvider icon="Logout" /></Button>
+      <ButtonNotifications />
     </>
   );
 

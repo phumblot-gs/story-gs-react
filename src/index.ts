@@ -5,7 +5,6 @@ import "./lib.css";
 import * as React from "react";
 import { buttonVariants } from "./components/ui/button-base";
 import { Button } from "./components/ui/button";
-import { ButtonCircle } from "./components/ui/button-circle";
 import { LanguageSwitcher } from "./components/ui/language-switcher";
 import { FileBrowser } from "./components/ui/file-browser";
 import {
@@ -35,6 +34,7 @@ import { Toggle, toggleVariants } from "./components/ui/toggle";
 import { ToggleGroup, ToggleGroupItem } from "./components/ui/toggle-group";
 import { Workflow } from "./components/ui/workflow";
 import { WorkflowStep } from "./components/ui/workflow-step";
+import type { WorkflowStepState } from "./components/ui/workflow-step";
 import { TruncatedText } from "./components/ui/truncated-text";
 import {
   Accordion,
@@ -264,12 +264,6 @@ import type {
 } from "./components/ui/button";
 
 import type {
-  ButtonBackground as ButtonCircleBackground,
-  ButtonSize as ButtonCircleSize,
-  ButtonCircleProps
-} from "./components/ui/button-circle/types";
-
-import type {
   IconName
 } from "./components/ui/icons/types";
 
@@ -323,7 +317,6 @@ export * from "./components/ui/icon-provider";
 // Export UI components
 export { buttonVariants };
 export { Button };
-export { ButtonCircle };
 export { LanguageSwitcher };
 export { FileBrowser };
 export { Select, SelectTrigger, SelectContent, SelectItem, SelectValue };
@@ -337,6 +330,7 @@ export { Icon } from "./components/ui/icons";
 // Export additional UI components
 export { Toggle, toggleVariants, ToggleGroup, ToggleGroupItem };
 export { Workflow, WorkflowStep };
+export type { WorkflowStepState };
 export { TruncatedText };
 export { Accordion, AccordionItem, AccordionTrigger, AccordionContent };
 export {
@@ -525,9 +519,6 @@ export type {
   ButtonProps,
   ButtonSize,
   ButtonVariant,
-  ButtonCircleBackground,
-  ButtonCircleProps,
-  ButtonCircleSize,
   IconName,
   Language,
   LanguageSwitcherProps,

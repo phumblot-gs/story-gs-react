@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect, forwardRef, useImperativeHandle } from "react";
-import { ButtonCircle } from "@/components/ui/button-circle";
+import { Button } from "@/components/ui/button";
+import { IconProvider } from "@/components/ui/icon-provider";
 import ActivityPanel from "./notifications/ActivityPanel";
 import { NotificationProps } from "./notifications/NotificationPanel";
 import { useTranslation } from "@/contexts/TranslationContext";
@@ -113,16 +114,20 @@ const ButtonNotifications = forwardRef<ButtonNotificationsRef, ButtonNotificatio
 
   return (
     <>
-      <ButtonCircle 
-        icon="Bell" 
-        size="large" 
-        background="white" 
-        indicator={unreadCount > 0}
-        featured={true}
-        onClick={togglePanel}
-        debug={debug}
-        aria-label={`${t("notifications.title")}${unreadCount > 0 ? ` (${unreadCount} ${t("notifications.unread")})` : ''}`}
-      />
+      <div className="relative">
+        <Button
+          variant="secondary"
+          className="p-0 w-6 h-6"
+          onClick={togglePanel}
+          debug={debug}
+          aria-label={`${t("notifications.title")}${unreadCount > 0 ? ` (${unreadCount} ${t("notifications.unread")})` : ''}`}
+        >
+          <IconProvider icon="Bell" />
+        </Button>
+        {unreadCount > 0 && (
+          <span className="absolute bottom-0 right-0 w-[7px] h-[7px] rounded-full bg-yellow" />
+        )}
+      </div>
       
       <ActivityPanel 
         isOpen={isPanelOpen} 

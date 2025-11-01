@@ -8,7 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { MediaStatus } from "@/utils/mediaStatus";
 import { StatusIndicator } from "@/components/StatusIndicator";
-import { ButtonCircle } from "@/components/ui/button-circle";
+import { Button } from "@/components/ui/button";
+import { IconProvider } from "@/components/ui/icon-provider";
 import { ButtonStatus } from "@/components/ButtonStatus";
 
 const NestedComponentsTestSection: React.FC = () => {
@@ -139,10 +140,9 @@ const NestedComponentsTestSection: React.FC = () => {
                 <div className="space-y-4">
                   <p>This is a card with nested components inside it.</p>
                   <div className="flex space-x-4">
-                    <ButtonCircle
-                      icon="Check"
-                      size="small"
-                    />
+                    <Button className="p-1 w-4 h-4">
+                      <IconProvider icon="Check" />
+                    </Button>
                     <Button variant={buttonVariant}>Button</Button>
                     <ButtonStatus
                       status={selectedStatus}

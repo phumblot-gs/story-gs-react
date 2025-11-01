@@ -1,6 +1,6 @@
 {
   "name": "@gs/gs-components-library",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -120,11 +120,6 @@
       "types": "./dist/components/button.d.ts",
       "import": "./dist/components/button.mjs",
       "require": "./dist/components/button.cjs"
-    },
-    "./button-circle": {
-      "types": "./dist/components/button-circle.d.ts",
-      "import": "./dist/components/button-circle.mjs",
-      "require": "./dist/components/button-circle.cjs"
     },
     "./file-browser": {
       "types": "./dist/components/file-browser.d.ts",

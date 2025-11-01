@@ -2,6 +2,7 @@
 import type { Meta, StoryObj } from "@storybook/react"
 import { LanguageSwitcher } from "./language-switcher"
 import { useState, useEffect } from "react"
+import { Layout } from "@/components/layout"
 
 const LANGUAGES = [
   { code: "EN", name: "English" },
@@ -11,7 +12,7 @@ const LANGUAGES = [
 ]
 
 const meta: Meta<typeof LanguageSwitcher> = {
-  title: "UI/LanguageSwitcher",
+  title: "Components/LanguageSwitcher",
   component: LanguageSwitcher,
   parameters: {
     layout: "centered",
@@ -86,6 +87,13 @@ export const MyLanguageSwitcher = () => {
     }
   },
   tags: ["autodocs"],
+  decorators: [
+    (Story) => (
+      <Layout bg="white" padding={6}>
+        <Story />
+      </Layout>
+    ),
+  ],
   argTypes: {
     size: {
       control: "select",

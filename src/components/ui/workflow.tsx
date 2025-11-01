@@ -5,7 +5,7 @@ import { WorkflowStep, WorkflowStepProps } from "./workflow-step";
 import { useBgContext } from "@/components/layout/BgContext";
 
 export interface WorkflowProps {
-  steps: (Omit<WorkflowStepProps, "className" | "bench_root_id"> & { bench_id: string })[];
+  steps: (Omit<WorkflowStepProps, "className" | "bench_root_id"> & { bench_id: number })[];
   bench_root_id: number;
   className?: string;
   debug?: boolean;
@@ -23,8 +23,10 @@ const Workflow: React.FC<WorkflowProps> = ({ steps, bench_root_id, className, de
           )}
           <WorkflowStep
             label={step.label}
-            isActive={step.isActive}
+            state={step.state}
             onClick={step.onClick}
+            onFocus={step.onFocus}
+            onBlur={step.onBlur}
             bench_id={step.bench_id}
             bench_root_id={bench_root_id}
             debug={debug}

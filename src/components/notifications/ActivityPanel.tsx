@@ -1,7 +1,8 @@
 
 import React, { useState, useEffect } from "react";
 import { Sheet, SheetContent, SheetClose, SheetTitle, SheetDescription } from "@/components/ui/sheet";
-import { ButtonCircle } from "@/components/ui/button-circle";
+import { Button } from "@/components/ui/button";
+import { IconProvider } from "@/components/ui/icon-provider";
 import NotificationPanel, { NotificationProps } from "./NotificationPanel";
 import { useTranslation } from "@/contexts/TranslationContext";
 import { formatDateForLocale } from "@/utils/translations";
@@ -101,10 +102,15 @@ const ActivityPanel: React.FC<ActivityPanelProps> = ({
         <SheetDescription className="sr-only">{t('notifications.panelDescription')}</SheetDescription>
         
         <div className="flex flex-col h-full">
-          {/* ButtonCircle moved to its own line with p-2 class */}
+          {/* Button moved to its own line with p-2 class */}
           <div className="p-2">
             <SheetClose asChild>
-              <ButtonCircle icon="X" size="large" background="black" aria-label="Close" />
+              <Button
+                className="p-0 w-6 h-6"
+                aria-label="Close"
+              >
+                <IconProvider icon="X" />
+              </Button>
             </SheetClose>
           </div>
           

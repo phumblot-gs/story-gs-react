@@ -5,7 +5,6 @@ import PageTitle from "./PageTitle";
 import { IconName } from "@/components/ui/icons/types";
 import { useThemeValues } from "@/hooks/useThemeValues";
 import BrandLogo from "./BrandLogo";
-import { ButtonCircle } from "@/components/ui/button-circle";
 import { Layout, HStack } from "@/components/layout";
 
 export interface PageHeaderProps {

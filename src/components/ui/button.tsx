@@ -6,7 +6,7 @@ import { useBgContext } from "@/components/layout/BgContext";
 
 // Types
 export type ButtonVariant = "normal" | "secondary" | "ghost" | "outline" | "destructive" | "link";
-export type ButtonSize = "small" | "large";
+export type ButtonSize = "small" | "medium" | "large";
 
 // Mapping pour compatibilité shadcn
 type ShadcnVariant = "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
@@ -53,13 +53,18 @@ function normalizeSize(size?: ButtonSize | ShadcnSize): ButtonSize {
       return "small";
 
     case "lg":
-    case "large":
     case "default":
     case undefined:
-      return "large";
+      return "medium"; // lg et default → medium (ancien comportement de "large")
+
+    case "medium":
+      return "medium";
+
+    case "large":
+      return "large"; // "large" explicite → nouvelle taille large
 
     default:
-      return "large";
+      return "medium";
   }
 }
 
@@ -77,13 +82,14 @@ const buttonVariants = cva(
         link: "btn-link hover:underline active:underline",
       },
       size: {
-        small: "px-2 py-[4px] h-5 text-xs gap-1",  // 10px horizontal, 4px vertical, 20px height (12px content + 8px padding), gap 5px, font 9px
-        large: "px-4 py-1 text-base gap-2",        // 20px horizontal, 5px vertical, gap 10px, font 13px
+        small: "px-2 py-[4px] h-5 text-xs gap-1",      // 8px horizontal, 4px vertical, 20px height, gap 4px, font 12px
+        medium: "px-4 py-1 text-base gap-2",            // 16px horizontal, 4px vertical, gap 8px, font 16px (anciennement large)
+        large: "px-5 py-[15px] text-base gap-[5px]",     // 20px horizontal, 15px vertical, gap 5px, font 16px (nouvelle taille depuis Figma)
       },
     },
     defaultVariants: {
       variant: "normal",
-      size: "large",
+      size: "medium",
     },
   }
 );
@@ -97,7 +103,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ variant, size, indicator, debug, className, children, asChild = false, onClick, ...props }, ref) => {
+  ({ variant, size, indicator, debug, className, children, asChild = false, onClick, onFocus, onBlur, ...props }, ref) => {
     const Comp = asChild ? Slot : "button";
     const normalizedVariant = normalizeVariant(variant);
     const normalizedSize = normalizeSize(size);
@@ -120,6 +126,40 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       onClick?.(e);
     }, [debug, variant, normalizedVariant, size, normalizedSize, indicator, bg, onClick]);
 
+    // Debug mode : wrapper pour onFocus avec log
+    const handleFocus = React.useCallback((e: React.FocusEvent<HTMLButtonElement>) => {
+      if (debug) {
+        console.log('[Button Focus]', {
+          variant: variant,
+          normalizedVariant,
+          size: size,
+          normalizedSize,
+          indicator,
+          bg,
+          event: e,
+        });
+      }
+      // Appelle le onFocus original s'il existe
+      onFocus?.(e);
+    }, [debug, variant, normalizedVariant, size, normalizedSize, indicator, bg, onFocus]);
+
+    // Debug mode : wrapper pour onBlur avec log
+    const handleBlur = React.useCallback((e: React.FocusEvent<HTMLButtonElement>) => {
+      if (debug) {
+        console.log('[Button Blur]', {
+          variant: variant,
+          normalizedVariant,
+          size: size,
+          normalizedSize,
+          indicator,
+          bg,
+          event: e,
+        });
+      }
+      // Appelle le onBlur original s'il existe
+      onBlur?.(e);
+    }, [debug, variant, normalizedVariant, size, normalizedSize, indicator, bg, onBlur]);
+
     return (
       <Comp
         ref={ref}
@@ -134,6 +174,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           className
         )}
         onClick={debug ? handleClick : onClick}
+        onFocus={debug ? handleFocus : onFocus}
+        onBlur={debug ? handleBlur : onBlur}
         {...props}
       >
         {children}

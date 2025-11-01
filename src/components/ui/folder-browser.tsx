@@ -3,7 +3,6 @@
 import React, { useState, useCallback, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { ButtonCircle } from "@/components/ui/button-circle";
 import { IconProvider } from "@/components/ui/icon-provider";
 import { IconName } from "@/components/ui/icons/types";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -251,12 +250,12 @@ export const FolderBrowser: React.FC<FolderBrowserProps> = ({
                             <div className="flex items-center justify-end space-x-1">
                               <Tooltip>
                                 <TooltipTrigger asChild>
-                                  <ButtonCircle
-                                    size="large"
-                                    icon="ArrowRight"
-                                    background="white"
+                                  <Button
+                                    className="p-0 w-6 h-6"
                                     onClick={(e) => handleSelectFolder(folder, e)}
-                                  />
+                                  >
+                                    <IconProvider icon="ArrowRight" />
+                                  </Button>
                                 </TooltipTrigger>
                                 <TooltipContent>{t('folderBrowser.select')}</TooltipContent>
                               </Tooltip>
