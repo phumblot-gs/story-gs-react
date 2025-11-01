@@ -1,5 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Layout } from '@/components/layout';
 
 const Typography = () => {
   return (
@@ -223,5 +226,96 @@ export const Sizes: Story = {
       <p className="text-3xl">Titre 1 (text-3xl)</p>
       <p className="text-4xl">Très grand titre (text-4xl)</p>
     </div>
+  ),
+};
+
+export const AlignmentTest: Story = {
+  name: 'Test d\'alignement avec Badge et Button',
+  render: () => (
+    <Layout bg="white" padding={6}>
+      <div className="space-y-8">
+        <div>
+          <h3 className="text-lg font-semibold mb-4">Texte inline avec Badge et Button</h3>
+          <p className="text-sm text-grey-stronger mb-4">
+            Vérifiez l'alignement vertical du texte avec les badges et boutons sur la même ligne.
+          </p>
+        </div>
+
+        {/* Texte base avec badge et bouton */}
+        <div className="space-y-4">
+          <div className="border border-grey-light rounded p-4 bg-grey-lighter">
+            <h4 className="text-sm font-medium mb-2">Taille base (text-base)</h4>
+            <p className="text-base">
+              Texte normal <Badge>Badge</Badge> suite du texte <Button size="small">Button</Button> fin du texte.
+            </p>
+          </div>
+
+          <div className="border border-grey-light rounded p-4 bg-grey-lighter">
+            <h4 className="text-sm font-medium mb-2">Taille base avec espacement</h4>
+            <p className="text-base">
+              Texte normal <Badge>Badge</Badge> suite du texte <Button size="small">Button</Button> fin du texte.
+            </p>
+          </div>
+
+          {/* Texte small avec badge et bouton */}
+          <div className="border border-grey-light rounded p-4 bg-grey-lighter">
+            <h4 className="text-sm font-medium mb-2">Taille small (text-sm)</h4>
+            <p className="text-sm">
+              Texte petit <Badge>Badge</Badge> suite du texte <Button size="small">Button</Button> fin du texte.
+            </p>
+          </div>
+
+          {/* Texte xs avec badge et bouton */}
+          <div className="border border-grey-light rounded p-4 bg-grey-lighter">
+            <h4 className="text-sm font-medium mb-2">Taille xs (text-xs)</h4>
+            <p className="text-xs">
+              Texte très petit <Badge>Badge</Badge> suite du texte <Button size="small">Button</Button> fin du texte.
+            </p>
+          </div>
+
+          {/* Texte lg avec badge et bouton */}
+          <div className="border border-grey-light rounded p-4 bg-grey-lighter">
+            <h4 className="text-sm font-medium mb-2">Taille large (text-lg)</h4>
+            <p className="text-lg">
+              Texte grand <Badge>Badge</Badge> suite du texte <Button size="medium">Button</Button> fin du texte.
+            </p>
+          </div>
+
+          {/* Test avec différentes variantes de badge */}
+          <div className="border border-grey-light rounded p-4 bg-grey-lighter">
+            <h4 className="text-sm font-medium mb-2">Variantes de Badge</h4>
+            <p className="text-base">
+              Texte normal <Badge variant="default">Default</Badge> <Badge variant="secondary">Secondary</Badge> <Badge variant="outline">Outline</Badge> suite du texte.
+            </p>
+          </div>
+
+          {/* Test avec différentes tailles de bouton */}
+          <div className="border border-grey-light rounded p-4 bg-grey-lighter">
+            <h4 className="text-sm font-medium mb-2">Différentes tailles de Button</h4>
+            <p className="text-base">
+              Texte normal <Button size="small">Small</Button> <Button size="medium">Medium</Button> <Button size="large">Large</Button> suite du texte.
+            </p>
+          </div>
+
+          {/* Test avec bouton outline */}
+          <div className="border border-grey-light rounded p-4 bg-grey-lighter">
+            <h4 className="text-sm font-medium mb-2">Bouton outline</h4>
+            <p className="text-base">
+              Texte normal <Badge>Badge</Badge> suite du texte <Button size="small" variant="outline">Outline</Button> fin du texte.
+            </p>
+          </div>
+        </div>
+
+        {/* Guide visuel avec lignes de référence */}
+        <div className="mt-8 p-4 bg-blue-primary rounded">
+          <p className="text-xs font-medium mb-2 text-black">💡 Guide d'évaluation :</p>
+          <ul className="text-xs space-y-1 list-disc list-inside text-black">
+            <li>Le texte dans le Badge et le Button doit être aligné sur la même baseline que le texte adjacent</li>
+            <li>Le texte ne doit pas sembler trop haut ou trop bas dans les composants</li>
+            <li>Les différents tailles de texte doivent maintenir un alignement cohérent</li>
+          </ul>
+        </div>
+      </div>
+    </Layout>
   ),
 };
