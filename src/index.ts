@@ -519,6 +519,7 @@ export type {
   ButtonProps,
   ButtonSize,
   ButtonVariant,
+  AvatarSize,
   IconName,
   Language,
   LanguageSwitcherProps,
