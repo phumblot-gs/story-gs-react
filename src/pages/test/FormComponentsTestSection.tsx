@@ -107,21 +107,21 @@ const FormComponentsTestSection: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-6">
                 <div>
-                  <Label className={bg === "black" ? "text-white" : "text-black"}>Input</Label>
+                  <Label>Input</Label>
                   <div className="mt-2">
                     <Input background={bg} placeholder="Enter your text here" />
                   </div>
                 </div>
                 
                 <div>
-                  <Label className={bg === "black" ? "text-white" : "text-black"}>Textarea</Label>
+                  <Label>Textarea</Label>
                   <div className="mt-2">
                     <Textarea background={bg} placeholder="Write your message here" />
                   </div>
                 </div>
                 
                 <div>
-                  <Label className={bg === "black" ? "text-white" : "text-black"}>Select</Label>
+                  <Label>Select</Label>
                   <div className="mt-2">
                     <Select>
                       <SelectTrigger background={bg}>
@@ -137,7 +137,7 @@ const FormComponentsTestSection: React.FC = () => {
                 </div>
                 
                 <div>
-                  <Label className={bg === "black" ? "text-white" : "text-black"}>Slider</Label>
+                  <Label>Slider</Label>
                   <div className="mt-2">
                     <Slider 
                       background={bg}
@@ -158,7 +158,7 @@ const FormComponentsTestSection: React.FC = () => {
               
               <div className="space-y-6">
                 <div>
-                  <Label className={bg === "black" ? "text-white" : "text-black"}>Switch</Label>
+                  <Label>Switch</Label>
                   <div className="flex items-center space-x-2 mt-2">
                     <Switch
                       background={bg}
@@ -175,55 +175,37 @@ const FormComponentsTestSection: React.FC = () => {
                 </div>
                 
                 <div>
-                  <Label className={bg === "black" ? "text-white" : "text-black"}>Checkbox</Label>
+                  <Label>Checkbox</Label>
                   <div className="flex items-center space-x-2 mt-2">
                     <Checkbox background={bg} id={`terms-${bg}`} />
-                    <label
-                      htmlFor={`terms-${bg}`}
-                      className={cn(
-                        "text-sm leading-[30px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
-                        bg === "black" ? "text-white" : "text-black"
-                      )}
-                    >
+                    <Label htmlFor={`terms-${bg}`}>
                       Accept terms and conditions
-                    </label>
+                    </Label>
                   </div>
                 </div>
                 
                 <div>
-                  <Label className={bg === "black" ? "text-white" : "text-black"}>Radio Group</Label>
+                  <Label>Radio Group</Label>
                   <div className="mt-2">
                     <RadioGroup defaultValue="option1">
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem background={bg} value="option1" id={`option1-${bg}`} />
-                        <label 
-                          htmlFor={`option1-${bg}`}
-                          className={cn(
-                            "text-sm leading-[30px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
-                            bg === "black" ? "text-white" : "text-black"
-                          )}
-                        >
+                        <Label htmlFor={`option1-${bg}`}>
                           Option 1
-                        </label>
+                        </Label>
                       </div>
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem background={bg} value="option2" id={`option2-${bg}`} />
-                        <label 
-                          htmlFor={`option2-${bg}`}
-                          className={cn(
-                            "text-sm leading-[30px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
-                            bg === "black" ? "text-white" : "text-black"
-                          )}
-                        >
+                        <Label htmlFor={`option2-${bg}`}>
                           Option 2
-                        </label>
+                        </Label>
                       </div>
                     </RadioGroup>
                   </div>
                 </div>
                 
                 <div>
-                  <Label className={bg === "black" ? "text-white" : "text-black"}>Button</Label>
+                  <Label>Button</Label>
                   <div className="mt-2 space-x-2">
                     <Button 
                       variant="default" 
@@ -256,7 +238,7 @@ const FormComponentsTestSection: React.FC = () => {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className={selectedBackground === "black" ? "text-white" : ""}>Name</FormLabel>
+                      <FormLabel>Name</FormLabel>
                       <FormControl>
                         <Input background={selectedBackground} placeholder="Your name" {...field} />
                       </FormControl>
@@ -273,7 +255,7 @@ const FormComponentsTestSection: React.FC = () => {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className={selectedBackground === "black" ? "text-white" : ""}>Email</FormLabel>
+                      <FormLabel>Email</FormLabel>
                       <FormControl>
                         <Input background={selectedBackground} placeholder="your.email@example.com" {...field} />
                       </FormControl>
@@ -291,7 +273,7 @@ const FormComponentsTestSection: React.FC = () => {
                 name="bio"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className={selectedBackground === "black" ? "text-white" : ""}>Bio</FormLabel>
+                    <FormLabel>Bio</FormLabel>
                     <FormControl>
                       <Textarea 
                         background={selectedBackground}
@@ -314,7 +296,7 @@ const FormComponentsTestSection: React.FC = () => {
                   name="role"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className={selectedBackground === "black" ? "text-white" : ""}>Role</FormLabel>
+                      <FormLabel>Role</FormLabel>
                       <Select 
                         onValueChange={field.onChange} 
                         defaultValue={field.value}
@@ -343,7 +325,7 @@ const FormComponentsTestSection: React.FC = () => {
                   name="expertise"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className={selectedBackground === "black" ? "text-white" : ""}>Expertise Level (1-100)</FormLabel>
+                      <FormLabel>Expertise Level (1-100)</FormLabel>
                       <FormControl>
                         <Slider
                           background={selectedBackground}
@@ -385,7 +367,7 @@ const FormComponentsTestSection: React.FC = () => {
                         />
                       </FormControl>
                       <div className="space-y-1 leading-none">
-                        <FormLabel className={selectedBackground === "black" ? "text-white" : ""}>Enable Notifications</FormLabel>
+                        <FormLabel>Enable Notifications</FormLabel>
                         <FormDescription className={selectedBackground === "black" ? "text-gray-400" : ""}>
                           Receive notifications about account activity.
                         </FormDescription>
@@ -400,7 +382,7 @@ const FormComponentsTestSection: React.FC = () => {
                   name="date"
                   render={({ field }) => (
                     <FormItem className="flex flex-col">
-                      <FormLabel className={selectedBackground === "black" ? "text-white" : ""}>Select Date</FormLabel>
+                      <FormLabel>Select Date</FormLabel>
                       <Popover>
                         <PopoverTrigger asChild>
                           <FormControl>
@@ -453,7 +435,7 @@ const FormComponentsTestSection: React.FC = () => {
                       />
                     </FormControl>
                     <div className="space-y-1 leading-none">
-                      <FormLabel className={selectedBackground === "black" ? "text-white" : ""}>Subscribe to newsletter</FormLabel>
+                      <FormLabel>Subscribe to newsletter</FormLabel>
                       <FormDescription className={selectedBackground === "black" ? "text-gray-400" : ""}>
                         Receive emails about new features and updates.
                       </FormDescription>
@@ -467,7 +449,7 @@ const FormComponentsTestSection: React.FC = () => {
                 name="communication"
                 render={({ field }) => (
                   <FormItem className="space-y-3">
-                    <FormLabel className={selectedBackground === "black" ? "text-white" : ""}>Preferred Communication</FormLabel>
+                    <FormLabel>Preferred Communication</FormLabel>
                     <FormControl>
                       <RadioGroup
                         onValueChange={field.onChange}
@@ -478,10 +460,7 @@ const FormComponentsTestSection: React.FC = () => {
                           <FormControl>
                             <RadioGroupItem background={selectedBackground} value="email" />
                           </FormControl>
-                          <FormLabel className={cn(
-                            "text-sm leading-[30px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
-                            selectedBackground === "black" ? "text-white" : ""
-                          )}>
+                          <FormLabel>
                             Email
                           </FormLabel>
                         </FormItem>
@@ -489,10 +468,7 @@ const FormComponentsTestSection: React.FC = () => {
                           <FormControl>
                             <RadioGroupItem background={selectedBackground} value="sms" />
                           </FormControl>
-                          <FormLabel className={cn(
-                            "text-sm leading-[30px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
-                            selectedBackground === "black" ? "text-white" : ""
-                          )}>
+                          <FormLabel>
                             SMS
                           </FormLabel>
                         </FormItem>
@@ -500,10 +476,7 @@ const FormComponentsTestSection: React.FC = () => {
                           <FormControl>
                             <RadioGroupItem background={selectedBackground} value="push" />
                           </FormControl>
-                          <FormLabel className={cn(
-                            "text-sm leading-[30px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
-                            selectedBackground === "black" ? "text-white" : ""
-                          )}>
+                          <FormLabel>
                             Push Notification
                           </FormLabel>
                         </FormItem>

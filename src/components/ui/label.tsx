@@ -1,42 +1,37 @@
 
 import * as React from "react"
 import * as LabelPrimitive from "@radix-ui/react-label"
-import { cva, type VariantProps } from "class-variance-authority"
+import { cva } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
+import { useBgContext } from "@/components/layout/BgContext"
 
 const labelVariants = cva(
-  "text-sm leading-[30px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
+  "text-sm leading-[30px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70 label-default",
   {
-    variants: {
-      background: {
-        white: "text-black",
-        black: "text-white",
-        grey: "text-black",
-      },
-    },
-    defaultVariants: {
-      background: "white",
-    },
+    variants: {},
+    defaultVariants: {},
   }
 )
 
 export interface LabelProps extends
-  React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root>,
-  VariantProps<typeof labelVariants> {
-  background?: "white" | "black" | "grey"
-}
+  React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root> {}
 
 const Label = React.forwardRef<
   React.ElementRef<typeof LabelPrimitive.Root>,
   LabelProps
->(({ className, background, ...props }, ref) => (
-  <LabelPrimitive.Root
-    ref={ref}
-    className={cn(labelVariants({ background, className }))}
-    {...props}
-  />
-))
+>(({ className, ...props }, ref) => {
+  const bg = useBgContext();
+
+  return (
+    <LabelPrimitive.Root
+      ref={ref}
+      data-bg={bg || undefined}
+      className={cn(labelVariants(), className)}
+      {...props}
+    />
+  );
+})
 Label.displayName = LabelPrimitive.Root.displayName
 
 export { Label, labelVariants }
