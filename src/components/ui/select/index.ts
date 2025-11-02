@@ -6,6 +6,3 @@ export {
   SelectItem,
   SelectValue
 } from '../select';
-
-// Export des types
-export type { SelectBackground } from '../select';
