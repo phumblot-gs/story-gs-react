@@ -20,6 +20,12 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
+      - name: Configure npm for Nexus authentication
+        run: |
+          echo "@gs:registry=https://nexus.grand-shooting.org/repository/npm-gs/" >> ~/.npmrc
+          echo "//nexus.grand-shooting.org/repository/npm-gs/:_auth=${{ secrets.NPM_NEXUS_AUTH }}" >> ~/.npmrc
+          echo "✅ Configuration Nexus pour npm ajoutée"
+
       - name: Install dependencies
         run: npm ci
 
