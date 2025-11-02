@@ -36,17 +36,17 @@ const config: StorybookConfig = {
           "@storybook/blocks": join(__dirname, "../node_modules/@storybook/addon-docs/dist/blocks.mjs"),
           // storybook/test et storybook/preview-api sont résolus automatiquement par Storybook
           // Pas besoin d'alias explicite
-          // Forcer l'utilisation du runtime JSX de développement
-          // Pointer directement vers le fichier de développement pour éviter la vérification NODE_ENV
-          "react/jsx-runtime": join(__dirname, "../node_modules/react/cjs/react-jsx-dev-runtime.development.js"),
-          "react/jsx-dev-runtime": join(__dirname, "../node_modules/react/cjs/react-jsx-dev-runtime.development.js"),
+          // Ne pas forcer d'alias pour react/jsx-runtime - laisser Storybook le résoudre naturellement
+          // Le define NODE_ENV devrait suffire
         },
       },
       // Forcer Storybook à utiliser le runtime JSX de développement même en production
       // car Storybook dev nécessite _jsxDEV
+      // Important: définir NODE_ENV avant tout autre code pour que React l'utilise
       define: {
         ...config.define,
         "process.env.NODE_ENV": JSON.stringify("development"),
+        "__DEV__": "true",
       },
       optimizeDeps: {
         ...config.optimizeDeps,
