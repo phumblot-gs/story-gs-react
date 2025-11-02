@@ -24,6 +24,7 @@ import {
   TabsContent,
 } from "./components/ui/tabs";
 import { Modal } from "./components/layout/Modal";
+import { FullFrame } from "./components/layout/FullFrame";
 import { FolderBrowser } from "./components/ui/folder-browser";
 import ButtonNotifications from "./components/ButtonNotifications";
 import { ButtonNotificationsRef } from "./components/notifications/types";
@@ -307,13 +308,17 @@ import type {
 } from "./components/layout/Modal";
 
 import type {
+  FullFrameProps
+} from "./components/layout/FullFrame";
+
+import type {
   FolderItem,
   FolderBrowserProps
 } from "./components/ui/folder-browser";
 
 // Export layout components
-export { Layout, HStack, VStack, Modal } from "./components/layout";
-export type { LayoutProps, HStackProps, VStackProps, ModalProps } from "./components/layout";
+export { Layout, HStack, VStack, Modal, FullFrame } from "./components/layout";
+export type { LayoutProps, HStackProps, VStackProps, ModalProps, FullFrameProps } from "./components/layout";
 
 // Export icons
 export * from "./components/ui/icons";

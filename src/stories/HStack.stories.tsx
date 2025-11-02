@@ -8,7 +8,144 @@ const meta = {
     layout: 'padded',
     docs: {
       description: {
-        component: 'Stack horizontal (Flexbox row) - Correspond à Figma Auto Layout horizontal. Dispose les enfants horizontalement côte à côte avec un espacement défini.',
+        component: `HStack component built with the Figma design system. HStack is a horizontal flexbox container that arranges children side by side with configurable spacing.
+
+## Features
+- Horizontal flexbox layout (flex-row)
+- Configurable spacing between children (gap)
+- Vertical alignment control (align items)
+- Horizontal distribution control (justify content)
+- Background context support (white, grey, black)
+- Padding support using spacing primitives
+- Wrap support for responsive layouts
+- Automatic context-aware styling via \`data-bg\` mechanism
+
+## Basic Usage
+
+\`\`\`tsx
+import { HStack } from '@story-gs-react';
+
+<HStack gap={4}>
+  <Button>Action 1</Button>
+  <Button>Action 2</Button>
+  <Button>Action 3</Button>
+</HStack>
+\`\`\`
+
+## Gap Spacing
+
+The \`gap\` prop controls the horizontal spacing between children. Values correspond to spacing primitives (0-100):
+
+\`\`\`tsx
+<HStack gap={2}>  {/* 10px spacing */}
+  <Button>Item 1</Button>
+  <Button>Item 2</Button>
+</HStack>
+
+<HStack gap={4}>  {/* 20px spacing */}
+  <Button>Item 1</Button>
+  <Button>Item 2</Button>
+</HStack>
+
+<HStack gap={8}>  {/* 40px spacing */}
+  <Button>Item 1</Button>
+  <Button>Item 2</Button>
+</HStack>
+\`\`\`
+
+**Available gap values:** 0, 1, 2, 3, 4, 5, 6, 8, 10, 12, 16, 20, 24, 28, 30, 32, 36, 40, 44, 48, 50, 52, 56, 60, 64, 68, 70, 72, 80, 90, 100
+
+## Vertical Alignment (align)
+
+The \`align\` prop controls how children are aligned vertically (cross-axis):
+
+\`\`\`tsx
+<HStack align="start">    {/* Top alignment */}
+<HStack align="center">   {/* Center alignment */}
+<HStack align="end">      {/* Bottom alignment */}
+<HStack align="stretch">  {/* Stretch to fill height */}
+<HStack align="baseline"> {/* Baseline alignment */}
+\`\`\`
+
+**Available align values:** \`start\`, \`center\`, \`end\`, \`baseline\`, \`stretch\` (default: \`stretch\`)
+
+## Horizontal Distribution (justify)
+
+The \`justify\` prop controls how children are distributed horizontally (main axis):
+
+\`\`\`tsx
+<HStack justify="start">    {/* Left alignment */}
+<HStack justify="center">   {/* Center alignment */}
+<HStack justify="end">      {/* Right alignment */}
+<HStack justify="between"> {/* Space between items */}
+<HStack justify="around">   {/* Space around items */}
+<HStack justify="evenly">   {/* Equal space between items */}
+\`\`\`
+
+**Available justify values:** \`start\` (default), \`center\`, \`end\`, \`between\`, \`around\`, \`evenly\`
+
+## Background Contexts
+
+HStack supports background contexts that automatically adapt child component styling:
+
+\`\`\`tsx
+<HStack bg="white" gap={4}>
+  <Button>White background</Button>
+</HStack>
+
+<HStack bg="grey" gap={4}>
+  <Button>Grey background</Button>
+</HStack>
+
+<HStack bg="black" gap={4}>
+  <Button>Black background</Button>
+</HStack>
+\`\`\`
+
+**Available background values:** \`white\`, \`grey\`, \`black\`
+
+## Wrap Support
+
+Use the \`wrap\` prop to allow items to wrap to the next line on smaller screens:
+
+\`\`\`tsx
+<HStack gap={2} wrap>
+  {items.map(item => (
+    <Button key={item.id}>{item.label}</Button>
+  ))}
+</HStack>
+\`\`\`
+
+## Common Use Cases
+
+### Header Navigation
+\`\`\`tsx
+<HStack
+  bg="white"
+  padding={4}
+  justify="between"
+  align="center"
+>
+  <Logo />
+  <Navigation />
+  <UserMenu />
+</HStack>
+\`\`\`
+
+### Button Group
+\`\`\`tsx
+<HStack gap={2}>
+  <Button variant="secondary">Cancel</Button>
+  <Button variant="normal">Save</Button>
+</HStack>
+\`\`\`
+
+### Responsive Card Row
+\`\`\`tsx
+<HStack gap={4} wrap className="w-full">
+  {cards.map(card => <Card key={card.id} {...card} />)}
+</HStack>
+\`\`\``,
       },
     },
   },
@@ -17,27 +154,35 @@ const meta = {
     bg: {
       control: 'select',
       options: ['white', 'grey', 'black'],
-      description: 'Contexte de couleur de fond',
+      description: 'Background color context (white, grey, black). Automatically sets data-bg attribute for child components.',
     },
     gap: {
       control: 'select',
       options: [0, 1, 2, 3, 4, 5, 6, 8, 10, 12, 16, 20, 24, 28, 30, 32, 36, 40, 44, 48, 50, 52, 56, 60, 64, 68, 70, 72, 80, 90, 100],
-      description: 'Espacement entre les enfants',
+      description: 'Spacing between children (uses spacing primitives: 0-100)',
     },
     align: {
       control: 'select',
       options: ['start', 'center', 'end', 'baseline', 'stretch'],
-      description: 'Alignement vertical (axe secondaire)',
+      description: 'Vertical alignment of children (cross-axis). Default: stretch',
     },
     justify: {
       control: 'select',
       options: ['start', 'center', 'end', 'between', 'around', 'evenly'],
-      description: 'Alignement horizontal (axe principal)',
+      description: 'Horizontal distribution of children (main axis). Default: start',
     },
     padding: {
       control: 'select',
       options: [0, 1, 2, 3, 4, 5, 6, 8, 10, 12, 16, 20, 24, 28, 30, 32, 36, 40, 44, 48, 50, 52, 56, 60, 64, 68, 70, 72, 80, 90, 100],
-      description: 'Padding du stack',
+      description: 'Padding value (uses spacing primitives: 0-100)',
+    },
+    wrap: {
+      control: 'boolean',
+      description: 'Allow items to wrap to the next line (flex-wrap)',
+    },
+    className: {
+      control: 'text',
+      description: 'Additional Tailwind CSS classes',
     },
   },
 } satisfies Meta<typeof HStack>;

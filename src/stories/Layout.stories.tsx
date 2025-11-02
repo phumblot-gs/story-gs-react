@@ -8,7 +8,167 @@ const meta = {
     layout: 'fullscreen',
     docs: {
       description: {
-        component: 'Composant Layout pour gérer les contextes de couleurs et la disposition. Permet de définir le contexte de couleur (white/grey/black) pour les composants shadcn enfants.',
+        component: `Layout component built with the Figma design system. Layout is the foundation component for managing color contexts and layout structure in your application.
+
+## Features
+- Background color context management (white, grey, black)
+- Automatic \`data-bg\` attribute propagation for child components
+- Context inheritance from parent Layout components
+- Scroll behavior control (vertical, horizontal, both, none)
+- Padding support using spacing primitives
+- Semantic HTML element support (\`as\` prop)
+- Flexible styling with Tailwind CSS classes
+
+## Background Contexts
+
+The \`bg\` prop sets the background color context and automatically applies the \`data-bg\` attribute to child components, enabling context-aware styling:
+
+\`\`\`tsx
+import { Layout, Button } from '@story-gs-react';
+
+<Layout bg="white">
+  <Button>Button adapts to white background</Button>
+</Layout>
+
+<Layout bg="grey">
+  <Button>Button adapts to grey background</Button>
+</Layout>
+
+<Layout bg="black">
+  <Button>Button adapts to black background</Button>
+</Layout>
+\`\`\`
+
+**Available background values:** \`white\` (#ffffff), \`grey\` (#eaeaea), \`black\` (#292828)
+
+## Context Inheritance
+
+Layout components can be nested, and child Layouts inherit the parent's background context unless explicitly overridden:
+
+\`\`\`tsx
+<Layout bg="grey" padding={8}>
+  <Layout bg="white" padding={6}>
+    <Button>White background (overrides grey)</Button>
+  </Layout>
+  <Layout padding={6}>
+    <Button>Grey background (inherited from parent)</Button>
+  </Layout>
+</Layout>
+\`\`\`
+
+## Scroll Behavior
+
+The \`scroll\` prop controls how overflow content is handled:
+
+\`\`\`tsx
+<Layout scroll="vertical">    {/* Vertical scroll only */}
+<Layout scroll="horizontal">  {/* Horizontal scroll only */}
+<Layout scroll="both">         {/* Both directions */}
+<Layout scroll="auto">         {/* Auto (default) */}
+<Layout scroll="none">         {/* No scroll (hidden overflow) */}
+<Layout scroll="always">       {/* Always show scrollbar */}
+\`\`\`
+
+**Available scroll values:** \`none\`, \`auto\` (default), \`always\`, \`vertical\`, \`horizontal\`, \`both\`
+
+## Padding
+
+The \`padding\` prop uses spacing primitives for consistent spacing throughout your application:
+
+\`\`\`tsx
+<Layout padding={4}>  {/* 20px padding */}
+<Layout padding={6}>  {/* 30px padding */}
+<Layout padding={8}>  {/* 40px padding */}
+\`\`\`
+
+**Available padding values:** 0, 1, 2, 3, 4, 5, 6, 8, 10, 12, 16, 20, 24, 28, 30, 32, 36, 40, 44, 48, 50, 52, 56, 60, 64, 68, 70, 72, 80, 90, 100
+
+## Semantic HTML Elements
+
+Use the \`as\` prop to render semantic HTML elements:
+
+\`\`\`tsx
+<Layout as="header" bg="white" padding={4}>
+  <Navigation />
+</Layout>
+
+<Layout as="main" bg="grey" padding={8}>
+  <Content />
+</Layout>
+
+<Layout as="footer" bg="black" padding={6}>
+  <FooterContent />
+</Layout>
+\`\`\`
+
+**Available semantic elements:** \`div\` (default), \`section\`, \`article\`, \`main\`, \`aside\`, \`header\`, \`footer\`
+
+## Common Use Cases
+
+### Page Layout
+\`\`\`tsx
+<Layout bg="grey" className="min-h-screen">
+  <Layout as="header" bg="white" padding={4}>
+    <Header />
+  </Layout>
+  <Layout as="main" bg="grey" padding={8}>
+    <PageContent />
+  </Layout>
+  <Layout as="footer" bg="black" padding={6}>
+    <Footer />
+  </Layout>
+</Layout>
+\`\`\`
+
+### Scrollable Container
+\`\`\`tsx
+<Layout
+  bg="white"
+  padding={4}
+  scroll="vertical"
+  className="h-96"
+>
+  {items.map(item => (
+    <Item key={item.id} {...item} />
+  ))}
+</Layout>
+\`\`\`
+
+### Flexbox Container
+\`\`\`tsx
+<Layout
+  bg="white"
+  padding={4}
+  className="flex items-center justify-between"
+>
+  <Logo />
+  <Navigation />
+  <UserMenu />
+</Layout>
+\`\`\`
+
+### Grid Container
+\`\`\`tsx
+<Layout
+  bg="white"
+  padding={6}
+  className="grid grid-cols-3 gap-4"
+>
+  {cards.map(card => (
+    <Card key={card.id} {...card} />
+  ))}
+</Layout>
+\`\`\`
+
+## Context-Aware Styling
+
+The \`data-bg\` attribute automatically set by Layout allows child components to adapt their styling:
+
+- **White background**: Components use white background styles
+- **Grey background**: Components use grey background styles
+- **Black background**: Components use black background styles
+
+This is handled automatically via the \`data-bg\` attribute system, ensuring consistent styling across your application.`,
       },
     },
   },
@@ -17,22 +177,26 @@ const meta = {
     bg: {
       control: 'select',
       options: ['white', 'grey', 'black'],
-      description: 'Contexte de couleur de fond',
+      description: 'Background color context (white, grey, black). Sets data-bg attribute for child components and creates a new context scope.',
     },
     scroll: {
       control: 'select',
       options: ['none', 'auto', 'always', 'vertical', 'horizontal', 'both'],
-      description: 'Comportement du scroll',
+      description: 'Scroll behavior for overflow content. Default: auto',
     },
     padding: {
       control: 'select',
       options: [0, 1, 2, 3, 4, 5, 6, 8, 10, 12, 16, 20, 24, 28, 30, 32, 36, 40, 44, 48, 50, 52, 56, 60, 64, 68, 70, 72, 80, 90, 100],
-      description: 'Padding du layout (utilise les primitives spacing)',
+      description: 'Padding value (uses spacing primitives: 0-100)',
     },
     as: {
       control: 'select',
       options: ['div', 'section', 'article', 'main', 'aside', 'header', 'footer'],
-      description: 'Élément HTML à rendre',
+      description: 'Semantic HTML element to render. Default: div',
+    },
+    className: {
+      control: 'text',
+      description: 'Additional Tailwind CSS classes (flexbox, grid, spacing, etc.)',
     },
   },
 } satisfies Meta<typeof Layout>;

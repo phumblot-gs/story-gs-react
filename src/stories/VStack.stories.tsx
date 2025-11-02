@@ -8,7 +8,170 @@ const meta = {
     layout: 'padded',
     docs: {
       description: {
-        component: 'Stack vertical (Flexbox column) - Correspond à Figma Auto Layout vertical. Dispose les enfants verticalement les uns sous les autres avec un espacement défini.',
+        component: `VStack component built with the Figma design system. VStack is a vertical flexbox container that arranges children in a column with configurable spacing.
+
+## Features
+- Vertical flexbox layout (flex-col)
+- Configurable spacing between children (gap)
+- Horizontal alignment control (align items)
+- Vertical distribution control (justify content)
+- Background context support (white, grey, black)
+- Padding support using spacing primitives
+- Scroll support for overflow content
+- Automatic context-aware styling via \`data-bg\` mechanism
+
+## Basic Usage
+
+\`\`\`tsx
+import { VStack } from '@story-gs-react';
+
+<VStack gap={6}>
+  <h1>Title</h1>
+  <p>Description</p>
+  <Button>Action</Button>
+</VStack>
+\`\`\`
+
+## Gap Spacing
+
+The \`gap\` prop controls the vertical spacing between children. Values correspond to spacing primitives (0-100):
+
+\`\`\`tsx
+<VStack gap={2}>  {/* 10px spacing */}
+  <Button>Item 1</Button>
+  <Button>Item 2</Button>
+</VStack>
+
+<VStack gap={4}>  {/* 20px spacing */}
+  <Button>Item 1</Button>
+  <Button>Item 2</Button>
+</VStack>
+
+<VStack gap={8}>  {/* 40px spacing */}
+  <Button>Item 1</Button>
+  <Button>Item 2</Button>
+</VStack>
+\`\`\`
+
+**Available gap values:** 0, 1, 2, 3, 4, 5, 6, 8, 10, 12, 16, 20, 24, 28, 30, 32, 36, 40, 44, 48, 50, 52, 56, 60, 64, 68, 70, 72, 80, 90, 100
+
+## Horizontal Alignment (align)
+
+The \`align\` prop controls how children are aligned horizontally (cross-axis):
+
+\`\`\`tsx
+<VStack align="start">    {/* Left alignment */}
+<VStack align="center">   {/* Center alignment */}
+<VStack align="end">      {/* Right alignment */}
+<VStack align="stretch">  {/* Stretch to fill width (default) */}
+<VStack align="baseline"> {/* Baseline alignment */}
+\`\`\`
+
+**Available align values:** \`start\`, \`center\`, \`end\`, \`baseline\`, \`stretch\` (default: \`stretch\`)
+
+## Vertical Distribution (justify)
+
+The \`justify\` prop controls how children are distributed vertically (main axis):
+
+\`\`\`tsx
+<VStack justify="start">    {/* Top alignment */}
+<VStack justify="center">   {/* Center alignment */}
+<VStack justify="end">      {/* Bottom alignment */}
+<VStack justify="between"> {/* Space between items */}
+<VStack justify="around">   {/* Space around items */}
+<VStack justify="evenly">   {/* Equal space between items */}
+\`\`\`
+
+**Available justify values:** \`start\` (default), \`center\`, \`end\`, \`between\`, \`around\`, \`evenly\`
+
+## Background Contexts
+
+VStack supports background contexts that automatically adapt child component styling:
+
+\`\`\`tsx
+<VStack bg="white" gap={4}>
+  <Button>White background</Button>
+</VStack>
+
+<VStack bg="grey" gap={4}>
+  <Button>Grey background</Button>
+</VStack>
+
+<VStack bg="black" gap={4}>
+  <Button>Black background</Button>
+</VStack>
+\`\`\`
+
+**Available background values:** \`white\`, \`grey\`, \`black\`
+
+## Scroll Support
+
+VStack inherits scroll behavior from Layout. Use the \`scroll\` prop for overflow content:
+
+\`\`\`tsx
+<VStack gap={2} scroll="vertical" className="h-64">
+  {items.map(item => (
+    <Card key={item.id} {...item} />
+  ))}
+</VStack>
+\`\`\`
+
+**Available scroll values:** \`none\`, \`auto\`, \`always\`, \`vertical\`, \`horizontal\`, \`both\`
+
+## Common Use Cases
+
+### Card Layout
+\`\`\`tsx
+<VStack bg="white" padding={6} gap={4} className="rounded-lg shadow-md">
+  <h2 className="gs-typo-h2">Card Title</h2>
+  <p>Card description</p>
+  <HStack gap={2} justify="end">
+    <Button variant="secondary">Cancel</Button>
+    <Button variant="normal">Save</Button>
+  </HStack>
+</VStack>
+\`\`\`
+
+### Form Layout
+\`\`\`tsx
+<VStack gap={6} padding={8}>
+  <h2 className="gs-typo-h2">Form Title</h2>
+  <VStack gap={4}>
+    <Input label="Name" />
+    <Input label="Email" />
+    <Textarea label="Message" />
+  </VStack>
+  <Button variant="normal">Submit</Button>
+</VStack>
+\`\`\`
+
+### Scrollable List
+\`\`\`tsx
+<VStack gap={2} scroll="vertical" className="h-screen">
+  {items.map(item => (
+    <ListItem key={item.id} {...item} />
+  ))}
+</VStack>
+\`\`\`
+
+### Hero Section
+\`\`\`tsx
+<VStack
+  bg="black"
+  padding={16}
+  gap={6}
+  align="center"
+  justify="center"
+  className="min-h-[400px]"
+>
+  <h1 className="gs-typo-h1 text-white">Welcome</h1>
+  <p className="text-grey-light">Description</p>
+  <HStack gap={4}>
+    <Button variant="normal">Get Started</Button>
+    <Button variant="outline">Learn More</Button>
+  </HStack>
+</VStack>
+\`\`\``,
       },
     },
   },
@@ -17,27 +180,36 @@ const meta = {
     bg: {
       control: 'select',
       options: ['white', 'grey', 'black'],
-      description: 'Contexte de couleur de fond',
+      description: 'Background color context (white, grey, black). Automatically sets data-bg attribute for child components.',
     },
     gap: {
       control: 'select',
       options: [0, 1, 2, 3, 4, 5, 6, 8, 10, 12, 16, 20, 24, 28, 30, 32, 36, 40, 44, 48, 50, 52, 56, 60, 64, 68, 70, 72, 80, 90, 100],
-      description: 'Espacement entre les enfants',
+      description: 'Spacing between children (uses spacing primitives: 0-100)',
     },
     align: {
       control: 'select',
       options: ['start', 'center', 'end', 'baseline', 'stretch'],
-      description: 'Alignement horizontal (axe secondaire)',
+      description: 'Horizontal alignment of children (cross-axis). Default: stretch',
     },
     justify: {
       control: 'select',
       options: ['start', 'center', 'end', 'between', 'around', 'evenly'],
-      description: 'Alignement vertical (axe principal)',
+      description: 'Vertical distribution of children (main axis). Default: start',
     },
     padding: {
       control: 'select',
       options: [0, 1, 2, 3, 4, 5, 6, 8, 10, 12, 16, 20, 24, 28, 30, 32, 36, 40, 44, 48, 50, 52, 56, 60, 64, 68, 70, 72, 80, 90, 100],
-      description: 'Padding du stack',
+      description: 'Padding value (uses spacing primitives: 0-100)',
+    },
+    scroll: {
+      control: 'select',
+      options: ['none', 'auto', 'always', 'vertical', 'horizontal', 'both'],
+      description: 'Scroll behavior for overflow content',
+    },
+    className: {
+      control: 'text',
+      description: 'Additional Tailwind CSS classes',
     },
   },
 } satisfies Meta<typeof VStack>;
