@@ -1,6 +1,6 @@
 {
   "name": "@gs/gs-components-library",
-  "version": "1.5.11",
+  "version": "1.5.12",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -227,6 +227,7 @@
     "*.css"
   ],
   "publishConfig": {
+    "registry": "https://nexus.gs-node.fr/repository/npm-private/",
     "access": "public"
   }
 }
