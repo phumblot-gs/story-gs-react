@@ -9,6 +9,13 @@ export default {
 		"./.storybook/**/*.{ts,tsx,js,jsx}"
 	],
 	prefix: "",
+	safelist: [
+		// Padding utilities pour s'assurer qu'elles sont générées même si non détectées
+		'pl-1', 'pl-2', 'pl-3', 'pl-4', 'pl-5', 'pl-6', 'pl-8',
+		'pr-1', 'pr-2', 'pr-3', 'pr-4', 'pr-5', 'pr-6', 'pr-8',
+		'pt-1', 'pt-2', 'pt-3', 'pt-4', 'pt-5', 'pt-6', 'pt-8',
+		'pb-1', 'pb-2', 'pb-3', 'pb-4', 'pb-5', 'pb-6', 'pb-8',
+	],
 	theme: {
 		container: {
 			center: true,

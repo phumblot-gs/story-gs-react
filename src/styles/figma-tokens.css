@@ -1773,6 +1773,56 @@
   height: 100%;
 }
 
+/* Grade Component Styles */
+/* Variables CSS pour Grade - basées sur les tokens Figma */
+:root {
+  /* Grade colors (from Figma tokens) */
+  --grade-bg-A: #89cc52;
+  --grade-bg-B: #74d4da;
+  --grade-bg-C: #ffd331;
+  --grade-bg-D: #dd3733;
+  --grade-bg-E: #595959;
+  --grade-fg-A: #ffffff;
+  --grade-fg-B: #ffffff;
+  --grade-fg-C: #ffffff;
+  --grade-fg-D: #ffffff;
+  --grade-fg-E: #ffffff;
+}
+
+/* Grade styles */
+.grade {
+  /* Taille minimale pour contenir le texte */
+  min-width: 14px;
+  min-height: 14px;
+  padding: 1px 3px;
+}
+
+/* Grades individuels avec leurs couleurs */
+.grade-a {
+  background: var(--grade-bg-A);
+  color: var(--grade-fg-A);
+}
+
+.grade-b {
+  background: var(--grade-bg-B);
+  color: var(--grade-fg-B);
+}
+
+.grade-c {
+  background: var(--grade-bg-C);
+  color: var(--grade-fg-C);
+}
+
+.grade-d {
+  background: var(--grade-bg-D);
+  color: var(--grade-fg-D);
+}
+
+.grade-e {
+  background: var(--grade-bg-E);
+  color: var(--grade-fg-E);
+}
+
 /* Classes de thème */
 .theme-light {
   color-scheme: light;
@@ -1780,4 +1830,139 @@
 
 .theme-dark {
   color-scheme: dark;
+}
+
+/* TagGrade Component Styles */
+/* Variables CSS pour TagGrade - basées sur les tokens Figma (même logique que TagText) */
+:root {
+  /* TagGrade - White background */
+  --tag-grade-w-bg-default: #f3f3f3;
+  --tag-grade-w-fg-default: #292828;
+  --tag-grade-w-bg-hover: #292828;
+  --tag-grade-w-fg-hover: #ffffff;
+  --tag-grade-w-bg-pressed: #292828;
+  --tag-grade-w-fg-pressed: #cdedff;
+  --tag-grade-w-bg-disabled: #f3f3f3;
+  --tag-grade-w-fg-disabled: #292828;
+  
+  /* TagGrade - Grey background */
+  --tag-grade-g-bg-default: #ffffff;
+  --tag-grade-g-fg-default: #292828;
+  --tag-grade-g-bg-hover: #292828;
+  --tag-grade-g-fg-hover: #ffffff;
+  --tag-grade-g-bg-pressed: #292828;
+  --tag-grade-g-fg-pressed: #cdedff;
+  --tag-grade-g-bg-disabled: #ffffff;
+  --tag-grade-g-fg-disabled: #292828;
+  
+  /* TagGrade - Black background */
+  --tag-grade-b-bg-default: #3a3a3a;
+  --tag-grade-b-fg-default: #ffffff;
+  --tag-grade-b-bg-hover: #ffffff;
+  --tag-grade-b-fg-hover: #292828;
+  --tag-grade-b-bg-pressed: #3a3a3a;
+  --tag-grade-b-fg-pressed: #cdedff;
+  --tag-grade-b-bg-disabled: #ffffff;
+  --tag-grade-b-fg-disabled: #292828;
+}
+
+/* TagGrade styles */
+[data-bg="white"] .tag-grade {
+  background: var(--tag-grade-w-bg-default);
+  color: var(--tag-grade-w-fg-default);
+}
+
+[data-bg="white"] .tag-grade:hover:not(.tag-grade-disabled) {
+  background: var(--tag-grade-w-bg-hover);
+  color: var(--tag-grade-w-fg-hover);
+}
+
+[data-bg="white"] .tag-grade:active:not(.tag-grade-disabled) {
+  background: var(--tag-grade-w-bg-pressed);
+  color: var(--tag-grade-w-fg-pressed);
+}
+
+[data-bg="white"] .tag-grade.tag-grade-disabled {
+  background: var(--tag-grade-w-bg-disabled);
+  color: var(--tag-grade-w-fg-disabled);
+}
+
+[data-bg="grey"] .tag-grade {
+  background: var(--tag-grade-g-bg-default);
+  color: var(--tag-grade-g-fg-default);
+}
+
+[data-bg="grey"] .tag-grade:hover:not(.tag-grade-disabled) {
+  background: var(--tag-grade-g-bg-hover);
+  color: var(--tag-grade-g-fg-hover);
+}
+
+[data-bg="grey"] .tag-grade:active:not(.tag-grade-disabled) {
+  background: var(--tag-grade-g-bg-pressed);
+  color: var(--tag-grade-g-fg-pressed);
+}
+
+[data-bg="grey"] .tag-grade.tag-grade-disabled {
+  background: var(--tag-grade-g-bg-disabled);
+  color: var(--tag-grade-g-fg-disabled);
+}
+
+[data-bg="black"] .tag-grade {
+  background: var(--tag-grade-b-bg-default);
+  color: var(--tag-grade-b-fg-default);
+}
+
+[data-bg="black"] .tag-grade:hover:not(.tag-grade-disabled) {
+  background: var(--tag-grade-b-bg-hover);
+  color: var(--tag-grade-b-fg-hover);
+}
+
+[data-bg="black"] .tag-grade:active:not(.tag-grade-disabled) {
+  background: var(--tag-grade-b-bg-pressed);
+  color: var(--tag-grade-b-fg-pressed);
+}
+
+[data-bg="black"] .tag-grade.tag-grade-disabled {
+  background: var(--tag-grade-b-bg-disabled);
+  color: var(--tag-grade-b-fg-disabled);
+}
+
+/* TagCross dans TagGrade - mêmes styles que TagText */
+[data-bg="white"] .tag-grade:hover .tag-cross:not(:disabled) {
+  color: var(--tag-cross-w-fg-hover);
+}
+
+[data-bg="white"] .tag-grade:active .tag-cross:not(:disabled) {
+  color: var(--tag-cross-w-fg-pressed);
+}
+
+[data-bg="white"] .tag-grade-disabled .tag-cross {
+  color: var(--tag-cross-w-fg-disabled);
+  cursor: not-allowed;
+}
+
+[data-bg="grey"] .tag-grade:hover .tag-cross:not(:disabled) {
+  color: var(--tag-cross-g-fg-hover);
+}
+
+[data-bg="grey"] .tag-grade:active .tag-cross:not(:disabled) {
+  color: var(--tag-cross-g-fg-pressed);
+}
+
+[data-bg="grey"] .tag-grade-disabled .tag-cross {
+  color: var(--tag-cross-g-fg-disabled);
+  cursor: not-allowed;
+}
+
+[data-bg="black"] .tag-grade:hover .tag-cross:not(:disabled) {
+  color: var(--tag-cross-b-fg-hover);
+}
+
+[data-bg="black"] .tag-grade:active .tag-cross:not(:disabled) {
+  color: var(--tag-cross-b-fg-pressed);
+}
+
+[data-bg="black"] .tag-grade-disabled .tag-cross {
+  color: var(--tag-cross-b-fg-disabled);
+  cursor: not-allowed;
 }

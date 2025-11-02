@@ -241,6 +241,8 @@ import { Switch } from "./components/ui/switch";
 import { TagText } from "./components/ui/tag-text";
 import { TagStar } from "./components/ui/tag-star";
 import { TagLabel } from "./components/ui/tag-label";
+import { TagGrade } from "./components/ui/tag-grade";
+import { Grade } from "./components/ui/grade";
 import {
   Table,
   TableHeader,
@@ -510,6 +512,8 @@ export { Switch };
 export { TagText };
 export { TagStar };
 export { TagLabel };
+export { TagGrade };
+export { Grade };
 export { Table, TableHeader, TableBody, TableFooter, TableHead, TableRow, TableCell, TableCaption };
 export { Textarea };
 export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider };
