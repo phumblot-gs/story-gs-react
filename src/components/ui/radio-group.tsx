@@ -1,17 +1,41 @@
 
 import * as React from "react"
 import * as RadioGroupPrimitive from "@radix-ui/react-radio-group"
-import { cva, type VariantProps } from "class-variance-authority"
+import { cva } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
+import { useBgContext } from "@/components/layout/BgContext"
+
+export interface RadioGroupProps
+  extends React.ComponentPropsWithoutRef<typeof RadioGroupPrimitive.Root> {
+  debug?: boolean;
+}
 
 const RadioGroup = React.forwardRef<
   React.ElementRef<typeof RadioGroupPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof RadioGroupPrimitive.Root>
->(({ className, ...props }, ref) => {
+  RadioGroupProps
+>(({ className, debug, onValueChange, value, defaultValue, ...props }, ref) => {
+  const bg = useBgContext();
+
+  // Debug mode : wrapper pour onValueChange avec log
+  const handleValueChange = React.useCallback((newValue: string) => {
+    if (debug) {
+      console.log('[RadioGroup ValueChange]', {
+        newValue,
+        previousValue: value ?? defaultValue,
+        bg,
+        event: { type: 'valueChange', value: newValue },
+      });
+    }
+    onValueChange?.(newValue);
+  }, [debug, value, defaultValue, bg, onValueChange]);
+
   return (
     <RadioGroupPrimitive.Root
-      className={cn("grid gap-2", className)}
+      className={cn("grid", className)}
+      onValueChange={debug ? handleValueChange : onValueChange}
+      value={value}
+      defaultValue={defaultValue}
       {...props}
       ref={ref}
     />
@@ -20,35 +44,60 @@ const RadioGroup = React.forwardRef<
 RadioGroup.displayName = RadioGroupPrimitive.Root.displayName
 
 const radioGroupItemVariants = cva(
-  "aspect-square h-3 w-3 rounded-full align-baseline border-none ring-offset-background focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+  "aspect-square h-3 w-3 rounded-full align-baseline border-none ring-offset-background focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 radio-group-item-default relative",
   {
-    variants: {
-      background: {
-        white: "bg-grey-lighter [&>span>svg]:fill-black [&>span>svg]:text-black data-[state=checked]:bg-black data-[state=checked]:text-white [&>span>svg]:data-[state=checked]:fill-white [&>span>svg]:data-[state=checked]:text-white",
-        black: "bg-black [&>span>svg]:fill-white [&>span>svg]:text-white",
-        grey: "bg-grey [&>span>svg]:fill-black [&>span>svg]:text-black data-[state=checked]:bg-black data-[state=checked]:text-white [&>span>svg]:data-[state=checked]:fill-white [&>span>svg]:data-[state=checked]:text-white",
-      },
-    },
-    defaultVariants: {
-      background: "white",
-    },
+    variants: {},
+    defaultVariants: {},
   }
 )
 
 export interface RadioGroupItemProps
-  extends React.ComponentPropsWithoutRef<typeof RadioGroupPrimitive.Item>,
-    VariantProps<typeof radioGroupItemVariants> {
-  background?: "white" | "black" | "grey"
+  extends React.ComponentPropsWithoutRef<typeof RadioGroupPrimitive.Item> {
+  debug?: boolean;
 }
 
 const RadioGroupItem = React.forwardRef<
   React.ElementRef<typeof RadioGroupPrimitive.Item>,
   RadioGroupItemProps
->(({ className, background, ...props }, ref) => {
+>(({ className, debug, onFocus, onBlur, value, ...props }, ref) => {
+  const bg = useBgContext();
+
+  // Debug mode : wrapper pour onFocus avec log
+  const handleFocus = React.useCallback((e: React.FocusEvent<HTMLButtonElement>) => {
+    if (debug) {
+      console.log('[RadioGroupItem Focus]', {
+        value,
+        bg,
+        event: e,
+      });
+    }
+    onFocus?.(e);
+  }, [debug, value, bg, onFocus]);
+
+  // Debug mode : wrapper pour onBlur avec log
+  const handleBlur = React.useCallback((e: React.FocusEvent<HTMLButtonElement>) => {
+    if (debug) {
+      console.log('[RadioGroupItem Blur]', {
+        value,
+        bg,
+        event: e,
+      });
+    }
+    onBlur?.(e);
+  }, [debug, value, bg, onBlur]);
+
   return (
     <RadioGroupPrimitive.Item
       ref={ref}
-      className={cn(radioGroupItemVariants({ background, className }))}
+      data-bg={bg || undefined}
+      className={cn(
+        radioGroupItemVariants(),
+        debug && "ring-2 ring-pink ring-offset-2",
+        className
+      )}
+      onFocus={debug ? handleFocus : onFocus}
+      onBlur={debug ? handleBlur : onBlur}
+      value={value}
       {...props}
     >
       <RadioGroupPrimitive.Indicator className="flex items-center justify-center">
@@ -60,6 +109,11 @@ const RadioGroupItem = React.forwardRef<
           <circle cx="12" cy="12" r="6"></circle>
         </svg>
       </RadioGroupPrimitive.Indicator>
+      {debug && (
+        <span className="absolute -top-6 left-0 text-xs bg-pink text-white px-1 rounded whitespace-nowrap">
+          {value || 'no-value'}
+        </span>
+      )}
     </RadioGroupPrimitive.Item>
   )
 })

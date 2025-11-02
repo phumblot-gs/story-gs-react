@@ -177,7 +177,7 @@ const FormComponentsTestSection: React.FC = () => {
                 <div>
                   <Label>Checkbox</Label>
                   <div className="flex items-center space-x-2 mt-2">
-                    <Checkbox background={bg} id={`terms-${bg}`} />
+                    <Checkbox id={`terms-${bg}`} />
                     <Label htmlFor={`terms-${bg}`}>
                       Accept terms and conditions
                     </Label>
@@ -189,13 +189,13 @@ const FormComponentsTestSection: React.FC = () => {
                   <div className="mt-2">
                     <RadioGroup defaultValue="option1">
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem background={bg} value="option1" id={`option1-${bg}`} />
+                        <RadioGroupItem value="option1" id={`option1-${bg}`} />
                         <Label htmlFor={`option1-${bg}`}>
                           Option 1
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem background={bg} value="option2" id={`option2-${bg}`} />
+                        <RadioGroupItem value="option2" id={`option2-${bg}`} />
                         <Label htmlFor={`option2-${bg}`}>
                           Option 2
                         </Label>
