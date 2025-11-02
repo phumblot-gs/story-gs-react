@@ -1,7 +1,7 @@
 /**
  * Variables CSS générées automatiquement depuis les tokens Figma
  * NE PAS MODIFIER DIRECTEMENT - Généré par scripts/generate-css-tokens.cjs
- * Date: 2025-11-02T10:00:23.548Z
+ * Date: 2025-11-02T12:02:51.289Z
  */
 
 :root {
@@ -1276,6 +1276,317 @@
 [data-bg="black"].btn-link {
   color: var(--button-b-link-fg-default);
   text-decoration: none;
+}
+
+/* TagText Component Styles */
+/* Variables CSS pour TagText et TagCross - basées sur les tokens Figma */
+:root {
+  /* TagText - White background */
+  --tag-text-w-bg-default: #f3f3f3;
+  --tag-text-w-fg-default: #292828;
+  --tag-text-w-bg-hover: #292828;
+  --tag-text-w-fg-hover: #ffffff;
+  --tag-text-w-bg-pressed: #292828;
+  --tag-text-w-fg-pressed: #cdedff;
+  --tag-text-w-bg-disabled: #f3f3f3;
+  --tag-text-w-fg-disabled: #292828;
+  
+  /* TagText - Grey background */
+  --tag-text-g-bg-default: #ffffff;
+  --tag-text-g-fg-default: #292828;
+  --tag-text-g-bg-hover: #292828;
+  --tag-text-g-fg-hover: #ffffff;
+  --tag-text-g-bg-pressed: #292828;
+  --tag-text-g-fg-pressed: #cdedff;
+  --tag-text-g-bg-disabled: #ffffff;
+  --tag-text-g-fg-disabled: #292828;
+  
+  /* TagText - Black background */
+  --tag-text-b-bg-default: #3a3a3a;
+  --tag-text-b-fg-default: #ffffff;
+  --tag-text-b-bg-hover: #ffffff;
+  --tag-text-b-fg-hover: #292828;
+  --tag-text-b-bg-pressed: #3a3a3a;
+  --tag-text-b-fg-pressed: #cdedff;
+  --tag-text-b-bg-disabled: #ffffff;
+  --tag-text-b-fg-disabled: #292828;
+  
+  /* TagCross - White background */
+  --tag-cross-w-fg-default: #292828;
+  --tag-cross-w-fg-hover: #ffffff;
+  --tag-cross-w-fg-pressed: #cdedff;
+  --tag-cross-w-fg-disabled: #c1c1c1;
+  
+  /* TagCross - Grey background */
+  --tag-cross-g-fg-default: #292828;
+  --tag-cross-g-fg-hover: #ffffff;
+  --tag-cross-g-fg-pressed: #cdedff;
+  --tag-cross-g-fg-disabled: #c1c1c1;
+  
+  /* TagCross - Black background */
+  --tag-cross-b-fg-default: #ffffff;
+  --tag-cross-b-fg-hover: #292828;
+  --tag-cross-b-fg-pressed: #cdedff;
+  --tag-cross-b-fg-disabled: #c1c1c1;
+  
+  /* TagStar - White background */
+  --tag-star-w-bg-default: #f3f3f3;
+  --tag-star-w-fg-default: #ffd331;
+  --tag-star-w-bg-hover: #292828;
+  --tag-star-w-fg-hover: #ffd331;
+  --tag-star-w-bg-pressed: #292828;
+  --tag-star-w-fg-pressed: #ffd331;
+  --tag-star-w-bg-disabled: #f3f3f3;
+  --tag-star-w-fg-disabled: #ffd331;
+  
+  /* TagStar - Grey background */
+  --tag-star-g-bg-default: #ffffff;
+  --tag-star-g-fg-default: #ffd331;
+  --tag-star-g-bg-hover: #292828;
+  --tag-star-g-fg-hover: #ffd331;
+  --tag-star-g-bg-pressed: #292828;
+  --tag-star-g-fg-pressed: #ffd331;
+  --tag-star-g-bg-disabled: #ffffff;
+  --tag-star-g-fg-disabled: #ffd331;
+  
+  /* TagStar - Black background */
+  --tag-star-b-bg-default: #3a3a3a;
+  --tag-star-b-fg-default: #ffd331;
+  --tag-star-b-bg-hover: #ffffff;
+  --tag-star-b-fg-hover: #ffd331;
+  --tag-star-b-bg-pressed: #3a3a3a;
+  --tag-star-b-fg-pressed: #ffd331;
+  --tag-star-b-bg-disabled: #ffffff;
+  --tag-star-b-fg-disabled: #ffd331;
+}
+
+/* TagText styles */
+[data-bg="white"] .tag-text {
+  background: var(--tag-text-w-bg-default);
+  color: var(--tag-text-w-fg-default);
+}
+
+[data-bg="white"] .tag-text:hover:not(.tag-text-disabled) {
+  background: var(--tag-text-w-bg-hover);
+  color: var(--tag-text-w-fg-hover);
+}
+
+[data-bg="white"] .tag-text:active:not(.tag-text-disabled) {
+  background: var(--tag-text-w-bg-pressed);
+  color: var(--tag-text-w-fg-pressed);
+}
+
+[data-bg="white"] .tag-text.tag-text-disabled {
+  background: var(--tag-text-w-bg-disabled);
+  color: var(--tag-text-w-fg-disabled);
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+[data-bg="grey"] .tag-text {
+  background: var(--tag-text-g-bg-default);
+  color: var(--tag-text-g-fg-default);
+}
+
+[data-bg="grey"] .tag-text:hover:not(.tag-text-disabled) {
+  background: var(--tag-text-g-bg-hover);
+  color: var(--tag-text-g-fg-hover);
+}
+
+[data-bg="grey"] .tag-text:active:not(.tag-text-disabled) {
+  background: var(--tag-text-g-bg-pressed);
+  color: var(--tag-text-g-fg-pressed);
+}
+
+[data-bg="grey"] .tag-text.tag-text-disabled {
+  background: var(--tag-text-g-bg-disabled);
+  color: var(--tag-text-g-fg-disabled);
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+[data-bg="black"] .tag-text {
+  background: var(--tag-text-b-bg-default);
+  color: var(--tag-text-b-fg-default);
+}
+
+[data-bg="black"] .tag-text:hover:not(.tag-text-disabled) {
+  background: var(--tag-text-b-bg-hover);
+  color: var(--tag-text-b-fg-hover);
+}
+
+[data-bg="black"] .tag-text:active:not(.tag-text-disabled) {
+  background: var(--tag-text-b-bg-pressed);
+  color: var(--tag-text-b-fg-pressed);
+}
+
+[data-bg="black"] .tag-text.tag-text-disabled {
+  background: var(--tag-text-b-bg-disabled);
+  color: var(--tag-text-b-fg-disabled);
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* TagCross styles */
+[data-bg="white"] .tag-cross {
+  color: var(--tag-cross-w-fg-default);
+}
+
+[data-bg="white"] .tag-text:hover .tag-cross:not(:disabled) {
+  color: var(--tag-cross-w-fg-hover);
+}
+
+[data-bg="white"] .tag-text:active .tag-cross:not(:disabled) {
+  color: var(--tag-cross-w-fg-pressed);
+}
+
+[data-bg="white"] .tag-cross:disabled,
+[data-bg="white"] .tag-text-disabled .tag-cross {
+  color: var(--tag-cross-w-fg-disabled);
+}
+
+[data-bg="grey"] .tag-cross {
+  color: var(--tag-cross-g-fg-default);
+}
+
+[data-bg="grey"] .tag-text:hover .tag-cross:not(:disabled) {
+  color: var(--tag-cross-g-fg-hover);
+}
+
+[data-bg="grey"] .tag-text:active .tag-cross:not(:disabled) {
+  color: var(--tag-cross-g-fg-pressed);
+}
+
+[data-bg="grey"] .tag-cross:disabled,
+[data-bg="grey"] .tag-text-disabled .tag-cross {
+  color: var(--tag-cross-g-fg-disabled);
+}
+
+[data-bg="black"] .tag-cross {
+  color: var(--tag-cross-b-fg-default);
+}
+
+[data-bg="black"] .tag-text:hover .tag-cross:not(:disabled) {
+  color: var(--tag-cross-b-fg-hover);
+}
+
+[data-bg="black"] .tag-text:active .tag-cross:not(:disabled) {
+  color: var(--tag-cross-b-fg-pressed);
+}
+
+[data-bg="black"] .tag-cross:disabled,
+[data-bg="black"] .tag-text-disabled .tag-cross {
+  color: var(--tag-cross-b-fg-disabled);
+}
+
+/* TagStar styles */
+[data-bg="white"] .tag-star {
+  background: var(--tag-star-w-bg-default);
+  color: var(--tag-star-w-fg-default);
+}
+
+[data-bg="white"] .tag-star:hover:not(.tag-star-disabled) {
+  background: var(--tag-star-w-bg-hover);
+  color: var(--tag-star-w-fg-hover);
+}
+
+[data-bg="white"] .tag-star:active:not(.tag-star-disabled) {
+  background: var(--tag-star-w-bg-pressed);
+  color: var(--tag-star-w-fg-pressed);
+}
+
+[data-bg="white"] .tag-star.tag-star-disabled {
+  background: var(--tag-star-w-bg-disabled);
+  color: var(--tag-star-w-fg-disabled);
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+[data-bg="grey"] .tag-star {
+  background: var(--tag-star-g-bg-default);
+  color: var(--tag-star-g-fg-default);
+}
+
+[data-bg="grey"] .tag-star:hover:not(.tag-star-disabled) {
+  background: var(--tag-star-g-bg-hover);
+  color: var(--tag-star-g-fg-hover);
+}
+
+[data-bg="grey"] .tag-star:active:not(.tag-star-disabled) {
+  background: var(--tag-star-g-bg-pressed);
+  color: var(--tag-star-g-fg-pressed);
+}
+
+[data-bg="grey"] .tag-star.tag-star-disabled {
+  background: var(--tag-star-g-bg-disabled);
+  color: var(--tag-star-g-fg-disabled);
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+[data-bg="black"] .tag-star {
+  background: var(--tag-star-b-bg-default);
+  color: var(--tag-star-b-fg-default);
+}
+
+[data-bg="black"] .tag-star:hover:not(.tag-star-disabled) {
+  background: var(--tag-star-b-bg-hover);
+  color: var(--tag-star-b-fg-hover);
+}
+
+[data-bg="black"] .tag-star:active:not(.tag-star-disabled) {
+  background: var(--tag-star-b-bg-pressed);
+  color: var(--tag-star-b-fg-pressed);
+}
+
+[data-bg="black"] .tag-star.tag-star-disabled {
+  background: var(--tag-star-b-bg-disabled);
+  color: var(--tag-star-b-fg-disabled);
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* TagStar styles pour les étoiles (héritent de la couleur du tag) */
+[data-bg="white"] .tag-star .tag-star-stars,
+[data-bg="white"] .tag-star:hover:not(.tag-star-disabled) .tag-star-stars,
+[data-bg="white"] .tag-star:active:not(.tag-star-disabled) .tag-star-stars {
+  color: var(--tag-star-w-fg-default);
+}
+
+[data-bg="grey"] .tag-star .tag-star-stars,
+[data-bg="grey"] .tag-star:hover:not(.tag-star-disabled) .tag-star-stars,
+[data-bg="grey"] .tag-star:active:not(.tag-star-disabled) .tag-star-stars {
+  color: var(--tag-star-g-fg-default);
+}
+
+[data-bg="black"] .tag-star .tag-star-stars,
+[data-bg="black"] .tag-star:hover:not(.tag-star-disabled) .tag-star-stars,
+[data-bg="black"] .tag-star:active:not(.tag-star-disabled) .tag-star-stars {
+  color: var(--tag-star-b-fg-default);
+}
+
+[data-bg="white"] .tag-star.tag-star-disabled .tag-cross,
+[data-bg="grey"] .tag-star.tag-star-disabled .tag-cross,
+[data-bg="black"] .tag-star.tag-star-disabled .tag-cross {
+  color: var(--tag-cross-w-fg-disabled);
+}
+
+[data-bg="white"] .tag-star.tag-star-disabled .tag-star-stars,
+[data-bg="grey"] .tag-star.tag-star-disabled .tag-star-stars,
+[data-bg="black"] .tag-star.tag-star-disabled .tag-star-stars {
+  opacity: 0.5;
+}
+
+/* Étoile outline (value=0) : trait plus épais pour meilleure visibilité */
+.tag-star .tag-star-outline svg path {
+  stroke-width: 1;
+}
+
+/* TagCross dans TagStar : blanc au hover */
+[data-bg="white"] .tag-star:hover:not(.tag-star-disabled) .tag-cross,
+[data-bg="grey"] .tag-star:hover:not(.tag-star-disabled) .tag-cross,
+[data-bg="black"] .tag-star:hover:not(.tag-star-disabled) .tag-cross {
+  color: #ffffff;
 }
 
 /* Classes de thème */

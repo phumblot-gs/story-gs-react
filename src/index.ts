@@ -238,6 +238,8 @@ import { Skeleton } from "./components/ui/skeleton";
 import { Slider } from "./components/ui/slider";
 import { Toaster, toast } from "./components/ui/sonner";
 import { Switch } from "./components/ui/switch";
+import { TagText } from "./components/ui/tag-text";
+import { TagStar } from "./components/ui/tag-star";
 import {
   Table,
   TableHeader,
@@ -504,6 +506,8 @@ export { Skeleton };
 export { Slider };
 export { Toaster, toast };
 export { Switch };
+export { TagText };
+export { TagStar };
 export { Table, TableHeader, TableBody, TableFooter, TableHead, TableRow, TableCell, TableCaption };
 export { Textarea };
 export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider };
