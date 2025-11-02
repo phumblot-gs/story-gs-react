@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";
+import { action } from "@storybook/addon-actions";
 import { Checkbox } from "./checkbox";
 import { Label } from "./label";
 import { Layout, VStack } from "@/components/layout";
@@ -93,15 +94,31 @@ The Checkbox automatically adapts its appearance based on the parent Layout back
 - **Grey background**: White background, black when checked
 - **Black background**: Black secondary background, white when checked
 
-This is handled automatically via the \`data-bg\` attribute system.`,
+This is handled automatically via the \`data-bg\` attribute system.
+
+## Indeterminate State
+
+The Checkbox supports an indeterminate state, useful for parent checkboxes in hierarchical lists where some children are checked and others are not:
+
+\`\`\`tsx
+const [checked, setChecked] = React.useState<boolean | "indeterminate">("indeterminate");
+
+<Checkbox 
+  checked={checked} 
+  onCheckedChange={setChecked} 
+/>
+\`\`\`
+
+The indeterminate state displays a minus icon instead of a checkmark and uses the same styling as the checked state.`,
       },
     },
   },
   tags: ["autodocs"],
   argTypes: {
     checked: {
-      control: "boolean",
-      description: "Controlled checked state",
+      control: "select",
+      options: [false, true, "indeterminate"],
+      description: "Controlled checked state (can be true, false, or 'indeterminate')",
     },
     defaultChecked: {
       control: "boolean",
@@ -141,15 +158,43 @@ export const Default: Story = {
 };
 
 export const Checked: Story = {
-  args: {
-    defaultChecked: true,
+  render: (args) => {
+    const [checked, setChecked] = React.useState(true);
+    const handleCheckedChange = (newChecked: boolean | "indeterminate") => {
+      setChecked(newChecked);
+      args.onCheckedChange?.(newChecked);
+    };
+    return (
+      <Checkbox 
+        {...args}
+        checked={checked} 
+        onCheckedChange={handleCheckedChange}
+      />
+    );
+  },
+};
+
+export const Indeterminate: Story = {
+  render: (args) => {
+    const [checked, setChecked] = React.useState<boolean | "indeterminate">("indeterminate");
+    const handleCheckedChange = (newChecked: boolean | "indeterminate") => {
+      setChecked(newChecked);
+      args.onCheckedChange?.(newChecked);
+    };
+    return (
+      <Checkbox 
+        {...args}
+        checked={checked} 
+        onCheckedChange={handleCheckedChange}
+      />
+    );
   },
 };
 
 export const WithLabel: Story = {
-  render: () => (
+  render: (args) => (
     <div className="flex items-center space-x-2">
-      <Checkbox id="terms" />
+      <Checkbox {...args} id="terms" />
       <Label htmlFor="terms">Accept terms and conditions</Label>
     </div>
   ),
@@ -162,60 +207,122 @@ export const Disabled: Story = {
 };
 
 export const WithBackgrounds: Story = {
-  render: () => (
-    <VStack gap={6}>
-      <div>
-        <h3 className="text-sm font-medium mb-3">Checkbox on different backgrounds</h3>
-        <p className="text-xs text-grey-stronger mb-4">
-          The checkbox automatically adapts its appearance based on the parent background using the <code>data-bg</code> mechanism.
-        </p>
-      </div>
-
-      <div className="space-y-6">
+  render: () => {
+    const [whiteUnchecked, setWhiteUnchecked] = React.useState(false);
+    const [whiteChecked, setWhiteChecked] = React.useState(true);
+    const [whiteIndeterminate, setWhiteIndeterminate] = React.useState<boolean | "indeterminate">("indeterminate");
+    
+    const [greyUnchecked, setGreyUnchecked] = React.useState(false);
+    const [greyChecked, setGreyChecked] = React.useState(true);
+    const [greyIndeterminate, setGreyIndeterminate] = React.useState<boolean | "indeterminate">("indeterminate");
+    
+    const [blackUnchecked, setBlackUnchecked] = React.useState(false);
+    const [blackChecked, setBlackChecked] = React.useState(true);
+    const [blackIndeterminate, setBlackIndeterminate] = React.useState<boolean | "indeterminate">("indeterminate");
+    
+    return (
+      <VStack gap={6}>
         <div>
-          <h4 className="text-xs font-medium mb-2">White Background</h4>
-          <Layout bg="white" padding={4} className="rounded">
-            <div className="flex items-center space-x-2">
-              <Checkbox id="checkbox-white-unchecked" />
-              <Label htmlFor="checkbox-white-unchecked">Unchecked</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox id="checkbox-white-checked" defaultChecked />
-              <Label htmlFor="checkbox-white-checked">Checked</Label>
-            </div>
-          </Layout>
+          <h3 className="text-sm font-medium mb-3">Checkbox on different backgrounds</h3>
+          <p className="text-xs text-grey-stronger mb-4">
+            The checkbox automatically adapts its appearance based on the parent background using the <code>data-bg</code> mechanism.
+          </p>
         </div>
 
-        <div>
-          <h4 className="text-xs font-medium mb-2">Grey Background</h4>
-          <Layout bg="grey" padding={4} className="rounded">
-            <div className="flex items-center space-x-2">
-              <Checkbox id="checkbox-grey-unchecked" />
-              <Label htmlFor="checkbox-grey-unchecked">Unchecked</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox id="checkbox-grey-checked" defaultChecked />
-              <Label htmlFor="checkbox-grey-checked">Checked</Label>
-            </div>
-          </Layout>
-        </div>
+        <div className="space-y-6">
+          <div>
+            <h4 className="text-xs font-medium mb-2">White Background</h4>
+            <Layout bg="white" padding={4} className="rounded">
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="checkbox-white-unchecked" 
+                  checked={whiteUnchecked}
+                  onCheckedChange={setWhiteUnchecked}
+                />
+                <Label htmlFor="checkbox-white-unchecked">Unchecked</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="checkbox-white-checked" 
+                  checked={whiteChecked}
+                  onCheckedChange={setWhiteChecked}
+                />
+                <Label htmlFor="checkbox-white-checked">Checked</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="checkbox-white-indeterminate" 
+                  checked={whiteIndeterminate}
+                  onCheckedChange={setWhiteIndeterminate}
+                />
+                <Label htmlFor="checkbox-white-indeterminate">Indeterminate</Label>
+              </div>
+            </Layout>
+          </div>
 
-        <div>
-          <h4 className="text-xs font-medium mb-2">Black Background</h4>
-          <Layout bg="black" padding={4} className="rounded">
-            <div className="flex items-center space-x-2">
-              <Checkbox id="checkbox-black-unchecked" />
-              <Label htmlFor="checkbox-black-unchecked">Unchecked</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox id="checkbox-black-checked" defaultChecked />
-              <Label htmlFor="checkbox-black-checked">Checked</Label>
-            </div>
-          </Layout>
+          <div>
+            <h4 className="text-xs font-medium mb-2">Grey Background</h4>
+            <Layout bg="grey" padding={4} className="rounded">
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="checkbox-grey-unchecked" 
+                  checked={greyUnchecked}
+                  onCheckedChange={setGreyUnchecked}
+                />
+                <Label htmlFor="checkbox-grey-unchecked">Unchecked</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="checkbox-grey-checked" 
+                  checked={greyChecked}
+                  onCheckedChange={setGreyChecked}
+                />
+                <Label htmlFor="checkbox-grey-checked">Checked</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="checkbox-grey-indeterminate" 
+                  checked={greyIndeterminate}
+                  onCheckedChange={setGreyIndeterminate}
+                />
+                <Label htmlFor="checkbox-grey-indeterminate">Indeterminate</Label>
+              </div>
+            </Layout>
+          </div>
+
+          <div>
+            <h4 className="text-xs font-medium mb-2">Black Background</h4>
+            <Layout bg="black" padding={4} className="rounded">
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="checkbox-black-unchecked" 
+                  checked={blackUnchecked}
+                  onCheckedChange={setBlackUnchecked}
+                />
+                <Label htmlFor="checkbox-black-unchecked">Unchecked</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="checkbox-black-checked" 
+                  checked={blackChecked}
+                  onCheckedChange={setBlackChecked}
+                />
+                <Label htmlFor="checkbox-black-checked">Checked</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="checkbox-black-indeterminate" 
+                  checked={blackIndeterminate}
+                  onCheckedChange={setBlackIndeterminate}
+                />
+                <Label htmlFor="checkbox-black-indeterminate">Indeterminate</Label>
+              </div>
+            </Layout>
+          </div>
         </div>
-      </div>
-    </VStack>
-  ),
+      </VStack>
+    );
+  },
 };
 
 export const DebugMode: Story = {
