@@ -10,7 +10,7 @@ import { ButtonStatus } from "@/components/ButtonStatus";
 
 const StatusComponentsTestSection: React.FC = () => {
   const [selectedStatus, setSelectedStatus] = useState<MediaStatus>(MediaStatus.VALIDATED);
-  const [statusSize, setStatusSize] = useState<"sm" | "md" | "lg">("md");
+  const [statusSize, setStatusSize] = useState<"small" | "medium" | "large">("medium");
   const [buttonIcon, setButtonIcon] = useState<"Check" | "X">("Check");
   const [buttonActive, setButtonActive] = useState(false);
   const [buttonDisabled, setButtonDisabled] = useState(false);
@@ -53,9 +53,9 @@ const StatusComponentsTestSection: React.FC = () => {
                     <SelectValue placeholder="Select size" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="sm">Small</SelectItem>
-                    <SelectItem value="md">Medium</SelectItem>
-                    <SelectItem value="lg">Large</SelectItem>
+                    <SelectItem value="small">Small</SelectItem>
+                    <SelectItem value="medium">Medium</SelectItem>
+                    <SelectItem value="large">Large</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

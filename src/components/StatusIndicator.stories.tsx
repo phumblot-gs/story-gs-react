@@ -21,8 +21,9 @@ const meta: Meta<typeof StatusIndicator> = {
       description: "The media status to display",
     },
     size: {
-      options: ["sm", "md", "lg"],
-      control: { type: "radio" },
+      options: ["small", "medium", "large"],
+      control: { type: "select" },
+      description: "Size of the status indicator (small, medium, large)",
     },
   },
 };
@@ -39,21 +40,21 @@ export const Default: Story = {
 export const Small: Story = {
   args: {
     status: MediaStatus.SUBMITTED_FOR_APPROVAL,
-    size: "sm",
+    size: "small",
   },
 };
 
 export const Medium: Story = {
   args: {
     status: MediaStatus.SUBMITTED_FOR_APPROVAL,
-    size: "md",
+    size: "medium",
   },
 };
 
 export const Large: Story = {
   args: {
     status: MediaStatus.SUBMITTED_FOR_APPROVAL,
-    size: "lg",
+    size: "large",
   },
 };
 
@@ -65,9 +66,9 @@ export const AllStatuses: Story = {
         .map(([statusName, statusValue]) => (
           <div key={statusName} className="flex items-center gap-4">
             <div className="w-32 font-medium">{statusName}</div>
-            <StatusIndicator status={statusValue as MediaStatus} size="sm" />
-            <StatusIndicator status={statusValue as MediaStatus} size="md" />
-            <StatusIndicator status={statusValue as MediaStatus} size="lg" />
+            <StatusIndicator status={statusValue as MediaStatus} size="small" />
+            <StatusIndicator status={statusValue as MediaStatus} size="medium" />
+            <StatusIndicator status={statusValue as MediaStatus} size="large" />
           </div>
         ))}
     </div>

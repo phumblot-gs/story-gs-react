@@ -3,6 +3,8 @@ import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 import { useBgContext } from "@/components/layout/BgContext";
+import { StatusIndicator } from "@/components/StatusIndicator";
+import { MediaStatus } from "@/utils/mediaStatus";
 
 // Types
 export type ButtonVariant = "normal" | "secondary" | "ghost" | "outline" | "destructive" | "link";
@@ -197,7 +199,11 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       >
         {children}
         {indicator && (
-          <span className="absolute bottom-0 right-0 w-[7px] h-[7px] rounded-full bg-yellow" />
+          <StatusIndicator
+            status={MediaStatus.SUBMITTED_FOR_APPROVAL}
+            size={normalizedSize}
+            className="absolute bottom-0 right-0"
+          />
         )}
         {debug && (
           <span className="absolute -top-6 left-0 text-xs bg-pink text-white px-1 rounded whitespace-nowrap">

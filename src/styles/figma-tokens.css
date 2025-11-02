@@ -1,7 +1,7 @@
 /**
  * Variables CSS générées automatiquement depuis les tokens Figma
  * NE PAS MODIFIER DIRECTEMENT - Généré par scripts/generate-css-tokens.cjs
- * Date: 2025-11-02T09:32:15.398Z
+ * Date: 2025-11-02T10:00:23.548Z
  */
 
 :root {
@@ -1285,104 +1285,4 @@
 
 .theme-dark {
   color-scheme: dark;
-}
-
-/* ButtonToggle styles pour adaptation selon background */
-/* Container styles */
-[data-bg="white"].button-toggle-default[data-state="on"]:not(:disabled) {
-  background-color: #292828; /* black */
-}
-
-[data-bg="white"].button-toggle-default[data-state="off"]:not(:disabled) {
-  background-color: #f3f3f3; /* grey-lighter */
-}
-
-[data-bg="grey"].button-toggle-default[data-state="on"]:not(:disabled) {
-  background-color: #292828; /* black */
-}
-
-[data-bg="grey"].button-toggle-default[data-state="off"]:not(:disabled) {
-  background-color: #ffffff; /* white */
-}
-
-[data-bg="black"].button-toggle-default[data-state="on"]:not(:disabled) {
-  background-color: #ffffff; /* white */
-}
-
-[data-bg="black"].button-toggle-default[data-state="off"]:not(:disabled) {
-  background-color: #3a3a3a; /* black-secondary */
-}
-
-/* Disabled container styles */
-[data-bg="white"].button-toggle-default[data-state="on"]:disabled,
-[data-bg="grey"].button-toggle-default[data-state="on"]:disabled {
-  background-color: #c1c1c1; /* grey-stronger */
-}
-
-[data-bg="white"].button-toggle-default[data-state="off"]:disabled {
-  background-color: #f3f3f3; /* grey-lighter */
-}
-
-[data-bg="grey"].button-toggle-default[data-state="off"]:disabled {
-  background-color: #ffffff; /* white */
-}
-
-[data-bg="black"].button-toggle-default[data-state="on"]:disabled {
-  background-color: #ffffff; /* white */
-}
-
-[data-bg="black"].button-toggle-default[data-state="off"]:disabled {
-  background-color: #3a3a3a; /* black-secondary */
-}
-
-/* Pill styles */
-[data-bg="white"].button-toggle-default[data-state="on"]:not(:disabled) .button-toggle-pill,
-[data-bg="grey"].button-toggle-default[data-state="on"]:not(:disabled) .button-toggle-pill {
-  background-color: #ffffff; /* white */
-}
-
-[data-bg="black"].button-toggle-default[data-state="on"]:not(:disabled) .button-toggle-pill {
-  background-color: #292828; /* black */
-}
-
-[data-bg="white"].button-toggle-default[data-state="off"]:not(:disabled) .button-toggle-pill,
-[data-bg="grey"].button-toggle-default[data-state="off"]:not(:disabled) .button-toggle-pill,
-[data-bg="black"].button-toggle-default[data-state="off"]:not(:disabled) .button-toggle-pill {
-  background-color: #292828; /* black */
-}
-
-.button-toggle-default:disabled .button-toggle-pill {
-  background-color: #c1c1c1; /* grey-stronger */
-}
-
-/* Text styles */
-[data-bg="white"].button-toggle-default[data-state="on"]:not(:disabled) .button-toggle-text,
-[data-bg="grey"].button-toggle-default[data-state="on"]:not(:disabled) .button-toggle-text {
-  color: #ffffff; /* white */
-}
-
-[data-bg="black"].button-toggle-default[data-state="on"]:not(:disabled) .button-toggle-text {
-  color: #292828; /* black */
-}
-
-[data-bg="white"].button-toggle-default[data-state="off"]:not(:disabled) .button-toggle-text,
-[data-bg="grey"].button-toggle-default[data-state="off"]:not(:disabled) .button-toggle-text {
-  color: #292828; /* black */
-}
-
-[data-bg="black"].button-toggle-default[data-state="off"]:not(:disabled) .button-toggle-text {
-  color: #ffffff; /* white */
-}
-
-.button-toggle-default:disabled .button-toggle-text {
-  color: #c1c1c1; /* grey-stronger */
-}
-
-/* Base pill styles */
-.button-toggle-pill {
-  width: 14px;
-  height: 14px;
-  border-radius: 7px;
-  flex-shrink: 0;
-  transition: all 0.2s;
 }
