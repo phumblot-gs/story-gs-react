@@ -1,7 +1,7 @@
 
 import * as React from "react"
 import * as CheckboxPrimitive from "@radix-ui/react-checkbox"
-import { Check } from "lucide-react"
+import { Check, Minus } from "lucide-react"
 import { cva } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
@@ -23,55 +23,105 @@ export interface CheckboxProps
 const Checkbox = React.forwardRef<
   React.ElementRef<typeof CheckboxPrimitive.Root>,
   CheckboxProps
->(({ className, debug, onCheckedChange, onFocus, onBlur, ...props }, ref) => {
+>(({ className, debug, onCheckedChange, onFocus, onBlur, checked, defaultChecked, ...props }, ref) => {
   const bg = useBgContext();
+  
+  // Pour les composants non-contrôlés, gérer l'état local pour appliquer le comportement par défaut
+  const isControlled = checked !== undefined;
+  const [internalChecked, setInternalChecked] = React.useState<boolean | "indeterminate">(
+    defaultChecked ?? false
+  );
+  
+  // Utiliser une ref pour obtenir la valeur actuelle dans les callbacks
+  const checkedStateRef = React.useRef<boolean | "indeterminate">(
+    isControlled ? (checked ?? false) : internalChecked
+  );
+  
+  // Determine the current state
+  const checkedState = isControlled 
+    ? (checked ?? false)
+    : internalChecked;
+  
+  // Mettre à jour la ref quand l'état change
+  React.useEffect(() => {
+    checkedStateRef.current = checkedState;
+  }, [checkedState]);
+  
+  const isIndeterminate = checkedState === "indeterminate";
+  const isChecked = checkedState === true;
 
-  // Debug mode : wrapper pour onCheckedChange avec log
-  const handleCheckedChange = React.useCallback((checked: boolean) => {
+  // Comportement par défaut : false/indeterminate → true, true → false
+  const handleCheckedChange = React.useCallback((checked: boolean | "indeterminate") => {
+    // Utiliser la ref pour obtenir la valeur actuelle
+    const currentState = checkedStateRef.current;
+    
+    // Appliquer le comportement par défaut basé sur l'état actuel AVANT le clic
+    // false ou indeterminate → true, true → false
+    let newChecked: boolean | "indeterminate";
+    if (currentState === false || currentState === "indeterminate") {
+      newChecked = true;
+    } else {
+      newChecked = false;
+    }
+    
     if (debug) {
       console.log('[Checkbox CheckedChange]', {
-        checked,
+        currentState,
+        radixValue: checked,
+        newChecked,
+        isControlled,
         bg,
-        event: { type: 'checkedChange', checked },
+        event: { type: 'checkedChange', checked, newChecked },
       });
     }
-    onCheckedChange?.(checked);
-  }, [debug, bg, onCheckedChange]);
+    
+    // Pour les composants non-contrôlés, mettre à jour l'état local
+    if (!isControlled) {
+      setInternalChecked(newChecked);
+    }
+    
+    // Appeler le handler personnalisé s'il existe avec le nouvel état calculé
+    if (onCheckedChange) {
+      onCheckedChange(newChecked);
+    }
+  }, [debug, bg, onCheckedChange, isControlled]);
 
   // Debug mode : wrapper pour onFocus avec log
   const handleFocus = React.useCallback((e: React.FocusEvent<HTMLButtonElement>) => {
     if (debug) {
       console.log('[Checkbox Focus]', {
-        checked: props.checked ?? props.defaultChecked,
+        checked: checkedState,
         bg,
         event: e,
       });
     }
     onFocus?.(e);
-  }, [debug, props.checked, props.defaultChecked, bg, onFocus]);
+  }, [debug, checkedState, bg, onFocus]);
 
   // Debug mode : wrapper pour onBlur avec log
   const handleBlur = React.useCallback((e: React.FocusEvent<HTMLButtonElement>) => {
     if (debug) {
       console.log('[Checkbox Blur]', {
-        checked: props.checked ?? props.defaultChecked,
+        checked: checkedState,
         bg,
         event: e,
       });
     }
     onBlur?.(e);
-  }, [debug, props.checked, props.defaultChecked, bg, onBlur]);
+  }, [debug, checkedState, bg, onBlur]);
 
   return (
     <CheckboxPrimitive.Root
       ref={ref}
       data-bg={bg || undefined}
+      data-state={isIndeterminate ? "indeterminate" : isChecked ? "checked" : "unchecked"}
+      checked={isControlled ? checked : internalChecked}
       className={cn(
         checkboxVariants(),
         debug && "ring-2 ring-pink ring-offset-2",
         className
       )}
-      onCheckedChange={debug ? handleCheckedChange : onCheckedChange}
+      onCheckedChange={handleCheckedChange}
       onFocus={debug ? handleFocus : onFocus}
       onBlur={debug ? handleBlur : onBlur}
       {...props}
@@ -79,11 +129,15 @@ const Checkbox = React.forwardRef<
       <CheckboxPrimitive.Indicator
         className={cn("flex items-center justify-center text-current")}
       >
-        <Check className="h-2 w-2" />
+        {isIndeterminate ? (
+          <Minus className="h-2 w-2" />
+        ) : (
+          <Check className="h-2 w-2" />
+        )}
       </CheckboxPrimitive.Indicator>
       {debug && (
         <span className="absolute -top-6 left-0 text-xs bg-pink text-white px-1 rounded whitespace-nowrap">
-          {props.checked !== undefined ? 'controlled' : 'uncontrolled'}/{props.checked ?? props.defaultChecked ? 'checked' : 'unchecked'}
+          {isControlled ? 'controlled' : 'uncontrolled'}/{isIndeterminate ? 'indeterminate' : isChecked ? 'checked' : 'unchecked'}
         </span>
       )}
     </CheckboxPrimitive.Root>
