@@ -9,6 +9,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useTranslationSafe } from "@/contexts/TranslationContext";
 import { TranslationMap } from "@/utils/translations";
+import { BgProvider } from "@/components/layout/BgContext";
 
 // Types basés sur le schéma BDD
 export interface FileItem {
@@ -613,170 +614,184 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
           </div>
         )}
       {/* Header avec breadcrumb et actions */}
-      <div className="flex items-center justify-between py-3 px-4 bg-white border-b border-gray-200">
-        <div className="flex items-center space-x-2">
-          {/* Navigation breadcrumb */}
-          {pathSegments.length === 1 ? (
-            // Racine uniquement
-            <span className="text-sm font-medium text-gray-900">
-              {pathSegments[0].name}
-            </span>
-          ) : pathSegments.length === 2 ? (
-            // Parent + Courant
-            <>
-              <Button
-                size="large"
-                onClick={() => onNavigate?.(pathSegments[0].path)}
-              >
+      <BgProvider value="white">
+        <div className="flex items-center justify-between py-3 px-4 bg-white border-b border-gray-200">
+          <div className="flex items-center space-x-2">
+            {/* Navigation breadcrumb */}
+            {pathSegments.length === 1 ? (
+              // Racine uniquement
+              <span className="text-sm font-medium text-gray-900 h-6 py-1">
                 {pathSegments[0].name}
-              </Button>
-              <span className="text-gray-400">/</span>
-              <span className="text-sm font-medium text-gray-900">
-                {pathSegments[pathSegments.length - 1].name}
               </span>
-            </>
-          ) : (
-            // Grand-parent + Parent + Courant
-            <>
-              <Button
-                size="large"
-                onClick={() => onNavigate?.(pathSegments[pathSegments.length - 3]?.path || "")}
-              >
-                <IconProvider icon="MoreHorizontal" size={16} />
-              </Button>
-              <span className="text-gray-400">/</span>
-              <Button
-                size="large"
-                onClick={() => onNavigate?.(pathSegments[pathSegments.length - 2].path)}
-              >
-                {pathSegments[pathSegments.length - 2].name}
-              </Button>
-              <span className="text-gray-400">/</span>
-              <span className="text-sm font-medium text-gray-900">
-                {pathSegments[pathSegments.length - 1].name}
-              </span>
-            </>
-          )}
-        </div>
+            ) : pathSegments.length === 2 ? (
+              // Parent + Courant
+              <>
+                <Button
+                  variant="secondary"
+                  size="medium"
+                  className="h-6"
+                  onClick={() => onNavigate?.(pathSegments[0].path)}
+                >
+                  {pathSegments[0].name}
+                </Button>
+                <span className="text-gray-400">/</span>
+                <span className="text-sm font-medium text-gray-900 h-6 py-1">
+                  {pathSegments[pathSegments.length - 1].name}
+                </span>
+              </>
+            ) : (
+              // Grand-parent + Parent + Courant
+              <>
+                <Button
+                  variant="secondary"
+                  size="medium"
+                  className="h-6"
+                  onClick={() => onNavigate?.(pathSegments[pathSegments.length - 3]?.path || "")}
+                >
+                  <IconProvider icon="MoreHorizontal" size={16} />
+                </Button>
+                <span className="text-gray-400">/</span>
+                <Button
+                  variant="secondary"
+                  size="medium"
+                  className="h-6"
+                  onClick={() => onNavigate?.(pathSegments[pathSegments.length - 2].path)}
+                >
+                  {pathSegments[pathSegments.length - 2].name}
+                </Button>
+                <span className="text-gray-400">/</span>
+                <span className="text-sm font-medium text-gray-900 h-6 py-1">
+                  {pathSegments[pathSegments.length - 1].name}
+                </span>
+              </>
+            )}
+          </div>
 
-      </div>
+        </div>
+      </BgProvider>
 
       {/* Barre de sélection fixe */}
-      <div className="flex items-center justify-between px-4 py-3 bg-white border-b border-gray-200">
-        <div className="flex items-center space-x-4">
-          {/* Filtre par date */}
-          <Select value={dateFilter} onValueChange={handleDateFilterChange}>
-            <SelectTrigger className="w-48">
-              <SelectValue placeholder={t('fileBrowser.filterByDate')} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">{getDateFilterLabel("all")}</SelectItem>
-              <SelectItem value="today">{getDateFilterLabel("today")}</SelectItem>
-              <SelectItem value="7days">{getDateFilterLabel("7days")}</SelectItem>
-              <SelectItem value="30days">{getDateFilterLabel("30days")}</SelectItem>
-              <SelectItem value="thisYear">{getDateFilterLabel("thisYear")}</SelectItem>
-              <SelectItem value="lastYear">{getDateFilterLabel("lastYear")}</SelectItem>
-              <SelectItem value="beforeLastYear">{getDateFilterLabel("beforeLastYear")}</SelectItem>
-            </SelectContent>
-          </Select>
-
-          {/* Compteur de fichiers */}
-          <span className="text-sm text-gray-600">
-            {getFileCountText()}
-          </span>
-        </div>
-
-        {/* Partie droite : Boutons + Actions en masse */}
-        <div className="flex items-center space-x-2">
-          {/* Boutons d'actions */}
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                className="p-0 w-6 h-6"
-                onClick={onRefresh}
-              >
-                <IconProvider icon="Refresh" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>{t('fileBrowser.refresh')}</TooltipContent>
-          </Tooltip>
-          {showUploadButton && (
-            <div className="relative" ref={addMenuRef}>
-              <Button
-                className="p-0 w-6 h-6"
-                onClick={() => setIsAddMenuOpen(!isAddMenuOpen)}
-              >
-                <IconProvider icon="Plus" />
-              </Button>
-              {isAddMenuOpen && (
-                <div className="absolute right-0 top-full mt-1 z-50 overflow-hidden rounded-none border shadow-lg bg-black text-white border-grey-strongest">
-                  <div className="p-0">
-                    <button
-                      onClick={() => {
-                        onCreateFolder?.();
-                        setIsAddMenuOpen(false);
-                      }}
-                      className="w-full px-4 py-2 text-left text-sm whitespace-nowrap bg-black-secondary text-white hover:bg-white hover:text-black active:bg-white active:text-blue-primary transition-colors duration-200"
-                    >
-                      {t('fileBrowser.newFolder')}
-                    </button>
-                    <button
-                      onClick={() => {
-                        onImportFiles?.();
-                        setIsAddMenuOpen(false);
-                      }}
-                      className="w-full px-4 py-2 text-left text-sm whitespace-nowrap bg-black-secondary text-white hover:bg-white hover:text-black active:bg-white active:text-blue-primary transition-colors duration-200"
-                    >
-                      {t('fileBrowser.importFiles')}
-                    </button>
-                    <button
-                      onClick={() => {
-                        onImportFolders?.();
-                        setIsAddMenuOpen(false);
-                      }}
-                      className="w-full px-4 py-2 text-left text-sm whitespace-nowrap bg-black-secondary text-white hover:bg-white hover:text-black active:bg-white active:text-blue-primary transition-colors duration-200"
-                    >
-                      {t('fileBrowser.importFolders')}
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Actions en masse (visible uniquement avec sélection) */}
-          {hasSelection && (
-            <Select
-              value=""
-              onValueChange={(value) => {
-                if (value !== "placeholder" && value !== "") {
-                  handleAction(value, getSelectedItems());
-                }
-              }}
-            >
+      <BgProvider value="white">
+        <div className="flex items-center justify-between px-4 py-3 bg-white border-b border-gray-200">
+          <div className="flex items-center space-x-4">
+            {/* Filtre par date */}
+            <Select value={dateFilter} onValueChange={handleDateFilterChange}>
               <SelectTrigger className="w-48">
-                <SelectValue placeholder={t('fileBrowser.selected', {
-                  count: selectedItems.size.toString(),
-                  plural: selectedItems.size > 1 ? 's' : ''
-                })} />
+                <SelectValue placeholder={t('fileBrowser.filterByDate')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem
-                  value="rename"
-                  disabled={selectedItems.size > 1}
-                  className={selectedItems.size > 1 ? "opacity-50 cursor-not-allowed" : ""}
-                >
-                  {t('fileBrowser.rename')}
-                </SelectItem>
-                <SelectItem value="move">{t('fileBrowser.moveTo')}</SelectItem>
-                <SelectItem value="download">{t('fileBrowser.download')}</SelectItem>
-                <SelectItem value="share">{t('fileBrowser.share')}</SelectItem>
-                <SelectItem value="delete">{t('fileBrowser.delete')}</SelectItem>
+                <SelectItem value="all">{getDateFilterLabel("all")}</SelectItem>
+                <SelectItem value="today">{getDateFilterLabel("today")}</SelectItem>
+                <SelectItem value="7days">{getDateFilterLabel("7days")}</SelectItem>
+                <SelectItem value="30days">{getDateFilterLabel("30days")}</SelectItem>
+                <SelectItem value="thisYear">{getDateFilterLabel("thisYear")}</SelectItem>
+                <SelectItem value="lastYear">{getDateFilterLabel("lastYear")}</SelectItem>
+                <SelectItem value="beforeLastYear">{getDateFilterLabel("beforeLastYear")}</SelectItem>
               </SelectContent>
             </Select>
-          )}
+
+            {/* Compteur de fichiers */}
+            <span className="text-sm text-gray-600">
+              {getFileCountText()}
+            </span>
+          </div>
+
+          {/* Partie droite : Boutons + Actions en masse */}
+          <div className="flex items-center space-x-2">
+            {/* Boutons d'actions */}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="medium"
+                  className="p-0 w-6 h-6"
+                  onClick={onRefresh}
+                >
+                  <IconProvider icon="Refresh" size={12} />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>{t('fileBrowser.refresh')}</TooltipContent>
+            </Tooltip>
+            {showUploadButton && (
+              <div className="relative" ref={addMenuRef}>
+                <Button
+                  variant="normal"
+                  size="medium"
+                  className="p-0 w-6 h-6"
+                  onClick={() => setIsAddMenuOpen(!isAddMenuOpen)}
+                >
+                  <IconProvider icon="Plus" size={12} />
+                </Button>
+                {isAddMenuOpen && (
+                  <div className="absolute right-0 top-full mt-1 z-50 overflow-hidden rounded-none border shadow-lg bg-black text-white border-grey-strongest">
+                    <div className="p-0">
+                      <button
+                        onClick={() => {
+                          onCreateFolder?.();
+                          setIsAddMenuOpen(false);
+                        }}
+                        className="w-full px-4 py-2 text-left text-sm whitespace-nowrap bg-black-secondary text-white hover:bg-white hover:text-black active:bg-white active:text-blue-primary transition-colors duration-200"
+                      >
+                        {t('fileBrowser.newFolder')}
+                      </button>
+                      <button
+                        onClick={() => {
+                          onImportFiles?.();
+                          setIsAddMenuOpen(false);
+                        }}
+                        className="w-full px-4 py-2 text-left text-sm whitespace-nowrap bg-black-secondary text-white hover:bg-white hover:text-black active:bg-white active:text-blue-primary transition-colors duration-200"
+                      >
+                        {t('fileBrowser.importFiles')}
+                      </button>
+                      <button
+                        onClick={() => {
+                          onImportFolders?.();
+                          setIsAddMenuOpen(false);
+                        }}
+                        className="w-full px-4 py-2 text-left text-sm whitespace-nowrap bg-black-secondary text-white hover:bg-white hover:text-black active:bg-white active:text-blue-primary transition-colors duration-200"
+                      >
+                        {t('fileBrowser.importFolders')}
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Actions en masse (visible uniquement avec sélection) */}
+            {hasSelection && (
+              <Select
+                value=""
+                onValueChange={(value) => {
+                  if (value !== "placeholder" && value !== "") {
+                    handleAction(value, getSelectedItems());
+                  }
+                }}
+              >
+                <SelectTrigger className="w-48">
+                  <SelectValue placeholder={t('fileBrowser.selected', {
+                    count: selectedItems.size.toString(),
+                    plural: selectedItems.size > 1 ? 's' : ''
+                  })} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem
+                    value="rename"
+                    disabled={selectedItems.size > 1}
+                    className={selectedItems.size > 1 ? "opacity-50 cursor-not-allowed" : ""}
+                  >
+                    {t('fileBrowser.rename')}
+                  </SelectItem>
+                  <SelectItem value="move">{t('fileBrowser.moveTo')}</SelectItem>
+                  <SelectItem value="download">{t('fileBrowser.download')}</SelectItem>
+                  <SelectItem value="share">{t('fileBrowser.share')}</SelectItem>
+                  <SelectItem value="delete">{t('fileBrowser.delete')}</SelectItem>
+                </SelectContent>
+              </Select>
+            )}
+          </div>
         </div>
-      </div>
+      </BgProvider>
 
       {/* Bandeau limite atteinte */}
       {sortedFiles.length >= maxFilesLimit && (
@@ -791,193 +806,206 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
       )}
 
       {/* Tableau */}
-      <div className={tableWrapperClasses}>
-        <div
-          className={cn("border-t border-b border-gray-200 select-none outline-none", tableContainerClasses)}
-          style={tableContainerStyle}
-          ref={tableRef}
-          tabIndex={0}
-        >
-          <table className="w-full">
-          <thead>
-            <tr className="bg-gray-50 border-b border-gray-200">
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                <button
-                  onClick={() => handleSort("file_name")}
-                  className="flex items-center space-x-1 hover:text-gray-900 transition-colors uppercase"
-                >
-                  <span>{t('fileBrowser.columnName')}</span>
-                  {getSortIcon("file_name") && (
-                    <IconProvider icon={getSortIcon("file_name")!} size={12} />
-                  )}
-                </button>
-              </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                <button
-                  onClick={() => handleSort("updated_at")}
-                  className="flex items-center space-x-1 hover:text-gray-900 transition-colors uppercase"
-                >
-                  <span>{t('fileBrowser.columnModified')}</span>
-                  {getSortIcon("updated_at") && (
-                    <IconProvider icon={getSortIcon("updated_at")!} size={12} />
-                  )}
-                </button>
-              </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                <button
-                  onClick={() => handleSort("file_size")}
-                  className="flex items-center space-x-1 hover:text-gray-900 transition-colors uppercase"
-                >
-                  <span>{t('fileBrowser.columnSize')}</span>
-                  {getSortIcon("file_size") && (
-                    <IconProvider icon={getSortIcon("file_size")!} size={12} />
-                  )}
-                </button>
-              </th>
-              <th className="w-48"></th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-100">
-            {sortedFiles.map((item, index) => {
-              const isSelected = selectedItems.has(item.id);
-              const isHovered = hoveredRow === item.id;
-              const isActive = activeIndex === index;
-              const isDisabled = item.disabled === true;
-
-              return (
-                <tr
-                  key={item.id}
-                  className={cn(
-                    "h-12 transition-colors duration-150",
-                    isDisabled
-                      ? "cursor-not-allowed"
-                      : "cursor-pointer",
-                    !isDisabled && isSelected
-                      ? "bg-blue-primary text-black hover:bg-blue-primary"
-                      : !isDisabled && "hover:bg-gray-50",
-                    !isDisabled && isActive && !isSelected && "ring-2 ring-inset ring-blue-400"
-                  )}
-                  onClick={(e) => !isDisabled && handleItemSelect(item, index, e.shiftKey, e.ctrlKey || e.metaKey)}
-                  onDoubleClick={() => !isDisabled && handleItemDoubleClick(item)}
-                  onMouseEnter={() => !isDisabled && setHoveredRow(item.id)}
-                  onMouseLeave={() => !isDisabled && setHoveredRow(null)}
-                >
-                  <td className="px-4 py-2">
-                    <div className="flex items-center space-x-3">
-                      <IconProvider
-                        icon={getFolderIcon(item)}
-                        size={16}
-                        className={cn(
-                          isDisabled ? "text-[#c1c1c1]" :
-                          isSelected ? "text-black" : "text-gray-500"
-                        )}
-                      />
-                      <span className={cn(
-                        "text-sm font-medium truncate",
-                        isDisabled ? "text-[#c1c1c1]" :
-                        isSelected ? "text-black" : "text-gray-900"
-                      )}>
-                        {item.file_name}
-                      </span>
-                    </div>
-                  </td>
-                  <td className={cn(
-                    "px-4 py-2 text-sm",
-                    isDisabled ? "text-[#c1c1c1]" :
-                    isSelected ? "text-black" : "text-gray-600"
-                  )}>
-                    {formatDate(item.updated_at)}
-                  </td>
-                  <td className={cn(
-                    "px-4 py-2 text-sm",
-                    isDisabled ? "text-[#c1c1c1]" :
-                    isSelected ? "text-black" : "text-gray-600"
-                  )}>
-                    {item.is_directory ? "—" : formatFileSize(item.file_size)}
-                  </td>
-                  <td className="px-4 py-2">
-                    {isHovered && !isDisabled && (
-                      <div className="flex items-center justify-end space-x-1">
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              className="p-0 w-6 h-6"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleAction("rename", [item]);
-                              }}
-                            >
-                              <IconProvider icon="Pencil" />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>{t('fileBrowser.rename')}</TooltipContent>
-                        </Tooltip>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              className="p-0 w-6 h-6"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleAction("move", [item]);
-                              }}
-                            >
-                              <IconProvider icon="FolderMoved" />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>{t('fileBrowser.moveTo')}</TooltipContent>
-                        </Tooltip>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              className="p-0 w-6 h-6"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleAction("download", [item]);
-                              }}
-                            >
-                              <IconProvider icon="Download" />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>{t('fileBrowser.download')}</TooltipContent>
-                        </Tooltip>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              className="p-0 w-6 h-6"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleAction("share", [item]);
-                              }}
-                            >
-                              <IconProvider icon="Share" />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>{t('fileBrowser.share')}</TooltipContent>
-                        </Tooltip>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              className="p-0 w-6 h-6"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleAction("delete", [item]);
-                              }}
-                            >
-                              <IconProvider icon="Trash" />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>{t('fileBrowser.delete')}</TooltipContent>
-                        </Tooltip>
-                      </div>
+      <BgProvider value="grey">
+        <div className={tableWrapperClasses}>
+          <div
+            className={cn("border-t border-b border-gray-200 select-none outline-none", tableContainerClasses)}
+            style={tableContainerStyle}
+            ref={tableRef}
+            tabIndex={0}
+          >
+            <table className="w-full">
+            <thead>
+              <tr className="bg-gray-50 border-b border-gray-200">
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  <button
+                    onClick={() => handleSort("file_name")}
+                    className="flex items-center space-x-1 hover:text-gray-900 transition-colors uppercase"
+                  >
+                    <span>{t('fileBrowser.columnName')}</span>
+                    {getSortIcon("file_name") && (
+                      <IconProvider icon={getSortIcon("file_name")!} size={12} />
                     )}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+                  </button>
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  <button
+                    onClick={() => handleSort("updated_at")}
+                    className="flex items-center space-x-1 hover:text-gray-900 transition-colors uppercase"
+                  >
+                    <span>{t('fileBrowser.columnModified')}</span>
+                    {getSortIcon("updated_at") && (
+                      <IconProvider icon={getSortIcon("updated_at")!} size={12} />
+                    )}
+                  </button>
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  <button
+                    onClick={() => handleSort("file_size")}
+                    className="flex items-center space-x-1 hover:text-gray-900 transition-colors uppercase"
+                  >
+                    <span>{t('fileBrowser.columnSize')}</span>
+                    {getSortIcon("file_size") && (
+                      <IconProvider icon={getSortIcon("file_size")!} size={12} />
+                    )}
+                  </button>
+                </th>
+                <th className="w-48"></th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-100">
+              {sortedFiles.map((item, index) => {
+                const isSelected = selectedItems.has(item.id);
+                const isHovered = hoveredRow === item.id;
+                const isActive = activeIndex === index;
+                const isDisabled = item.disabled === true;
+
+                return (
+                  <tr
+                    key={item.id}
+                    data-bg="grey"
+                    className={cn(
+                      "h-10 transition-colors duration-150",
+                      isDisabled
+                        ? "cursor-not-allowed"
+                        : "cursor-pointer",
+                      !isDisabled && isSelected
+                        ? "bg-blue-primary text-black hover:bg-blue-primary"
+                        : !isDisabled && "hover:bg-gray-50",
+                      !isDisabled && isActive && !isSelected && "ring-2 ring-inset ring-blue-400"
+                    )}
+                    onClick={(e) => !isDisabled && handleItemSelect(item, index, e.shiftKey, e.ctrlKey || e.metaKey)}
+                    onDoubleClick={() => !isDisabled && handleItemDoubleClick(item)}
+                    onMouseEnter={() => !isDisabled && setHoveredRow(item.id)}
+                    onMouseLeave={() => !isDisabled && setHoveredRow(null)}
+                  >
+                    <td className="px-4 py-2">
+                      <div className="flex items-center space-x-3">
+                        <IconProvider
+                          icon={getFolderIcon(item)}
+                          size={16}
+                          className={cn(
+                            isDisabled ? "text-[#c1c1c1]" :
+                            isSelected ? "text-black" : "text-gray-500"
+                          )}
+                        />
+                        <span className={cn(
+                          "text-sm font-medium truncate",
+                          isDisabled ? "text-[#c1c1c1]" :
+                          isSelected ? "text-black" : "text-gray-900"
+                        )}>
+                          {item.file_name}
+                        </span>
+                      </div>
+                    </td>
+                    <td className={cn(
+                      "px-4 py-2 text-sm",
+                      isDisabled ? "text-[#c1c1c1]" :
+                      isSelected ? "text-black" : "text-gray-600"
+                    )}>
+                      {formatDate(item.updated_at)}
+                    </td>
+                    <td className={cn(
+                      "px-4 py-2 text-sm",
+                      isDisabled ? "text-[#c1c1c1]" :
+                      isSelected ? "text-black" : "text-gray-600"
+                    )}>
+                      {item.is_directory ? "—" : formatFileSize(item.file_size)}
+                    </td>
+                    <td className="px-4 py-2">
+                      {isHovered && !isDisabled && (
+                        <div className="flex items-center justify-end space-x-1">
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="medium"
+                                className="p-0 w-6 h-6"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleAction("rename", [item]);
+                                }}
+                              >
+                                <IconProvider icon="Pencil" size={12} />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>{t('fileBrowser.rename')}</TooltipContent>
+                          </Tooltip>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="medium"
+                                className="p-0 w-6 h-6"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleAction("move", [item]);
+                                }}
+                              >
+                                <IconProvider icon="FolderMoved" size={12} />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>{t('fileBrowser.moveTo')}</TooltipContent>
+                          </Tooltip>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="medium"
+                                className="p-0 w-6 h-6"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleAction("download", [item]);
+                                }}
+                              >
+                                <IconProvider icon="Download" size={12} />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>{t('fileBrowser.download')}</TooltipContent>
+                          </Tooltip>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="medium"
+                                className="p-0 w-6 h-6"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleAction("share", [item]);
+                                }}
+                              >
+                                <IconProvider icon="Share" size={12} />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>{t('fileBrowser.share')}</TooltipContent>
+                          </Tooltip>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="medium"
+                                className="p-0 w-6 h-6"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleAction("delete", [item]);
+                                }}
+                              >
+                                <IconProvider icon="Trash" size={12} />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>{t('fileBrowser.delete')}</TooltipContent>
+                          </Tooltip>
+                        </div>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+          </div>
         </div>
-      </div>
+      </BgProvider>
 
       {/* Show more items button */}
       {hasMore && sortedFiles.length < maxFilesLimit && (

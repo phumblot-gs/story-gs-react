@@ -7,6 +7,7 @@ import { IconProvider } from "@/components/ui/icon-provider";
 import { IconName } from "@/components/ui/icons/types";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useTranslationSafe, TranslationMap } from "@/contexts/TranslationContext";
+import { BgProvider } from "@/components/layout/BgContext";
 
 // Types réutilisés de FileBrowser
 export interface FolderItem {
@@ -137,139 +138,152 @@ export const FolderBrowser: React.FC<FolderBrowserProps> = ({
     <TooltipProvider>
       <div className={cn("flex flex-col bg-white", className)}>
         {/* Header avec breadcrumb (même style que FileBrowser) */}
-        <div className="flex items-center justify-between py-3 px-4 bg-white border-b border-gray-200">
-          <div className="flex items-center space-x-2">
-            {/* Navigation breadcrumb (même logique que FileBrowser) */}
-            {pathSegments.length === 1 ? (
-              // Racine uniquement
-              <span className="text-sm font-medium text-gray-900">
-                {pathSegments[0].name}
-              </span>
-            ) : pathSegments.length === 2 ? (
-              // Parent + Courant
-              <>
-                <Button
-                  size="large"
-                  onClick={() => onNavigate?.(pathSegments[0].path)}
-                >
+        <BgProvider value="white">
+          <div className="flex items-center justify-between py-3 px-4 bg-white border-b border-gray-200">
+            <div className="flex items-center space-x-2">
+              {/* Navigation breadcrumb (même logique que FileBrowser) */}
+              {pathSegments.length === 1 ? (
+                // Racine uniquement
+                <span className="text-sm font-medium text-gray-900 h-6 py-1">
                   {pathSegments[0].name}
-                </Button>
-                <span className="text-gray-400">/</span>
-                <span className="text-sm font-medium text-gray-900">
-                  {pathSegments[pathSegments.length - 1].name}
                 </span>
-              </>
-            ) : (
-              // Grand-parent + Parent + Courant
-              <>
-                <Button
-                  size="large"
-                  onClick={() => onNavigate?.(pathSegments[pathSegments.length - 3]?.path || "")}
-                >
-                  <IconProvider icon="MoreHorizontal" size={16} />
-                </Button>
-                <span className="text-gray-400">/</span>
-                <Button
-                  size="large"
-                  onClick={() => onNavigate?.(pathSegments[pathSegments.length - 2].path)}
-                >
-                  {pathSegments[pathSegments.length - 2].name}
-                </Button>
-                <span className="text-gray-400">/</span>
-                <span className="text-sm font-medium text-gray-900">
-                  {pathSegments[pathSegments.length - 1].name}
-                </span>
-              </>
-            )}
+              ) : pathSegments.length === 2 ? (
+                // Parent + Courant
+                <>
+                  <Button
+                    variant="secondary"
+                    size="medium"
+                    className="h-6"
+                    onClick={() => onNavigate?.(pathSegments[0].path)}
+                  >
+                    {pathSegments[0].name}
+                  </Button>
+                  <span className="text-gray-400">/</span>
+                  <span className="text-sm font-medium text-gray-900 h-6 py-1">
+                    {pathSegments[pathSegments.length - 1].name}
+                  </span>
+                </>
+              ) : (
+                // Grand-parent + Parent + Courant
+                <>
+                  <Button
+                    variant="secondary"
+                    size="medium"
+                    className="h-6"
+                    onClick={() => onNavigate?.(pathSegments[pathSegments.length - 3]?.path || "")}
+                  >
+                    <IconProvider icon="MoreHorizontal" size={16} />
+                  </Button>
+                  <span className="text-gray-400">/</span>
+                  <Button
+                    variant="secondary"
+                    size="medium"
+                    className="h-6"
+                    onClick={() => onNavigate?.(pathSegments[pathSegments.length - 2].path)}
+                  >
+                    {pathSegments[pathSegments.length - 2].name}
+                  </Button>
+                  <span className="text-gray-400">/</span>
+                  <span className="text-sm font-medium text-gray-900 h-6 py-1">
+                    {pathSegments[pathSegments.length - 1].name}
+                  </span>
+                </>
+              )}
+            </div>
           </div>
-        </div>
+        </BgProvider>
 
         {/* Tableau (même style que FileBrowser) */}
-        <div className="w-full">
-          <div className="border-t border-b border-gray-200 select-none outline-none">
-            <table className="w-full">
-              <thead>
-                <tr className="bg-gray-50 border-b border-gray-200">
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    <button
-                      onClick={handleSort}
-                      className="flex items-center space-x-1 hover:text-gray-900 transition-colors uppercase"
-                    >
-                      <span>{t('folderBrowser.columnName')}</span>
-                      <IconProvider icon={getSortIcon()} size={12} />
-                    </button>
-                  </th>
-                  <th className="w-48"></th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-100">
-                {sortedFolders.length === 0 ? (
-                  <tr>
-                    <td colSpan={2} className="text-center py-12 text-gray-500">
-                      <p className="text-sm">{t('folderBrowser.emptyFolder')}</p>
-                    </td>
+        <BgProvider value="grey">
+          <div className="w-full">
+            <div className="border-t border-b border-gray-200 select-none outline-none">
+              <table className="w-full">
+                <thead>
+                  <tr className="bg-gray-50 border-b border-gray-200">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      <button
+                        onClick={handleSort}
+                        className="flex items-center space-x-1 hover:text-gray-900 transition-colors uppercase"
+                      >
+                        <span>{t('folderBrowser.columnName')}</span>
+                        <IconProvider icon={getSortIcon()} size={12} />
+                      </button>
+                    </th>
+                    <th className="w-48"></th>
                   </tr>
-                ) : (
-                  sortedFolders.map((folder) => {
-                    const isHovered = hoveredRow === folder.id;
-                    const isDisabled = folder.disabled === true;
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-100">
+                  {sortedFolders.length === 0 ? (
+                    <tr>
+                      <td colSpan={2} className="text-center py-12 text-gray-500">
+                        <p className="text-sm">{t('folderBrowser.emptyFolder')}</p>
+                      </td>
+                    </tr>
+                  ) : (
+                    sortedFolders.map((folder) => {
+                      const isHovered = hoveredRow === folder.id;
+                      const isDisabled = folder.disabled === true;
 
-                    return (
+                      return (
                       <tr
                         key={folder.id}
+                        data-bg="grey"
                         className={cn(
-                          "h-12 transition-colors duration-150",
-                          isDisabled
-                            ? "cursor-not-allowed"
-                            : "cursor-pointer",
-                          !isDisabled && isHovered ? "bg-gray-50" : ""
-                        )}
-                        onDoubleClick={() => !isDisabled && handleRowDoubleClick(folder)}
-                        onMouseEnter={() => !isDisabled && setHoveredRow(folder.id)}
-                        onMouseLeave={() => !isDisabled && setHoveredRow(null)}
-                      >
-                        <td className="px-4 py-2">
-                          <div className="flex items-center space-x-3">
-                            <IconProvider
-                              icon="Folder"
-                              size={16}
-                              className={cn(
-                                isDisabled ? "text-[#c1c1c1]" : "text-gray-500"
-                              )}
-                            />
-                            <span className={cn(
-                              "text-sm font-medium truncate",
-                              isDisabled ? "text-[#c1c1c1]" : "text-gray-900"
-                            )}>
-                              {folder.file_name}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="px-4 py-2">
-                          {isHovered && !isDisabled && (
-                            <div className="flex items-center justify-end space-x-1">
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Button
-                                    className="p-0 w-6 h-6"
-                                    onClick={(e) => handleSelectFolder(folder, e)}
-                                  >
-                                    <IconProvider icon="ArrowRight" />
-                                  </Button>
-                                </TooltipTrigger>
-                                <TooltipContent>{t('folderBrowser.select')}</TooltipContent>
-                              </Tooltip>
-                            </div>
+                          "h-10 transition-colors duration-150",
+                            isDisabled
+                              ? "cursor-not-allowed"
+                              : "cursor-pointer",
+                            !isDisabled && isHovered ? "bg-gray-50" : ""
                           )}
-                        </td>
-                      </tr>
-                    );
-                  })
-                )}
-              </tbody>
-            </table>
+                          onDoubleClick={() => !isDisabled && handleRowDoubleClick(folder)}
+                          onMouseEnter={() => !isDisabled && setHoveredRow(folder.id)}
+                          onMouseLeave={() => !isDisabled && setHoveredRow(null)}
+                        >
+                          <td className="px-4 py-2">
+                            <div className="flex items-center space-x-3">
+                              <IconProvider
+                                icon="Folder"
+                                size={16}
+                                className={cn(
+                                  isDisabled ? "text-[#c1c1c1]" : "text-gray-500"
+                                )}
+                              />
+                              <span className={cn(
+                                "text-sm font-medium truncate",
+                                isDisabled ? "text-[#c1c1c1]" : "text-gray-900"
+                              )}>
+                                {folder.file_name}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="px-4 py-2">
+                            {isHovered && !isDisabled && (
+                              <div className="flex items-center justify-end space-x-1">
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <Button
+                                      variant="ghost"
+                                      size="medium"
+                                      className="p-0 w-6 h-6"
+                                      onClick={(e) => handleSelectFolder(folder, e)}
+                                    >
+                                      <IconProvider icon="ArrowRight" size={12} />
+                                    </Button>
+                                  </TooltipTrigger>
+                                  <TooltipContent>{t('folderBrowser.select')}</TooltipContent>
+                                </Tooltip>
+                              </div>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
+        </BgProvider>
       </div>
     </TooltipProvider>
   );
