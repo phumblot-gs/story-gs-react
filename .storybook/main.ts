@@ -1,6 +1,7 @@
 
 import type { StorybookConfig } from "@storybook/react-vite";
 import { join } from "path";
+import { forceJsxDevRuntime } from "./vite-plugin-jsx-dev";
 
 const config: StorybookConfig = {
   stories: ["../src/**/*.mdx", "../src/**/*.stories.@(js|jsx|mjs|ts|tsx)"],
@@ -27,6 +28,10 @@ const config: StorybookConfig = {
   async viteFinal(config) {
     return {
       ...config,
+      plugins: [
+        ...(config.plugins || []),
+        forceJsxDevRuntime(),
+      ],
       resolve: {
         ...config.resolve,
         alias: {
@@ -36,13 +41,10 @@ const config: StorybookConfig = {
           "@storybook/blocks": join(__dirname, "../node_modules/@storybook/addon-docs/dist/blocks.mjs"),
           // storybook/test et storybook/preview-api sont résolus automatiquement par Storybook
           // Pas besoin d'alias explicite
-          // Ne pas forcer d'alias pour react/jsx-runtime - laisser Storybook le résoudre naturellement
-          // Le define NODE_ENV devrait suffire
         },
       },
       // Forcer Storybook à utiliser le runtime JSX de développement même en production
       // car Storybook dev nécessite _jsxDEV
-      // Important: définir NODE_ENV avant tout autre code pour que React l'utilise
       define: {
         ...config.define,
         "process.env.NODE_ENV": JSON.stringify("development"),
