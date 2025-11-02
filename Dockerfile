@@ -22,6 +22,9 @@ RUN if [ -n "$NPM_NEXUS_AUTH" ]; then \
 # Copier les fichiers de dépendances
 COPY package*.json ./
 
+# Nettoyer le cache npm et node_modules pour forcer une installation propre
+RUN rm -rf node_modules package-lock.json .npm
+
 # Installer les dépendances (y compris devDependencies pour Storybook)
 # Limiter la mémoire utilisée par npm pour éviter les problèmes d'OOM
 RUN npm ci --production=false --prefer-offline --no-audit
