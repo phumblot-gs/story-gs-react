@@ -20,7 +20,7 @@ RUN if [ -n "$NPM_NEXUS_AUTH" ]; then \
     fi
 
 # Copier les fichiers de dépendances
-COPY package*.json ./
+COPY package.json package-lock.json* ./
 
 # Nettoyer le cache npm pour forcer une installation propre
 # (ne pas supprimer package-lock.json car npm ci en a besoin)
