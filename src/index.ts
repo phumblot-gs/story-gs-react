@@ -265,6 +265,10 @@ import {
 
 // Import types for re-export
 import type {
+  AvatarSize
+} from "./components/ui/avatar";
+
+import type {
   ButtonProps,
   ButtonSize,
   ButtonVariant
@@ -287,10 +291,6 @@ import type {
   SortField,
   SortDirection
 } from "./components/ui/file-browser";
-
-import type {
-  SelectBackground
-} from "./components/ui/select";
 
 import type {
   InputProps
@@ -549,7 +549,6 @@ export type {
   SortConfig,
   SortField,
   SortDirection,
-  SelectBackground,
   InputProps,
   SearchProps,
   PageHeaderProps,

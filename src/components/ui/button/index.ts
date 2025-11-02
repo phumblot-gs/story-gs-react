@@ -1,6 +1,6 @@
 // Export principal du Button avec tous ses types
 export { Button, buttonVariants } from '../button';
-export type { ButtonProps, ButtonSize, ButtonBackground } from '../button';
+export type { ButtonProps, ButtonSize } from '../button';
 
 // Export du ButtonBase pour ceux qui veulent étendre
 export { Button as ButtonBase, buttonVariants as buttonBaseVariants } from '../button-base';
