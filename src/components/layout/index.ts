@@ -13,4 +13,10 @@ export type { ModalProps } from './Modal';
 export { FullFrame } from './FullFrame';
 export type { FullFrameProps } from './FullFrame';
 
+export { ActionBar } from './ActionBar';
+export type { ActionBarProps } from './ActionBar';
+
+export { ActionBarProvider } from './ActionBarContext';
+export { useActionBarContext } from './ActionBarContext';
+
 export { useBgContext, BgProvider } from './BgContext';

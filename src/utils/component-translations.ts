@@ -449,5 +449,35 @@ export const componentTranslations: TranslationMap = {
     ES: "Máximo {max} caracteres permitidos",
     IT: "Massimo {max} caratteri consentiti",
     DE: "Maximal {max} Zeichen erlaubt"
+  },
+
+  // ActionBar
+  "actionBar.filesSelected": {
+    EN: "{count} file{plural} selected",
+    FR: "{count} fichier{plural} sélectionné{plural}",
+    ES: "{count} archivo{plural} seleccionado{plural}",
+    IT: "{count} file{plural} selezionato{plural}",
+    DE: "{count} Datei{plural} ausgewählt"
+  },
+  "actionBar.imagesSelected": {
+    EN: "{count} image{plural} selected",
+    FR: "{count} image{plural} sélectionnée{plural}",
+    ES: "{count} imagen{plural} seleccionada{plural}",
+    IT: "{count} immagine{plural} selezionata{plural}",
+    DE: "{count} Bild{plural} ausgewählt"
+  },
+  "actionBar.itemsSelected": {
+    EN: "{count} item{plural} selected",
+    FR: "{count} élément{plural} sélectionné{plural}",
+    ES: "{count} elemento{plural} seleccionado{plural}",
+    IT: "{count} elemento{plural} selezionato{plural}",
+    DE: "{count} Element{plural} ausgewählt"
+  },
+  "actionBar.deselectAll": {
+    EN: "Deselect all",
+    FR: "Tout désélectionner",
+    ES: "Deseleccionar todo",
+    IT: "Deseleziona tutto",
+    DE: "Alles abwählen"
   }
 };

@@ -317,8 +317,8 @@ import type {
 } from "./components/ui/folder-browser";
 
 // Export layout components
-export { Layout, HStack, VStack, Modal, FullFrame } from "./components/layout";
-export type { LayoutProps, HStackProps, VStackProps, ModalProps, FullFrameProps } from "./components/layout";
+export { Layout, HStack, VStack, Modal, FullFrame, ActionBar, ActionBarProvider } from "./components/layout";
+export type { LayoutProps, HStackProps, VStackProps, ModalProps, FullFrameProps, ActionBarProps } from "./components/layout";
 
 // Export icons
 export * from "./components/ui/icons";
