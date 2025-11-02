@@ -8,7 +8,10 @@ const config: StorybookConfig = {
 
   framework: {
     name: "@storybook/react-vite",
-    options: {},
+    options: {
+      // Forcer le mode développement pour React
+      strictMode: true,
+    },
   },
 
   // Configuration pour servir les fonts statiques
@@ -33,6 +36,10 @@ const config: StorybookConfig = {
           "@storybook/blocks": join(__dirname, "../node_modules/@storybook/addon-docs/dist/blocks.mjs"),
           // storybook/test et storybook/preview-api sont résolus automatiquement par Storybook
           // Pas besoin d'alias explicite
+          // Forcer l'utilisation du runtime JSX de développement
+          // Pointer directement vers le fichier de développement pour éviter la vérification NODE_ENV
+          "react/jsx-runtime": join(__dirname, "../node_modules/react/cjs/react-jsx-dev-runtime.development.js"),
+          "react/jsx-dev-runtime": join(__dirname, "../node_modules/react/cjs/react-jsx-dev-runtime.development.js"),
         },
       },
       // Forcer Storybook à utiliser le runtime JSX de développement même en production
@@ -43,7 +50,17 @@ const config: StorybookConfig = {
       },
       optimizeDeps: {
         ...config.optimizeDeps,
-        include: ["react", "react-dom", "react/jsx-dev-runtime"],
+        include: [
+          "react",
+          "react-dom",
+          "react/jsx-dev-runtime",
+          "react/jsx-runtime",
+        ],
+        esbuildOptions: {
+          ...config.optimizeDeps?.esbuildOptions,
+          jsx: "automatic",
+          jsxDev: true,
+        },
       },
       esbuild: {
         ...config.esbuild,
