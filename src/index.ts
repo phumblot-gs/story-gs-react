@@ -313,13 +313,17 @@ import type {
 } from "./components/layout/FullFrame";
 
 import type {
+  SidePanelProps
+} from "./components/layout/SidePanel";
+
+import type {
   FolderItem,
   FolderBrowserProps
 } from "./components/ui/folder-browser";
 
 // Export layout components
-export { Layout, HStack, VStack, Modal, FullFrame, ActionBar, ActionBarProvider } from "./components/layout";
-export type { LayoutProps, HStackProps, VStackProps, ModalProps, FullFrameProps, ActionBarProps } from "./components/layout";
+export { Layout, HStack, VStack, Modal, FullFrame, ActionBar, ActionBarProvider, SidePanel } from "./components/layout";
+export type { LayoutProps, HStackProps, VStackProps, ModalProps, FullFrameProps, ActionBarProps, SidePanelProps } from "./components/layout";
 
 // Export icons
 export * from "./components/ui/icons";

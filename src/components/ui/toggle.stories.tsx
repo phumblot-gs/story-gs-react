@@ -3,6 +3,7 @@ import React from "react";
 import { Toggle } from "./toggle";
 import { Icon } from "./icons";
 import { Layout, HStack, VStack } from "@/components/layout";
+import { SidePanel } from "@/components/layout/SidePanel";
 
 const meta: Meta<typeof Toggle> = {
   title: "UI/Toggle",
@@ -218,12 +219,34 @@ export const Default: Story = {
 };
 
 export const IconOnly: Story = {
-  args: {
-    variant: "secondary",
-    size: "medium",
-    className: "p-0 w-6 h-6",
-    children: <Icon name="Switch" size={12} />,
-    "aria-label": "Toggle switch",
+  render: () => {
+    const [isPanelOpen, setIsPanelOpen] = React.useState(false);
+
+    return (
+      <>
+        <Toggle
+          variant="secondary"
+          size="medium"
+          className="p-0 w-6 h-6"
+          isActive={isPanelOpen}
+          onClick={() => setIsPanelOpen(!isPanelOpen)}
+          aria-label="Toggle side panel"
+        >
+          <Icon name="Switch" size={12} />
+        </Toggle>
+        <SidePanel
+          isOpen={isPanelOpen}
+          onClose={() => setIsPanelOpen(false)}
+        >
+          <div className="p-6">
+            <h2 className="gs-typo-h2 text-white mb-4">Side Panel</h2>
+            <p className="text-white text-sm">
+              Ce panneau s'ouvre et se ferme en cliquant sur le toggle ci-dessus.
+            </p>
+          </div>
+        </SidePanel>
+      </>
+    );
   },
 };
 

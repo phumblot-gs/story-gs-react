@@ -20,3 +20,6 @@ export { ActionBarProvider } from './ActionBarContext';
 export { useActionBarContext } from './ActionBarContext';
 
 export { useBgContext, BgProvider } from './BgContext';
+
+export { SidePanel } from './SidePanel';
+export type { SidePanelProps } from './SidePanel';
