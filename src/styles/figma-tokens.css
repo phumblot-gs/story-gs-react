@@ -1,7 +1,7 @@
 /**
  * Variables CSS générées automatiquement depuis les tokens Figma
  * NE PAS MODIFIER DIRECTEMENT - Généré par scripts/generate-css-tokens.cjs
- * Date: 2025-11-01T22:10:05.655Z
+ * Date: 2025-11-02T09:32:15.398Z
  */
 
 :root {
@@ -1278,111 +1278,6 @@
   text-decoration: none;
 }
 
-/* Checkbox styles pour adaptation selon background */
-[data-bg="white"].checkbox-default {
-  background-color: var(--color-grey-lighter);
-  border-color: var(--color-grey-lighter);
-}
-
-[data-bg="white"].checkbox-default[data-state="checked"] {
-  background-color: var(--color-black);
-  color: var(--color-white);
-  border-color: var(--color-black);
-}
-
-[data-bg="grey"].checkbox-default {
-  background-color: var(--color-white);
-  border-color: var(--color-white);
-}
-
-[data-bg="grey"].checkbox-default[data-state="checked"] {
-  background-color: var(--color-black);
-  color: var(--color-white);
-  border-color: var(--color-black);
-}
-
-[data-bg="black"].checkbox-default {
-  background-color: var(--color-black-secondary);
-  border-color: var(--color-black-secondary);
-}
-
-[data-bg="black"].checkbox-default[data-state="checked"] {
-  background-color: var(--color-white);
-  color: var(--color-black);
-  border-color: var(--color-white);
-}
-
-/* Label styles pour adaptation selon background */
-[data-bg="white"].label-default {
-  color: #292828; /* text-black */
-}
-
-[data-bg="grey"].label-default {
-  color: #292828; /* text-black */
-}
-
-[data-bg="black"].label-default {
-  color: #ffffff; /* text-white */
-}
-
-/* RadioGroupItem styles pour adaptation selon background */
-[data-bg="white"].radio-group-item-default {
-  background-color: var(--color-grey-lighter);
-}
-
-[data-bg="white"].radio-group-item-default > span > svg {
-  fill: var(--color-black);
-  color: var(--color-black);
-}
-
-[data-bg="white"].radio-group-item-default[data-state="checked"] {
-  background-color: var(--color-black);
-  color: var(--color-white);
-}
-
-[data-bg="white"].radio-group-item-default[data-state="checked"] > span > svg {
-  fill: var(--color-white);
-  color: var(--color-white);
-}
-
-[data-bg="grey"].radio-group-item-default {
-  background-color: var(--color-white);
-}
-
-[data-bg="grey"].radio-group-item-default > span > svg {
-  fill: var(--color-black);
-  color: var(--color-black);
-}
-
-[data-bg="grey"].radio-group-item-default[data-state="checked"] {
-  background-color: var(--color-black);
-  color: var(--color-white);
-}
-
-[data-bg="grey"].radio-group-item-default[data-state="checked"] > span > svg {
-  fill: var(--color-white);
-  color: var(--color-white);
-}
-
-[data-bg="black"].radio-group-item-default {
-  background-color: var(--color-black-secondary);
-}
-
-[data-bg="black"].radio-group-item-default > span > svg {
-  fill: var(--color-white);
-  color: var(--color-white);
-}
-
-[data-bg="black"].radio-group-item-default[data-state="checked"] {
-  background-color: var(--color-white);
-  color: var(--color-black);
-}
-
-[data-bg="black"].radio-group-item-default[data-state="checked"] > span > svg {
-  fill: var(--color-black);
-  color: var(--color-black);
-}
-
 /* Classes de thème */
 .theme-light {
   color-scheme: light;
@@ -1390,4 +1285,104 @@
 
 .theme-dark {
   color-scheme: dark;
+}
+
+/* ButtonToggle styles pour adaptation selon background */
+/* Container styles */
+[data-bg="white"].button-toggle-default[data-state="on"]:not(:disabled) {
+  background-color: #292828; /* black */
+}
+
+[data-bg="white"].button-toggle-default[data-state="off"]:not(:disabled) {
+  background-color: #f3f3f3; /* grey-lighter */
+}
+
+[data-bg="grey"].button-toggle-default[data-state="on"]:not(:disabled) {
+  background-color: #292828; /* black */
+}
+
+[data-bg="grey"].button-toggle-default[data-state="off"]:not(:disabled) {
+  background-color: #ffffff; /* white */
+}
+
+[data-bg="black"].button-toggle-default[data-state="on"]:not(:disabled) {
+  background-color: #ffffff; /* white */
+}
+
+[data-bg="black"].button-toggle-default[data-state="off"]:not(:disabled) {
+  background-color: #3a3a3a; /* black-secondary */
+}
+
+/* Disabled container styles */
+[data-bg="white"].button-toggle-default[data-state="on"]:disabled,
+[data-bg="grey"].button-toggle-default[data-state="on"]:disabled {
+  background-color: #c1c1c1; /* grey-stronger */
+}
+
+[data-bg="white"].button-toggle-default[data-state="off"]:disabled {
+  background-color: #f3f3f3; /* grey-lighter */
+}
+
+[data-bg="grey"].button-toggle-default[data-state="off"]:disabled {
+  background-color: #ffffff; /* white */
+}
+
+[data-bg="black"].button-toggle-default[data-state="on"]:disabled {
+  background-color: #ffffff; /* white */
+}
+
+[data-bg="black"].button-toggle-default[data-state="off"]:disabled {
+  background-color: #3a3a3a; /* black-secondary */
+}
+
+/* Pill styles */
+[data-bg="white"].button-toggle-default[data-state="on"]:not(:disabled) .button-toggle-pill,
+[data-bg="grey"].button-toggle-default[data-state="on"]:not(:disabled) .button-toggle-pill {
+  background-color: #ffffff; /* white */
+}
+
+[data-bg="black"].button-toggle-default[data-state="on"]:not(:disabled) .button-toggle-pill {
+  background-color: #292828; /* black */
+}
+
+[data-bg="white"].button-toggle-default[data-state="off"]:not(:disabled) .button-toggle-pill,
+[data-bg="grey"].button-toggle-default[data-state="off"]:not(:disabled) .button-toggle-pill,
+[data-bg="black"].button-toggle-default[data-state="off"]:not(:disabled) .button-toggle-pill {
+  background-color: #292828; /* black */
+}
+
+.button-toggle-default:disabled .button-toggle-pill {
+  background-color: #c1c1c1; /* grey-stronger */
+}
+
+/* Text styles */
+[data-bg="white"].button-toggle-default[data-state="on"]:not(:disabled) .button-toggle-text,
+[data-bg="grey"].button-toggle-default[data-state="on"]:not(:disabled) .button-toggle-text {
+  color: #ffffff; /* white */
+}
+
+[data-bg="black"].button-toggle-default[data-state="on"]:not(:disabled) .button-toggle-text {
+  color: #292828; /* black */
+}
+
+[data-bg="white"].button-toggle-default[data-state="off"]:not(:disabled) .button-toggle-text,
+[data-bg="grey"].button-toggle-default[data-state="off"]:not(:disabled) .button-toggle-text {
+  color: #292828; /* black */
+}
+
+[data-bg="black"].button-toggle-default[data-state="off"]:not(:disabled) .button-toggle-text {
+  color: #ffffff; /* white */
+}
+
+.button-toggle-default:disabled .button-toggle-text {
+  color: #c1c1c1; /* grey-stronger */
+}
+
+/* Base pill styles */
+.button-toggle-pill {
+  width: 14px;
+  height: 14px;
+  border-radius: 7px;
+  flex-shrink: 0;
+  transition: all 0.2s;
 }

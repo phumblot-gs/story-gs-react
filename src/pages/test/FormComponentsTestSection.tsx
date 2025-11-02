@@ -161,9 +161,8 @@ const FormComponentsTestSection: React.FC = () => {
                   <Label>Switch</Label>
                   <div className="flex items-center space-x-2 mt-2">
                     <Switch
-                      background={bg}
-                      checked={switchValue}
-                      onCheckedChange={setSwitchValue}
+                      value={switchValue}
+                      onValueChange={setSwitchValue}
                     />
                     <span className={cn(
                       "text-sm",
@@ -361,9 +360,8 @@ const FormComponentsTestSection: React.FC = () => {
                     )}>
                       <FormControl>
                         <Switch
-                          background={selectedBackground}
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
+                          value={field.value}
+                          onValueChange={field.onChange}
                         />
                       </FormControl>
                       <div className="space-y-1 leading-none">

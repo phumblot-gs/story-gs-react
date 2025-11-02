@@ -1,48 +1,136 @@
-
 import * as React from "react"
-import * as SwitchPrimitives from "@radix-ui/react-switch"
-import { cva, type VariantProps } from "class-variance-authority"
-
 import { cn } from "@/lib/utils"
+import { useBgContext } from "@/components/layout/BgContext"
 
-const switchVariants = cva(
-  "peer inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50",
-  {
-    variants: {
-      background: {
-        white: "data-[state=checked]:bg-black data-[state=unchecked]:bg-grey-light [&>span]:bg-white [&>span]:data-[state=checked]:border-black",
-        black: "data-[state=checked]:bg-blue-primary data-[state=unchecked]:bg-grey-strongest [&>span]:bg-black [&>span]:data-[state=checked]:border-blue-primary",
-        grey: "data-[state=checked]:bg-black data-[state=unchecked]:bg-grey-stronger [&>span]:bg-grey [&>span]:data-[state=checked]:border-black",
-      },
-    },
-    defaultVariants: {
-      background: "white",
-    },
+export interface SwitchProps extends 
+  Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'value'> {
+  // Toggle state
+  value?: boolean
+  onValueChange?: (value: boolean) => void
+  
+  // Text labels
+  onText?: string
+  offText?: string
+  
+  disabled?: boolean
+  debug?: boolean
+}
+
+const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
+  ({ 
+    className,
+    value = true,
+    onValueChange,
+    onText = "On",
+    offText = "Off",
+    disabled = false,
+    debug,
+    onClick,
+    onFocus,
+    onBlur,
+    ...props 
+  }, ref) => {
+    const bg = useBgContext();
+    
+    // Handle click to toggle state (always needed)
+    const handleClick = React.useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+      if (debug) {
+        console.log('[Switch Click]', {
+          value,
+          newValue: !value,
+          bg,
+          disabled,
+          onText,
+          offText,
+          event: e,
+        });
+      }
+      if (!disabled) {
+        onValueChange?.(!value)
+      }
+      onClick?.(e)
+    }, [debug, value, bg, disabled, onText, offText, onValueChange, onClick]);
+
+    // Debug mode : wrapper pour onFocus avec log
+    const handleFocus = React.useCallback((e: React.FocusEvent<HTMLButtonElement>) => {
+      if (debug) {
+        console.log('[Switch Focus]', {
+          value,
+          bg,
+          disabled,
+          event: e,
+        });
+      }
+      onFocus?.(e);
+    }, [debug, value, bg, disabled, onFocus]);
+
+    // Debug mode : wrapper pour onBlur avec log
+    const handleBlur = React.useCallback((e: React.FocusEvent<HTMLButtonElement>) => {
+      if (debug) {
+        console.log('[Switch Blur]', {
+          value,
+          bg,
+          disabled,
+          event: e,
+        });
+      }
+      onBlur?.(e);
+    }, [debug, value, bg, disabled, onBlur]);
+    
+    const displayText = value ? onText : offText
+    
+    return (
+      <button
+        ref={ref}
+        type="button"
+        role="switch"
+        aria-checked={value}
+        aria-label={displayText}
+        disabled={disabled}
+        data-bg={bg || undefined}
+        data-state={value ? "on" : "off"}
+        className={cn(
+          // Base container styles with fixed height
+          "relative inline-flex items-center justify-start p-1 rounded-[10px]",
+          "min-w-[40px] h-[20px] min-h-[20px] max-h-[20px] box-border",
+          "transition-all duration-200",
+          "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
+          !disabled && "cursor-pointer",
+          // Use CSS classes for background adaptation
+          "button-toggle-default",
+          debug && "ring-2 ring-pink ring-offset-2",
+          className
+        )}
+        onClick={handleClick}
+        onFocus={debug ? handleFocus : onFocus}
+        onBlur={debug ? handleBlur : onBlur}
+        {...props}
+      >
+        {/* Toggle pill and label container */}
+        <div className={cn(
+          "flex items-center w-full h-full gap-1",
+          value ? "flex-row-reverse" : "flex-row"
+        )}>
+          {/* Circular pill */}
+          <div className="button-toggle-pill" />
+          
+          {/* Label */}
+          <div className="flex-1 flex items-center justify-center px-[3px] min-w-0">
+            <span className="button-toggle-text text-[8px] leading-[8px] font-['Avenir_Next',_sans-serif] font-normal select-none whitespace-nowrap">
+              {displayText}
+            </span>
+          </div>
+        </div>
+        {debug && (
+          <span className="absolute -top-6 left-0 text-xs bg-pink text-white px-1 rounded whitespace-nowrap">
+            {value ? 'on' : 'off'}/{bg || 'no-bg'}
+          </span>
+        )}
+      </button>
+    )
   }
 )
 
-export interface SwitchProps
-  extends React.ComponentPropsWithoutRef<typeof SwitchPrimitives.Root>,
-    VariantProps<typeof switchVariants> {
-  background?: "white" | "black" | "grey"  
-}
+Switch.displayName = "Switch"
 
-const Switch = React.forwardRef<
-  React.ElementRef<typeof SwitchPrimitives.Root>,
-  SwitchProps
->(({ className, background, ...props }, ref) => (
-  <SwitchPrimitives.Root
-    className={cn(switchVariants({ background, className }))}
-    {...props}
-    ref={ref}
-  >
-    <SwitchPrimitives.Thumb
-      className={cn(
-        "pointer-events-none block h-4 w-4 rounded-full shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
-      )}
-    />
-  </SwitchPrimitives.Root>
-))
-Switch.displayName = SwitchPrimitives.Root.displayName
-
-export { Switch, switchVariants }
+export { Switch }
