@@ -44,6 +44,8 @@ export const renderIcon = (
       return <CustomIcons.CustomSearchIcon />;
     case "Flag":
       return <CustomIcons.CustomFlagIcon />;
+    case "FlagEmpty":
+      return <CustomIcons.CustomFlagEmptyIcon />;
     case "Switch":
       return <CustomIcons.CustomSwitchIcon />;
     case "Scroll":

@@ -89,7 +89,7 @@ export const AllIcons: Story = {
   render: () => {
     // Organiser les icônes par catégories selon icon-renderer.tsx
     const statusIcons: IconName[] = ["Check", "X", "Alert", "Status", "Urgent"];
-    const actionIcons: IconName[] = ["Plus", "Pencil", "Sort", "Filter", "Eye", "Logout", "Refresh", "Search", "Flag", "Switch", "Scroll"];
+    const actionIcons: IconName[] = ["Plus", "Pencil", "Sort", "Filter", "Eye", "Logout", "Refresh", "Search", "Flag", "FlagEmpty", "Switch", "Scroll"];
     const itemIcons: IconName[] = ["Tag", "Bell", "Star", "Vedette", "Comment", "FolderOpened", "FolderMoved"];
     const navigationIcons: IconName[] = ["ArrowRight", "ArrowLeft", "ArrowUp", "ArrowDown"];
     const utilityIcons: IconName[] = ["Help", "Settings", "User"];

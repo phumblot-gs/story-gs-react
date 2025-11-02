@@ -1589,6 +1589,190 @@
   color: #ffffff;
 }
 
+/* TagLabel Component Styles */
+/* Variables CSS pour TagLabel - basées sur les tokens Figma */
+:root {
+  /* TagLabel - White background */
+  --tag-label-w-bg-default: #f3f3f3;
+  --tag-label-w-fg-default: #292828;
+  --tag-label-w-bg-hover: #292828;
+  --tag-label-w-fg-hover: #ffffff;
+  --tag-label-w-bg-pressed: #292828;
+  --tag-label-w-fg-pressed: #cdedff;
+  --tag-label-w-bg-disabled: #f3f3f3;
+  --tag-label-w-fg-disabled: #292828;
+  
+  /* TagLabel - Grey background */
+  --tag-label-g-bg-default: #ffffff;
+  --tag-label-g-fg-default: #292828;
+  --tag-label-g-bg-hover: #292828;
+  --tag-label-g-fg-hover: #ffffff;
+  --tag-label-g-bg-pressed: #292828;
+  --tag-label-g-fg-pressed: #cdedff;
+  --tag-label-g-bg-disabled: #ffffff;
+  --tag-label-g-fg-disabled: #292828;
+  
+  /* TagLabel - Black background */
+  --tag-label-b-bg-default: #3a3a3a;
+  --tag-label-b-fg-default: #ffffff;
+  --tag-label-b-bg-hover: #ffffff;
+  --tag-label-b-fg-hover: #292828;
+  --tag-label-b-bg-pressed: #3a3a3a;
+  --tag-label-b-fg-pressed: #cdedff;
+  --tag-label-b-bg-disabled: #ffffff;
+  --tag-label-b-fg-disabled: #292828;
+  
+  /* Label colors (from Figma variables) */
+  --label-blue: #74d4da;
+  --label-green: #89cc52;
+  --label-orange: #ff9900;
+  --label-pink: #ffaad4;
+  --label-purple: #a44c9f;
+  --label-red: #dd3733;
+  --label-white: #ffffff;
+}
+
+/* TagLabel styles */
+[data-bg="white"] .tag-label {
+  background: var(--tag-label-w-bg-default);
+  color: var(--tag-label-w-fg-default);
+}
+
+[data-bg="white"] .tag-label:hover:not(.tag-label-disabled) {
+  background: var(--tag-label-w-bg-hover);
+  color: var(--tag-label-w-fg-hover);
+}
+
+[data-bg="white"] .tag-label:active:not(.tag-label-disabled) {
+  background: var(--tag-label-w-bg-pressed);
+  color: var(--tag-label-w-fg-pressed);
+}
+
+[data-bg="white"] .tag-label.tag-label-disabled {
+  background: var(--tag-label-w-bg-disabled);
+  color: var(--tag-label-w-fg-disabled);
+}
+
+[data-bg="grey"] .tag-label {
+  background: var(--tag-label-g-bg-default);
+  color: var(--tag-label-g-fg-default);
+}
+
+[data-bg="grey"] .tag-label:hover:not(.tag-label-disabled) {
+  background: var(--tag-label-g-bg-hover);
+  color: var(--tag-label-g-fg-hover);
+}
+
+[data-bg="grey"] .tag-label:active:not(.tag-label-disabled) {
+  background: var(--tag-label-g-bg-pressed);
+  color: var(--tag-label-g-fg-pressed);
+}
+
+[data-bg="grey"] .tag-label.tag-label-disabled {
+  background: var(--tag-label-g-bg-disabled);
+  color: var(--tag-label-g-fg-disabled);
+}
+
+[data-bg="black"] .tag-label {
+  background: var(--tag-label-b-bg-default);
+  color: var(--tag-label-b-fg-default);
+}
+
+[data-bg="black"] .tag-label:hover:not(.tag-label-disabled) {
+  background: var(--tag-label-b-bg-hover);
+  color: var(--tag-label-b-fg-hover);
+}
+
+[data-bg="black"] .tag-label:active:not(.tag-label-disabled) {
+  background: var(--tag-label-b-bg-pressed);
+  color: var(--tag-label-b-fg-pressed);
+}
+
+[data-bg="black"] .tag-label.tag-label-disabled {
+  background: var(--tag-label-b-bg-disabled);
+  color: var(--tag-label-b-fg-disabled);
+}
+
+/* TagCross dans TagLabel - mêmes styles que TagText */
+[data-bg="white"] .tag-label:hover .tag-cross:not(:disabled) {
+  color: var(--tag-cross-w-fg-hover);
+}
+
+[data-bg="white"] .tag-label:active .tag-cross:not(:disabled) {
+  color: var(--tag-cross-w-fg-pressed);
+}
+
+[data-bg="white"] .tag-label-disabled .tag-cross {
+  color: var(--tag-cross-w-fg-disabled);
+  cursor: not-allowed;
+}
+
+[data-bg="grey"] .tag-label:hover .tag-cross:not(:disabled) {
+  color: var(--tag-cross-g-fg-hover);
+}
+
+[data-bg="grey"] .tag-label:active .tag-cross:not(:disabled) {
+  color: var(--tag-cross-g-fg-pressed);
+}
+
+[data-bg="grey"] .tag-label-disabled .tag-cross {
+  color: var(--tag-cross-g-fg-disabled);
+  cursor: not-allowed;
+}
+
+[data-bg="black"] .tag-label:hover .tag-cross:not(:disabled) {
+  color: var(--tag-cross-b-fg-hover);
+}
+
+[data-bg="black"] .tag-label:active .tag-cross:not(:disabled) {
+  color: var(--tag-cross-b-fg-pressed);
+}
+
+[data-bg="black"] .tag-label-disabled .tag-cross {
+  color: var(--tag-cross-b-fg-disabled);
+  cursor: not-allowed;
+}
+
+/* Disabled state - les labels gardent leur couleur mais avec opacité réduite */
+.tag-label-disabled .tag-label-icon {
+  opacity: 0.5;
+}
+
+/* Cas particulier : white label sur grey background - ajout d'une bordure grise intérieure */
+[data-bg="grey"] .tag-label-white-on-grey {
+  border: 1px solid var(--color-grey-stronger);
+  border-radius: 2px;
+  box-sizing: border-box;
+}
+
+/* Enlever le border au hover pour grey background */
+[data-bg="grey"] .tag-label:hover:not(.tag-label-disabled) .tag-label-white-on-grey {
+  border: none;
+}
+
+/* Cas particulier : white label sur black background - bordure au hover uniquement */
+[data-bg="black"] .tag-label-white-on-black {
+  border: none;
+  border-radius: 2px;
+  box-sizing: border-box;
+}
+
+/* Ajouter le border au hover pour black background */
+[data-bg="black"] .tag-label:hover:not(.tag-label-disabled) .tag-label-white-on-black {
+  border: 1px solid var(--color-grey-stronger);
+}
+
+/* Application de la couleur via variable CSS sur la div */
+.tag-label-icon[style*="--tag-label-color"] {
+  color: var(--tag-label-color);
+}
+
+/* Les SVG dans tag-label-icon doivent s'adapter au conteneur */
+.tag-label-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
 /* Classes de thème */
 .theme-light {
   color-scheme: light;

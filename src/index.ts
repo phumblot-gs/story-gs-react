@@ -240,6 +240,7 @@ import { Toaster, toast } from "./components/ui/sonner";
 import { Switch } from "./components/ui/switch";
 import { TagText } from "./components/ui/tag-text";
 import { TagStar } from "./components/ui/tag-star";
+import { TagLabel } from "./components/ui/tag-label";
 import {
   Table,
   TableHeader,
@@ -508,6 +509,7 @@ export { Toaster, toast };
 export { Switch };
 export { TagText };
 export { TagStar };
+export { TagLabel };
 export { Table, TableHeader, TableBody, TableFooter, TableHead, TableRow, TableCell, TableCaption };
 export { Textarea };
 export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider };

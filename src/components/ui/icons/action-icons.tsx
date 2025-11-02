@@ -76,11 +76,17 @@ export const CustomSearchIcon = () => (
   </svg>
 )
 
-export const CustomFlagIcon = () => (
+export const CustomFlagEmptyIcon = () => (
   <svg width="12" height="12" viewBox="0 0 14 12" preserveAspectRatio="xMidYMid meet" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M11 1.20001H3C1.89543 1.20001 1 2.09544 1 3.20001V8.80001C1 9.90458 1.89543 10.8 3 10.8H11C12.1046 10.8 13 9.90458 13 8.80001V3.20001C13 2.09544 12.1046 1.20001 11 1.20001Z" stroke="currentColor" strokeWidth="0.5" strokeMiterlimit="10"/>
     <path d="M1.75 1.80005L12.25 10.2" stroke="currentColor" strokeWidth="0.5" strokeMiterlimit="10"/>
     <path d="M12.25 1.80005L1.75 10.2" stroke="currentColor" strokeWidth="0.5" strokeMiterlimit="10"/>
+  </svg>
+)
+
+export const CustomFlagIcon = () => (
+  <svg width="10" height="8" viewBox="0 0 14 12" preserveAspectRatio="xMidYMid meet" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M11 1.2H3C1.89543 1.2 1 2.09543 1 3.2V8.8C1 9.90457 1.89543 10.8 3 10.8H11C12.1046 10.8 13 9.90457 13 8.8V3.2C13 2.09543 12.1046 1.2 11 1.2Z" fill="currentColor"/>
   </svg>
 )
 
