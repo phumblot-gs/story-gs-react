@@ -11,7 +11,78 @@ const meta: Meta<typeof ButtonStatus> = {
     layout: "centered",
     controls: {
       sort: 'alpha'
-    }
+    },
+    docs: {
+      description: {
+        component: `ButtonStatus component for displaying media status with approve/reject actions.
+
+## Features
+- Media status display with color-coded appearance
+- Approve (Check) or Reject (X) icon support
+- Active state management via \`isActive\` prop
+- Three sizes (small, medium, large)
+- Disabled state support
+- Event handlers (onClick, onFocus, onBlur)
+- Debug mode for development
+
+## Active State with isActive
+
+The \`isActive\` prop allows you to control the active state of the button. When \`isActive\` is \`true\`, the button displays an active appearance (applies hover styles).
+
+**Important:** The ButtonStatus component does not automatically toggle the \`isActive\` state. You must implement the toggle logic yourself in the \`onClick\` handler.
+
+\`\`\`tsx
+// Controlled active state - YOU must handle the toggle logic
+const [isActive, setIsActive] = useState(false);
+
+<ButtonStatus
+  status={MediaStatus.SUBMITTED_FOR_APPROVAL}
+  icon="Check"
+  isActive={isActive}
+  onClick={() => setIsActive(!isActive)} // Toggle logic is YOUR responsibility
+/>
+\`\`\`
+
+**Behavior:**
+- When \`isActive\` is \`true\`, the button applies styles similar to the hover state
+- The active state is managed entirely by the parent component via \`isActive\` and \`onClick\`
+- You must implement the toggle logic (\`setIsActive(!isActive)\`) in your \`onClick\` handler
+- This gives you full control over when and how the button state changes
+
+## Basic Usage
+
+\`\`\`tsx
+import { ButtonStatus, MediaStatus } from '@story-gs-react';
+
+<ButtonStatus
+  status={MediaStatus.SUBMITTED_FOR_APPROVAL}
+  icon="Check"
+/>
+\`\`\`
+
+## Sizes
+
+The ButtonStatus component supports three sizes:
+
+\`\`\`tsx
+<ButtonStatus status={MediaStatus.VALIDATED} icon="Check" size="small" />
+<ButtonStatus status={MediaStatus.VALIDATED} icon="Check" size="medium" />
+<ButtonStatus status={MediaStatus.VALIDATED} icon="Check" size="large" />
+\`\`\`
+
+## Status Colors
+
+Each media status has a specific color associated with it:
+
+- **Validated**: Green
+- **Rejected**: Red
+- **Pending**: Yellow/Orange
+- **Ignored**: Grey
+- And more...
+
+The button automatically applies the correct color based on the \`status\` prop.`,
+      },
+    },
   },
   tags: ["autodocs"],
   argTypes: {
@@ -26,16 +97,32 @@ const meta: Meta<typeof ButtonStatus> = {
     icon: {
       options: ["Check", "X"],
       control: { type: "radio" },
+      description: "Icon to display (Check for approve, X for reject)",
     },
     isActive: {
       control: "boolean",
+      description: "Active state. When true, applies active styles (hover state). You must implement the toggle logic yourself in onClick.",
     },
     disabled: {
       control: "boolean",
+      description: "Disable the button",
     },
     size: {
       options: ["small", "medium", "large"],
       control: { type: "select" },
+      description: "Button size (small, medium, large)",
+    },
+    onClick: {
+      action: "clicked",
+      description: "Function called on click. You must implement the toggle logic (setIsActive(!isActive)) if you want toggle behavior.",
+    },
+    onFocus: {
+      action: "focused",
+      description: "Function called when the button receives focus",
+    },
+    onBlur: {
+      action: "blurred",
+      description: "Function called when the button loses focus",
     },
   },
 };

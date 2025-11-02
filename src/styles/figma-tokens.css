@@ -2189,3 +2189,96 @@
 .theme-dark {
   color-scheme: dark;
 }
+
+/* Toggle Component Styles */
+/* État actif du toggle : applique les styles hover correspondants aux variants de Button */
+
+/* White background - Normal variant */
+[data-bg="white"].toggle.toggle-active.btn-normal:not(:disabled) {
+  background: var(--button-w-normal-bg-hover);
+  color: var(--button-w-normal-fg-hover);
+}
+
+/* White background - Secondary variant */
+[data-bg="white"].toggle.toggle-active.btn-secondary:not(:disabled) {
+  background: var(--button-w-secondary-bg-hover);
+  color: var(--button-w-secondary-fg-hover);
+}
+
+/* White background - Ghost variant */
+[data-bg="white"].toggle.toggle-active.btn-ghost:not(:disabled) {
+  background: var(--button-w-ghost-bg-hover);
+  color: var(--button-w-ghost-fg-hover);
+}
+
+/* White background - Outline variant */
+[data-bg="white"].toggle.toggle-active.btn-outline:not(:disabled) {
+  background: var(--button-w-outline-bg-hover);
+  color: var(--button-w-outline-fg-hover);
+}
+
+/* White background - Destructive variant */
+[data-bg="white"].toggle.toggle-active.btn-destructive:not(:disabled) {
+  background: var(--button-w-destructive-bg-hover);
+  color: var(--button-w-destructive-fg-hover);
+}
+
+/* Grey background - Normal variant */
+[data-bg="grey"].toggle.toggle-active.btn-normal:not(:disabled) {
+  background: var(--button-g-normal-bg-hover);
+  color: var(--button-g-normal-fg-hover);
+}
+
+/* Grey background - Secondary variant */
+[data-bg="grey"].toggle.toggle-active.btn-secondary:not(:disabled) {
+  background: var(--button-g-secondary-bg-hover);
+  color: var(--button-g-secondary-fg-hover);
+}
+
+/* Grey background - Ghost variant */
+[data-bg="grey"].toggle.toggle-active.btn-ghost:not(:disabled) {
+  background: var(--button-g-ghost-bg-hover);
+  color: var(--button-g-ghost-fg-hover);
+}
+
+/* Grey background - Outline variant */
+[data-bg="grey"].toggle.toggle-active.btn-outline:not(:disabled) {
+  background: var(--button-g-outline-bg-hover);
+  color: var(--button-g-outline-fg-hover);
+}
+
+/* Grey background - Destructive variant */
+[data-bg="grey"].toggle.toggle-active.btn-destructive:not(:disabled) {
+  background: var(--button-g-destructive-bg-hover);
+  color: var(--button-g-destructive-fg-hover);
+}
+
+/* Black background - Normal variant */
+[data-bg="black"].toggle.toggle-active.btn-normal:not(:disabled) {
+  background: var(--button-b-normal-bg-hover);
+  color: var(--button-b-normal-fg-hover);
+}
+
+/* Black background - Secondary variant */
+[data-bg="black"].toggle.toggle-active.btn-secondary:not(:disabled) {
+  background: var(--button-b-secondary-bg-hover);
+  color: var(--button-b-secondary-fg-hover);
+}
+
+/* Black background - Ghost variant */
+[data-bg="black"].toggle.toggle-active.btn-ghost:not(:disabled) {
+  background: var(--button-b-ghost-bg-hover);
+  color: var(--button-b-ghost-fg-hover);
+}
+
+/* Black background - Outline variant */
+[data-bg="black"].toggle.toggle-active.btn-outline:not(:disabled) {
+  background: var(--button-b-outline-bg-hover);
+  color: var(--button-b-outline-fg-hover);
+}
+
+/* Black background - Destructive variant */
+[data-bg="black"].toggle.toggle-active.btn-destructive:not(:disabled) {
+  background: var(--button-b-destructive-bg-hover);
+  color: var(--button-b-destructive-fg-hover);
+}

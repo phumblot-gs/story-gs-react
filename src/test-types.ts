@@ -6,7 +6,6 @@
 import {
   // Components
   Button,
-  ButtonCircle,
   FileBrowser,
   FolderBrowser,
   ModalLayer,
@@ -23,7 +22,6 @@ import {
 
   // Types
   ButtonProps,
-  ButtonCircleProps,
   FileBrowserProps,
   FolderBrowserProps,
   ModalLayerProps,
@@ -41,7 +39,6 @@ const buttonTest: ButtonProps = {
   children: 'Test',
   onClick: () => {},
   size: 'large',
-  background: 'white',
 };
 
 const fileTest: FileItem = {
@@ -70,7 +67,7 @@ const themeTest: ThemeCustomization = {
 };
 
 // Test that language type works
-const languageTest: TranslationLanguage = 'FR';
+const languageTest: TranslationLanguage = { code: 'FR', name: 'Français' };
 
 // Test that icon names are exported
 const iconTest: IconName = 'File';
@@ -88,7 +85,6 @@ const testHooksAvailable = () => {
 const testComponentsAvailable = () => {
   return (
     typeof Button === 'function' &&
-    typeof ButtonCircle === 'function' &&
     typeof FileBrowser === 'function' &&
     typeof FolderBrowser === 'function' &&
     typeof ThemeProvider === 'function' &&

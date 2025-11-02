@@ -1,49 +1,134 @@
-import * as React from "react"
-import * as TogglePrimitive from "@radix-ui/react-toggle"
-import { cva, type VariantProps } from "class-variance-authority"
+import * as React from "react";
+import { Button, ButtonProps, ButtonVariant, ButtonSize } from "@/components/ui/button";
+import { Icon } from "@/components/ui/icons";
+import { cn } from "@/lib/utils";
 
-import { cn } from "@/lib/utils"
-import { useBgContext } from "@/components/layout/BgContext"
+export interface ToggleProps extends Omit<ButtonProps, 'variant' | 'size' | 'onClick' | 'onFocus' | 'onBlur'> {
+  /** Variant du bouton (hérite de Button) */
+  variant?: ButtonVariant;
+  
+  /** Taille du bouton (hérite de Button) */
+  size?: ButtonSize;
+  
+  /** État actif du toggle (similaire à ButtonStatus.isActive) */
+  isActive?: boolean;
+  
+  /** Callback appelé lors du clic */
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
+  
+  /** Callback appelé lors du focus */
+  onFocus?: React.FocusEventHandler<HTMLButtonElement>;
+  
+  /** Callback appelé lors du blur */
+  onBlur?: React.FocusEventHandler<HTMLButtonElement>;
+  
+  /** Désactive le toggle */
+  disabled?: boolean;
+  
+  /** Mode debug */
+  debug?: boolean;
+}
 
-const toggleVariants = cva(
-  "inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors hover:bg-muted hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=on]:bg-accent data-[state=on]:text-accent-foreground",
-  {
-    variants: {
-      variant: {
-        default: "bg-transparent",
-        outline:
-          "border border-input bg-transparent hover:bg-accent hover:text-accent-foreground",
-      },
-      size: {
-        default: "h-10 px-3",
-        sm: "h-9 px-2.5",
-        lg: "h-11 px-5",
-      },
-    },
-    defaultVariants: {
-      variant: "default",
-      size: "default",
-    },
+const Toggle = React.forwardRef<HTMLButtonElement, ToggleProps>(
+  ({ 
+    isActive = false,
+    onClick,
+    onFocus,
+    onBlur,
+    disabled = false,
+    debug = false,
+    variant,
+    size,
+    className,
+    children,
+    ...props 
+  }, ref) => {
+    // Normaliser la taille pour déterminer la taille de l'icône
+    const normalizedSize = size || "medium";
+    
+    // Taille de l'icône selon la taille du bouton
+    const iconSize = normalizedSize === "small" ? 10 : normalizedSize === "large" ? 14 : 12;
+    
+    // Si pas de children, afficher l'icône Switch par défaut
+    const displayChildren = children || <Icon name="Switch" size={iconSize} />;
+    
+    // Debug mode : wrapper pour onClick avec log
+    const handleClick = React.useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+      if (disabled) return;
+      
+      if (debug) {
+        console.log('[Toggle Click]', {
+          isActive,
+          disabled,
+          variant,
+          size,
+          event: e,
+        });
+      }
+      
+      // Appeler le onClick original
+      onClick?.(e);
+    }, [disabled, debug, isActive, variant, size, onClick]);
+    
+    // Debug mode : wrapper pour onFocus avec log
+    const handleFocus = React.useCallback((e: React.FocusEvent<HTMLButtonElement>) => {
+      if (debug) {
+        console.log('[Toggle Focus]', {
+          isActive,
+          disabled,
+          variant,
+          size,
+          event: e,
+        });
+      }
+      onFocus?.(e);
+    }, [debug, isActive, disabled, variant, size, onFocus]);
+    
+    // Debug mode : wrapper pour onBlur avec log
+    const handleBlur = React.useCallback((e: React.FocusEvent<HTMLButtonElement>) => {
+      if (debug) {
+        console.log('[Toggle Blur]', {
+          isActive,
+          disabled,
+          variant,
+          size,
+          event: e,
+        });
+      }
+      onBlur?.(e);
+    }, [debug, isActive, disabled, variant, size, onBlur]);
+    
+    return (
+      <Button
+        ref={ref}
+        variant={variant}
+        size={size}
+        disabled={disabled}
+        debug={debug}
+        className={cn(
+          "toggle",
+          // Appliquer les styles d'état actif similaires à ButtonStatus
+          isActive && "toggle-active",
+          className
+        )}
+        data-state={isActive ? "on" : "off"}
+        aria-pressed={isActive}
+        onClick={handleClick}
+        onFocus={debug ? handleFocus : onFocus}
+        onBlur={debug ? handleBlur : onBlur}
+        {...props}
+      >
+        {displayChildren}
+        {debug && (
+          <span className="absolute -top-6 left-0 text-xs bg-pink text-white px-1 rounded whitespace-nowrap z-10">
+            {isActive ? 'on' : 'off'}
+          </span>
+        )}
+      </Button>
+    );
   }
-)
+);
 
-const Toggle = React.forwardRef<
-  React.ElementRef<typeof TogglePrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof TogglePrimitive.Root> &
-    VariantProps<typeof toggleVariants>
->(({ className, variant, size, ...props }, ref) => {
-  const bg = useBgContext();
+Toggle.displayName = "Toggle";
 
-  return (
-    <TogglePrimitive.Root
-      ref={ref}
-      data-bg={bg || undefined}
-      className={cn(toggleVariants({ variant, size, className }))}
-      {...props}
-    />
-  );
-})
-
-Toggle.displayName = TogglePrimitive.Root.displayName
-
-export { Toggle, toggleVariants }
+export { Toggle };

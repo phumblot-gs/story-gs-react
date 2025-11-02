@@ -109,14 +109,14 @@ const FormComponentsTestSection: React.FC = () => {
                 <div>
                   <Label>Input</Label>
                   <div className="mt-2">
-                    <Input background={bg} placeholder="Enter your text here" />
+                    <Input placeholder="Enter your text here" />
                   </div>
                 </div>
                 
                 <div>
                   <Label>Textarea</Label>
                   <div className="mt-2">
-                    <Textarea background={bg} placeholder="Write your message here" />
+                    <Textarea placeholder="Write your message here" />
                   </div>
                 </div>
                 
@@ -124,10 +124,10 @@ const FormComponentsTestSection: React.FC = () => {
                   <Label>Select</Label>
                   <div className="mt-2">
                     <Select>
-                      <SelectTrigger background={bg}>
+                      <SelectTrigger>
                         <SelectValue placeholder="Select an option" />
                       </SelectTrigger>
-                      <SelectContent background={bg}>
+                      <SelectContent>
                         <SelectItem value="option1">Option 1</SelectItem>
                         <SelectItem value="option2">Option 2</SelectItem>
                         <SelectItem value="option3">Option 3</SelectItem>
@@ -140,7 +140,6 @@ const FormComponentsTestSection: React.FC = () => {
                   <Label>Slider</Label>
                   <div className="mt-2">
                     <Slider 
-                      background={bg}
                       value={sliderValue} 
                       onValueChange={setSliderValue} 
                       max={100} 
@@ -208,7 +207,6 @@ const FormComponentsTestSection: React.FC = () => {
                   <div className="mt-2 space-x-2">
                     <Button 
                       variant="default" 
-                      background={bg as any}
                     >
                       Default Button
                     </Button>
@@ -239,7 +237,7 @@ const FormComponentsTestSection: React.FC = () => {
                     <FormItem>
                       <FormLabel>Name</FormLabel>
                       <FormControl>
-                        <Input background={selectedBackground} placeholder="Your name" {...field} />
+                        <Input placeholder="Your name" {...field} />
                       </FormControl>
                       <FormDescription className={selectedBackground === "black" ? "text-gray-400" : ""}>
                         Enter your full name.
@@ -256,7 +254,7 @@ const FormComponentsTestSection: React.FC = () => {
                     <FormItem>
                       <FormLabel>Email</FormLabel>
                       <FormControl>
-                        <Input background={selectedBackground} placeholder="your.email@example.com" {...field} />
+                        <Input placeholder="your.email@example.com" {...field} />
                       </FormControl>
                       <FormDescription className={selectedBackground === "black" ? "text-gray-400" : ""}>
                         Your email will not be shared.
@@ -275,7 +273,6 @@ const FormComponentsTestSection: React.FC = () => {
                     <FormLabel>Bio</FormLabel>
                     <FormControl>
                       <Textarea 
-                        background={selectedBackground}
                         placeholder="Tell us a bit about yourself" 
                         className="min-h-[120px]" 
                         {...field} 
@@ -301,11 +298,11 @@ const FormComponentsTestSection: React.FC = () => {
                         defaultValue={field.value}
                       >
                         <FormControl>
-                          <SelectTrigger background={selectedBackground}>
+                          <SelectTrigger>
                             <SelectValue placeholder="Select a role" />
                           </SelectTrigger>
                         </FormControl>
-                        <SelectContent background={selectedBackground}>
+                        <SelectContent>
                           <SelectItem value="admin">Admin</SelectItem>
                           <SelectItem value="user">User</SelectItem>
                           <SelectItem value="editor">Editor</SelectItem>
@@ -327,7 +324,6 @@ const FormComponentsTestSection: React.FC = () => {
                       <FormLabel>Expertise Level (1-100)</FormLabel>
                       <FormControl>
                         <Slider
-                          background={selectedBackground}
                           min={1}
                           max={100}
                           step={1}
@@ -386,7 +382,6 @@ const FormComponentsTestSection: React.FC = () => {
                           <FormControl>
                             <Button
                               variant={"outline"}
-                              background={selectedBackground as any}
                               className={cn(
                                 "w-full pl-3 text-left font-normal",
                                 !field.value && "text-muted-foreground"
@@ -427,7 +422,6 @@ const FormComponentsTestSection: React.FC = () => {
                   <FormItem className="flex flex-row items-start space-x-3 space-y-0">
                     <FormControl>
                       <Checkbox
-                        background={selectedBackground}
                         checked={field.value}
                         onCheckedChange={field.onChange}
                       />
@@ -456,7 +450,7 @@ const FormComponentsTestSection: React.FC = () => {
                       >
                         <FormItem className="flex items-center space-x-3 space-y-0">
                           <FormControl>
-                            <RadioGroupItem background={selectedBackground} value="email" />
+                            <RadioGroupItem value="email" />
                           </FormControl>
                           <FormLabel>
                             Email
@@ -464,7 +458,7 @@ const FormComponentsTestSection: React.FC = () => {
                         </FormItem>
                         <FormItem className="flex items-center space-x-3 space-y-0">
                           <FormControl>
-                            <RadioGroupItem background={selectedBackground} value="sms" />
+                            <RadioGroupItem value="sms" />
                           </FormControl>
                           <FormLabel>
                             SMS
@@ -472,7 +466,7 @@ const FormComponentsTestSection: React.FC = () => {
                         </FormItem>
                         <FormItem className="flex items-center space-x-3 space-y-0">
                           <FormControl>
-                            <RadioGroupItem background={selectedBackground} value="push" />
+                            <RadioGroupItem value="push" />
                           </FormControl>
                           <FormLabel>
                             Push Notification
@@ -486,7 +480,6 @@ const FormComponentsTestSection: React.FC = () => {
               />
               
               <Button 
-                background={selectedBackground as any} 
                 type="submit" 
                 className="w-full md:w-auto"
               >

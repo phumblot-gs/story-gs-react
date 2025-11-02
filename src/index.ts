@@ -31,7 +31,8 @@ import { ButtonNotificationsRef } from "./components/notifications/types";
 import PageHeader from "./components/PageHeader";
 
 // Import additional UI components
-import { Toggle, toggleVariants } from "./components/ui/toggle";
+import { Toggle } from "./components/ui/toggle";
+import type { ToggleProps } from "./components/ui/toggle";
 import { ToggleGroup, ToggleGroupItem } from "./components/ui/toggle-group";
 import { Workflow } from "./components/ui/workflow";
 import { WorkflowStep } from "./components/ui/workflow-step";
@@ -338,7 +339,7 @@ export { FolderBrowser };
 export { Icon } from "./components/ui/icons";
 
 // Export additional UI components
-export { Toggle, toggleVariants, ToggleGroup, ToggleGroupItem };
+export { Toggle, ToggleGroup, ToggleGroupItem };
 export { Workflow, WorkflowStep };
 export type { WorkflowStepState };
 export { TruncatedText };
@@ -549,7 +550,8 @@ export type {
   SearchProps,
   PageHeaderProps,
   FolderItem,
-  FolderBrowserProps
+  FolderBrowserProps,
+  ToggleProps
 };
 
 export type { IconProps } from "./components/ui/icons";

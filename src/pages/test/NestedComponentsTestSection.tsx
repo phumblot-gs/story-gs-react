@@ -8,7 +8,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { MediaStatus } from "@/utils/mediaStatus";
 import { StatusIndicator } from "@/components/StatusIndicator";
-import { Button } from "@/components/ui/button";
 import { IconProvider } from "@/components/ui/icon-provider";
 import { ButtonStatus } from "@/components/ButtonStatus";
 

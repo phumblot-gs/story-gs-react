@@ -73,7 +73,7 @@ const TranslationTestPanel: React.FC = () => {
           <Button
             key={lang.code}
             onClick={() => setLanguage(lang)}
-            featured={language.code === lang.code}
+            variant={language.code === lang.code ? "normal" : "secondary"}
           >
             {lang.code}
           </Button>

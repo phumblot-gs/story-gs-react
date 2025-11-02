@@ -14,17 +14,17 @@ const ButtonVariantsExample = () => {
         <div className="grid grid-cols-3 gap-8">
           <div className="flex flex-col items-center gap-2 bg-white p-4 rounded-lg">
             <span className="text-sm text-muted-foreground">White Background</span>
-            <ButtonSmall background="white">Small button</ButtonSmall>
+            <ButtonSmall>Small button</ButtonSmall>
           </div>
           
           <div className="flex flex-col items-center gap-2 bg-black p-4 rounded-lg">
             <span className="text-sm text-white">Black Background</span>
-            <ButtonSmall background="black">Small button</ButtonSmall>
+            <ButtonSmall>Small button</ButtonSmall>
           </div>
           
           <div className="flex flex-col items-center gap-2 bg-grey p-4 rounded-lg">
             <span className="text-sm text-muted-foreground">Grey Background</span>
-            <ButtonSmall background="grey">Small button</ButtonSmall>
+            <ButtonSmall>Small button</ButtonSmall>
           </div>
         </div>
       </div>

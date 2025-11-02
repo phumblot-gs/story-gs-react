@@ -1,6 +1,7 @@
 
 import React, { useState } from "react";
 import { Workflow } from "@/components/ui/workflow";
+import { WorkflowStepState } from "@/components/ui/workflow-step";
 
 export const WorkflowExample: React.FC = () => {
   const [activeStep, setActiveStep] = useState(4);
@@ -15,25 +16,25 @@ export const WorkflowExample: React.FC = () => {
     { 
       bench_id: 1, 
       label: "LIVE", 
-      state: activeStep === 1 ? "current" : (activeStep > 1 ? "active" : "inactive"),
+      state: (activeStep === 1 ? "current" : (activeStep > 1 ? "active" : "inactive")) as WorkflowStepState,
       onClick: handleStepClick
     },
     { 
       bench_id: 2, 
       label: "PHASE 1", 
-      state: activeStep === 2 ? "current" : (activeStep > 2 ? "active" : "inactive"),
+      state: (activeStep === 2 ? "current" : (activeStep > 2 ? "active" : "inactive")) as WorkflowStepState,
       onClick: handleStepClick
     },
     { 
       bench_id: 3, 
       label: "EXPORTS", 
-      state: activeStep === 3 ? "current" : (activeStep > 3 ? "active" : "inactive"),
+      state: (activeStep === 3 ? "current" : (activeStep > 3 ? "active" : "inactive")) as WorkflowStepState,
       onClick: handleStepClick
     },
     { 
       bench_id: 4, 
       label: "VALIDATION", 
-      state: activeStep === 4 ? "current" : (activeStep > 4 ? "active" : "inactive"),
+      state: (activeStep === 4 ? "current" : (activeStep > 4 ? "active" : "inactive")) as WorkflowStepState,
       onClick: handleStepClick
     },
   ];
