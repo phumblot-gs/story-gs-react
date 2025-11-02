@@ -29,9 +29,10 @@ const config: StorybookConfig = {
         alias: {
           ...config.resolve?.alias,
           "@/fonts": join(__dirname, "../src/fonts"),
+          // @storybook/blocks reste nécessaire pour les fichiers .mdx
           "@storybook/blocks": join(__dirname, "../node_modules/@storybook/addon-docs/dist/blocks.mjs"),
-          "@storybook/test": join(__dirname, "../node_modules/storybook/dist/test/index.mjs"),
-          "@storybook/preview-api": join(__dirname, "../node_modules/storybook/dist/preview-api/index.mjs"),
+          // storybook/test et storybook/preview-api sont résolus automatiquement par Storybook
+          // Pas besoin d'alias explicite
         },
       },
       // Forcer Storybook à utiliser le runtime JSX de développement même en production
