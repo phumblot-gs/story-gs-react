@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Icon } from "@/components/ui/icons";
 import { Layout, HStack, VStack } from "@/components/layout";
+import { AVAILABLE_ICONS } from "@/components/ui/icons/constants";
+import { IconName } from "@/components/ui/icons/types";
 
 const meta = {
   title: "UI/Icon",
@@ -46,7 +48,7 @@ import { Icon } from '@story-gs-react';
   argTypes: {
     name: {
       control: 'select',
-      options: ['Plus', 'Settings', 'Trash', 'Pencil', 'X', 'Bell', 'Mail', 'Star', 'Check', 'Alert'],
+      options: AVAILABLE_ICONS,
       description: 'Nom de l\'icône à afficher',
     },
     size: {
@@ -84,86 +86,58 @@ export const Default: Story = {
 };
 
 export const AllIcons: Story = {
-  render: () => (
-    <Layout bg="white" padding={6}>
-      <VStack gap={6}>
-        <div>
-          <h3 className="gs-typo-h3 mb-2">Toutes les icônes disponibles</h3>
-          <p className="text-sm text-grey-stronger">
-            Liste complète des icônes avec leur nom. Taille par défaut : 12px
-          </p>
-        </div>
+  render: () => {
+    // Organiser les icônes par catégories selon icon-renderer.tsx
+    const statusIcons: IconName[] = ["Check", "X", "Alert", "Status", "Urgent"];
+    const actionIcons: IconName[] = ["Plus", "Pencil", "Sort", "Filter", "Eye", "Logout", "Refresh", "Search", "Flag", "Switch", "Scroll"];
+    const itemIcons: IconName[] = ["Tag", "Bell", "Star", "Vedette", "Comment", "FolderOpened", "FolderMoved"];
+    const navigationIcons: IconName[] = ["ArrowRight", "ArrowLeft", "ArrowUp", "ArrowDown"];
+    const utilityIcons: IconName[] = ["Help", "Settings", "User"];
+    const customIcons: IconName[] = ["ToastSuccessIcon", "ToastErrorIcon"];
+    const lucideIcons: IconName[] = [
+      "AlertTriangle", "Loader", "ChevronDown", "ChevronLeft", "ChevronRight", "ChevronUp",
+      "Download", "File", "Folder", "Globe", "Grip", "Mail", "Menu", "Minus",
+      "MoreHorizontal", "MoreVertical", "Move", "RotateCcw", "Share",
+      "StarFilled", "Trash", "Upload", "Users"
+    ];
 
-        <VStack gap={4}>
+    const renderIconGrid = (icons: IconName[], title: string) => (
+      <div key={title}>
+        <h4 className="text-sm font-medium mb-2">{title}</h4>
+        <HStack gap={4} wrap className="items-center">
+          {icons.map((iconName) => (
+            <div key={iconName} className="flex flex-col items-center gap-1">
+              <Icon name={iconName} />
+              <span className="text-xs">{iconName}</span>
+            </div>
+          ))}
+        </HStack>
+      </div>
+    );
+
+    return (
+      <Layout bg="white" padding={6}>
+        <VStack gap={6}>
           <div>
-            <h4 className="text-sm font-medium mb-2">Actions</h4>
-            <HStack gap={4} wrap className="items-center">
-              <div className="flex flex-col items-center gap-1">
-                <Icon name="Plus" />
-                <span className="text-xs">Plus</span>
-              </div>
-              <div className="flex flex-col items-center gap-1">
-                <Icon name="Pencil" />
-                <span className="text-xs">Pencil</span>
-              </div>
-              <div className="flex flex-col items-center gap-1">
-                <Icon name="X" />
-                <span className="text-xs">X</span>
-              </div>
-              <div className="flex flex-col items-center gap-1">
-                <Icon name="Trash" />
-                <span className="text-xs">Trash</span>
-              </div>
-              <div className="flex flex-col items-center gap-1">
-                <Icon name="Settings" />
-                <span className="text-xs">Settings</span>
-              </div>
-              <div className="flex flex-col items-center gap-1">
-                <Icon name="Refresh" />
-                <span className="text-xs">Refresh</span>
-              </div>
-            </HStack>
+            <h3 className="gs-typo-h3 mb-2">Toutes les icônes disponibles</h3>
+            <p className="text-sm text-grey-stronger">
+              Liste complète des {AVAILABLE_ICONS.length} icônes avec leur nom. Taille par défaut : 12px
+            </p>
           </div>
 
-          <div>
-            <h4 className="text-sm font-medium mb-2">Notifications</h4>
-            <HStack gap={4} wrap className="items-center">
-              <div className="flex flex-col items-center gap-1">
-                <Icon name="Bell" />
-                <span className="text-xs">Bell</span>
-              </div>
-              <div className="flex flex-col items-center gap-1">
-                <Icon name="Mail" />
-                <span className="text-xs">Mail</span>
-              </div>
-              <div className="flex flex-col items-center gap-1">
-                <Icon name="Alert" />
-                <span className="text-xs">Alert</span>
-              </div>
-            </HStack>
-          </div>
-
-          <div>
-            <h4 className="text-sm font-medium mb-2">Status</h4>
-            <HStack gap={4} wrap className="items-center">
-              <div className="flex flex-col items-center gap-1">
-                <Icon name="Check" />
-                <span className="text-xs">Check</span>
-              </div>
-              <div className="flex flex-col items-center gap-1">
-                <Icon name="Star" />
-                <span className="text-xs">Star</span>
-              </div>
-              <div className="flex flex-col items-center gap-1">
-                <Icon name="StarFilled" />
-                <span className="text-xs">StarFilled</span>
-              </div>
-            </HStack>
-          </div>
+          <VStack gap={4}>
+            {renderIconGrid(statusIcons, "Status")}
+            {renderIconGrid(actionIcons, "Actions")}
+            {renderIconGrid(itemIcons, "Items")}
+            {renderIconGrid(navigationIcons, "Navigation")}
+            {renderIconGrid(utilityIcons, "Utility")}
+            {renderIconGrid(customIcons, "Custom")}
+            {renderIconGrid(lucideIcons, "Lucide Icons")}
+          </VStack>
         </VStack>
-      </VStack>
-    </Layout>
-  ),
+      </Layout>
+    );
+  },
 };
 
 export const Sizes: Story = {

@@ -2,7 +2,7 @@
 import React from "react"
 
 export const CustomCheckIcon = () => (
-  <svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <svg width="12" height="12" viewBox="0 0 10 6" preserveAspectRatio="xMidYMid meet" fill="none" xmlns="http://www.w3.org/2000/svg">
     <g clipPath="url(#clip0_303_5348)">
       <path d="M9.19999 0.449982L4.09999 5.54998L0.799988 2.23798" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
     </g>
@@ -15,7 +15,7 @@ export const CustomCheckIcon = () => (
 )
 
 export const CustomXIcon = () => (
-  <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <svg width="12" height="12" viewBox="0 0 10 10" preserveAspectRatio="xMidYMid meet" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M9.25911 0.740906L0.740906 9.25911" stroke="currentColor" strokeWidth="0.5" strokeMiterlimit="10" strokeLinecap="round"/>
     <path d="M0.740906 0.740906L9.25911 9.25911" stroke="currentColor" strokeWidth="0.5" strokeMiterlimit="10" strokeLinecap="round"/>
   </svg>
@@ -42,16 +42,16 @@ export const CustomAlertIcon = () => (
 )
 
 export const CustomStatusIcon = () => (
-  <svg width="12" height="11.65" viewBox="0 0 12 11.65" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect className="status-yellow" x="0" y="4.3" width="12" height="3"/>
-    <rect className="status-purple" x="0" y="0" width="12" height="3"/>
-    <rect className="status-green" x="0" y="8.65" width="12" height="3"/>
+  <svg width="12" height="12" viewBox="0 0 12 11.65" preserveAspectRatio="xMidYMid meet" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect fill="#a44c9f" x="0" y="0" width="12" height="3"/>
+    <rect fill="#ffd331" x="0" y="4.3" width="12" height="3"/>
+    <rect fill="#89cc52" x="0" y="8.65" width="12" height="3"/>
   </svg>
 )
 
 export const CustomUrgentIcon = () => (
-  <svg width="10" height="12" viewBox="0 0 10 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M5.58552 0.354506L0.740401 6.92926C0.63297 7.06892 0.740401 7.27304 0.91229 7.27304H4.67236C4.81202 7.27304 4.90871 7.40195 4.88722 7.53087L4.03852 11.4628C3.98481 11.6884 4.28561 11.8174 4.42527 11.6347L9.27039 5.05997C9.37782 4.92031 9.27039 4.71619 9.0985 4.71619H5.33843C5.19877 4.71619 5.10208 4.58727 5.12357 4.45836L5.97227 0.526395C6.02599 0.300791 5.72518 0.171874 5.58552 0.354506Z" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
+  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M5.58552 0.354506L0.740401 6.92926C0.63297 7.06892 0.740401 7.27304 0.91229 7.27304H4.67236C4.81202 7.27304 4.90871 7.40195 4.88722 7.53087L4.03852 11.4628C3.98481 11.6884 4.28561 11.8174 4.42527 11.6347L9.27039 5.05997C9.37782 4.92031 9.27039 4.71619 9.0985 4.71619H5.33843C5.19877 4.71619 5.10208 4.58727 5.12357 4.45836L5.97227 0.526395C6.02599 0.300791 5.72518 0.171874 5.58552 0.354506Z" fill="currentColor" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
 )
 

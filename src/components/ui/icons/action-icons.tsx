@@ -24,7 +24,7 @@ export const CustomPencilIcon = () => (
 )
 
 export const CustomSortIcon = () => (
-  <svg width="12" height="13" viewBox="0 0 12 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <svg width="12" height="12" viewBox="0 0 12 13" preserveAspectRatio="xMidYMid meet" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M2.64001 11.76V0.23999" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
     <path d="M0.23999 9.56158L2.30399 11.6256C2.49599 11.8176 2.79359 11.8176 2.98559 11.6256L5.04959 9.56158" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
     <path d="M9.35999 0.23999V11.76" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -47,7 +47,7 @@ export const CustomFilterIcon = () => (
 )
 
 export const CustomEyeIcon = () => (
-  <svg width="12" height="8" viewBox="0 0 14 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <svg width="12" height="12" viewBox="0 0 14 8" preserveAspectRatio="xMidYMid meet" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M12.8182 4.00001C12.8182 5.12728 9.98182 7.63637 7.00001 7.63637C4.01819 7.63637 1.18182 5.12728 1.18182 4.00001C1.18182 2.87274 4.01819 0.363647 7.00001 0.363647C9.98182 0.363647 12.8182 2.87274 12.8182 4.00001Z" stroke="currentColor" strokeWidth="0.5" strokeMiterlimit="10"/>
     <path d="M7.00001 5.81819C8.00416 5.81819 8.81819 5.00416 8.81819 4.00001C8.81819 2.99585 8.00416 2.18182 7.00001 2.18182C5.99585 2.18182 5.18182 2.99585 5.18182 4.00001C5.18182 5.00416 5.99585 5.81819 7.00001 5.81819Z" stroke="currentColor" strokeWidth="0.5" strokeMiterlimit="10"/>
   </svg>
@@ -67,5 +67,34 @@ export const CustomRefreshIcon = () => (
     <path d="M1.5 1.5V4H4" stroke="currentColor" strokeWidth="0.75" strokeLinecap="round" strokeLinejoin="round"/>
     <path d="M1.5 6C1.5 7.19347 1.97411 8.33807 2.81802 9.18198C3.66193 10.0259 4.80653 10.5 6 10.5C7.25802 10.4953 8.46552 10.0044 9.37 9.13L10.5 8" stroke="currentColor" strokeWidth="0.75" strokeLinecap="round" strokeLinejoin="round"/>
     <path d="M8 8H10.5V10.5" stroke="currentColor" strokeWidth="0.75" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+)
+
+export const CustomSearchIcon = () => (
+  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0.772157 9.48333C0.852233 9.01431 0.840793 8.53386 0.669201 8.09916C-0.131561 6.04005 0.303138 3.61489 1.95042 1.95616C4.18112 -0.274532 7.81887 -0.274532 10.0496 1.95616C12.2803 4.18686 12.2803 7.82461 10.0496 10.0553C8.39084 11.714 5.96567 12.1373 3.90657 11.3365C3.47187 11.1649 2.97997 11.1535 2.52239 11.245L1.36701 11.4509C0.897991 11.531 0.48617 11.1306 0.577686 10.6616L0.783596 9.50621L0.772157 9.48333Z" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+)
+
+export const CustomFlagIcon = () => (
+  <svg width="12" height="12" viewBox="0 0 14 12" preserveAspectRatio="xMidYMid meet" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M11 1.20001H3C1.89543 1.20001 1 2.09544 1 3.20001V8.80001C1 9.90458 1.89543 10.8 3 10.8H11C12.1046 10.8 13 9.90458 13 8.80001V3.20001C13 2.09544 12.1046 1.20001 11 1.20001Z" stroke="currentColor" strokeWidth="0.5" strokeMiterlimit="10"/>
+    <path d="M1.75 1.80005L12.25 10.2" stroke="currentColor" strokeWidth="0.5" strokeMiterlimit="10"/>
+    <path d="M12.25 1.80005L1.75 10.2" stroke="currentColor" strokeWidth="0.5" strokeMiterlimit="10"/>
+  </svg>
+)
+
+export const CustomSwitchIcon = () => (
+  <svg width="12" height="12" viewBox="0 0 12 8" preserveAspectRatio="xMidYMid meet" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M8.37119 0.611206H3.62879C1.75721 0.611206 0.23999 2.12842 0.23999 4.00001C0.23999 5.87159 1.75721 7.38881 3.62879 7.38881H8.37119C10.2428 7.38881 11.76 5.87159 11.76 4.00001C11.76 2.12842 10.2428 0.611206 8.37119 0.611206Z" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M8.39998 5.92002C9.46037 5.92002 10.32 5.0604 10.32 4.00002C10.32 2.93963 9.46037 2.08002 8.39998 2.08002C7.33959 2.08002 6.47998 2.93963 6.47998 4.00002C6.47998 5.0604 7.33959 5.92002 8.39998 5.92002Z" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+)
+
+export const CustomScrollIcon = () => (
+  <svg width="12" height="12" viewBox="0 0 6 10" preserveAspectRatio="xMidYMid meet" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M1 5H5" stroke="currentColor" strokeWidth="0.5" strokeMiterlimit="10" strokeLinecap="round"/>
+    <path d="M1 1H5" stroke="currentColor" strokeWidth="0.5" strokeMiterlimit="10" strokeLinecap="round"/>
+    <path d="M1 9H5" stroke="currentColor" strokeWidth="0.5" strokeMiterlimit="10" strokeLinecap="round"/>
   </svg>
 )

@@ -40,6 +40,14 @@ export const renderIcon = (
       return <CustomIcons.CustomLogoutIcon />;
     case "Refresh":
       return <CustomIcons.CustomRefreshIcon />;
+    case "Search":
+      return <CustomIcons.CustomSearchIcon />;
+    case "Flag":
+      return <CustomIcons.CustomFlagIcon />;
+    case "Switch":
+      return <CustomIcons.CustomSwitchIcon />;
+    case "Scroll":
+      return <CustomIcons.CustomScrollIcon />;
       
     // Item icons
     case "Tag":
@@ -118,8 +126,6 @@ export const renderIcon = (
       return <LucideIcons.Move size={size} className="max-w-[12px] max-h-[12px]" />;
     case "RotateCcw":
       return <LucideIcons.RotateCcw size={size} className="max-w-[12px] max-h-[12px]" />;
-    case "Search":
-      return <LucideIcons.Search size={size} className="max-w-[12px] max-h-[12px]" />;
     case "Share":
       return <LucideIcons.Share2 size={size} className="max-w-[12px] max-h-[12px]" />;
     case "StarFilled":
