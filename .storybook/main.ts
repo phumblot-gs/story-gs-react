@@ -1,7 +1,6 @@
 
 import type { StorybookConfig } from "@storybook/react-vite";
 import { join } from "path";
-import { forceJsxDevRuntime } from "./vite-plugin-jsx-dev";
 
 const config: StorybookConfig = {
   stories: ["../src/**/*.mdx", "../src/**/*.stories.@(js|jsx|mjs|ts|tsx)"],
@@ -28,10 +27,6 @@ const config: StorybookConfig = {
   async viteFinal(config) {
     return {
       ...config,
-      plugins: [
-        ...(config.plugins || []),
-        forceJsxDevRuntime(),
-      ],
       resolve: {
         ...config.resolve,
         alias: {
