@@ -41,7 +41,7 @@ export const renderIcon = (
     case "Refresh":
       return <CustomIcons.CustomRefreshIcon />;
     case "Search":
-      return <CustomIcons.CustomSearchIcon />;
+      return <LucideIcons.Search size={size} className="max-w-[12px] max-h-[12px]" />;
     case "Flag":
       return <CustomIcons.CustomFlagIcon />;
     case "FlagEmpty":

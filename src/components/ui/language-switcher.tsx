@@ -32,6 +32,14 @@ export const LanguageSwitcher = ({
 }: LanguageSwitcherProps) => {
   const [isOpen, setIsOpen] = useState(false)
 
+  // Debug: vérifier que currentLanguage existe
+  React.useEffect(() => {
+    if (debug) {
+      console.log("[LanguageSwitcher] currentLanguage:", currentLanguage)
+      console.log("[LanguageSwitcher] currentLanguage?.code:", currentLanguage?.code)
+    }
+  }, [debug, currentLanguage])
+
   const handleSelect = (language: Language) => {
     if (debug) {
       console.log(`LanguageSwitcher: Language changed from ${currentLanguage.code} to ${language.code}`);
@@ -41,8 +49,35 @@ export const LanguageSwitcher = ({
   }
 
   // Déterminer les dimensions du bouton selon le size
-  const buttonSizeClasses = size === "small" ? "p-1 w-4 h-4" : "p-0 w-6 h-6"
+  const buttonSizeClasses = size === "small" ? "p-1 w-4 h-4" : "w-auto min-w-[2rem] h-6 px-2"
   const iconSize = size === "small" ? 8 : 12
+
+  // Vérification de sécurité pour currentLanguage et extraction du code
+  const languageCode = currentLanguage?.code
+  const isValidLanguage = currentLanguage && languageCode && typeof languageCode === "string" && languageCode.trim().length > 0
+  
+  if (!isValidLanguage) {
+    if (debug) {
+      console.warn("[LanguageSwitcher] currentLanguage is missing or invalid:", {
+        currentLanguage,
+        code: currentLanguage?.code,
+        codeType: typeof currentLanguage?.code,
+        codeLength: currentLanguage?.code?.length,
+        type: typeof currentLanguage,
+        keys: currentLanguage ? Object.keys(currentLanguage) : []
+      })
+    }
+    return null
+  }
+
+  // Contenu du bouton
+  const buttonContent = isOpen ? (
+    <Icon name="X" size={iconSize} />
+  ) : (
+    <span className={size === "small" ? "text-[9px]" : "text-xs"}>
+      {languageCode}
+    </span>
+  )
 
   return (
     <Popover open={disabled ? false : isOpen} onOpenChange={disabled ? undefined : setIsOpen}>
@@ -59,12 +94,9 @@ export const LanguageSwitcher = ({
           disabled={disabled}
           onClick={() => !disabled && setIsOpen(!isOpen)}
           data-active={isOpen}
+          asChild={false}
         >
-          {isOpen ? (
-            <Icon name="X" size={iconSize} />
-          ) : (
-            <span className={size === "small" ? "text-[9px]" : "text-xs"}>{currentLanguage.code}</span>
-          )}
+          {buttonContent}
         </Button>
       </PopoverTrigger>
       <PopoverContent
