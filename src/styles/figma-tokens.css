@@ -2344,6 +2344,11 @@
   color: var(--color-white);
 }
 
+[data-bg="white"] .btn-plus:active:not(:disabled) span,
+[data-bg="grey"] .btn-plus:active:not(:disabled) span {
+  color: var(--color-blue-primary);
+}
+
 [data-bg="white"] .btn-plus:disabled span,
 [data-bg="grey"] .btn-plus:disabled span {
   color: var(--button-action-plus-w-color-fg-disabled);
@@ -2352,6 +2357,10 @@
 /* Black background: texte black par défaut, color-fg-disabled si disabled */
 [data-bg="black"] .btn-plus span {
   color: var(--color-black);
+}
+
+[data-bg="black"] .btn-plus:active:not(:disabled) span {
+  color: var(--color-blue-primary);
 }
 
 [data-bg="black"] .btn-plus:disabled span {
