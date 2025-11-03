@@ -6,6 +6,9 @@
 /* 1. Variables design system (SOURCE DE VÉRITÉ) */
 @import './styles/figma-tokens.css';
 
+/* 1.5. Styles personnalisés (doit être après figma-tokens pour utiliser les variables) */
+@import './styles/custom-styles.css';
+
 /* 2. Variables shadcn/ui (dépend de figma-tokens) */
 @import './styles/shadcn-theme.css';
 
