@@ -117,6 +117,30 @@ The menu will automatically:
       control: "boolean",
       description: "Disables the button and all actions",
     },
+    onClick: {
+      action: "clicked",
+      description: "Callback called when the button is clicked",
+    },
+    onFocus: {
+      action: "focused",
+      description: "Callback called when the button receives focus",
+    },
+    onBlur: {
+      action: "blurred",
+      description: "Callback called when the button loses focus",
+    },
+    open: {
+      control: "boolean",
+      description: "Controlled open state of the menu",
+    },
+    defaultOpen: {
+      control: "boolean",
+      description: "Initial open state of the menu (uncontrolled mode)",
+    },
+    onOpenChange: {
+      action: "openChange",
+      description: "Callback called when the menu open state changes",
+    },
     debug: {
       control: "boolean",
       description: "Debug mode: logs props and actions to console",
