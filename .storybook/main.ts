@@ -34,6 +34,8 @@ const config: StorybookConfig = {
           "@/fonts": join(__dirname, "../src/fonts"),
           // @storybook/blocks reste nécessaire pour les fichiers .mdx
           "@storybook/blocks": join(__dirname, "../node_modules/@storybook/addon-docs/dist/blocks.mjs"),
+          // Alias pour storybook/actions qui pointe vers @storybook/preview-api dans Storybook 9.x
+          "storybook/actions": "@storybook/preview-api",
           // storybook/test et storybook/preview-api sont résolus automatiquement par Storybook
           // Pas besoin d'alias explicite
         },
