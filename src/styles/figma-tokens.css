@@ -1,7 +1,7 @@
 /**
  * Variables CSS générées automatiquement depuis les tokens Figma
  * NE PAS MODIFIER DIRECTEMENT - Généré par scripts/generate-css-tokens.cjs
- * Date: 2025-11-03T23:04:04.694Z
+ * Date: 2025-11-03T23:13:33.061Z
  */
 
 :root {
@@ -2198,78 +2198,163 @@
   height: 100%;
 }
 
-/* Styles pour popup-action (menu déroulant) */
-/* Sur fond white ou grey : background black */
-[data-bg="white"] .popup-action,
-[data-bg="grey"] .popup-action {
-  background: var(--color-black);
+/* Styles pour btn-plus (ButtonPlus pill container) */
+/* White/Grey background: utilise button-action-plus-w-color */
+[data-bg="white"] .btn-plus,
+[data-bg="grey"] .btn-plus {
+  background: var(--button-action-plus-w-color-bg-default);
+  color: var(--button-action-plus-w-color-fg-default);
+  border: none;
 }
 
-/* Sur fond black : background black-secondary */
-[data-bg="black"] .popup-action {
-  background: var(--color-black-secondary);
+[data-bg="white"] .btn-plus:hover:not(:disabled),
+[data-bg="grey"] .btn-plus:hover:not(:disabled) {
+  background: var(--button-action-plus-w-color-bg-hover);
+  color: var(--button-action-plus-w-color-fg-hover);
 }
 
-/* Styles pour popup-action-item (items du menu déroulant) */
-/* Sur fond white ou grey : background black-secondary pour les items, texte white */
-[data-bg="white"] .popup-action-item,
-[data-bg="grey"] .popup-action-item {
-  background: var(--color-black-secondary);
+[data-bg="white"] .btn-plus:active:not(:disabled),
+[data-bg="grey"] .btn-plus:active:not(:disabled) {
+  background: var(--button-action-plus-w-color-bg-pressed);
+  color: var(--button-action-plus-w-color-fg-pressed);
+}
+
+[data-bg="white"] .btn-plus:disabled,
+[data-bg="grey"] .btn-plus:disabled {
+  background: var(--button-action-plus-w-color-bg-disabled);
+  color: var(--button-action-plus-w-color-fg-disabled);
+  opacity: 1;
+}
+
+/* Black background: utilise button-action-plus-b-color */
+[data-bg="black"] .btn-plus {
+  background: var(--button-action-plus-b-color-bg-default);
+  color: var(--button-action-plus-b-color-fg-default);
+  border: none;
+}
+
+[data-bg="black"] .btn-plus:hover:not(:disabled) {
+  background: var(--button-action-plus-b-color-bg-hover);
+  color: var(--button-action-plus-b-color-fg-hover);
+}
+
+[data-bg="black"] .btn-plus:active:not(:disabled) {
+  background: var(--button-action-plus-b-color-bg-pressed);
+  color: var(--button-action-plus-b-color-fg-pressed);
+}
+
+[data-bg="black"] .btn-plus:disabled {
+  background: var(--button-action-plus-b-color-bg-disabled);
+  color: var(--button-action-plus-b-color-fg-disabled);
+  opacity: 1;
+}
+
+/* Styles pour le bouton interne de ButtonPlus */
+/* White/Grey backgrounds: inner button uses data-bg="black" -> utilise button-b-normal */
+[data-bg="white"] .btn-plus [data-bg="black"] button,
+[data-bg="grey"] .btn-plus [data-bg="black"] button {
+  background: var(--button-b-normal-bg-default);
+  color: var(--button-b-normal-fg-default);
+}
+
+[data-bg="white"] .btn-plus:hover:not(:disabled) [data-bg="black"] button,
+[data-bg="grey"] .btn-plus:hover:not(:disabled) [data-bg="black"] button {
+  background: var(--button-b-normal-bg-hover);
+  color: var(--button-b-normal-fg-hover);
+}
+
+[data-bg="white"] .btn-plus:active:not(:disabled) [data-bg="black"] button,
+[data-bg="grey"] .btn-plus:active:not(:disabled) [data-bg="black"] button {
+  background: var(--button-b-normal-bg-pressed);
+  color: var(--button-b-normal-fg-pressed);
+}
+
+[data-bg="white"] .btn-plus:disabled [data-bg="black"] button,
+[data-bg="grey"] .btn-plus:disabled [data-bg="black"] button {
+  background: var(--button-b-normal-bg-disabled);
+  color: var(--button-b-normal-fg-disabled);
+}
+
+/* Black background: inner button uses data-bg="white" -> utilise button-w-normal */
+[data-bg="black"] .btn-plus [data-bg="white"] button {
+  background: var(--button-w-normal-bg-default);
+  color: var(--button-w-normal-fg-default);
+}
+
+[data-bg="black"] .btn-plus:hover:not(:disabled) [data-bg="white"] button {
+  background: var(--button-w-normal-bg-hover);
+  color: var(--button-w-normal-fg-hover);
+}
+
+[data-bg="black"] .btn-plus:active:not(:disabled) [data-bg="white"] button {
+  background: var(--button-w-normal-bg-pressed);
+  color: var(--button-w-normal-fg-pressed);
+}
+
+[data-bg="black"] .btn-plus:disabled [data-bg="white"] button {
+  background: var(--button-w-normal-bg-disabled);
+  color: var(--button-w-normal-fg-disabled);
+}
+
+/* Styles pour l'icône Plus dans ButtonPlus */
+/* White/Grey backgrounds: inner button uses data-bg="black" */
+/* Icône black par défaut et hover, blue-primary au pressed */
+[data-bg="white"] .btn-plus [data-bg="black"] button svg,
+[data-bg="grey"] .btn-plus [data-bg="black"] button svg {
+  color: var(--color-black);
+}
+
+[data-bg="white"] .btn-plus:hover:not(:disabled) [data-bg="black"] button svg,
+[data-bg="grey"] .btn-plus:hover:not(:disabled) [data-bg="black"] button svg {
+  color: var(--color-black);
+}
+
+[data-bg="white"] .btn-plus:active:not(:disabled) [data-bg="black"] button svg,
+[data-bg="grey"] .btn-plus:active:not(:disabled) [data-bg="black"] button svg {
+  color: var(--color-blue-primary);
+}
+
+[data-bg="white"] .btn-plus:disabled [data-bg="black"] button svg,
+[data-bg="grey"] .btn-plus:disabled [data-bg="black"] button svg {
+  color: var(--button-action-plus-w-color-plus-disabled);
+}
+
+/* Black background: inner button uses data-bg="white" */
+/* Icône white par défaut et hover, blue-primary au pressed */
+[data-bg="black"] .btn-plus [data-bg="white"] button svg {
   color: var(--color-white);
 }
 
-/* Hover state avec data-highlighted (Radix UI) - syntaxe avec attribut data */
-[data-bg="white"] .popup-action-item[data-highlighted],
-[data-bg="grey"] .popup-action-item[data-highlighted],
-[data-bg="white"] .popup-action-item[data-highlighted="true"],
-[data-bg="grey"] .popup-action-item[data-highlighted="true"] {
-  background: var(--color-white);
-  color: var(--color-black);
-}
-
-/* Focus state (utilisé par Radix UI pour le hover également) */
-[data-bg="white"] .popup-action-item:focus-visible,
-[data-bg="grey"] .popup-action-item:focus-visible {
-  background: var(--color-white);
-  color: var(--color-black);
-}
-
-/* Active/pressed state */
-[data-bg="white"] .popup-action-item:active:not(:disabled),
-[data-bg="grey"] .popup-action-item:active:not(:disabled) {
-  background: var(--color-blue-primary);
-  color: var(--color-black);
-}
-
-/* Sur fond black : background black pour les items, texte white */
-[data-bg="black"] .popup-action-item {
-  background: var(--color-black);
+[data-bg="black"] .btn-plus:hover:not(:disabled) [data-bg="white"] button svg {
   color: var(--color-white);
 }
 
-/* Hover state avec data-highlighted (Radix UI) - syntaxe avec attribut data */
-[data-bg="black"] .popup-action-item[data-highlighted],
-[data-bg="black"] .popup-action-item[data-highlighted="true"] {
-  background: var(--color-white);
+[data-bg="black"] .btn-plus:active:not(:disabled) [data-bg="white"] button svg {
+  color: var(--color-blue-primary);
+}
+
+[data-bg="black"] .btn-plus:disabled [data-bg="white"] button svg {
+  color: var(--button-action-plus-b-color-plus-disabled);
+}
+
+/* Label text dans ButtonPlus */
+/* White/Grey backgrounds: texte white par défaut, color-fg-disabled si disabled */
+[data-bg="white"] .btn-plus span,
+[data-bg="grey"] .btn-plus span {
+  color: var(--color-white);
+}
+
+[data-bg="white"] .btn-plus:disabled span,
+[data-bg="grey"] .btn-plus:disabled span {
+  color: var(--button-action-plus-w-color-fg-disabled);
+}
+
+/* Black background: texte black par défaut, color-fg-disabled si disabled */
+[data-bg="black"] .btn-plus span {
   color: var(--color-black);
 }
 
-/* Focus state */
-[data-bg="black"] .popup-action-item:focus-visible {
-  background: var(--color-white);
-  color: var(--color-black);
-}
-
-/* Active/pressed state */
-[data-bg="black"] .popup-action-item:active:not(:disabled) {
-  background: var(--color-blue-primary);
-  color: var(--color-black);
-}
-
-/* Disabled state */
-.popup-action-item:disabled,
-.popup-action-item[data-disabled] {
-  opacity: 0.5;
-  cursor: not-allowed;
+[data-bg="black"] .btn-plus:disabled span {
+  color: var(--button-action-plus-b-color-fg-disabled);
 }
 

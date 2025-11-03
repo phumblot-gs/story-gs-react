@@ -91,7 +91,7 @@ export const ButtonPlus = React.forwardRef<HTMLButtonElement, ButtonPlusProps>(
           // Pill container styles - 40px height with py-1
           "inline-flex items-center gap-2 rounded-full pl-2 pr-4 py-1 h-10 relative",
           "transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-          "disabled:pointer-events-none disabled:opacity-50",
+          "disabled:pointer-events-none",
           // Use btn-plus class for styling
           "btn-plus",
           debug && "ring-2 ring-pink ring-offset-2",
