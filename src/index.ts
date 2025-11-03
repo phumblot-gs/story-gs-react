@@ -7,6 +7,7 @@ import { buttonVariants } from "./components/ui/button-base";
 import { Button } from "./components/ui/button";
 import { ButtonMenu } from "./components/ui/button-menu";
 import { ButtonMenuStatus } from "./components/ui/button-menu-status";
+import { ButtonMenuSmall } from "./components/ui/button-menu-small";
 import { ButtonPlus } from "./components/ui/button-plus";
 import { LanguageSwitcher } from "./components/ui/language-switcher";
 import { FileBrowser } from "./components/ui/file-browser";
@@ -288,6 +289,10 @@ import type {
 } from "./components/ui/button-menu-status";
 
 import type {
+  ButtonMenuSmallProps
+} from "./components/ui/button-menu-small";
+
+import type {
   ButtonPlusProps
 } from "./components/ui/button-plus";
 
@@ -351,6 +356,7 @@ export { buttonVariants };
 export { Button };
 export { ButtonMenu };
 export { ButtonMenuStatus };
+export { ButtonMenuSmall };
 export { ButtonPlus };
 export { LanguageSwitcher };
 export { FileBrowser };
@@ -563,6 +569,7 @@ export type {
   ButtonMenuProps,
   ButtonMenuStatusOption,
   ButtonMenuStatusProps,
+  ButtonMenuSmallProps,
   ButtonPlusProps,
   AvatarSize,
   IconName,
