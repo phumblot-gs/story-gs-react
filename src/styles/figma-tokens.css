@@ -2358,3 +2358,78 @@
   color: var(--button-action-plus-b-color-fg-disabled);
 }
 
+/* Styles pour popup-action (menu déroulant) */
+/* Sur fond white ou grey : background black */
+[data-bg="white"] .popup-action,
+[data-bg="grey"] .popup-action {
+  background: var(--color-black);
+}
+
+/* Sur fond black : background black-secondary */
+[data-bg="black"] .popup-action {
+  background: var(--color-black-secondary);
+}
+
+/* Styles pour popup-action-item (items du menu déroulant) */
+/* Sur fond white ou grey : background black-secondary pour les items, texte white */
+[data-bg="white"] .popup-action-item,
+[data-bg="grey"] .popup-action-item {
+  background: var(--color-black-secondary);
+  color: var(--color-white);
+}
+
+/* Hover state avec data-highlighted (Radix UI) - syntaxe avec attribut data */
+[data-bg="white"] .popup-action-item[data-highlighted],
+[data-bg="grey"] .popup-action-item[data-highlighted],
+[data-bg="white"] .popup-action-item[data-highlighted="true"],
+[data-bg="grey"] .popup-action-item[data-highlighted="true"] {
+  background: var(--color-white);
+  color: var(--color-black);
+}
+
+/* Focus state (utilisé par Radix UI pour le hover également) */
+[data-bg="white"] .popup-action-item:focus-visible,
+[data-bg="grey"] .popup-action-item:focus-visible {
+  background: var(--color-white);
+  color: var(--color-black);
+}
+
+/* Active/pressed state */
+[data-bg="white"] .popup-action-item:active:not(:disabled),
+[data-bg="grey"] .popup-action-item:active:not(:disabled) {
+  background: var(--color-blue-primary);
+  color: var(--color-black);
+}
+
+/* Sur fond black : background black-secondary pour les items, texte white */
+[data-bg="black"] .popup-action-item {
+  background: var(--color-black-secondary);
+  color: var(--color-white);
+}
+
+/* Hover state avec data-highlighted (Radix UI) - syntaxe avec attribut data */
+[data-bg="black"] .popup-action-item[data-highlighted],
+[data-bg="black"] .popup-action-item[data-highlighted="true"] {
+  background: var(--color-white);
+  color: var(--color-black);
+}
+
+/* Focus state */
+[data-bg="black"] .popup-action-item:focus-visible {
+  background: var(--color-white);
+  color: var(--color-black);
+}
+
+/* Active/pressed state */
+[data-bg="black"] .popup-action-item:active:not(:disabled) {
+  background: var(--color-blue-primary);
+  color: var(--color-black);
+}
+
+/* Disabled state */
+.popup-action-item:disabled,
+.popup-action-item[data-disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
