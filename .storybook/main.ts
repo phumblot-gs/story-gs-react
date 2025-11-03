@@ -34,10 +34,9 @@ const config: StorybookConfig = {
           "@/fonts": join(__dirname, "../src/fonts"),
           // @storybook/blocks reste nécessaire pour les fichiers .mdx
           "@storybook/blocks": join(__dirname, "../node_modules/@storybook/addon-docs/dist/blocks.mjs"),
-          // Alias pour storybook/actions qui pointe vers @storybook/preview-api dans Storybook 9.x
-          "storybook/actions": "@storybook/preview-api",
           // Alias pour @storybook/addon-actions (utilisé par certaines dépendances)
-          "@storybook/addon-actions": "@storybook/preview-api",
+          // Dans Storybook 9.1.16, les actions sont exportées via storybook/actions
+          "@storybook/addon-actions": "storybook/actions",
           // Alias pour storybook/test - dans Storybook 9.1.16, cela pointe vers le package storybook lui-même
           // qui exporte les utilitaires de test via son système d'exports
           "storybook/test": "storybook",
