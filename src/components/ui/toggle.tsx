@@ -56,6 +56,8 @@ const Toggle = React.forwardRef<HTMLButtonElement, ToggleProps>(
     const handleClick = React.useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
       if (disabled) return;
       
+      e.stopPropagation()
+      
       if (debug) {
         console.log('[Toggle Click]', {
           isActive,
@@ -72,6 +74,8 @@ const Toggle = React.forwardRef<HTMLButtonElement, ToggleProps>(
     
     // Debug mode : wrapper pour onFocus avec log
     const handleFocus = React.useCallback((e: React.FocusEvent<HTMLButtonElement>) => {
+      e.stopPropagation()
+      
       if (debug) {
         console.log('[Toggle Focus]', {
           isActive,
@@ -86,6 +90,8 @@ const Toggle = React.forwardRef<HTMLButtonElement, ToggleProps>(
     
     // Debug mode : wrapper pour onBlur avec log
     const handleBlur = React.useCallback((e: React.FocusEvent<HTMLButtonElement>) => {
+      e.stopPropagation()
+      
       if (debug) {
         console.log('[Toggle Blur]', {
           isActive,
@@ -104,7 +110,7 @@ const Toggle = React.forwardRef<HTMLButtonElement, ToggleProps>(
         variant={variant}
         size={size}
         disabled={disabled}
-        debug={debug}
+        debug={false}
         className={cn(
           "toggle",
           // Appliquer les styles d'état actif similaires à ButtonStatus

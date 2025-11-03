@@ -8,16 +8,20 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { useBgContext } from "@/components/layout/BgContext"
 import { VStack } from "@/components/layout"
+import { Icon } from "@/components/ui/icons"
+import MediaStatus from "@/components/MediaStatus"
+import { MediaStatus as MediaStatusEnum } from "@/utils/mediaStatus"
 import { cn } from "@/lib/utils"
 
-export interface ButtonMenuAction {
+export interface ButtonMenuStatusOption {
+  status: MediaStatusEnum
   label: string
-  onClick: () => void
   disabled?: boolean
 }
 
-export interface ButtonMenuProps extends Omit<ToggleProps, "onClick" | "isActive"> {
-  actions: ButtonMenuAction[]
+export interface ButtonMenuStatusProps extends Omit<ToggleProps, "onClick" | "isActive" | "children"> {
+  currentStatus: MediaStatusEnum
+  statusOptions: ButtonMenuStatusOption[]
   onOpenChange?: (open: boolean) => void
   debug?: boolean
   /**
@@ -29,16 +33,17 @@ export interface ButtonMenuProps extends Omit<ToggleProps, "onClick" | "isActive
   menuMaxHeight?: string
 }
 
-export const ButtonMenu = React.forwardRef<HTMLButtonElement, ButtonMenuProps>(
+export const ButtonMenuStatus = React.forwardRef<HTMLButtonElement, ButtonMenuStatusProps>(
   (
     {
-      actions,
-      children,
+      currentStatus,
+      statusOptions,
       className,
       disabled,
       onOpenChange,
       debug = false,
       menuMaxHeight = "max-h-[calc(100vh-2rem)]",
+      size = "medium",
       ...buttonProps
     },
     ref
@@ -53,6 +58,34 @@ export const ButtonMenu = React.forwardRef<HTMLButtonElement, ButtonMenuProps>(
       },
       [onOpenChange]
     )
+
+    // Classes pour le toggle selon la taille
+    const getToggleClassName = () => {
+      switch (size) {
+        case "small":
+          return "p-1 w-4 h-4"
+        case "medium":
+          return "p-0 w-6 h-6"
+        case "large":
+          return "p-0 w-8 h-8"
+        default:
+          return "p-0 w-6 h-6"
+      }
+    }
+
+    // Taille de l'icône selon la taille du toggle
+    const getIconSize = () => {
+      switch (size) {
+        case "small":
+          return 10
+        case "medium":
+          return 12
+        case "large":
+          return 14
+        default:
+          return 12
+      }
+    }
 
     // Couleur de fond du menu selon data-bg
     const getMenuBackgroundClass = () => {
@@ -70,13 +103,14 @@ export const ButtonMenu = React.forwardRef<HTMLButtonElement, ButtonMenuProps>(
     // Debug log uniquement quand isOpen change pour éviter les doubles logs
     React.useEffect(() => {
       if (debug) {
-        console.log("[ButtonMenu] State changed", {
+        console.log("[ButtonMenuStatus] State changed", {
           bg,
           isOpen,
-          actionsCount: actions.length,
+          currentStatus,
+          statusOptionsCount: statusOptions.length,
         })
       }
-    }, [debug, isOpen, bg, actions.length])
+    }, [debug, isOpen, bg, currentStatus, statusOptions.length])
 
     return (
       <DropdownMenu open={isOpen} onOpenChange={handleOpenChange}>
@@ -84,15 +118,16 @@ export const ButtonMenu = React.forwardRef<HTMLButtonElement, ButtonMenuProps>(
           <Toggle
             ref={ref}
             disabled={disabled}
-            className={className}
+            className={cn(getToggleClassName(), className)}
             isActive={isOpen}
+            size={size}
             {...buttonProps}
             onClick={(e) => {
               // Empêcher l'action onClick par défaut du Toggle
               e.preventDefault()
             }}
           >
-            {children}
+            <Icon name="Status" size={getIconSize()} />
           </Toggle>
         </DropdownMenuTrigger>
         <DropdownMenuContent
@@ -107,23 +142,25 @@ export const ButtonMenu = React.forwardRef<HTMLButtonElement, ButtonMenuProps>(
           data-bg={bg || undefined}
         >
           <VStack gap={2} padding={2}>
-            {actions.map((action, index) => (
+            {statusOptions.map((option, index) => (
               <DropdownMenuItem
                 key={index}
-                disabled={action.disabled || disabled}
+                disabled={option.disabled || disabled}
                 className={cn(
                   "w-full px-4 py-2 text-left text-sm whitespace-nowrap rounded-sm cursor-pointer popup-action-item"
                 )}
                 onClick={(e) => {
                   e.stopPropagation()
                   if (debug) {
-                    console.log("[ButtonMenu] Action clicked:", action.label)
+                    console.log("[ButtonMenuStatus] Status clicked:", option.status, option.label)
                   }
-                  action.onClick()
                   handleOpenChange(false)
                 }}
               >
-                {action.label}
+                <div className="flex items-center gap-2">
+                  <MediaStatus status={option.status} width={12} height={3} />
+                  <span>{option.label}</span>
+                </div>
               </DropdownMenuItem>
             ))}
           </VStack>
@@ -133,5 +170,5 @@ export const ButtonMenu = React.forwardRef<HTMLButtonElement, ButtonMenuProps>(
   }
 )
 
-ButtonMenu.displayName = "ButtonMenu"
+ButtonMenuStatus.displayName = "ButtonMenuStatus"
 
