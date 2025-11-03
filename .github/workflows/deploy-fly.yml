@@ -27,7 +27,7 @@ jobs:
           echo "✅ Configuration Nexus pour npm ajoutée"
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install --legacy-peer-deps
 
       - name: Run postinstall (apply MCP patch)
         run: npm run postinstall || true
