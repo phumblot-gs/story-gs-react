@@ -219,7 +219,9 @@ export const ButtonMenuStatus = React.forwardRef<HTMLButtonElement, ButtonMenuSt
                 key={index}
                 disabled={option.disabled || disabled}
                 className={cn(
-                  "w-full px-4 py-2 text-left text-sm whitespace-nowrap rounded-sm cursor-pointer popup-action-item"
+                  "w-full px-4 py-2 text-left text-sm whitespace-nowrap rounded-sm cursor-pointer popup-action-item",
+                  "flex items-center gap-2 text-white hover:text-black active:text-black",
+                  "data-[disabled]:opacity-50 data-[disabled]:cursor-not-allowed"
                 )}
                 onClick={(e) => {
                   e.stopPropagation()
@@ -229,10 +231,8 @@ export const ButtonMenuStatus = React.forwardRef<HTMLButtonElement, ButtonMenuSt
                   handleOpenChange(false)
                 }}
               >
-                <div className="flex items-center gap-2">
-                  <MediaStatus status={option.status} width={12} height={3} />
-                  <span>{option.label}</span>
-                </div>
+                <MediaStatus status={option.status} width={12} height={3} />
+                <span>{option.label}</span>
               </DropdownMenuItem>
             ))}
           </VStack>

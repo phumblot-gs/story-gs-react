@@ -14,6 +14,7 @@ export interface ButtonMenuAction {
   label: string
   onClick: () => void
   disabled?: boolean
+  icon?: React.ReactNode
 }
 
 export interface ButtonMenuProps extends Omit<ToggleProps, "onClick" | "isActive"> {
@@ -184,7 +185,9 @@ export const ButtonMenu = React.forwardRef<HTMLButtonElement, ButtonMenuProps>(
                 key={index}
                 disabled={action.disabled || disabled}
                 className={cn(
-                  "w-full px-4 py-2 text-left text-sm whitespace-nowrap rounded-sm cursor-pointer popup-action-item"
+                  "w-full px-4 py-2 text-left text-sm whitespace-nowrap rounded-sm cursor-pointer popup-action-item",
+                  "flex items-center gap-2 text-white hover:text-black active:text-black",
+                  "data-[disabled]:opacity-50 data-[disabled]:cursor-not-allowed"
                 )}
                 onClick={(e) => {
                   e.stopPropagation()
@@ -195,7 +198,12 @@ export const ButtonMenu = React.forwardRef<HTMLButtonElement, ButtonMenuProps>(
                   handleOpenChange(false)
                 }}
               >
-                {action.label}
+                {action.icon && (
+                  <span className="flex-shrink-0 flex items-center justify-center">
+                    {action.icon}
+                  </span>
+                )}
+                <span>{action.label}</span>
               </DropdownMenuItem>
             ))}
           </VStack>

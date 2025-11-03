@@ -1,7 +1,7 @@
 /**
  * Variables CSS générées automatiquement depuis les tokens Figma
  * NE PAS MODIFIER DIRECTEMENT - Généré par scripts/generate-css-tokens.cjs
- * Date: 2025-11-03T22:23:48.938Z
+ * Date: 2025-11-03T22:55:22.255Z
  */
 
 :root {
@@ -2211,7 +2211,7 @@
 }
 
 /* Styles pour popup-action-item (items du menu déroulant) */
-/* Sur fond white ou grey : background black-secondary pour les items */
+/* Sur fond white ou grey : background black-secondary pour les items, texte white */
 [data-bg="white"] .popup-action-item,
 [data-bg="grey"] .popup-action-item {
   background: var(--color-black-secondary);
@@ -2230,7 +2230,7 @@
   color: var(--color-black);
 }
 
-/* Sur fond black : background black pour les items */
+/* Sur fond black : background black pour les items, texte white */
 [data-bg="black"] .popup-action-item {
   background: var(--color-black);
   color: var(--color-white);
@@ -2247,7 +2247,8 @@
 }
 
 /* Disabled state */
-.popup-action-item:disabled {
+.popup-action-item:disabled,
+.popup-action-item[data-disabled] {
   opacity: 0.5;
   cursor: not-allowed;
 }
