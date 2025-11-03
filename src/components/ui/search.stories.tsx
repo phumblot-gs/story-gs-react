@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Search } from "./search";
 import { Layout, VStack } from "@/components/layout";
 import { useState } from "react";

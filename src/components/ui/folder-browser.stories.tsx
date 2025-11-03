@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { FolderBrowser, FolderItem } from "./folder-browser";
 
 const meta: Meta<typeof FolderBrowser> = {

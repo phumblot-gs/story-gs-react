@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import React, { useState, useEffect } from 'react';
 import { StyleProvider, useStyles, useGlobalStyles, type StyleConfig } from './StyleProvider';
 import { Button } from '@/components/ui/button';

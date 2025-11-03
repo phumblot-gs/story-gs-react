@@ -1,9 +1,9 @@
 import React, { useRef } from "react";
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import ButtonNotifications from "./ButtonNotifications";
 import { MediaStatus } from "@/utils/mediaStatus";
 import { NotificationType } from "./notifications/NotificationPanel";
-import { action } from "@storybook/addon-actions";
+import { action } from "storybook/actions";
 import { TranslationProvider } from "@/contexts/TranslationContext";
 import { MemoryRouter } from "react-router-dom";
 import { Button } from "@/components/ui/button";

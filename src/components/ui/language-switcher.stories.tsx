@@ -1,5 +1,5 @@
 
-import type { Meta, StoryObj } from "@storybook/react"
+import type { Meta, StoryObj } from "@storybook/react-vite"
 import { LanguageSwitcher } from "./language-switcher"
 import { useState, useEffect } from "react"
 import { Layout } from "@/components/layout"

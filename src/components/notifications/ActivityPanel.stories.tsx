@@ -1,6 +1,6 @@
 
 import React from "react";
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import ActivityPanel from "./ActivityPanel";
 import { MediaStatus } from "@/utils/mediaStatus";
 import { NotificationType } from "./NotificationPanel";
@@ -8,7 +8,7 @@ import { MemoryRouter } from "react-router-dom";
 import { TranslationProvider } from "@/contexts/TranslationContext";
 
 const meta: Meta<typeof ActivityPanel> = {
-  title: "Components/Notifications/ActivityPanel",
+  title: "Components/ActivityPanel",
   component: ActivityPanel,
   parameters: {
     layout: "centered",

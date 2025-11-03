@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import React from "react";
 import { Grade } from "@/components/ui/grade";
 import { Layout, VStack, HStack } from "@/components/layout";

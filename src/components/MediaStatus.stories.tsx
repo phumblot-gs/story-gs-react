@@ -1,5 +1,5 @@
 
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import MediaStatus from "./MediaStatus";
 import { MediaStatus as MediaStatusEnum } from "@/utils/mediaStatus";
 

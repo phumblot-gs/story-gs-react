@@ -1,6 +1,6 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import React from "react";
-import { action } from "@storybook/addon-actions";
+import { action } from "storybook/actions";
 import { Checkbox } from "./checkbox";
 import { Label } from "./label";
 import { Layout, VStack } from "@/components/layout";

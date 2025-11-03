@@ -1,12 +1,12 @@
 
 import React from "react";
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import NotificationPanel from "./NotificationPanel";
 import { MediaStatus } from "@/utils/mediaStatus";
 import { MemoryRouter } from "react-router-dom";
 
 const meta: Meta<typeof NotificationPanel> = {
-  title: "Components/Notifications/NotificationPanel",
+  title: "Components/NotificationPanel",
   component: NotificationPanel,
   parameters: {
     layout: "centered",

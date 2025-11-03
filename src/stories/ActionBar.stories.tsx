@@ -1,6 +1,6 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useState, useEffect } from "react";
-import { useArgs } from "@storybook/preview-api";
+import { useArgs } from "storybook/preview-api";
 import { ActionBar, ActionBarProvider } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { Layout, VStack, HStack } from "@/components/layout";

@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { TranslationProvider, useTranslation } from "./TranslationContext";
 import { Language } from "@/components/ui/language-switcher";
 import { Button } from "@/components/ui/button";

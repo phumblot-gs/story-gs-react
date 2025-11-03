@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import { expect, userEvent, within } from "@storybook/test";
+import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect, userEvent, within } from "storybook/test";
 import * as React from "react";
 import { Avatar, AvatarImage, AvatarFallback } from "./avatar";
 import { Button } from "./button";

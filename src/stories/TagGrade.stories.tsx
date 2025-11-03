@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { TagGrade } from "@/components/ui/tag-grade";
 import { Layout, VStack, HStack } from "@/components/layout";
 

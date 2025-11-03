@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { TagLabel } from "@/components/ui/tag-label";
 import { Layout, VStack, HStack } from "@/components/layout";
 
