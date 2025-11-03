@@ -22,6 +22,9 @@ jobs:
 
       - name: Configure npm for Nexus authentication
         run: |
+          # Configurer le registry npm public par défaut (nécessaire pour Storybook 9.1.16)
+          npm config set registry https://registry.npmjs.org/
+          # Configurer le registry Nexus pour les packages @gs
           echo "@gs:registry=https://nexus.grand-shooting.org/repository/npm-gs/" >> ~/.npmrc
           echo "//nexus.grand-shooting.org/repository/npm-gs/:_auth=${{ secrets.NPM_NEXUS_AUTH }}" >> ~/.npmrc
           echo "✅ Configuration Nexus pour npm ajoutée"
