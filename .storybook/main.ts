@@ -41,6 +41,8 @@ const config: StorybookConfig = {
           // Alias pour storybook/test - dans Storybook 9.1.16, cela pointe vers le package storybook lui-même
           // qui exporte les utilitaires de test via son système d'exports
           "storybook/test": "storybook",
+          // Alias pour @storybook/test (utilisé par certaines dépendances)
+          "@storybook/test": "storybook",
           // storybook/preview-api est résolu automatiquement par Storybook
           // Pas besoin d'alias explicite
         },
