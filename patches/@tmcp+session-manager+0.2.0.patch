@@ -1,0 +1,13 @@
+diff --git a/node_modules/@tmcp/session-manager/package.json b/node_modules/@tmcp/session-manager/package.json
+index 0000000..1111111 100644
+--- a/node_modules/@tmcp/session-manager/package.json
++++ b/node_modules/@tmcp/session-manager/package.json
+@@ -16,7 +16,8 @@
+   "exports": {
+     ".": {
+       "types": "./src/types/index.d.ts",
+-      "import": "./src/index.js"
++      "import": "./src/index.js",
++      "require": "./src/index.js"
+     }
+   },

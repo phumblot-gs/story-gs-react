@@ -9,6 +9,14 @@ Cette librairie a deux types de déploiements :
 
 ## 📚 Déploiement Storybook
 
+### Déploiement sur Fly.io
+
+Storybook est déployé sur Fly.io avec support du serveur MCP. Le déploiement est automatique via GitHub Actions.
+
+**URL de production :** https://gs-components-library.grand-shooting.org
+
+Pour plus de détails, consultez le [guide de déploiement Fly.io](./fly-deployment.md).
+
 ### Build de production
 
 ```bash
@@ -17,41 +25,6 @@ npm run build-storybook
 ```
 
 Le build génère un dossier `storybook-static/` contenant les fichiers statiques.
-
-### Déploiement automatique
-
-Le déploiement Storybook est automatisé via CI/CD :
-
-- **Déclencheur** : Push sur la branche `main`
-- **Cible** : Serveur de documentation interne
-- **URL** : `https://storybook.gs-components.internal`
-
-### Configuration CI/CD
-
-```yaml
-# .gitlab-ci.yml ou .github/workflows/deploy.yml
-deploy-storybook:
-  stage: deploy
-  script:
-    - npm install
-    - npm run build-storybook
-    - rsync -av storybook-static/ user@server:/var/www/storybook/
-  only:
-    - main
-```
-
-### Déploiement manuel
-
-```bash
-# Build
-npm run build-storybook
-
-# Upload vers le serveur
-scp -r storybook-static/* user@server:/var/www/storybook/
-
-# Ou avec rsync
-rsync -av storybook-static/ user@server:/var/www/storybook/
-```
 
 ## 📦 Publication de la librairie npm
 

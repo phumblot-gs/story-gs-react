@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "storybook-gs-components": {
+      "server": {
+        "url": "https://gs-components-library.grand-shooting.org/mcp"
+      }
+    }
+  }
+}
+

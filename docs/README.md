@@ -20,7 +20,12 @@ Bienvenue dans la documentation de la librairie de composants GS.
 
 ### 🚢 Déploiement
 - [Guide de déploiement](./deployment-guide.md) - Mise en production
+- [Déploiement Fly.io](./fly-deployment.md) - Configuration et déploiement sur Fly.io
 - [Workflow de publication](./publishing-workflow.md) - Process de release
+
+### 🔌 Serveur MCP
+- [Configuration Cursor](./CURSOR_MCP_CONFIGURATION.md) - Configuration du serveur MCP dans Cursor IDE
+- [Vérification du serveur MCP](./VERIFIER_MCP_SERVEUR.md) - Guide de vérification et dépannage
 
 ## 🚀 Vue d'ensemble
 
@@ -77,15 +82,18 @@ function App() {
 
 ## 🔗 Liens utiles
 
-- [Storybook local](http://localhost:6006) - Documentation interactive des composants
+- [Storybook en production](https://gs-components-library.grand-shooting.org) - Documentation interactive des composants
+- [Storybook local](http://localhost:6006) - Documentation interactive locale
+- [Serveur MCP](https://gs-components-library.grand-shooting.org/mcp) - Endpoint du serveur MCP
 - [Repository Nexus](https://nexus.grand-shooting.org/repository/npm-gs/) - Registry privé
 - [Interface Nexus](https://nexus.grand-shooting.org/) - Gestion des packages
 
 ## 📋 Statut du projet
 
-**Version actuelle :** 0.3.0-beta.1
-**Dernière mise à jour :** 30 septembre 2025
+**Version actuelle :** 1.5.12
+**Dernière mise à jour :** Novembre 2025
 **Statut :** En développement actif
+**Déploiement :** Fly.io (https://gs-components-library.grand-shooting.org)
 
 ## 🤝 Contribution
 
