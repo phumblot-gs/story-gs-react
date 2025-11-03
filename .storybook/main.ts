@@ -39,9 +39,10 @@ const config: StorybookConfig = {
           "@storybook/addon-actions": "storybook/actions",
           // Alias pour storybook/test - dans Storybook 9.1.16, cela pointe vers le package storybook lui-même
           // qui exporte les utilitaires de test via son système d'exports
-          "storybook/test": "storybook",
+          // Utiliser le chemin complet pour garantir la résolution correcte
+          "storybook/test": join(__dirname, "../node_modules/storybook/dist/test/index.js"),
           // Alias pour @storybook/test (utilisé par certaines dépendances)
-          "@storybook/test": "storybook",
+          "@storybook/test": join(__dirname, "../node_modules/storybook/dist/test/index.js"),
           // Alias pour storybook/preview-api et @storybook/preview-api
           // Dans Storybook 9.1.16, preview-api est exporté via storybook/preview-api
           "storybook/preview-api": "storybook/preview-api",
