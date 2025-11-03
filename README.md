@@ -114,6 +114,22 @@ npm run build:lib
 npm run build-storybook
 ```
 
+### Git Hooks
+
+Un hook Git pre-push est disponible pour vérifier automatiquement que le build Storybook fonctionne avant chaque push. Cela évite de découvrir les erreurs uniquement sur GitHub Actions.
+
+**Installation du hook :**
+
+```bash
+./scripts/install-pre-push-hook.sh
+```
+
+Le hook empêchera le push si le build Storybook échoue. Pour ignorer cette vérification (non recommandé) :
+
+```bash
+git push --no-verify
+```
+
 ### Testing Your Changes
 
 1. Build the library: `npm run build:lib`
