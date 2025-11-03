@@ -42,8 +42,10 @@ const config: StorybookConfig = {
           "storybook/test": "storybook",
           // Alias pour @storybook/test (utilisé par certaines dépendances)
           "@storybook/test": "storybook",
-          // storybook/preview-api est résolu automatiquement par Storybook
-          // Pas besoin d'alias explicite
+          // Alias pour storybook/preview-api et @storybook/preview-api
+          // Dans Storybook 9.1.16, preview-api est exporté via storybook/preview-api
+          "storybook/preview-api": "storybook/preview-api",
+          "@storybook/preview-api": "storybook/preview-api",
         },
       },
       // Forcer Storybook à utiliser le runtime JSX de développement même en production
