@@ -1,7 +1,7 @@
 /**
  * Variables CSS générées automatiquement depuis les tokens Figma
  * NE PAS MODIFIER DIRECTEMENT - Généré par scripts/generate-css-tokens.cjs
- * Date: 2025-11-02T21:10:35.837Z
+ * Date: 2025-11-03T22:23:48.938Z
  */
 
 :root {
@@ -1278,242 +1278,6 @@
   text-decoration: none;
 }
 
-/* ButtonPlus styles */
-/* White background */
-[data-bg="white"].btn-plus {
-  background: var(--button-action-plus-w-color-bg-default);
-  color: var(--button-action-plus-w-color-fg-default);
-}
-
-[data-bg="white"].btn-plus:hover:not(:disabled) {
-  background: var(--button-action-plus-w-color-bg-hover);
-  color: var(--button-action-plus-w-color-fg-hover);
-}
-
-[data-bg="white"].btn-plus:active:not(:disabled) {
-  background: var(--button-action-plus-w-color-bg-pressed);
-  color: var(--button-action-plus-w-color-fg-pressed);
-}
-
-[data-bg="white"].btn-plus:disabled {
-  background: var(--button-action-plus-w-color-bg-disabled);
-  color: var(--button-action-plus-w-color-fg-disabled);
-  cursor: not-allowed;
-  opacity: 0.5;
-}
-
-/* ButtonPlus inner button Plus icon colors - White background */
-[data-bg="white"].btn-plus [data-bg="black"] .btn-normal svg {
-  color: var(--color-black);
-}
-
-[data-bg="white"].btn-plus:hover:not(:disabled) [data-bg="black"] .btn-normal {
-  background: var(--color-white);
-}
-
-[data-bg="white"].btn-plus:hover:not(:disabled) [data-bg="black"] .btn-normal svg {
-  color: var(--button-action-plus-w-color-plus-hover);
-}
-
-[data-bg="white"].btn-plus:active:not(:disabled) [data-bg="black"] .btn-normal {
-  background: var(--color-white);
-}
-
-[data-bg="white"].btn-plus:active:not(:disabled) [data-bg="black"] .btn-normal svg {
-  color: var(--button-action-plus-w-color-plus-pressed);
-}
-
-[data-bg="white"].btn-plus:disabled [data-bg="black"] .btn-normal svg {
-  color: var(--button-action-plus-w-color-plus-disabled);
-}
-
-/* Grey background */
-[data-bg="grey"].btn-plus {
-  background: var(--button-action-plus-g-color-bg-default);
-  color: var(--button-action-plus-g-color-fg-default);
-}
-
-[data-bg="grey"].btn-plus:hover:not(:disabled) {
-  background: var(--button-action-plus-g-color-bg-hover);
-  color: var(--button-action-plus-g-color-fg-hover);
-}
-
-[data-bg="grey"].btn-plus:active:not(:disabled) {
-  background: var(--button-action-plus-g-color-bg-pressed);
-  color: var(--button-action-plus-g-color-fg-pressed);
-}
-
-[data-bg="grey"].btn-plus:disabled {
-  background: var(--button-action-plus-g-color-bg-disabled);
-  color: var(--button-action-plus-g-color-fg-disabled);
-  cursor: not-allowed;
-  opacity: 0.5;
-}
-
-/* ButtonPlus inner button Plus icon colors - Grey background */
-[data-bg="grey"].btn-plus [data-bg="black"] .btn-normal svg {
-  color: var(--color-black);
-}
-
-[data-bg="grey"].btn-plus:hover:not(:disabled) [data-bg="black"] .btn-normal {
-  background: var(--color-white);
-}
-
-[data-bg="grey"].btn-plus:hover:not(:disabled) [data-bg="black"] .btn-normal svg {
-  color: var(--button-action-plus-g-color-plus-hover);
-}
-
-[data-bg="grey"].btn-plus:active:not(:disabled) [data-bg="black"] .btn-normal {
-  background: var(--color-white);
-}
-
-[data-bg="grey"].btn-plus:active:not(:disabled) [data-bg="black"] .btn-normal svg {
-  color: var(--button-action-plus-g-color-plus-pressed);
-}
-
-[data-bg="grey"].btn-plus:disabled [data-bg="black"] .btn-normal svg {
-  color: var(--button-action-plus-g-color-plus-disabled);
-}
-
-/* Black background */
-[data-bg="black"].btn-plus {
-  background: var(--button-action-plus-b-color-bg-default);
-  color: var(--button-action-plus-b-color-fg-default);
-}
-
-[data-bg="black"].btn-plus:hover:not(:disabled) {
-  background: var(--button-action-plus-b-color-bg-hover);
-  color: var(--button-action-plus-b-color-fg-hover);
-}
-
-[data-bg="black"].btn-plus:active:not(:disabled) {
-  background: var(--button-action-plus-b-color-bg-pressed);
-  color: var(--button-action-plus-b-color-fg-pressed);
-}
-
-[data-bg="black"].btn-plus:disabled {
-  background: var(--button-action-plus-b-color-bg-disabled);
-  color: var(--button-action-plus-b-color-fg-disabled);
-  cursor: not-allowed;
-  opacity: 0.5;
-}
-
-/* ButtonPlus inner button Plus icon colors - Black background */
-[data-bg="black"].btn-plus [data-bg="white"] .btn-normal svg {
-  color: var(--color-black);
-}
-
-[data-bg="black"].btn-plus:hover:not(:disabled) [data-bg="white"] .btn-normal {
-  background: var(--color-black);
-}
-
-[data-bg="black"].btn-plus:hover:not(:disabled) [data-bg="white"] .btn-normal svg {
-  color: var(--color-white);
-}
-
-[data-bg="black"].btn-plus:active:not(:disabled) [data-bg="white"] .btn-normal {
-  background: var(--color-black);
-}
-
-[data-bg="black"].btn-plus:active:not(:disabled) [data-bg="white"] .btn-normal svg {
-  color: var(--color-white);
-}
-
-[data-bg="black"].btn-plus:disabled [data-bg="white"] .btn-normal svg {
-  color: var(--button-action-plus-b-color-plus-disabled);
-}
-
-/* Toggle active styles - applique les styles hover quand isActive est true */
-/* White background */
-[data-bg="white"].toggle.toggle-active.btn-normal:not(:disabled) {
-  background: var(--button-w-normal-bg-hover);
-  color: var(--button-w-normal-fg-hover);
-}
-
-[data-bg="white"].toggle.toggle-active.btn-secondary:not(:disabled) {
-  background: var(--button-w-secondary-bg-hover);
-  color: var(--button-w-secondary-fg-hover);
-}
-
-[data-bg="white"].toggle.toggle-active.btn-ghost:not(:disabled) {
-  background: var(--button-w-ghost-bg-hover);
-  color: var(--button-w-ghost-fg-hover);
-}
-
-[data-bg="white"].toggle.toggle-active.btn-outline:not(:disabled) {
-  background: var(--button-w-outline-bg-hover);
-  color: var(--button-w-outline-fg-hover);
-}
-
-[data-bg="white"].toggle.toggle-active.btn-destructive:not(:disabled) {
-  background: var(--button-w-destructive-bg-hover);
-  color: var(--button-w-destructive-fg-hover);
-}
-
-[data-bg="white"].toggle.toggle-active.btn-link:not(:disabled) {
-  text-decoration: underline;
-}
-
-/* Grey background */
-[data-bg="grey"].toggle.toggle-active.btn-normal:not(:disabled) {
-  background: var(--button-g-normal-bg-hover);
-  color: var(--button-g-normal-fg-hover);
-}
-
-[data-bg="grey"].toggle.toggle-active.btn-secondary:not(:disabled) {
-  background: var(--button-g-secondary-bg-hover);
-  color: var(--button-g-secondary-fg-hover);
-}
-
-[data-bg="grey"].toggle.toggle-active.btn-ghost:not(:disabled) {
-  background: var(--button-g-ghost-bg-hover);
-  color: var(--button-g-ghost-fg-hover);
-}
-
-[data-bg="grey"].toggle.toggle-active.btn-outline:not(:disabled) {
-  background: var(--button-g-outline-bg-hover);
-  color: var(--button-g-outline-fg-hover);
-}
-
-[data-bg="grey"].toggle.toggle-active.btn-destructive:not(:disabled) {
-  background: var(--button-g-destructive-bg-hover);
-  color: var(--button-g-destructive-fg-hover);
-}
-
-[data-bg="grey"].toggle.toggle-active.btn-link:not(:disabled) {
-  text-decoration: underline;
-}
-
-/* Black background */
-[data-bg="black"].toggle.toggle-active.btn-normal:not(:disabled) {
-  background: var(--button-b-normal-bg-hover);
-  color: var(--button-b-normal-fg-hover);
-}
-
-[data-bg="black"].toggle.toggle-active.btn-secondary:not(:disabled) {
-  background: var(--button-b-secondary-bg-hover);
-  color: var(--button-b-secondary-fg-hover);
-}
-
-[data-bg="black"].toggle.toggle-active.btn-ghost:not(:disabled) {
-  background: var(--button-b-ghost-bg-hover);
-  color: var(--button-b-ghost-fg-hover);
-}
-
-[data-bg="black"].toggle.toggle-active.btn-outline:not(:disabled) {
-  background: var(--button-b-outline-bg-hover);
-  color: var(--button-b-outline-fg-hover);
-}
-
-[data-bg="black"].toggle.toggle-active.btn-destructive:not(:disabled) {
-  background: var(--button-b-destructive-bg-hover);
-  color: var(--button-b-destructive-fg-hover);
-}
-
-[data-bg="black"].toggle.toggle-active.btn-link:not(:disabled) {
-  text-decoration: underline;
-}
-
 /* Classes de thème */
 .theme-light {
   color-scheme: light;
@@ -2434,59 +2198,56 @@
   height: 100%;
 }
 
-/* ButtonMenu styles - popupAction et popupActionItem selon data-bg */
-
-/* Pour white et grey : popupAction = bg-black, popupActionItem = bg-black-secondary */
+/* Styles pour popup-action (menu déroulant) */
+/* Sur fond white ou grey : background black */
 [data-bg="white"] .popup-action,
 [data-bg="grey"] .popup-action {
-  background-color: var(--color-black);
+  background: var(--color-black);
 }
 
+/* Sur fond black : background black-secondary */
+[data-bg="black"] .popup-action {
+  background: var(--color-black-secondary);
+}
+
+/* Styles pour popup-action-item (items du menu déroulant) */
+/* Sur fond white ou grey : background black-secondary pour les items */
 [data-bg="white"] .popup-action-item,
 [data-bg="grey"] .popup-action-item {
-  background-color: var(--color-black-secondary);
+  background: var(--color-black-secondary);
   color: var(--color-white);
 }
 
 [data-bg="white"] .popup-action-item:hover:not(:disabled),
 [data-bg="grey"] .popup-action-item:hover:not(:disabled) {
-  background-color: var(--color-white);
+  background: var(--color-white);
   color: var(--color-black);
 }
 
 [data-bg="white"] .popup-action-item:active:not(:disabled),
 [data-bg="grey"] .popup-action-item:active:not(:disabled) {
-  background-color: var(--color-white);
-  color: var(--color-blue-primary);
+  background: var(--color-blue-primary);
+  color: var(--color-black);
 }
 
-[data-bg="white"] .popup-action-item:disabled,
-[data-bg="grey"] .popup-action-item:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* Pour black : popupAction = bg-black-secondary, popupActionItem = bg-black */
-[data-bg="black"] .popup-action {
-  background-color: var(--color-black-secondary);
-}
-
+/* Sur fond black : background black pour les items */
 [data-bg="black"] .popup-action-item {
-  background-color: var(--color-black);
+  background: var(--color-black);
   color: var(--color-white);
 }
 
 [data-bg="black"] .popup-action-item:hover:not(:disabled) {
-  background-color: var(--color-white);
+  background: var(--color-white);
   color: var(--color-black);
 }
 
 [data-bg="black"] .popup-action-item:active:not(:disabled) {
-  background-color: var(--color-white);
-  color: var(--color-blue-primary);
+  background: var(--color-blue-primary);
+  color: var(--color-black);
 }
 
-[data-bg="black"] .popup-action-item:disabled {
+/* Disabled state */
+.popup-action-item:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
