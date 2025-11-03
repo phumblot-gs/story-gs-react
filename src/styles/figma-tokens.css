@@ -1,7 +1,7 @@
 /**
  * Variables CSS générées automatiquement depuis les tokens Figma
  * NE PAS MODIFIER DIRECTEMENT - Généré par scripts/generate-css-tokens.cjs
- * Date: 2025-11-03T22:55:22.255Z
+ * Date: 2025-11-03T23:04:04.694Z
  */
 
 :root {
@@ -2218,12 +2218,23 @@
   color: var(--color-white);
 }
 
-[data-bg="white"] .popup-action-item:hover:not(:disabled),
-[data-bg="grey"] .popup-action-item:hover:not(:disabled) {
+/* Hover state avec data-highlighted (Radix UI) - syntaxe avec attribut data */
+[data-bg="white"] .popup-action-item[data-highlighted],
+[data-bg="grey"] .popup-action-item[data-highlighted],
+[data-bg="white"] .popup-action-item[data-highlighted="true"],
+[data-bg="grey"] .popup-action-item[data-highlighted="true"] {
   background: var(--color-white);
   color: var(--color-black);
 }
 
+/* Focus state (utilisé par Radix UI pour le hover également) */
+[data-bg="white"] .popup-action-item:focus-visible,
+[data-bg="grey"] .popup-action-item:focus-visible {
+  background: var(--color-white);
+  color: var(--color-black);
+}
+
+/* Active/pressed state */
 [data-bg="white"] .popup-action-item:active:not(:disabled),
 [data-bg="grey"] .popup-action-item:active:not(:disabled) {
   background: var(--color-blue-primary);
@@ -2236,11 +2247,20 @@
   color: var(--color-white);
 }
 
-[data-bg="black"] .popup-action-item:hover:not(:disabled) {
+/* Hover state avec data-highlighted (Radix UI) - syntaxe avec attribut data */
+[data-bg="black"] .popup-action-item[data-highlighted],
+[data-bg="black"] .popup-action-item[data-highlighted="true"] {
   background: var(--color-white);
   color: var(--color-black);
 }
 
+/* Focus state */
+[data-bg="black"] .popup-action-item:focus-visible {
+  background: var(--color-white);
+  color: var(--color-black);
+}
+
+/* Active/pressed state */
 [data-bg="black"] .popup-action-item:active:not(:disabled) {
   background: var(--color-blue-primary);
   color: var(--color-black);

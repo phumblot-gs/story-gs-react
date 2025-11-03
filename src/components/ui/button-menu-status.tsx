@@ -220,7 +220,7 @@ export const ButtonMenuStatus = React.forwardRef<HTMLButtonElement, ButtonMenuSt
                 disabled={option.disabled || disabled}
                 className={cn(
                   "w-full px-4 py-2 text-left text-sm whitespace-nowrap rounded-sm cursor-pointer popup-action-item",
-                  "flex items-center gap-2 text-white hover:text-black active:text-black",
+                  "flex items-center gap-2",
                   "data-[disabled]:opacity-50 data-[disabled]:cursor-not-allowed"
                 )}
                 onClick={(e) => {
