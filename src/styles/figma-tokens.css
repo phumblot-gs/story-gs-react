@@ -1278,6 +1278,151 @@
   text-decoration: none;
 }
 
+/* ButtonPlus styles */
+/* White background */
+[data-bg="white"].btn-plus {
+  background: var(--button-action-plus-w-color-bg-default);
+  color: var(--button-action-plus-w-color-fg-default);
+}
+
+[data-bg="white"].btn-plus:hover:not(:disabled) {
+  background: var(--button-action-plus-w-color-bg-hover);
+  color: var(--button-action-plus-w-color-fg-hover);
+}
+
+[data-bg="white"].btn-plus:active:not(:disabled) {
+  background: var(--button-action-plus-w-color-bg-pressed);
+  color: var(--button-action-plus-w-color-fg-pressed);
+}
+
+[data-bg="white"].btn-plus:disabled {
+  background: var(--button-action-plus-w-color-bg-disabled);
+  color: var(--button-action-plus-w-color-fg-disabled);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* ButtonPlus inner button Plus icon colors - White background */
+[data-bg="white"].btn-plus [data-bg="black"] .btn-normal svg {
+  color: var(--color-black);
+}
+
+[data-bg="white"].btn-plus:hover:not(:disabled) [data-bg="black"] .btn-normal {
+  background: var(--color-white);
+}
+
+[data-bg="white"].btn-plus:hover:not(:disabled) [data-bg="black"] .btn-normal svg {
+  color: var(--button-action-plus-w-color-plus-hover);
+}
+
+[data-bg="white"].btn-plus:active:not(:disabled) [data-bg="black"] .btn-normal {
+  background: var(--color-white);
+}
+
+[data-bg="white"].btn-plus:active:not(:disabled) [data-bg="black"] .btn-normal svg {
+  color: var(--button-action-plus-w-color-plus-pressed);
+}
+
+[data-bg="white"].btn-plus:disabled [data-bg="black"] .btn-normal svg {
+  color: var(--button-action-plus-w-color-plus-disabled);
+}
+
+/* Grey background */
+[data-bg="grey"].btn-plus {
+  background: var(--button-action-plus-g-color-bg-default);
+  color: var(--button-action-plus-g-color-fg-default);
+}
+
+[data-bg="grey"].btn-plus:hover:not(:disabled) {
+  background: var(--button-action-plus-g-color-bg-hover);
+  color: var(--button-action-plus-g-color-fg-hover);
+}
+
+[data-bg="grey"].btn-plus:active:not(:disabled) {
+  background: var(--button-action-plus-g-color-bg-pressed);
+  color: var(--button-action-plus-g-color-fg-pressed);
+}
+
+[data-bg="grey"].btn-plus:disabled {
+  background: var(--button-action-plus-g-color-bg-disabled);
+  color: var(--button-action-plus-g-color-fg-disabled);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* ButtonPlus inner button Plus icon colors - Grey background */
+[data-bg="grey"].btn-plus [data-bg="black"] .btn-normal svg {
+  color: var(--color-black);
+}
+
+[data-bg="grey"].btn-plus:hover:not(:disabled) [data-bg="black"] .btn-normal {
+  background: var(--color-white);
+}
+
+[data-bg="grey"].btn-plus:hover:not(:disabled) [data-bg="black"] .btn-normal svg {
+  color: var(--button-action-plus-g-color-plus-hover);
+}
+
+[data-bg="grey"].btn-plus:active:not(:disabled) [data-bg="black"] .btn-normal {
+  background: var(--color-white);
+}
+
+[data-bg="grey"].btn-plus:active:not(:disabled) [data-bg="black"] .btn-normal svg {
+  color: var(--button-action-plus-g-color-plus-pressed);
+}
+
+[data-bg="grey"].btn-plus:disabled [data-bg="black"] .btn-normal svg {
+  color: var(--button-action-plus-g-color-plus-disabled);
+}
+
+/* Black background */
+[data-bg="black"].btn-plus {
+  background: var(--button-action-plus-b-color-bg-default);
+  color: var(--button-action-plus-b-color-fg-default);
+}
+
+[data-bg="black"].btn-plus:hover:not(:disabled) {
+  background: var(--button-action-plus-b-color-bg-hover);
+  color: var(--button-action-plus-b-color-fg-hover);
+}
+
+[data-bg="black"].btn-plus:active:not(:disabled) {
+  background: var(--button-action-plus-b-color-bg-pressed);
+  color: var(--button-action-plus-b-color-fg-pressed);
+}
+
+[data-bg="black"].btn-plus:disabled {
+  background: var(--button-action-plus-b-color-bg-disabled);
+  color: var(--button-action-plus-b-color-fg-disabled);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* ButtonPlus inner button Plus icon colors - Black background */
+[data-bg="black"].btn-plus [data-bg="white"] .btn-normal svg {
+  color: var(--color-black);
+}
+
+[data-bg="black"].btn-plus:hover:not(:disabled) [data-bg="white"] .btn-normal {
+  background: var(--color-black);
+}
+
+[data-bg="black"].btn-plus:hover:not(:disabled) [data-bg="white"] .btn-normal svg {
+  color: var(--color-white);
+}
+
+[data-bg="black"].btn-plus:active:not(:disabled) [data-bg="white"] .btn-normal {
+  background: var(--color-black);
+}
+
+[data-bg="black"].btn-plus:active:not(:disabled) [data-bg="white"] .btn-normal svg {
+  color: var(--color-white);
+}
+
+[data-bg="black"].btn-plus:disabled [data-bg="white"] .btn-normal svg {
+  color: var(--button-action-plus-b-color-plus-disabled);
+}
+
 /* Toggle active styles - applique les styles hover quand isActive est true */
 /* White background */
 [data-bg="white"].toggle.toggle-active.btn-normal:not(:disabled) {

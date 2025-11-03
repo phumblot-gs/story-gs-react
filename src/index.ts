@@ -7,6 +7,7 @@ import { buttonVariants } from "./components/ui/button-base";
 import { Button } from "./components/ui/button";
 import { ButtonMenu } from "./components/ui/button-menu";
 import { ButtonMenuStatus } from "./components/ui/button-menu-status";
+import { ButtonPlus } from "./components/ui/button-plus";
 import { LanguageSwitcher } from "./components/ui/language-switcher";
 import { FileBrowser } from "./components/ui/file-browser";
 import {
@@ -287,6 +288,10 @@ import type {
 } from "./components/ui/button-menu-status";
 
 import type {
+  ButtonPlusProps
+} from "./components/ui/button-plus";
+
+import type {
   IconName
 } from "./components/ui/icons/types";
 
@@ -346,6 +351,7 @@ export { buttonVariants };
 export { Button };
 export { ButtonMenu };
 export { ButtonMenuStatus };
+export { ButtonPlus };
 export { LanguageSwitcher };
 export { FileBrowser };
 export { Select, SelectTrigger, SelectContent, SelectItem, SelectValue };
@@ -557,6 +563,7 @@ export type {
   ButtonMenuProps,
   ButtonMenuStatusOption,
   ButtonMenuStatusProps,
+  ButtonPlusProps,
   AvatarSize,
   IconName,
   Language,
