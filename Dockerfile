@@ -27,8 +27,9 @@ COPY package.json package-lock.json* ./
 RUN rm -rf node_modules .npm
 
 # Installer les dépendances (y compris devDependencies pour Storybook)
+# Utiliser npm install avec --legacy-peer-deps pour gérer le conflit avec @storybook/addon-mcp
 # Limiter la mémoire utilisée par npm pour éviter les problèmes d'OOM
-RUN npm ci --production=false --prefer-offline --no-audit
+RUN npm install --legacy-peer-deps --production=false --prefer-offline --no-audit
 
 # Copier le reste du code
 COPY . .
