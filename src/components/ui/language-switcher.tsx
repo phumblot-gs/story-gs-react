@@ -54,11 +54,30 @@ export const LanguageSwitcher = ({
 
   // Vérification de sécurité pour currentLanguage et extraction du code
   const languageCode = currentLanguage?.code
-  const isValidLanguage = currentLanguage && languageCode && typeof languageCode === "string" && languageCode.trim().length > 0
+  const isValidLanguage = currentLanguage && 
+    languageCode && 
+    typeof languageCode === "string" && 
+    languageCode.trim().length > 0
+  
+  // Debug: log détaillé pour comprendre le problème
+  if (debug) {
+    React.useEffect(() => {
+      console.log("[LanguageSwitcher] Render check:", {
+        currentLanguage,
+        languageCode,
+        isValidLanguage,
+        codeType: typeof languageCode,
+        codeLength: languageCode?.length,
+        codeTrimmed: languageCode?.trim(),
+        codeTrimmedLength: languageCode?.trim()?.length,
+        currentLanguageKeys: currentLanguage ? Object.keys(currentLanguage) : []
+      })
+    }, [currentLanguage, languageCode, isValidLanguage])
+  }
   
   if (!isValidLanguage) {
     if (debug) {
-      console.warn("[LanguageSwitcher] currentLanguage is missing or invalid:", {
+      console.warn("[LanguageSwitcher] currentLanguage is missing or invalid - returning null:", {
         currentLanguage,
         code: currentLanguage?.code,
         codeType: typeof currentLanguage?.code,
@@ -70,13 +89,21 @@ export const LanguageSwitcher = ({
     return null
   }
 
-  // Contenu du bouton
+  // Contenu du bouton avec vérification supplémentaire
   const buttonContent = isOpen ? (
     <Icon name="X" size={iconSize} />
   ) : (
-    <span className={size === "small" ? "text-[9px]" : "text-xs"}>
-      {languageCode}
-    </span>
+    languageCode && languageCode.trim().length > 0 ? (
+      <span className={size === "small" ? "text-[9px]" : "text-xs"}>
+        {languageCode}
+      </span>
+    ) : (
+      debug && (
+        <span className={size === "small" ? "text-[9px] text-red-500" : "text-xs text-red-500"}>
+          {"?"}
+        </span>
+      )
+    )
   )
 
   return (
