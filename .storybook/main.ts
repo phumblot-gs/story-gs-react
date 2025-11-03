@@ -36,7 +36,10 @@ const config: StorybookConfig = {
           "@storybook/blocks": join(__dirname, "../node_modules/@storybook/addon-docs/dist/blocks.mjs"),
           // Alias pour storybook/actions qui pointe vers @storybook/preview-api dans Storybook 9.x
           "storybook/actions": "@storybook/preview-api",
-          // storybook/test et storybook/preview-api sont résolus automatiquement par Storybook
+          // Alias pour storybook/test - dans Storybook 9.1.16, cela pointe vers le package storybook lui-même
+          // qui exporte les utilitaires de test via son système d'exports
+          "storybook/test": "storybook",
+          // storybook/preview-api est résolu automatiquement par Storybook
           // Pas besoin d'alias explicite
         },
       },
