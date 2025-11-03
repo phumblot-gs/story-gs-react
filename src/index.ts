@@ -5,6 +5,7 @@ import "./lib.css";
 import * as React from "react";
 import { buttonVariants } from "./components/ui/button-base";
 import { Button } from "./components/ui/button";
+import { ButtonMenu } from "./components/ui/button-menu";
 import { LanguageSwitcher } from "./components/ui/language-switcher";
 import { FileBrowser } from "./components/ui/file-browser";
 import {
@@ -275,6 +276,11 @@ import type {
 } from "./components/ui/button";
 
 import type {
+  ButtonMenuAction,
+  ButtonMenuProps
+} from "./components/ui/button-menu";
+
+import type {
   IconName
 } from "./components/ui/icons/types";
 
@@ -332,6 +338,7 @@ export * from "./components/ui/icon-provider";
 // Export UI components
 export { buttonVariants };
 export { Button };
+export { ButtonMenu };
 export { LanguageSwitcher };
 export { FileBrowser };
 export { Select, SelectTrigger, SelectContent, SelectItem, SelectValue };
@@ -539,6 +546,8 @@ export type {
   ButtonProps,
   ButtonSize,
   ButtonVariant,
+  ButtonMenuAction,
+  ButtonMenuProps,
   AvatarSize,
   IconName,
   Language,

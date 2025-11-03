@@ -1278,6 +1278,97 @@
   text-decoration: none;
 }
 
+/* Toggle active styles - applique les styles hover quand isActive est true */
+/* White background */
+[data-bg="white"].toggle.toggle-active.btn-normal:not(:disabled) {
+  background: var(--button-w-normal-bg-hover);
+  color: var(--button-w-normal-fg-hover);
+}
+
+[data-bg="white"].toggle.toggle-active.btn-secondary:not(:disabled) {
+  background: var(--button-w-secondary-bg-hover);
+  color: var(--button-w-secondary-fg-hover);
+}
+
+[data-bg="white"].toggle.toggle-active.btn-ghost:not(:disabled) {
+  background: var(--button-w-ghost-bg-hover);
+  color: var(--button-w-ghost-fg-hover);
+}
+
+[data-bg="white"].toggle.toggle-active.btn-outline:not(:disabled) {
+  background: var(--button-w-outline-bg-hover);
+  color: var(--button-w-outline-fg-hover);
+}
+
+[data-bg="white"].toggle.toggle-active.btn-destructive:not(:disabled) {
+  background: var(--button-w-destructive-bg-hover);
+  color: var(--button-w-destructive-fg-hover);
+}
+
+[data-bg="white"].toggle.toggle-active.btn-link:not(:disabled) {
+  text-decoration: underline;
+}
+
+/* Grey background */
+[data-bg="grey"].toggle.toggle-active.btn-normal:not(:disabled) {
+  background: var(--button-g-normal-bg-hover);
+  color: var(--button-g-normal-fg-hover);
+}
+
+[data-bg="grey"].toggle.toggle-active.btn-secondary:not(:disabled) {
+  background: var(--button-g-secondary-bg-hover);
+  color: var(--button-g-secondary-fg-hover);
+}
+
+[data-bg="grey"].toggle.toggle-active.btn-ghost:not(:disabled) {
+  background: var(--button-g-ghost-bg-hover);
+  color: var(--button-g-ghost-fg-hover);
+}
+
+[data-bg="grey"].toggle.toggle-active.btn-outline:not(:disabled) {
+  background: var(--button-g-outline-bg-hover);
+  color: var(--button-g-outline-fg-hover);
+}
+
+[data-bg="grey"].toggle.toggle-active.btn-destructive:not(:disabled) {
+  background: var(--button-g-destructive-bg-hover);
+  color: var(--button-g-destructive-fg-hover);
+}
+
+[data-bg="grey"].toggle.toggle-active.btn-link:not(:disabled) {
+  text-decoration: underline;
+}
+
+/* Black background */
+[data-bg="black"].toggle.toggle-active.btn-normal:not(:disabled) {
+  background: var(--button-b-normal-bg-hover);
+  color: var(--button-b-normal-fg-hover);
+}
+
+[data-bg="black"].toggle.toggle-active.btn-secondary:not(:disabled) {
+  background: var(--button-b-secondary-bg-hover);
+  color: var(--button-b-secondary-fg-hover);
+}
+
+[data-bg="black"].toggle.toggle-active.btn-ghost:not(:disabled) {
+  background: var(--button-b-ghost-bg-hover);
+  color: var(--button-b-ghost-fg-hover);
+}
+
+[data-bg="black"].toggle.toggle-active.btn-outline:not(:disabled) {
+  background: var(--button-b-outline-bg-hover);
+  color: var(--button-b-outline-fg-hover);
+}
+
+[data-bg="black"].toggle.toggle-active.btn-destructive:not(:disabled) {
+  background: var(--button-b-destructive-bg-hover);
+  color: var(--button-b-destructive-fg-hover);
+}
+
+[data-bg="black"].toggle.toggle-active.btn-link:not(:disabled) {
+  text-decoration: underline;
+}
+
 /* Classes de thème */
 .theme-light {
   color-scheme: light;
@@ -2196,5 +2287,62 @@
 .tag-label-icon svg {
   width: 100%;
   height: 100%;
+}
+
+/* ButtonMenu styles - popupAction et popupActionItem selon data-bg */
+
+/* Pour white et grey : popupAction = bg-black, popupActionItem = bg-black-secondary */
+[data-bg="white"] .popup-action,
+[data-bg="grey"] .popup-action {
+  background-color: var(--color-black);
+}
+
+[data-bg="white"] .popup-action-item,
+[data-bg="grey"] .popup-action-item {
+  background-color: var(--color-black-secondary);
+  color: var(--color-white);
+}
+
+[data-bg="white"] .popup-action-item:hover:not(:disabled),
+[data-bg="grey"] .popup-action-item:hover:not(:disabled) {
+  background-color: var(--color-white);
+  color: var(--color-black);
+}
+
+[data-bg="white"] .popup-action-item:active:not(:disabled),
+[data-bg="grey"] .popup-action-item:active:not(:disabled) {
+  background-color: var(--color-white);
+  color: var(--color-blue-primary);
+}
+
+[data-bg="white"] .popup-action-item:disabled,
+[data-bg="grey"] .popup-action-item:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Pour black : popupAction = bg-black-secondary, popupActionItem = bg-black */
+[data-bg="black"] .popup-action {
+  background-color: var(--color-black-secondary);
+}
+
+[data-bg="black"] .popup-action-item {
+  background-color: var(--color-black);
+  color: var(--color-white);
+}
+
+[data-bg="black"] .popup-action-item:hover:not(:disabled) {
+  background-color: var(--color-white);
+  color: var(--color-black);
+}
+
+[data-bg="black"] .popup-action-item:active:not(:disabled) {
+  background-color: var(--color-white);
+  color: var(--color-blue-primary);
+}
+
+[data-bg="black"] .popup-action-item:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
