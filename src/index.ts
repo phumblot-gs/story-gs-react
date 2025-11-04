@@ -525,6 +525,7 @@ export {
 };
 export { Popover, PopoverTrigger, PopoverContent };
 export { Progress };
+export type { ProgressState, ProgressProps } from "./components/ui/progress";
 export { RadioGroup, RadioGroupItem };
 export { ResizablePanelGroup, ResizablePanel, ResizableHandle };
 export { ScrollArea, ScrollBar };

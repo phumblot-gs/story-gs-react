@@ -250,3 +250,20 @@
   cursor: not-allowed;
 }
 
+/* Styles pour Progress component */
+/* Sur fond grey : background white */
+[data-bg="grey"] .progress-default {
+  background: var(--color-white);
+}
+
+/* Sur fond black : background black-secondary */
+[data-bg="black"] .progress-default {
+  background: var(--color-black-secondary);
+}
+
+/* Sur fond black : indicateur white */
+[data-bg="black"] .progress-indicator {
+  background: var(--color-white);
+}
+
+

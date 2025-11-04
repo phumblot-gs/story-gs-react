@@ -11,6 +11,8 @@ import { ActivityStatusProvider, useActivityStatusContext } from "@/contexts/Act
 import { Workflow } from "@/components/ui/workflow";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import ButtonNotifications from "@/components/ButtonNotifications";
+import { ButtonMenuSmall, ButtonMenuAction } from "@/components/ui/button-menu-small";
+import { Icon } from "@/components/ui/icons";
 
 const meta: Meta<typeof PageHeader> = {
   title: "Components/PageHeader",
@@ -393,6 +395,29 @@ const RightSideButtons = () => {
   ];
   const [currentLanguage, setCurrentLanguage] = useState(languages[0]);
 
+  const userMenuActions: ButtonMenuAction[] = [
+    { 
+      label: "Mon profil", 
+      onClick: () => console.log("Mon profil"),
+      icon: <Icon name="User" size={12} />
+    },
+    { 
+      label: "Paramètres", 
+      onClick: () => console.log("Paramètres"),
+      icon: <Icon name="Settings" size={12} />
+    },
+    { 
+      label: "Aide", 
+      onClick: () => console.log("Aide"),
+      icon: <Icon name="Help" size={12} />
+    },
+    { 
+      label: "Déconnexion", 
+      onClick: () => console.log("Déconnexion"),
+      icon: <Icon name="Logout" size={12} />
+    },
+  ];
+
   return (
     <>
       <LanguageSwitcher 
@@ -400,10 +425,9 @@ const RightSideButtons = () => {
         currentLanguage={currentLanguage} 
         onLanguageChange={setCurrentLanguage} 
       />
-      <Button variant="ghost" className="p-0 w-6 h-6"><IconProvider icon="User" /></Button>
-      <Button variant="ghost" className="p-0 w-6 h-6"><IconProvider icon="Settings" /></Button>
-      <Button variant="ghost" className="p-0 w-6 h-6"><IconProvider icon="Help" /></Button>
-      <Button variant="ghost" className="p-0 w-6 h-6"><IconProvider icon="Logout" /></Button>
+      <ButtonMenuSmall variant="ghost" size="large" className="p-0 w-6 h-6" actions={userMenuActions}>
+        <Icon name="User" size={12} />
+      </ButtonMenuSmall>
       <ButtonNotifications />
     </>
   );
