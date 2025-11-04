@@ -251,12 +251,20 @@
 }
 
 /* Styles pour Progress component */
+/* Background par défaut du composant Progress */
+/* Sur fond white : utilise muted (grey-lighter) */
+.progress-bg {
+  background: var(--color-grey-lighter);
+}
+
 /* Sur fond grey : background white */
+[data-bg="grey"] .progress-bg,
 [data-bg="grey"] .progress-default {
   background: var(--color-white);
 }
 
 /* Sur fond black : background black-secondary */
+[data-bg="black"] .progress-bg,
 [data-bg="black"] .progress-default {
   background: var(--color-black-secondary);
 }
