@@ -8,7 +8,7 @@ import { Card } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { SegmentedControl, SegmentedControlContent, SegmentedControlList, SegmentedControlTrigger } from '@/components/ui/segmented-control';
 
 const GSComponentsRootDocumentation = () => {
   return (
@@ -174,15 +174,15 @@ function App() {
       <section className="space-y-6">
         <h2 className="text-2xl font-bold">Configurations par environnement</h2>
 
-        <Tabs defaultValue="nextjs" className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="nextjs">Next.js</TabsTrigger>
-            <TabsTrigger value="vite">Vite</TabsTrigger>
-            <TabsTrigger value="cra">Create React App</TabsTrigger>
-            <TabsTrigger value="remix">Remix</TabsTrigger>
-          </TabsList>
+        <SegmentedControl defaultValue="nextjs" className="w-full">
+          <SegmentedControlList className="grid w-full grid-cols-4">
+            <SegmentedControlTrigger value="nextjs">Next.js</SegmentedControlTrigger>
+            <SegmentedControlTrigger value="vite">Vite</SegmentedControlTrigger>
+            <SegmentedControlTrigger value="cra">Create React App</SegmentedControlTrigger>
+            <SegmentedControlTrigger value="remix">Remix</SegmentedControlTrigger>
+          </SegmentedControlList>
 
-          <TabsContent value="nextjs" className="space-y-4">
+          <SegmentedControlContent value="nextjs" className="space-y-4">
             <Card className="p-6">
               <h3 className="text-lg font-semibold mb-4">Next.js App Router</h3>
               <pre className="bg-muted p-4 rounded-lg overflow-x-auto">
@@ -240,9 +240,9 @@ export default function App({ Component, pageProps }) {
 }`}</code>
               </pre>
             </Card>
-          </TabsContent>
+          </SegmentedControlContent>
 
-          <TabsContent value="vite">
+          <SegmentedControlContent value="vite">
             <Card className="p-6">
               <h3 className="text-lg font-semibold mb-4">Vite React</h3>
               <pre className="bg-muted p-4 rounded-lg overflow-x-auto">
@@ -268,9 +268,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 );`}</code>
               </pre>
             </Card>
-          </TabsContent>
+          </SegmentedControlContent>
 
-          <TabsContent value="cra">
+          <SegmentedControlContent value="cra">
             <Card className="p-6">
               <h3 className="text-lg font-semibold mb-4">Create React App</h3>
               <pre className="bg-muted p-4 rounded-lg overflow-x-auto">
@@ -299,9 +299,9 @@ root.render(
 );`}</code>
               </pre>
             </Card>
-          </TabsContent>
+          </SegmentedControlContent>
 
-          <TabsContent value="remix">
+          <SegmentedControlContent value="remix">
             <Card className="p-6">
               <h3 className="text-lg font-semibold mb-4">Remix</h3>
               <pre className="bg-muted p-4 rounded-lg overflow-x-auto">
@@ -334,8 +334,8 @@ export default function App() {
 }`}</code>
               </pre>
             </Card>
-          </TabsContent>
-        </Tabs>
+          </SegmentedControlContent>
+        </SegmentedControl>
       </section>
 
       <section className="space-y-6">

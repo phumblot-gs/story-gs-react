@@ -2,7 +2,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { SegmentedControl, SegmentedControlList, SegmentedControlTrigger, SegmentedControlContent } from "@/components/ui/segmented-control";
 
 // Import all test section components
 import PageHeaderTestSection from "./test/PageHeaderTestSection";
@@ -28,41 +28,41 @@ const Test: React.FC = () => {
         </div>
       </div>
 
-      <Tabs defaultValue="page-header" className="w-full">
-        <TabsList className="mb-4">
-          <TabsTrigger value="page-header">Page Header</TabsTrigger>
-          <TabsTrigger value="notifications">Notifications</TabsTrigger>
-          <TabsTrigger value="buttons">Buttons</TabsTrigger>
-          <TabsTrigger value="forms">Forms</TabsTrigger>
-          <TabsTrigger value="status">Status Components</TabsTrigger>
-          <TabsTrigger value="nested">Nested Components</TabsTrigger>
-        </TabsList>
+      <SegmentedControl defaultValue="page-header" className="w-full">
+        <SegmentedControlList className="mb-4">
+          <SegmentedControlTrigger value="page-header">Page Header</SegmentedControlTrigger>
+          <SegmentedControlTrigger value="notifications">Notifications</SegmentedControlTrigger>
+          <SegmentedControlTrigger value="buttons">Buttons</SegmentedControlTrigger>
+          <SegmentedControlTrigger value="forms">Forms</SegmentedControlTrigger>
+          <SegmentedControlTrigger value="status">Status Components</SegmentedControlTrigger>
+          <SegmentedControlTrigger value="nested">Nested Components</SegmentedControlTrigger>
+        </SegmentedControlList>
 
-        <TabsContent value="page-header" className="space-y-8">
+        <SegmentedControlContent value="page-header" className="space-y-8">
           <PageHeaderTestSection />
-        </TabsContent>
+        </SegmentedControlContent>
 
-        <TabsContent value="notifications" className="space-y-8">
+        <SegmentedControlContent value="notifications" className="space-y-8">
           <NotificationsTestSection />
-        </TabsContent>
+        </SegmentedControlContent>
 
-        <TabsContent value="buttons" className="space-y-8">
+        <SegmentedControlContent value="buttons" className="space-y-8">
           <ButtonTestSection />
           <ToastTestSection />
-        </TabsContent>
+        </SegmentedControlContent>
         
-        <TabsContent value="forms" className="space-y-8">
+        <SegmentedControlContent value="forms" className="space-y-8">
           <FormComponentsTestSection />
-        </TabsContent>
+        </SegmentedControlContent>
 
-        <TabsContent value="status" className="space-y-8">
+        <SegmentedControlContent value="status" className="space-y-8">
           <StatusComponentsTestSection />
-        </TabsContent>
+        </SegmentedControlContent>
 
-        <TabsContent value="nested" className="space-y-8">
+        <SegmentedControlContent value="nested" className="space-y-8">
           <NestedComponentsTestSection />
-        </TabsContent>
-      </Tabs>
+        </SegmentedControlContent>
+      </SegmentedControl>
     </div>
   );
 };

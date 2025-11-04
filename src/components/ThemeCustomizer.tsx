@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { SegmentedControl, SegmentedControlContent, SegmentedControlList, SegmentedControlTrigger } from '@/components/ui/segmented-control';
 import { cn } from '@/lib/utils';
 import { ColorInput } from './ColorInput';
 import BrandLogo from './PageHeader/BrandLogo';
@@ -220,15 +220,15 @@ export const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({
               </div>
             </div>
             
-            <Tabs defaultValue="background">
-              <TabsList className="grid grid-cols-4 mb-2">
-                <TabsTrigger value="background">Background</TabsTrigger>
-                <TabsTrigger value="text">Text</TabsTrigger>
-                <TabsTrigger value="status">Status</TabsTrigger>
-                <TabsTrigger value="header">Header</TabsTrigger>
-              </TabsList>
+            <SegmentedControl defaultValue="background">
+              <SegmentedControlList className="grid grid-cols-4 mb-2">
+                <SegmentedControlTrigger value="background">Background</SegmentedControlTrigger>
+                <SegmentedControlTrigger value="text">Text</SegmentedControlTrigger>
+                <SegmentedControlTrigger value="status">Status</SegmentedControlTrigger>
+                <SegmentedControlTrigger value="header">Header</SegmentedControlTrigger>
+              </SegmentedControlList>
               
-              <TabsContent value="background" className="space-y-3">
+              <SegmentedControlContent value="background" className="space-y-3">
                 <ColorInput 
                   label="bg-white" 
                   colorKey="bgWhite" 
@@ -264,9 +264,9 @@ export const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({
                   value={formValues.bgGreyStrongest || ''}
                   onChange={handleInputChange} 
                 />
-              </TabsContent>
+              </SegmentedControlContent>
               
-              <TabsContent value="text" className="space-y-3">
+              <SegmentedControlContent value="text" className="space-y-3">
                 <ColorInput 
                   label="text-grey-stronger" 
                   colorKey="textGreyStronger" 
@@ -302,9 +302,9 @@ export const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({
                   value={formValues.textBlue || ''}
                   onChange={handleInputChange} 
                 />
-              </TabsContent>
+              </SegmentedControlContent>
               
-              <TabsContent value="status" className="space-y-3">
+              <SegmentedControlContent value="status" className="space-y-3">
                 <ColorInput 
                   label="status-ignored" 
                   colorKey="statusIgnored" 
@@ -375,9 +375,9 @@ export const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({
                   value={formValues.statusPublished || ''}
                   onChange={handleInputChange} 
                 />
-              </TabsContent>
+              </SegmentedControlContent>
               
-              <TabsContent value="header" className="space-y-3">
+              <SegmentedControlContent value="header" className="space-y-3">
                 <ColorInput 
                   label="Header Gradient Start" 
                   colorKey="headerGradientStart" 
@@ -402,8 +402,8 @@ export const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({
                     }}
                   ></div>
                 </div>
-              </TabsContent>
-            </Tabs>
+              </SegmentedControlContent>
+            </SegmentedControl>
             
             <div className="flex justify-between">
               <Button variant="outline" onClick={handleReset}>

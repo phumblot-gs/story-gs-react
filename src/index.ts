@@ -22,6 +22,12 @@ import { Input } from "./components/ui/input";
 import { InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator } from "./components/ui/input-otp";
 import { Search } from "./components/ui/search";
 import {
+  SegmentedControl,
+  SegmentedControlList,
+  SegmentedControlTrigger,
+  SegmentedControlContent,
+} from "./components/ui/segmented-control";
+import {
   Tabs,
   TabsList,
   TabsTrigger,
@@ -364,6 +370,7 @@ export { Select, SelectTrigger, SelectContent, SelectItem, SelectValue };
 export { Input };
 export { InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator };
 export { Search };
+export { SegmentedControl, SegmentedControlList, SegmentedControlTrigger, SegmentedControlContent };
 export { Tabs, TabsList, TabsTrigger, TabsContent };
 export { FolderBrowser };
 export { Icon } from "./components/ui/icons";

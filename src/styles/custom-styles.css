@@ -274,4 +274,145 @@
   background: var(--color-white);
 }
 
+/* Variables CSS pour Tabs - basées sur les tokens Figma */
+:root {
+  /* Tabs - White background */
+  --tabs-w-color-fg-default: #292828;
+  --tabs-w-color-stroke-default: #292828;
+  --tabs-w-color-bg-default: #efefef;
+  
+  /* Tabs - Grey background */
+  --tabs-g-color-fg-default: #292828;
+  --tabs-g-color-stroke-default: #292828;
+  --tabs-g-color-bg-default: #ffffff;
+  
+  /* Tabs - Black background */
+  --tabs-b-color-fg-default: #ffffff;
+  --tabs-b-color-stroke-default: #ffffff;
+  --tabs-b-color-bg-default: #3a3a3a;
+}
 
+/* Styles pour Tabs component */
+/* TabHeader - ligne de séparation et conteneur des onglets */
+.tabs-header {
+  border-bottom: 1px solid;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xlarge, 1.875rem);
+  position: relative;
+}
+
+[data-bg="white"] .tabs-header {
+  border-color: var(--tabs-w-color-stroke-default);
+}
+
+[data-bg="grey"] .tabs-header {
+  border-color: var(--tabs-g-color-stroke-default);
+}
+
+[data-bg="black"] .tabs-header {
+  border-color: var(--tabs-b-color-stroke-default);
+}
+
+/* TabsList - conteneur scrollable des onglets */
+.tabs-list {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xlarge, 1.875rem);
+  overflow: hidden;
+  flex: 1;
+}
+
+/* TabsTrigger - chaque onglet */
+.tabs-trigger {
+  padding: var(--spacing-medium, 0.625rem) 0;
+  font-size: var(--font-size-base, 0.8125rem);
+  line-height: var(--font-lh-none, 1);
+  font-weight: var(--font-weight-regular, 400);
+  white-space: nowrap;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
+  cursor: pointer;
+  background: none;
+  border-top: 0;
+  border-left: 0;
+  border-right: 0;
+}
+
+/* TabsTrigger - état actif */
+.tabs-trigger[data-state="active"] {
+  font-weight: 600; /* Demi Bold */
+  border-bottom-color: currentColor;
+}
+
+/* TabsTrigger - White background */
+[data-bg="white"] .tabs-trigger {
+  color: var(--tabs-w-color-fg-default);
+}
+
+[data-bg="white"] .tabs-trigger[data-state="active"] {
+  border-bottom-color: var(--tabs-w-color-stroke-default);
+}
+
+/* TabsTrigger - Grey background */
+[data-bg="grey"] .tabs-trigger {
+  color: var(--tabs-g-color-fg-default);
+}
+
+[data-bg="grey"] .tabs-trigger[data-state="active"] {
+  border-bottom-color: var(--tabs-g-color-stroke-default);
+}
+
+/* TabsTrigger - Black background */
+[data-bg="black"] .tabs-trigger {
+  color: var(--tabs-b-color-fg-default);
+}
+
+[data-bg="black"] .tabs-trigger[data-state="active"] {
+  border-bottom-color: var(--tabs-b-color-stroke-default);
+}
+
+/* Boutons de navigation */
+.tabs-nav-button {
+  padding: var(--spacing-small, 0.3125rem);
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: currentColor;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.tabs-nav-button:hover:not(:disabled) {
+  opacity: 1;
+}
+
+.tabs-nav-button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* TabBody - conteneur du contenu */
+.tabs-body {
+  background: var(--tabs-w-color-bg-default);
+}
+
+[data-bg="white"] .tabs-body {
+  background: var(--tabs-w-color-bg-default);
+}
+
+[data-bg="grey"] .tabs-body {
+  background: var(--tabs-g-color-bg-default);
+}
+
+[data-bg="black"] .tabs-body {
+  background: var(--tabs-b-color-bg-default);
+}
+
+/* TabsContent - contenu de chaque onglet */
+.tabs-content {
+  /* Styles spécifiques si nécessaire */
+}

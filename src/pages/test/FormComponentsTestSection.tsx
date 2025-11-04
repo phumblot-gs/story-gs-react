@@ -26,7 +26,7 @@ import {
   FormMessage 
 } from "@/components/ui/form";
 import { Label } from "@/components/ui/label";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { SegmentedControl, SegmentedControlList, SegmentedControlTrigger, SegmentedControlContent } from "@/components/ui/segmented-control";
 
 // Form schema for validation
 const formSchema = z.object({
@@ -89,15 +89,15 @@ const FormComponentsTestSection: React.FC = () => {
         </p>
       </div>
 
-      <Tabs defaultValue="white" onValueChange={(value) => setSelectedBackground(value as BackgroundType)}>
-        <TabsList>
-          <TabsTrigger value="white">White Background</TabsTrigger>
-          <TabsTrigger value="black">Black Background</TabsTrigger>
-          <TabsTrigger value="grey">Grey Background</TabsTrigger>
-        </TabsList>
+      <SegmentedControl defaultValue="white" onValueChange={(value) => setSelectedBackground(value as BackgroundType)}>
+        <SegmentedControlList>
+          <SegmentedControlTrigger value="white">White Background</SegmentedControlTrigger>
+          <SegmentedControlTrigger value="black">Black Background</SegmentedControlTrigger>
+          <SegmentedControlTrigger value="grey">Grey Background</SegmentedControlTrigger>
+        </SegmentedControlList>
         
         {backgrounds.map((bg) => (
-          <TabsContent key={bg} value={bg} className={cn(
+          <SegmentedControlContent key={bg} value={bg} className={cn(
             "p-6 rounded-lg mt-4",
             bg === "white" && "bg-white",
             bg === "black" && "bg-black",
@@ -214,9 +214,9 @@ const FormComponentsTestSection: React.FC = () => {
                 </div>
               </div>
             </div>
-          </TabsContent>
+          </SegmentedControlContent>
         ))}
-      </Tabs>
+      </SegmentedControl>
 
       {/* Complete form example */}
       <div className="mt-16">
