@@ -32,7 +32,7 @@ const Search = React.forwardRef<HTMLInputElement, SearchProps>(
           return "bg-white text-black border-grey-strongest hover:border-white focus:border-white"
         case "grey":
           // Le composant s'affiche sur fond gris - le champ doit être blanc
-          return "bg-white text-black border-grey-stronger hover:border-black focus:border-black"
+          return "bg-white text-black border-grey hover:border-black focus:border-black"
         default:
           return "bg-grey-lighter text-black border-grey-lighter hover:border-black focus:border-black"
       }

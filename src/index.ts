@@ -39,6 +39,7 @@ import { FolderBrowser } from "./components/ui/folder-browser";
 import ButtonNotifications from "./components/ButtonNotifications";
 import { ButtonNotificationsRef } from "./components/notifications/types";
 import PageHeader from "./components/PageHeader";
+import PageSearch from "./components/PageSearch";
 
 // Import additional UI components
 import { Toggle } from "./components/ui/toggle";
@@ -335,6 +336,10 @@ import type {
 } from "./components/PageHeader";
 
 import type {
+  PageSearchProps
+} from "./components/PageSearch";
+
+import type {
   ModalProps
 } from "./components/layout/Modal";
 
@@ -571,6 +576,7 @@ export { Modal as ModalLayer };
 export { ButtonNotifications };
 export type { ButtonNotificationsRef };
 export { PageHeader };
+export { PageSearch };
 
 // Export types
 export type {
@@ -597,6 +603,7 @@ export type {
   InputProps,
   SearchProps,
   PageHeaderProps,
+  PageSearchProps,
   FolderItem,
   FolderBrowserProps,
   ToggleProps
