@@ -93,7 +93,7 @@ const Search = React.forwardRef<HTMLInputElement, SearchProps>(
           )}
           style={{ left: '12px', width: '20px', height: '20px' }}
         >
-          <Icon name="Search" size="small" className="p-1 w-4 h-4" />
+          <Icon name="Search" size={10} className="p-1 w-4 h-4" />
         </div>
         <input
           type="search"
@@ -130,7 +130,7 @@ const Search = React.forwardRef<HTMLInputElement, SearchProps>(
               className="p-0 w-5 h-5 hover:bg-transparent"
               onClick={handleClear}
             >
-              <Icon name="X" size="small" className="p-1 w-4 h-4" />
+              <Icon name="X" size={10} className="p-1 w-4 h-4" />
             </Button>
           </div>
         )}

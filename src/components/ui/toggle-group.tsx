@@ -12,10 +12,18 @@ const ToggleGroupContext = React.createContext<
   variant: "secondary",
 })
 
+type ToggleGroupProps = (
+  | (React.ComponentPropsWithoutRef<typeof ToggleGroupPrimitive.Root> &
+      VariantProps<typeof buttonVariants> & { type: "single" })
+  | (React.ComponentPropsWithoutRef<typeof ToggleGroupPrimitive.Root> &
+      VariantProps<typeof buttonVariants> & { type: "multiple" })
+) & {
+  type?: "single" | "multiple"
+}
+
 const ToggleGroup = React.forwardRef<
   React.ElementRef<typeof ToggleGroupPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof ToggleGroupPrimitive.Root> &
-    VariantProps<typeof buttonVariants> & { type?: "single" | "multiple" }
+  ToggleGroupProps
 >(({ className, variant, size, children, type = "multiple", ...props }, ref) => (
   <ToggleGroupPrimitive.Root
     ref={ref}

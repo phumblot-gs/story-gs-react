@@ -136,3 +136,4 @@ Où :
 - Documentation Storybook MCP Addon : https://storybook.js.org/addons/@storybook/addon-mcp
 - Script de vérification : `./scripts/check-mcp-server.sh`
 
+

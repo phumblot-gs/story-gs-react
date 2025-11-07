@@ -177,7 +177,7 @@ export const runTests = () => {
 
   // Test 1: Check if providers are exported
   try {
-    if (ThemeProvider && TranslationProvider) {
+    if (typeof ThemeProvider !== 'undefined' && typeof TranslationProvider !== 'undefined') {
       console.log('✅ Providers are properly exported');
     }
   } catch (error) {
@@ -186,7 +186,7 @@ export const runTests = () => {
 
   // Test 2: Check if hooks are available
   try {
-    if (useCustomTheme && useTranslation) {
+    if (typeof useCustomTheme !== 'undefined' && typeof useTranslation !== 'undefined') {
       console.log('✅ Hooks are properly exported');
     }
   } catch (error) {
@@ -195,7 +195,7 @@ export const runTests = () => {
 
   // Test 3: Check if components are available
   try {
-    if (FileBrowser && FolderBrowser && Button) {
+    if (typeof FileBrowser !== 'undefined' && typeof FolderBrowser !== 'undefined' && typeof Button !== 'undefined') {
       console.log('✅ Components are properly exported');
     }
   } catch (error) {

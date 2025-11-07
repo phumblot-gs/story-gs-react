@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { FileBrowser, type FileItem } from './file-browser';
 import { FolderBrowser } from './folder-browser';
-import { ModalLayer } from './modal-layer';
+import { Modal } from '../layout/Modal';
 import { Button } from './button';
 
 // Simuler une API ou une source de données
@@ -193,14 +193,14 @@ export function FileBrowserExample() {
       </div>
 
       {/* Modal pour le déplacement avec FolderBrowser */}
-      <ModalLayer
+      <Modal
         isOpen={isMoveModalOpen}
         onClose={handleCloseMoveModal}
         className="w-[800px] max-w-[90vw]"
         footer={
           <Button
             size="large"
-            background="white"
+            variant="secondary"
             onClick={handleCloseMoveModal}
           >
             Annuler

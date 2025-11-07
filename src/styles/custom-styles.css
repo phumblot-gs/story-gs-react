@@ -416,3 +416,76 @@
 .tabs-content {
   /* Styles spécifiques si nécessaire */
 }
+
+/* Variables CSS pour Card - basées sur les tokens Figma */
+:root {
+  /* Card - White background (utilisé quand parent est white) */
+  --card-w-color-bg-default: #eaeaea;
+  --card-w-color-fg-default: #292828;
+  
+  /* Card - Grey background (utilisé quand parent est grey) */
+  --card-g-color-bg-default: #ffffff;
+  --card-g-color-fg-default: #292828;
+  
+  /* Card - Black background (utilisé quand parent est black) */
+  --card-b-color-bg-default: #3a3a3a;
+  --card-b-color-fg-default: #ffffff;
+}
+
+/* Styles pour Card component */
+/* Card base - fond et texte selon le contexte parent */
+/* Quand parent est white → Card utilise cardWColorBgDefault (grey) */
+[data-bg="white"] .card-base {
+  background: var(--card-w-color-bg-default);
+  color: var(--card-w-color-fg-default);
+}
+
+/* Quand parent est grey → Card utilise cardGColorBgDefault (white) */
+[data-bg="grey"] .card-base {
+  background: var(--card-g-color-bg-default);
+  color: var(--card-g-color-fg-default);
+}
+
+/* Quand parent est black → Card utilise cardBColorBgDefault (black) */
+[data-bg="black"] .card-base {
+  background: var(--card-b-color-bg-default);
+  color: var(--card-b-color-fg-default);
+}
+
+/* CardHeader - pas de styles spécifiques nécessaires, utilise les styles du Card */
+.card-header {
+  /* Styles hérités du Card */
+}
+
+/* CardTitle - titre en uppercase */
+.card-title {
+  color: inherit;
+}
+
+/* CardDescription - description */
+.card-description {
+  color: inherit;
+}
+
+/* CardContent - contenu */
+.card-content {
+  /* Styles hérités du Card */
+}
+
+/* CardFooter - footer aligné à droite */
+.card-footer {
+  /* Styles hérités du Card */
+}
+
+/* Classes typographiques pour Card */
+.text-large-bold {
+  font-size: var(--font-size-lg); /* 16px */
+  font-weight: var(--font-weight-bold); /* 700 */
+  line-height: var(--font-lh-none); /* 1 */
+}
+
+.text-std-medium {
+  font-size: var(--font-size-base); /* 13px */
+  font-weight: var(--font-weight-medium); /* 500 */
+  line-height: var(--font-lh-normal); /* 1.5 */
+}

@@ -52,3 +52,4 @@ SegmentedControlContent.displayName = TabsPrimitive.Content.displayName
 
 export { SegmentedControl, SegmentedControlList, SegmentedControlTrigger, SegmentedControlContent }
 
+

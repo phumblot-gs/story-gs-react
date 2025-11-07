@@ -1,3 +1,4 @@
+import React from 'react';
 import { cn } from '@/lib/utils';
 import { Layout, LayoutProps } from './Layout';
 
@@ -74,32 +75,40 @@ export interface VStackProps extends Omit<LayoutProps, 'className'> {
  * </VStack>
  * ```
  */
-export function VStack({
-  gap = 0,
-  align = 'stretch',
-  justify = 'start',
-  className,
-  ...props
-}: VStackProps) {
-  return (
-    <Layout
-      {...props}
-      className={cn(
-        'flex flex-col',
-        gapClasses[gap],
-        align === 'start' && 'items-start',
-        align === 'center' && 'items-center',
-        align === 'end' && 'items-end',
-        align === 'baseline' && 'items-baseline',
-        align === 'stretch' && 'items-stretch',
-        justify === 'start' && 'justify-start',
-        justify === 'center' && 'justify-center',
-        justify === 'end' && 'justify-end',
-        justify === 'between' && 'justify-between',
-        justify === 'around' && 'justify-around',
-        justify === 'evenly' && 'justify-evenly',
-        className
-      )}
-    />
-  );
-}
+export const VStack = React.forwardRef<HTMLDivElement, VStackProps>(
+  (
+    {
+      gap = 0,
+      align = 'stretch',
+      justify = 'start',
+      className,
+      ...props
+    },
+    ref
+  ) => {
+    return (
+      <Layout
+        {...props}
+        ref={ref}
+        className={cn(
+          'flex flex-col',
+          gapClasses[gap],
+          align === 'start' && 'items-start',
+          align === 'center' && 'items-center',
+          align === 'end' && 'items-end',
+          align === 'baseline' && 'items-baseline',
+          align === 'stretch' && 'items-stretch',
+          justify === 'start' && 'justify-start',
+          justify === 'center' && 'justify-center',
+          justify === 'end' && 'justify-end',
+          justify === 'between' && 'justify-between',
+          justify === 'around' && 'justify-around',
+          justify === 'evenly' && 'justify-evenly',
+          className
+        )}
+      />
+    );
+  }
+);
+
+VStack.displayName = "VStack";

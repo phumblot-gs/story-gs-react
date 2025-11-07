@@ -6,7 +6,7 @@ export interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   children: React.ReactNode;
-  footer?: React.ReactNode;
+  footer?: React.ReactNode | (() => React.ReactNode);
   className?: string;
   overlayClassName?: string;
   contentClassName?: string;

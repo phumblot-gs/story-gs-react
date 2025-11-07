@@ -266,6 +266,7 @@ import {
   TableCaption,
 } from "./components/ui/table";
 import { Textarea } from "./components/ui/textarea";
+import { Text } from "./components/ui/text";
 import {
   Tooltip,
   TooltipTrigger,
@@ -561,6 +562,8 @@ export { TagGrade };
 export { Grade };
 export { Table, TableHeader, TableBody, TableFooter, TableHead, TableRow, TableCell, TableCaption };
 export { Textarea };
+export { Text };
+export type { TextProps } from "./components/ui/text";
 export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider };
 
 // Backward compatibility - ModalLayer is now Modal in layout

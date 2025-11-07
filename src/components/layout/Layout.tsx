@@ -1,4 +1,4 @@
-import { ReactNode, ElementType } from 'react';
+import React, { ReactNode, ElementType } from 'react';
 import { cn } from '@/lib/utils';
 import { useBgContext, BgProvider } from './BgContext';
 
@@ -84,53 +84,61 @@ const paddingClasses: Record<SpacingValue, string> = {
   100: 'p-100',
 };
 
-export function Layout({
-  bg,
-  children,
-  className,
-  padding,
-  scroll = 'auto',
-  as: Component = 'div',
-}: LayoutProps) {
-  // Récupère le bg du parent via Context
-  const parentBg = useBgContext();
+export const Layout = React.forwardRef<HTMLDivElement, LayoutProps>(
+  (
+    {
+      bg,
+      children,
+      className,
+      padding,
+      scroll = 'auto',
+      as: Component = 'div',
+    },
+    ref
+  ) => {
+    // Récupère le bg du parent via Context
+    const parentBg = useBgContext();
 
-  // Utilise bg spécifié, sinon hérite du parent
-  const effectiveBg = bg || parentBg;
+    // Utilise bg spécifié, sinon hérite du parent
+    const effectiveBg = bg || parentBg;
 
-  const content = (
-    <Component
-      data-bg={effectiveBg || undefined}
-      className={cn(
-        // Couleur de fond selon le contexte (seulement si bg est spécifié)
-        bg === 'white' && 'bg-white',
-        bg === 'grey' && 'bg-grey',
-        bg === 'black' && 'bg-black',
+    const content = (
+      <Component
+        ref={ref}
+        data-bg={effectiveBg || undefined}
+        className={cn(
+          // Couleur de fond selon le contexte (seulement si bg est spécifié)
+          bg === 'white' && 'bg-white',
+          bg === 'grey' && 'bg-grey',
+          bg === 'black' && 'bg-black',
 
-        // Padding (utilise les primitives spacing)
-        padding !== undefined && paddingClasses[padding],
+          // Padding (utilise les primitives spacing)
+          padding !== undefined && paddingClasses[padding],
 
-        // Comportement du scroll
-        scroll === 'none' && 'overflow-hidden',
-        scroll === 'auto' && 'overflow-auto',
-        scroll === 'always' && 'overflow-scroll',
-        scroll === 'vertical' && 'overflow-y-auto overflow-x-hidden',
-        scroll === 'horizontal' && 'overflow-x-auto overflow-y-hidden',
-        scroll === 'both' && 'overflow-auto',
+          // Comportement du scroll
+          scroll === 'none' && 'overflow-hidden',
+          scroll === 'auto' && 'overflow-auto',
+          scroll === 'always' && 'overflow-scroll',
+          scroll === 'vertical' && 'overflow-y-auto overflow-x-hidden',
+          scroll === 'horizontal' && 'overflow-x-auto overflow-y-hidden',
+          scroll === 'both' && 'overflow-auto',
 
-        // Classes personnalisées
-        className
-      )}
-    >
-      {children}
-    </Component>
-  );
+          // Classes personnalisées
+          className
+        )}
+      >
+        {children}
+      </Component>
+    );
 
-  // Si un nouveau bg est spécifié, on crée un nouveau contexte
-  // Sinon on laisse passer le contexte parent
-  return bg ? (
-    <BgProvider value={bg}>
-      {content}
-    </BgProvider>
-  ) : content;
-}
+    // Si un nouveau bg est spécifié, on crée un nouveau contexte
+    // Sinon on laisse passer le contexte parent
+    return bg ? (
+      <BgProvider value={bg}>
+        {content}
+      </BgProvider>
+    ) : content;
+  }
+);
+
+Layout.displayName = "Layout";
