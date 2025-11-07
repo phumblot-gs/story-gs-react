@@ -4,6 +4,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useBgContext } from "@/components/layout/BgContext"
@@ -11,8 +12,25 @@ import { VStack } from "@/components/layout"
 import { cn } from "@/lib/utils"
 import { ButtonMenuAction } from "./button-menu"
 
+/**
+ * Item that can be rendered in ButtonMenuSmall dropdown menu.
+ * Can be either a regular action or a separator.
+ */
+export type ButtonMenuSmallItem = ButtonMenuAction | { separator: true }
+
 export interface ButtonMenuSmallProps extends Omit<ToggleProps, "onClick" | "isActive"> {
-  actions: ButtonMenuAction[]
+  /**
+   * Array of actions and/or separators to display in the dropdown menu.
+   * Use `{ separator: true }` to insert a separator between items.
+   * 
+   * @example
+   * const items: ButtonMenuSmallItem[] = [
+   *   { label: "Éditer", onClick: () => console.log("Éditer") },
+   *   { separator: true },
+   *   { label: "Supprimer", onClick: () => console.log("Supprimer") },
+   * ];
+   */
+  actions: ButtonMenuSmallItem[]
   /** Callback called when the button is clicked */
   onClick?: React.MouseEventHandler<HTMLButtonElement>
   /** Callback called when the button receives focus */
@@ -79,6 +97,40 @@ export interface ButtonMenuSmallProps extends Omit<ToggleProps, "onClick" | "isA
    * The menu will automatically enable vertical scrolling when content exceeds this height.
    */
   menuMaxHeight?: string
+  /**
+   * Preferred side of the trigger where the menu should open.
+   * The menu will automatically adjust if there's not enough space.
+   * 
+   * Default: `"bottom"` (menu opens below the button)
+   * 
+   * @example
+   * // Menu opens above the button
+   * <ButtonMenuSmall menuSide="top" ... />
+   * 
+   * @example
+   * // Menu opens to the right of the button
+   * <ButtonMenuSmall menuSide="right" ... />
+   */
+  menuSide?: "top" | "right" | "bottom" | "left"
+  /**
+   * Preferred alignment of the menu relative to the trigger.
+   * The menu will automatically adjust if there's not enough space.
+   * 
+   * - `"start"`: Aligned to the left (or top) edge of the trigger
+   * - `"center"`: Centered relative to the trigger
+   * - `"end"`: Aligned to the right (or bottom) edge of the trigger
+   * 
+   * Default: `"start"` (menu aligned to the left)
+   * 
+   * @example
+   * // Menu aligned to the right
+   * <ButtonMenuSmall menuAlign="end" ... />
+   * 
+   * @example
+   * // Menu centered
+   * <ButtonMenuSmall menuAlign="center" ... />
+   */
+  menuAlign?: "start" | "center" | "end"
 }
 
 export const ButtonMenuSmall = React.forwardRef<HTMLButtonElement, ButtonMenuSmallProps>(
@@ -96,6 +148,8 @@ export const ButtonMenuSmall = React.forwardRef<HTMLButtonElement, ButtonMenuSma
       onOpenChange,
       debug = false,
       menuMaxHeight = "max-h-[calc(100vh-2rem)]",
+      menuSide = "bottom",
+      menuAlign = "start",
       ...buttonProps
     },
     ref
@@ -133,13 +187,16 @@ export const ButtonMenuSmall = React.forwardRef<HTMLButtonElement, ButtonMenuSma
     // Debug log uniquement quand isOpen change pour éviter les doubles logs
     React.useEffect(() => {
       if (debug) {
+        const actionsCount = actions.filter(item => !('separator' in item && item.separator === true)).length
+        const separatorsCount = actions.filter(item => 'separator' in item && item.separator === true).length
         console.log("[ButtonMenuSmall] State changed", {
           bg,
           isOpen,
-          actionsCount: actions.length,
+          actionsCount,
+          separatorsCount,
         })
       }
-    }, [debug, isOpen, bg, actions.length])
+    }, [debug, isOpen, bg, actions])
 
     return (
       <DropdownMenu open={isOpen} onOpenChange={handleOpenChange}>
@@ -168,38 +225,48 @@ export const ButtonMenuSmall = React.forwardRef<HTMLButtonElement, ButtonMenuSma
             menuMaxHeight,
             getMenuBackgroundClass()
           )}
-          align="start"
+          align={menuAlign}
+          side={menuSide}
           sideOffset={5}
           collisionPadding={8}
           data-bg={bg || undefined}
         >
           <VStack gap={0} padding={0}>
-            {actions.map((action, index) => (
-              <DropdownMenuItem
-                key={index}
-                disabled={action.disabled || disabled}
-                className={cn(
-                  "w-full px-4 py-2 text-left text-sm whitespace-nowrap rounded-sm cursor-pointer popup-action-item",
-                  "flex items-center gap-2",
-                  "data-[disabled]:opacity-50 data-[disabled]:cursor-not-allowed"
-                )}
-                onClick={(e) => {
-                  e.stopPropagation()
-                  if (debug) {
-                    console.log("[ButtonMenuSmall] Action clicked:", action.label)
-                  }
-                  action.onClick()
-                  handleOpenChange(false)
-                }}
-              >
-                {action.icon && (
-                  <span className="flex-shrink-0 flex items-center justify-center">
-                    {action.icon}
-                  </span>
-                )}
-                <span>{action.label}</span>
-              </DropdownMenuItem>
-            ))}
+            {actions.map((item, index) => {
+              // Render separator if item is a separator
+              if ('separator' in item && item.separator === true) {
+                return <DropdownMenuSeparator key={`separator-${index}`} className="bg-white m-0" />
+              }
+
+              // Render regular action item
+              const action = item as ButtonMenuAction
+              return (
+                <DropdownMenuItem
+                  key={index}
+                  disabled={action.disabled || disabled}
+                  className={cn(
+                    "w-full px-4 py-2 text-left text-sm whitespace-nowrap rounded-sm cursor-pointer popup-action-item",
+                    "flex items-center gap-2",
+                    "data-[disabled]:opacity-50 data-[disabled]:cursor-not-allowed"
+                  )}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    if (debug) {
+                      console.log("[ButtonMenuSmall] Action clicked:", action.label)
+                    }
+                    action.onClick()
+                    handleOpenChange(false)
+                  }}
+                >
+                  {action.icon && (
+                    <span className="flex-shrink-0 flex items-center justify-center">
+                      {action.icon}
+                    </span>
+                  )}
+                  <span>{action.label}</span>
+                </DropdownMenuItem>
+              )
+            })}
           </VStack>
         </DropdownMenuContent>
       </DropdownMenu>

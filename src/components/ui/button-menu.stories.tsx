@@ -18,6 +18,7 @@ const meta = {
 - Automatic styling based on data-bg context (white, grey, black)
 - Visual feedback when menu is open (Toggle's isActive state)
 - Auto-positioning menu (drops where there's space)
+- Configurable menu position and alignment (menuSide, menuAlign)
 - Similar pattern to LanguageSwitcher component
 
 ## Background Context Adaptation
@@ -97,6 +98,47 @@ The menu will automatically:
 - \`max-h-[50vh]\` - 50% of viewport height
 - \`max-h-96\` - Fixed height (384px)
 - \`max-h-[calc(100vh-2rem)]\` - Viewport height minus 2rem (default)
+
+## Menu Position and Alignment
+
+You can control the preferred position and alignment of the dropdown menu using \`menuSide\` and \`menuAlign\` props. The menu will automatically adjust if there's not enough space.
+
+### Menu Side
+
+Controls which side of the button the menu opens on:
+- \`"bottom"\` (default): Menu opens below the button
+- \`"top"\`: Menu opens above the button
+- \`"left"\`: Menu opens to the left of the button
+- \`"right"\`: Menu opens to the right of the button
+
+### Menu Align
+
+Controls the alignment of the menu relative to the button:
+- \`"start"\` (default): Aligned to the left (or top) edge
+- \`"center"\`: Centered relative to the button
+- \`"end"\`: Aligned to the right (or bottom) edge
+
+\`\`\`tsx
+// Menu opens below, aligned to the right
+<ButtonMenu 
+  menuSide="bottom" 
+  menuAlign="end"
+  actions={actions}
+>
+  Actions
+</ButtonMenu>
+
+// Menu opens above, aligned to the right
+<ButtonMenu 
+  menuSide="top" 
+  menuAlign="end"
+  actions={actions}
+>
+  Actions
+</ButtonMenu>
+\`\`\`
+
+**Note:** The menu will automatically reposition itself if the preferred position doesn't fit on screen (e.g., if the button is at the bottom-right corner, the menu will open above and align to the right).
 `,
       },
     },
@@ -148,6 +190,16 @@ The menu will automatically:
     menuMaxHeight: {
       control: "text",
       description: "Maximum height of the dropdown menu (e.g., 'max-h-[40vh]', 'max-h-96'). Default: 'max-h-[calc(100vh-2rem)]'",
+    },
+    menuSide: {
+      control: "select",
+      options: ["top", "right", "bottom", "left"],
+      description: "Preferred side where the menu opens. The menu will automatically adjust if there's not enough space. Default: 'bottom'",
+    },
+    menuAlign: {
+      control: "select",
+      options: ["start", "center", "end"],
+      description: "Preferred alignment of the menu relative to the button. The menu will automatically adjust if there's not enough space. Default: 'start'",
     },
   },
 } satisfies Meta<typeof ButtonMenu>
@@ -359,5 +411,62 @@ export const DebugMode: Story = {
       </VStack>
     </Layout>
   ),
+}
+
+export const MenuPositioning: Story = {
+  render: () => (
+    <Layout bg="white" padding={6}>
+      <VStack gap={8}>
+        <div>
+          <h3 className="gs-typo-h3 mb-4">Position par défaut (bottom, start)</h3>
+          <ButtonMenu variant="normal" actions={defaultActions}>
+            Menu par défaut
+          </ButtonMenu>
+        </div>
+
+        <div>
+          <h3 className="gs-typo-h3 mb-4">En bas, aligné à droite</h3>
+          <div className="flex justify-end">
+            <ButtonMenu variant="normal" actions={defaultActions} menuSide="bottom" menuAlign="end">
+              Bottom + End
+            </ButtonMenu>
+          </div>
+        </div>
+
+        <div>
+          <h3 className="gs-typo-h3 mb-4">En haut, aligné à droite</h3>
+          <div className="flex justify-end">
+            <ButtonMenu variant="normal" actions={defaultActions} menuSide="top" menuAlign="end">
+              Top + End
+            </ButtonMenu>
+          </div>
+        </div>
+
+        <div>
+          <h3 className="gs-typo-h3 mb-4">Centré</h3>
+          <ButtonMenu variant="normal" actions={defaultActions} menuSide="bottom" menuAlign="center">
+            Bottom + Center
+          </ButtonMenu>
+        </div>
+
+        <div>
+          <h3 className="gs-typo-h3 mb-4">À droite, aligné en haut</h3>
+          <ButtonMenu variant="normal" actions={defaultActions} menuSide="right" menuAlign="start">
+            Right + Start
+          </ButtonMenu>
+        </div>
+
+        <div>
+          <h3 className="gs-typo-h3 mb-4">À gauche, aligné en haut</h3>
+          <ButtonMenu variant="normal" actions={defaultActions} menuSide="left" menuAlign="start">
+            Left + Start
+          </ButtonMenu>
+        </div>
+      </VStack>
+    </Layout>
+  ),
+  parameters: {
+    layout: "fullscreen",
+  },
 }
 

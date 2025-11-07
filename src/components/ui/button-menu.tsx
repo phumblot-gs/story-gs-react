@@ -85,6 +85,40 @@ export interface ButtonMenuProps extends Omit<ToggleProps, "onClick" | "isActive
    * The menu will automatically enable vertical scrolling when content exceeds this height.
    */
   menuMaxHeight?: string
+  /**
+   * Preferred side of the trigger where the menu should open.
+   * The menu will automatically adjust if there's not enough space.
+   * 
+   * Default: `"bottom"` (menu opens below the button)
+   * 
+   * @example
+   * // Menu opens above the button
+   * <ButtonMenu menuSide="top" ... />
+   * 
+   * @example
+   * // Menu opens to the right of the button
+   * <ButtonMenu menuSide="right" ... />
+   */
+  menuSide?: "top" | "right" | "bottom" | "left"
+  /**
+   * Preferred alignment of the menu relative to the trigger.
+   * The menu will automatically adjust if there's not enough space.
+   * 
+   * - `"start"`: Aligned to the left (or top) edge of the trigger
+   * - `"center"`: Centered relative to the trigger
+   * - `"end"`: Aligned to the right (or bottom) edge of the trigger
+   * 
+   * Default: `"start"` (menu aligned to the left)
+   * 
+   * @example
+   * // Menu aligned to the right
+   * <ButtonMenu menuAlign="end" ... />
+   * 
+   * @example
+   * // Menu centered
+   * <ButtonMenu menuAlign="center" ... />
+   */
+  menuAlign?: "start" | "center" | "end"
 }
 
 export const ButtonMenu = React.forwardRef<HTMLButtonElement, ButtonMenuProps>(
@@ -102,6 +136,8 @@ export const ButtonMenu = React.forwardRef<HTMLButtonElement, ButtonMenuProps>(
       onOpenChange,
       debug = false,
       menuMaxHeight = "max-h-[calc(100vh-2rem)]",
+      menuSide = "bottom",
+      menuAlign = "start",
       ...buttonProps
     },
     ref
@@ -174,7 +210,8 @@ export const ButtonMenu = React.forwardRef<HTMLButtonElement, ButtonMenuProps>(
             menuMaxHeight,
             getMenuBackgroundClass()
           )}
-          align="start"
+          align={menuAlign}
+          side={menuSide}
           sideOffset={5}
           collisionPadding={8}
           data-bg={bg || undefined}

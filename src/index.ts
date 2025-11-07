@@ -295,7 +295,8 @@ import type {
 } from "./components/ui/button-menu-status";
 
 import type {
-  ButtonMenuSmallProps
+  ButtonMenuSmallProps,
+  ButtonMenuSmallItem
 } from "./components/ui/button-menu-small";
 
 import type {
@@ -578,6 +579,7 @@ export type {
   ButtonMenuStatusOption,
   ButtonMenuStatusProps,
   ButtonMenuSmallProps,
+  ButtonMenuSmallItem,
   ButtonPlusProps,
   AvatarSize,
   IconName,

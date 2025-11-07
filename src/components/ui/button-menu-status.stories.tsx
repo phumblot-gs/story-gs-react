@@ -20,6 +20,7 @@ const meta = {
 - Size variants (small, medium, large) with appropriate icon sizes
 - Automatic styling based on data-bg context (white, grey, black)
 - Auto-positioning menu (drops where there's space)
+- Configurable menu position and alignment (menuSide, menuAlign)
 - Customizable status options list (for workflow-specific statuses)
 
 ## Basic Usage
@@ -58,6 +59,45 @@ const statusOptions: ButtonMenuStatusOption[] = [
   { status: MediaStatus.VALIDATED, label: t("status.validated") },
 ];
 \`\`\`
+
+## Menu Position and Alignment
+
+You can control the preferred position and alignment of the dropdown menu using \`menuSide\` and \`menuAlign\` props. The menu will automatically adjust if there's not enough space.
+
+### Menu Side
+
+Controls which side of the button the menu opens on:
+- \`"bottom"\` (default): Menu opens below the button
+- \`"top"\`: Menu opens above the button
+- \`"left"\`: Menu opens to the left of the button
+- \`"right"\`: Menu opens to the right of the button
+
+### Menu Align
+
+Controls the alignment of the menu relative to the button:
+- \`"start"\` (default): Aligned to the left (or top) edge
+- \`"center"\`: Centered relative to the button
+- \`"end"\`: Aligned to the right (or bottom) edge
+
+\`\`\`tsx
+// Menu opens below, aligned to the right
+<ButtonMenuStatus 
+  menuSide="bottom" 
+  menuAlign="end"
+  currentStatus={MediaStatus.SELECTED}
+  statusOptions={statusOptions}
+/>
+
+// Menu opens above, aligned to the right
+<ButtonMenuStatus 
+  menuSide="top" 
+  menuAlign="end"
+  currentStatus={MediaStatus.SELECTED}
+  statusOptions={statusOptions}
+/>
+\`\`\`
+
+**Note:** The menu will automatically reposition itself if the preferred position doesn't fit on screen (e.g., if the button is at the bottom-right corner, the menu will open above and align to the right).
 `,
       },
     },
@@ -109,6 +149,16 @@ const statusOptions: ButtonMenuStatusOption[] = [
     menuMaxHeight: {
       control: "text",
       description: "Maximum height of the dropdown menu (e.g., 'max-h-[40vh]', 'max-h-96'). Default: 'max-h-[calc(100vh-2rem)]'",
+    },
+    menuSide: {
+      control: "select",
+      options: ["top", "right", "bottom", "left"],
+      description: "Preferred side where the menu opens. The menu will automatically adjust if there's not enough space. Default: 'bottom'",
+    },
+    menuAlign: {
+      control: "select",
+      options: ["start", "center", "end"],
+      description: "Preferred alignment of the menu relative to the button. The menu will automatically adjust if there's not enough space. Default: 'start'",
     },
   },
 } satisfies Meta<typeof ButtonMenuStatus>
@@ -339,5 +389,78 @@ export const DebugMode: Story = {
       </VStack>
     </Layout>
   ),
+}
+
+export const MenuPositioning: Story = {
+  render: () => (
+    <Layout bg="white" padding={6}>
+      <VStack gap={8}>
+        <div>
+          <h3 className="gs-typo-h3 mb-4">Position par défaut (bottom, start)</h3>
+          <ButtonMenuStatus
+            currentStatus={MediaStatus.SELECTED}
+            statusOptions={workflowStatusOptions}
+          />
+        </div>
+
+        <div>
+          <h3 className="gs-typo-h3 mb-4">En bas, aligné à droite</h3>
+          <div className="flex justify-end">
+            <ButtonMenuStatus
+              currentStatus={MediaStatus.SELECTED}
+              statusOptions={workflowStatusOptions}
+              menuSide="bottom"
+              menuAlign="end"
+            />
+          </div>
+        </div>
+
+        <div>
+          <h3 className="gs-typo-h3 mb-4">En haut, aligné à droite</h3>
+          <div className="flex justify-end">
+            <ButtonMenuStatus
+              currentStatus={MediaStatus.SELECTED}
+              statusOptions={workflowStatusOptions}
+              menuSide="top"
+              menuAlign="end"
+            />
+          </div>
+        </div>
+
+        <div>
+          <h3 className="gs-typo-h3 mb-4">Centré</h3>
+          <ButtonMenuStatus
+            currentStatus={MediaStatus.SELECTED}
+            statusOptions={workflowStatusOptions}
+            menuSide="bottom"
+            menuAlign="center"
+          />
+        </div>
+
+        <div>
+          <h3 className="gs-typo-h3 mb-4">À droite, aligné en haut</h3>
+          <ButtonMenuStatus
+            currentStatus={MediaStatus.SELECTED}
+            statusOptions={workflowStatusOptions}
+            menuSide="right"
+            menuAlign="start"
+          />
+        </div>
+
+        <div>
+          <h3 className="gs-typo-h3 mb-4">À gauche, aligné en haut</h3>
+          <ButtonMenuStatus
+            currentStatus={MediaStatus.SELECTED}
+            statusOptions={workflowStatusOptions}
+            menuSide="left"
+            menuAlign="start"
+          />
+        </div>
+      </VStack>
+    </Layout>
+  ),
+  parameters: {
+    layout: "fullscreen",
+  },
 }
 
