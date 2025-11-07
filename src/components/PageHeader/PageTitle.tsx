@@ -41,7 +41,7 @@ const PageTitle: React.FC<PageTitleProps> = ({
       gap={2}
       align="center"
       className={cn(
-        featured && "pl-5 border-l border-grey",
+        featured && "pl-4 border-l border-grey",
         className
       )}
     >

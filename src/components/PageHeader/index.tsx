@@ -48,7 +48,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
       <HStack
         justify="between"
         align="center"
-        padding={3}
+        className="px-4 py-3"
       >
         {/* Left Side - with flex-shrink to allow truncation */}
         <HStack gap={4} align="center" className="flex-shrink overflow-hidden">
