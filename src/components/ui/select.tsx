@@ -16,6 +16,7 @@ export interface SelectProps {
   placeholder?: string;
   className?: string;
   allowClear?: boolean;
+  size?: "normal" | "small";
 }
 
 export interface SelectTriggerProps extends React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger> {
@@ -23,6 +24,7 @@ export interface SelectTriggerProps extends React.ComponentPropsWithoutRef<typeo
   allowClear?: boolean;
   hasValue?: boolean;
   onClear?: () => void;
+  size?: "normal" | "small";
 }
 
 export interface SelectContentProps extends React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content> {
@@ -36,7 +38,7 @@ export interface SelectItemProps extends React.ComponentPropsWithoutRef<typeof S
 const Select = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Root>,
   SelectProps
->(({ children, debug = false, className, allowClear = false, value, onValueChange, ...props }, ref) => {
+>(({ children, debug = false, className, allowClear = false, value, onValueChange, size = "normal", ...props }, ref) => {
   const [internalValue, setInternalValue] = React.useState(props.defaultValue || "");
   const currentValue = value !== undefined ? value : internalValue;
   const hasValue = Boolean(currentValue);
@@ -56,7 +58,7 @@ const Select = React.forwardRef<
   };
 
   if (debug) {
-    console.log("Select: props", { debug, allowClear, hasValue, currentValue, ...props });
+    console.log("Select: props", { debug, allowClear, hasValue, currentValue, size, ...props });
   }
 
   return (
@@ -68,6 +70,7 @@ const Select = React.forwardRef<
               allowClear,
               hasValue,
               onClear: handleClear,
+              size,
               ...child.props,
             });
           }
@@ -81,7 +84,7 @@ const Select = React.forwardRef<
 const SelectTrigger = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Trigger>,
   SelectTriggerProps
->(({ className, children, debug = false, disabled, allowClear = false, hasValue = false, onClear, ...props }, ref) => {
+>(({ className, children, debug = false, disabled, allowClear = false, hasValue = false, onClear, size = "normal", ...props }, ref) => {
   const bg = useBgContext();
   const [isHovered, setIsHovered] = React.useState(false);
   const [isPressed, setIsPressed] = React.useState(false);
@@ -179,8 +182,28 @@ const SelectTrigger = React.forwardRef<
     }
   };
 
+  // Styles conditionnels selon la taille
+  const getSizeStyles = () => {
+    if (size === "small") {
+      return {
+        trigger: "h-4 py-0 pl-2 pr-[2px]",
+        button: "h-3 w-3",
+        iconWrapper: "w-[5px] h-[5px]",
+        iconSize: 5,
+      };
+    }
+    return {
+      trigger: "h-[30px] py-1 pl-3 pr-[4px]",
+      button: "h-4 w-4",
+      iconWrapper: "w-[10px] h-[10px]",
+      iconSize: 10,
+    };
+  };
+
+  const sizeStyles = getSizeStyles();
+
   if (debug) {
-    console.log("SelectTrigger: props", { bg, disabled, debug, allowClear, hasValue, isOpen, icon: getIcon() });
+    console.log("SelectTrigger: props", { bg, disabled, debug, allowClear, hasValue, isOpen, size, icon: getIcon() });
   }
 
   return (
@@ -195,11 +218,12 @@ const SelectTrigger = React.forwardRef<
       }}
       className={cn(
         // Base styles selon Figma
-        "flex h-8 w-full items-center justify-between rounded-full border pl-3 pr-1 py-2",
+        "flex w-full items-center justify-between rounded-full border",
+        sizeStyles.trigger,
         "text-sm font-light transition-colors duration-200",
         "focus:outline-none focus:ring-0",
         "disabled:cursor-not-allowed disabled:opacity-50",
-        "data-[placeholder]:text-grey-stronger",
+        "data-[placeholder]:text-grey-strongest",
         getBackgroundStyles(),
         className
       )}
@@ -215,14 +239,17 @@ const SelectTrigger = React.forwardRef<
         <SelectPrimitive.Icon asChild>
           <div
             className={cn(
-              "flex h-5 w-5 items-center justify-center rounded-full transition-colors duration-200",
+              "flex items-center justify-center rounded-full transition-colors duration-200",
+              sizeStyles.button,
               getIconButtonStyles(),
               allowClear && hasValue && !isOpen ? "cursor-pointer" : ""
             )}
             onPointerDown={handleClearPointerDown}
             data-icon-clear={allowClear && hasValue && !isOpen ? "true" : "false"}
           >
-            <Icon name={getIcon()} size={12} />
+            <span className={cn("flex items-center justify-center", sizeStyles.iconWrapper)}>
+              <Icon name={getIcon()} size={sizeStyles.iconSize} />
+            </span>
           </div>
         </SelectPrimitive.Icon>
       </div>

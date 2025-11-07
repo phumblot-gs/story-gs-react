@@ -239,7 +239,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
           aValue = a.file_name?.toLowerCase() || "";
           bValue = b.file_name?.toLowerCase() || "";
           break;
-        case "updated_at":
+        case "updated_at": {
           const aDate = new Date(a.updated_at || 0);
           const bDate = new Date(b.updated_at || 0);
 
@@ -257,6 +257,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
             bValue = bDate.getTime();
           }
           break;
+        }
         case "file_size":
           aValue = a.file_size || 0;
           bValue = b.file_size || 0;

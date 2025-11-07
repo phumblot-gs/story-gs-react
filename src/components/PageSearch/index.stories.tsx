@@ -21,6 +21,8 @@ const meta: Meta<typeof PageSearch> = {
 - Fixed style with grey background and bottom border
 - Horizontal spacing of 20px (px-4) and gap of 40px between left and right sections
 - Uses Layout component with bg="grey" for proper context propagation
+- Left content automatically takes maximum available space
+- Optional max-width constraint for left content via \`leftContentMaxWidth\` prop
 
 ## Basic Usage
 
@@ -30,6 +32,16 @@ import { Search } from '@gs/gs-components-library';
 
 <PageSearch
   leftContent={<Search placeholder="Search..." />}
+  rightContent={<ButtonMenuSmall actions={[...]} />}
+/>
+\`\`\`
+
+## With Max Width
+
+\`\`\`tsx
+<PageSearch
+  leftContent={<Search placeholder="Search..." />}
+  leftContentMaxWidth="max-w-md"
   rightContent={<ButtonMenuSmall actions={[...]} />}
 />
 \`\`\`
@@ -65,7 +77,7 @@ type Story = StoryObj<typeof PageSearch>;
 export const Default: Story = {
   render: () => (
     <PageSearch
-      leftContent={<Search placeholder="Search..." className="w-full max-w-md" />}
+      leftContent={<Search placeholder="Search..." />}
     />
   ),
 };

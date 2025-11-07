@@ -6,10 +6,12 @@ import { Button } from "@/components/ui/button"
 
 export interface SearchProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'type'> {
   onClear?: () => void
+  /** Classes CSS pour le conteneur wrapper */
+  containerClassName?: string
 }
 
 const Search = React.forwardRef<HTMLInputElement, SearchProps>(
-  ({ className, disabled, value, defaultValue, onClear, ...props }, ref) => {
+  ({ className, containerClassName, disabled, value, defaultValue, onClear, ...props }, ref) => {
     const bg = useBgContext()
     const [internalValue, setInternalValue] = React.useState(defaultValue || "")
     const [isFocused, setIsFocused] = React.useState(false)
@@ -84,7 +86,7 @@ const Search = React.forwardRef<HTMLInputElement, SearchProps>(
     }
 
     return (
-      <div className="relative w-full">
+      <div className={cn("relative w-full flex-1 min-w-0", containerClassName)}>
         <div
           className={cn(
             "absolute top-1/2 -translate-y-1/2 pointer-events-none rounded-full transition-colors duration-200",
@@ -100,11 +102,11 @@ const Search = React.forwardRef<HTMLInputElement, SearchProps>(
           value={currentValue}
           className={cn(
             // Base styles - même que Select avec rounded-full
-            "flex h-8 w-full items-center rounded-full border py-2",
+            "flex h-[30px] w-full items-center rounded-full border py-1",
             "text-sm font-light transition-colors duration-200",
             "focus:outline-none focus:ring-0",
             "disabled:cursor-not-allowed disabled:opacity-50",
-            "placeholder:text-grey-stronger",
+            "placeholder:text-grey-strongest",
             // Masquer le bouton clear natif du navigateur
             "[&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden",
             getBackgroundStyles(),

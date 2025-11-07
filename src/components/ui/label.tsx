@@ -14,8 +14,7 @@ const labelVariants = cva(
   }
 )
 
-export interface LabelProps extends
-  React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root> {}
+export type LabelProps = React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root>;
 
 const Label = React.forwardRef<
   React.ElementRef<typeof LabelPrimitive.Root>,

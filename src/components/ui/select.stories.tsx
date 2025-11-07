@@ -15,26 +15,180 @@ const meta: Meta<typeof Select> = {
     layout: "centered",
     docs: {
       description: {
-        component: "Composant Select personnalisé basé sur les maquettes Figma. Hérite automatiquement du contexte de couleur via `data-bg` du Layout parent.",
+        component: `Select component built with the Figma design system. The Select automatically inherits color context via \`data-bg\` from the parent Layout.
+
+## Features
+- Two sizes (normal, small)
+- Automatic context-aware styling based on parent background
+- Allow clear functionality with X icon
+- Controlled and uncontrolled modes
+- Disabled state support
+- Debug mode for development
+- Radix UI primitives (accessibility, keyboard navigation)
+- Shadcn UI compatibility
+
+## Basic Usage
+
+\`\`\`tsx
+import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue, Layout } from '@story-gs-react';
+
+<Layout bg="white">
+  <Select>
+    <SelectTrigger>
+      <SelectValue placeholder="Select an option" />
+    </SelectTrigger>
+    <SelectContent>
+      <SelectItem value="option1">Option 1</SelectItem>
+      <SelectItem value="option2">Option 2</SelectItem>
+      <SelectItem value="option3">Option 3</SelectItem>
+    </SelectContent>
+  </Select>
+</Layout>
+\`\`\`
+
+## Sizes
+
+The Select component supports two sizes: \`normal\` (default) and \`small\`.
+
+**Normal size (default):**
+- Height: 30px
+- Padding: \`py-1 pl-3 pr-[4px]\`
+- Icon button: \`w-4 h-4\`
+- Icon size: 10px
+
+**Small size:**
+- Height: 16px (\`h-4\`)
+- Padding: \`py-0 pl-2 pr-[2px]\`
+- Icon button: \`w-3 h-3\`
+- Icon size: 5px
+
+\`\`\`tsx
+// Normal size (default)
+<Select size="normal">
+  <SelectTrigger>
+    <SelectValue placeholder="Normal select" />
+  </SelectTrigger>
+  <SelectContent>
+    <SelectItem value="opt1">Option 1</SelectItem>
+  </SelectContent>
+</Select>
+
+// Small size
+<Select size="small">
+  <SelectTrigger>
+    <SelectValue placeholder="Small select" />
+  </SelectTrigger>
+  <SelectContent>
+    <SelectItem value="opt1">Option 1</SelectItem>
+  </SelectContent>
+</Select>
+\`\`\`
+
+## With Allow Clear
+
+The \`allowClear\` prop enables an X icon that appears when a value is selected, allowing users to clear the selection.
+
+\`\`\`tsx
+<Select allowClear>
+  <SelectTrigger>
+    <SelectValue placeholder="Select an option" />
+  </SelectTrigger>
+  <SelectContent>
+    <SelectItem value="option1">Option 1</SelectItem>
+    <SelectItem value="option2">Option 2</SelectItem>
+  </SelectContent>
+</Select>
+\`\`\`
+
+**Behavior:**
+- The X icon appears only when a value is selected
+- Clicking the X icon clears the selection and calls \`onValueChange\` with an empty string
+- The icon changes to ArrowUp/ArrowDown when the dropdown is open
+
+## Controlled vs Uncontrolled
+
+The Select component supports both controlled and uncontrolled modes.
+
+**Uncontrolled (default):**
+\`\`\`tsx
+<Select defaultValue="option1">
+  <SelectTrigger>
+    <SelectValue placeholder="Select" />
+  </SelectTrigger>
+  <SelectContent>
+    <SelectItem value="option1">Option 1</SelectItem>
+    <SelectItem value="option2">Option 2</SelectItem>
+  </SelectContent>
+</Select>
+\`\`\`
+
+**Controlled:**
+\`\`\`tsx
+const [value, setValue] = useState("option1");
+
+<Select value={value} onValueChange={setValue}>
+  <SelectTrigger>
+    <SelectValue placeholder="Select" />
+  </SelectTrigger>
+  <SelectContent>
+    <SelectItem value="option1">Option 1</SelectItem>
+    <SelectItem value="option2">Option 2</SelectItem>
+  </SelectContent>
+</Select>
+\`\`\`
+
+## Background Context Adaptation
+
+The Select component automatically adapts its appearance based on the parent Layout's \`data-bg\` context:
+
+- **White background**: Grey input field (\`bg-grey-lighter\`)
+- **Grey background**: White input field (\`bg-white\`)
+- **Black background**: Black-secondary input field (\`bg-black-secondary\`) with white text
+
+The dropdown menu also adapts:
+- **White/Grey backgrounds**: Black dropdown menu
+- **Black background**: White dropdown menu`,
       },
     },
   },
+  tags: ['autodocs'],
   argTypes: {
-    debug: {
-      control: "boolean",
-      description: "Mode debug pour afficher les logs console",
-    },
-    disabled: {
-      control: "boolean",
-      description: "État désactivé du select",
-    },
-    placeholder: {
-      control: "text",
-      description: "Texte de placeholder",
+    size: {
+      control: 'select',
+      options: ['normal', 'small'],
+      description: 'Select size (normal, small). Normal is 30px height, small is 16px height.',
     },
     allowClear: {
-      control: "boolean",
-      description: "Permet d'effacer la sélection avec une icône X",
+      control: 'boolean',
+      description: 'If true, displays an X icon when a value is selected, allowing users to clear the selection.',
+    },
+    disabled: {
+      control: 'boolean',
+      description: 'Disabled state - the select cannot be interacted with',
+    },
+    placeholder: {
+      control: 'text',
+      description: 'Placeholder text displayed when no value is selected',
+    },
+    value: {
+      control: 'text',
+      description: 'Controlled mode: the selected value',
+    },
+    defaultValue: {
+      control: 'text',
+      description: 'Uncontrolled mode: the default selected value',
+    },
+    onValueChange: {
+      action: 'valueChanged',
+      description: 'Callback function called when the selected value changes',
+    },
+    debug: {
+      control: 'boolean',
+      description: 'Debug mode: logs component props and state to the console',
+    },
+    className: {
+      control: 'text',
+      description: 'Additional Tailwind CSS classes',
     },
   },
 };
@@ -43,17 +197,17 @@ export default meta;
 type Story = StoryObj<typeof Select>;
 
 // Template de base
-const SelectTemplate = (args: any) => (
+const SelectTemplate = (args: Story['args']) => (
   <Layout bg="white" padding={6}>
     <Select {...args}>
-      <SelectTrigger debug={args.debug} disabled={args.disabled}>
-        <SelectValue placeholder={args.placeholder || "Sélectionner une option"} />
+      <SelectTrigger debug={args?.debug} disabled={args?.disabled}>
+        <SelectValue placeholder={args?.placeholder || "Sélectionner une option"} />
       </SelectTrigger>
-      <SelectContent debug={args.debug}>
-        <SelectItem value="option1" debug={args.debug}>Option 1</SelectItem>
-        <SelectItem value="option2" debug={args.debug}>Option 2</SelectItem>
-        <SelectItem value="option3" debug={args.debug}>Option 3</SelectItem>
-        <SelectItem value="option4" debug={args.debug}>Option très longue qui peut dépasser</SelectItem>
+      <SelectContent debug={args?.debug}>
+        <SelectItem value="option1" debug={args?.debug}>Option 1</SelectItem>
+        <SelectItem value="option2" debug={args?.debug}>Option 2</SelectItem>
+        <SelectItem value="option3" debug={args?.debug}>Option 3</SelectItem>
+        <SelectItem value="option4" debug={args?.debug}>Option très longue qui peut dépasser</SelectItem>
       </SelectContent>
     </Select>
   </Layout>
@@ -65,22 +219,26 @@ export const Default: Story = {
     disabled: false,
     placeholder: "Choisir une option",
     allowClear: false,
+    size: "normal",
   },
-  render: (args) => (
-    <Layout bg="white" padding={6}>
-      <Select debug={args.debug} disabled={args.disabled} allowClear={args.allowClear}>
-        <SelectTrigger>
-          <SelectValue placeholder={args.placeholder} />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="option1">Option 1</SelectItem>
-          <SelectItem value="option2">Option 2</SelectItem>
-          <SelectItem value="option3">Option 3</SelectItem>
-          <SelectItem value="option4">Option très longue qui peut dépasser</SelectItem>
-        </SelectContent>
-      </Select>
-    </Layout>
-  ),
+  render: (args) => {
+    const { placeholder, ...selectProps } = args;
+    return (
+      <Layout bg="white" padding={6}>
+        <Select {...selectProps}>
+          <SelectTrigger>
+            <SelectValue placeholder={placeholder} />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="option1">Option 1</SelectItem>
+            <SelectItem value="option2">Option 2</SelectItem>
+            <SelectItem value="option3">Option 3</SelectItem>
+            <SelectItem value="option4">Option très longue qui peut dépasser</SelectItem>
+          </SelectContent>
+        </Select>
+      </Layout>
+    );
+  },
 };
 
 export const BackgroundVariants: Story = {
@@ -240,7 +398,7 @@ export const WithDebug: Story = {
 };
 
 export const WithAllowClear: Story = {
-  render: (args: any) => (
+  render: (args) => (
     <Layout bg="white" padding={6}>
       <VStack gap={4}>
         <VStack gap={2}>

@@ -7,14 +7,13 @@ export interface TextProps extends React.HTMLAttributes<HTMLElement> {
   as?: 'span' | 'p' | 'div' | 'strong' | 'em' | 'small';
 }
 
-type TextElement = HTMLSpanElement | HTMLParagraphElement | HTMLDivElement | HTMLElement;
 
 /**
  * Composant Text qui adapte automatiquement la couleur du texte selon le contexte data-bg
  * - data-bg="white" ou "grey" → texte noir
  * - data-bg="black" → texte blanc
  */
-const Text = React.forwardRef<TextElement, TextProps>(
+const Text = React.forwardRef<HTMLElement, TextProps>(
   ({ className, as: Component = 'span', children, ...props }, ref) => {
     const parentBg = useBgContext();
 
@@ -25,7 +24,8 @@ const Text = React.forwardRef<TextElement, TextProps>(
 
     return (
       <Component
-        ref={ref as React.Ref<HTMLElement>}
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        ref={ref as any}
         className={cn("text-base", textColorClass, className)}
         {...props}
       >

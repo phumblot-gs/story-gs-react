@@ -24,6 +24,9 @@ export interface LayoutProps {
 
   /** Élément HTML à rendre */
   as?: ElementType;
+
+  /** Styles inline */
+  style?: React.CSSProperties;
 }
 
 /**
@@ -93,6 +96,7 @@ export const Layout = React.forwardRef<HTMLDivElement, LayoutProps>(
       padding,
       scroll = 'auto',
       as: Component = 'div',
+      style,
     },
     ref
   ) => {
@@ -106,6 +110,7 @@ export const Layout = React.forwardRef<HTMLDivElement, LayoutProps>(
       <Component
         ref={ref}
         data-bg={effectiveBg || undefined}
+        style={style}
         className={cn(
           // Couleur de fond selon le contexte (seulement si bg est spécifié)
           bg === 'white' && 'bg-white',

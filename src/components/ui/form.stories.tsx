@@ -388,9 +388,9 @@ export const ValidationWithToast: Story = {
         });
       };
 
-      const onError = (errors: any) => {
+      const onError = (errors: Record<string, { message?: string }>) => {
         // Show toast for validation errors
-        const firstError = Object.values(errors)[0] as any;
+        const firstError = Object.values(errors)[0] as { message?: string } | undefined;
         if (firstError?.message) {
           toast({
             type: "error",

@@ -128,7 +128,7 @@ export default meta
 type Story = StoryObj<typeof LanguageSwitcher>
 
 // Simple example template
-const LanguageSwitcherTemplate = (args: any) => {
+const LanguageSwitcherTemplate = (args: Story['args']) => {
   const [currentLanguage, setCurrentLanguage] = useState(LANGUAGES[2]) // Default to French
   
   return (
@@ -146,7 +146,7 @@ const LanguageSwitcherTemplate = (args: any) => {
 }
 
 // Example with browser detection and localStorage
-const LanguageSwitcherWithBrowserDetection = (args: any) => {
+const LanguageSwitcherWithBrowserDetection = (args: Story['args']) => {
   // Function to get the initial language based on browser preference or localStorage
   const getInitialLanguage = (): typeof LANGUAGES[0] => {
     // Check if we're in a browser environment (important for Storybook)

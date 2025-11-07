@@ -60,8 +60,8 @@ export const LanguageSwitcher = ({
     languageCode.trim().length > 0
   
   // Debug: log détaillé pour comprendre le problème
-  if (debug) {
-    React.useEffect(() => {
+  React.useEffect(() => {
+    if (debug) {
       console.log("[LanguageSwitcher] Render check:", {
         currentLanguage,
         languageCode,
@@ -72,8 +72,8 @@ export const LanguageSwitcher = ({
         codeTrimmedLength: languageCode?.trim()?.length,
         currentLanguageKeys: currentLanguage ? Object.keys(currentLanguage) : []
       })
-    }, [currentLanguage, languageCode, isValidLanguage])
-  }
+    }
+  }, [debug, currentLanguage, languageCode, isValidLanguage])
   
   if (!isValidLanguage) {
     if (debug) {

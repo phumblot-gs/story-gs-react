@@ -58,13 +58,6 @@ export const Icon: React.FC<IconProps> = ({
   onClick,
   debug = false,
 }) => {
-  const iconElement = renderIcon(name, size);
-
-  if (!iconElement) {
-    console.warn(`[Icon] Icon "${name}" not found`);
-    return null;
-  }
-
   const handleClick = React.useCallback(
     (e: React.MouseEvent<HTMLSpanElement>) => {
       if (debug) {
@@ -80,6 +73,13 @@ export const Icon: React.FC<IconProps> = ({
     },
     [debug, name, size, className, color, onClick]
   );
+
+  const iconElement = renderIcon(name, size);
+
+  if (!iconElement) {
+    console.warn(`[Icon] Icon "${name}" not found`);
+    return null;
+  }
 
   return (
     <span

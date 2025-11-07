@@ -220,7 +220,7 @@ export function FileBrowserExample() {
             onFolderSelect={handleFolderSelect}
           />
         </div>
-      </ModalLayer>
+      </Modal>
     </div>
   );
 }

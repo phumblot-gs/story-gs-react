@@ -3,7 +3,7 @@ import * as React from "react"
 import { cn } from "@/lib/utils"
 import { useBgContext } from "@/components/layout/BgContext"
 
-export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {}
+export type InputProps = React.InputHTMLAttributes<HTMLInputElement>;
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, type, disabled, ...props }, ref) => {
@@ -40,7 +40,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           "text-sm font-light transition-colors duration-200",
           "focus:outline-none focus:ring-0",
           "disabled:cursor-not-allowed disabled:opacity-50",
-          "placeholder:text-grey-stronger",
+          "placeholder:text-grey-strongest",
           "file:border-0 file:bg-transparent file:text-sm file:font-medium",
           getBackgroundStyles(),
           className

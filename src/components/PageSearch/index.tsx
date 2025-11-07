@@ -6,12 +6,15 @@ export interface PageSearchProps {
   leftContent?: React.ReactNode;
   rightContent?: React.ReactNode;
   className?: string;
+  /** Largeur maximale du contenu de gauche (ex: "max-w-md", "max-w-lg", etc.) */
+  leftContentMaxWidth?: string;
 }
 
 const PageSearch: React.FC<PageSearchProps> = ({
   leftContent,
   rightContent,
   className,
+  leftContentMaxWidth = "max-w-lg",
 }) => {
   return (
     <Layout
@@ -25,14 +28,18 @@ const PageSearch: React.FC<PageSearchProps> = ({
     >
       {/* Left Side */}
       {leftContent && (
-        <HStack gap={2} align="center" className="py-3.5">
+        <HStack 
+          gap={2} 
+          align="center" 
+          className={cn("py-3.5 flex-1 min-w-0", leftContentMaxWidth)}
+        >
           {leftContent}
         </HStack>
       )}
 
       {/* Right Side */}
       {rightContent && (
-        <HStack gap={2} align="center" className="justify-end">
+        <HStack gap={2} align="center" className="justify-end flex-shrink-0">
           {rightContent}
         </HStack>
       )}

@@ -7,8 +7,10 @@ export { Button as ButtonBase, buttonVariants as buttonBaseVariants } from '../b
 export type { ButtonProps as ButtonBaseProps } from '../button-base';
 
 // Export du ButtonSmall pour la compatibilité
-export const ButtonSmall = (props: Omit<import('../button').ButtonProps, "size">) => {
-  const { Button } = require('../button');
+import { Button } from '../button';
+import type { ButtonProps } from '../button';
+
+export const ButtonSmall = (props: Omit<ButtonProps, "size">) => {
   return Button({ ...props, size: "small" });
 };
-export type ButtonSmallProps = Omit<import('../button').ButtonProps, "size">;
+export type ButtonSmallProps = Omit<ButtonProps, "size">;
