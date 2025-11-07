@@ -708,7 +708,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
                   className="p-0 w-6 h-6"
                   onClick={onRefresh}
                 >
-                  <IconProvider icon="Refresh" size={12} />
+                  <IconProvider icon="Refresh" size={14} />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>{t('fileBrowser.refresh')}</TooltipContent>
@@ -721,7 +721,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
                   className="p-0 w-6 h-6"
                   onClick={() => setIsAddMenuOpen(!isAddMenuOpen)}
                 >
-                  <IconProvider icon="Plus" size={12} />
+                  <IconProvider icon="Plus" size={14} />
                 </Button>
                 {isAddMenuOpen && (
                   <div className="absolute right-0 top-full mt-1 z-50 overflow-hidden rounded-none border shadow-lg bg-black text-white border-grey-strongest">
@@ -927,7 +927,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
                                   handleAction("rename", [item]);
                                 }}
                               >
-                                <IconProvider icon="Pencil" size={12} />
+                                <IconProvider icon="Pencil" size={14} />
                               </Button>
                             </TooltipTrigger>
                             <TooltipContent>{t('fileBrowser.rename')}</TooltipContent>
@@ -943,7 +943,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
                                   handleAction("move", [item]);
                                 }}
                               >
-                                <IconProvider icon="FolderMoved" size={12} />
+                                <IconProvider icon="FolderMoved" size={14} />
                               </Button>
                             </TooltipTrigger>
                             <TooltipContent>{t('fileBrowser.moveTo')}</TooltipContent>
@@ -959,7 +959,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
                                   handleAction("download", [item]);
                                 }}
                               >
-                                <IconProvider icon="Download" size={12} />
+                                <IconProvider icon="Download" size={14} />
                               </Button>
                             </TooltipTrigger>
                             <TooltipContent>{t('fileBrowser.download')}</TooltipContent>
@@ -975,7 +975,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
                                   handleAction("share", [item]);
                                 }}
                               >
-                                <IconProvider icon="Share" size={12} />
+                                <IconProvider icon="Share" size={14} />
                               </Button>
                             </TooltipTrigger>
                             <TooltipContent>{t('fileBrowser.share')}</TooltipContent>
@@ -991,7 +991,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
                                   handleAction("delete", [item]);
                                 }}
                               >
-                                <IconProvider icon="Trash" size={12} />
+                                <IconProvider icon="Trash" size={14} />
                               </Button>
                             </TooltipTrigger>
                             <TooltipContent>{t('fileBrowser.delete')}</TooltipContent>

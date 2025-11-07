@@ -267,7 +267,7 @@ export const FolderBrowser: React.FC<FolderBrowserProps> = ({
                                       className="p-0 w-6 h-6"
                                       onClick={(e) => handleSelectFolder(folder, e)}
                                     >
-                                      <IconProvider icon="ArrowRight" size={12} />
+                                      <IconProvider icon="ArrowRight" size={14} />
                                     </Button>
                                   </TooltipTrigger>
                                   <TooltipContent>{t('folderBrowser.select')}</TooltipContent>

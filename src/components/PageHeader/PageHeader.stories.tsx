@@ -399,22 +399,22 @@ const RightSideButtons = () => {
     { 
       label: "Mon profil", 
       onClick: () => console.log("Mon profil"),
-      icon: <Icon name="User" size={12} />
+      icon: <Icon name="User" size={14} />
     },
     { 
       label: "Paramètres", 
       onClick: () => console.log("Paramètres"),
-      icon: <Icon name="Settings" size={12} />
+      icon: <Icon name="Settings" size={14} />
     },
     { 
       label: "Aide", 
       onClick: () => console.log("Aide"),
-      icon: <Icon name="Help" size={12} />
+      icon: <Icon name="Help" size={14} />
     },
     { 
       label: "Déconnexion", 
       onClick: () => console.log("Déconnexion"),
-      icon: <Icon name="Logout" size={12} />
+      icon: <Icon name="Logout" size={14} />
     },
   ];
 
@@ -426,7 +426,7 @@ const RightSideButtons = () => {
         onLanguageChange={setCurrentLanguage} 
       />
       <ButtonMenuSmall variant="ghost" size="large" className="p-0 w-6 h-6" actions={userMenuActions}>
-        <Icon name="User" size={12} />
+        <Icon name="User" size={14} />
       </ButtonMenuSmall>
       <ButtonNotifications />
     </>

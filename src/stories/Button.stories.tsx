@@ -48,7 +48,7 @@ import { Icon } from '@story-gs-react';
 
 **Tailles d'icônes recommandées selon la taille du bouton :**
 - **Bouton \`small\`** : Utilisez \`size={10}\` pour l'icône
-- **Bouton \`medium\`** (défaut) : Utilisez \`size={12}\` pour l'icône
+- **Bouton \`medium\`** (défaut) : Utilisez \`size={14}\` pour l'icône (test en cours)
 - **Bouton \`large\`** : Utilisez \`size={14}\` pour l'icône
 
 \`\`\`tsx
@@ -59,7 +59,7 @@ import { Icon } from '@story-gs-react';
 </Button>
 
 <Button size="medium">
-  <Icon name="Plus" size={12} />
+  <Icon name="Plus" size={14} />
   Medium Button
 </Button>
 
@@ -235,7 +235,7 @@ export const WithIcon: Story = {
             <p className="text-sm font-medium mb-2">💡 Tailles d'icônes recommandées :</p>
             <ul className="text-xs space-y-1 list-disc list-inside">
               <li><strong>Bouton <code>small</code></strong> : <code>size={10}</code></li>
-              <li><strong>Bouton <code>medium</code></strong> (défaut) : <code>size={12}</code></li>
+              <li><strong>Bouton <code>medium</code></strong> (défaut) : <code>size={14}</code> (test en cours)</li>
               <li><strong>Bouton <code>large</code></strong> : <code>size={14}</code></li>
             </ul>
           </div>
@@ -243,18 +243,18 @@ export const WithIcon: Story = {
 
         <VStack gap={4}>
           <div>
-            <h4 className="text-sm font-medium mb-2">Taille Medium (défaut) - Icon size={12}</h4>
+            <h4 className="text-sm font-medium mb-2">Taille Medium (défaut) - Icon size={14} (test)</h4>
             <HStack gap={3}>
               <Button variant="normal">
-                <Icon name="Plus" size={12} />
+                <Icon name="Plus" size={14} />
                 Ajouter
               </Button>
               <Button variant="secondary">
-                <Icon name="Settings" size={12} />
+                <Icon name="Settings" size={14} />
                 Paramètres
               </Button>
               <Button variant="ghost">
-                <Icon name="Trash" size={12} />
+                <Icon name="Trash" size={14} />
                 Supprimer
               </Button>
             </HStack>
@@ -314,7 +314,7 @@ export const IconsOnly: Story = {
             <p className="text-sm font-medium mb-2">💡 Dimensions recommandées pour icône uniquement :</p>
             <ul className="text-xs space-y-1 list-disc list-inside">
               <li><code>size="small"</code> : Ajouter <code>className="p-1 w-4 h-4"</code> + Icon <code>size={10}</code></li>
-              <li><code>size="medium"</code> : Ajouter <code>className="p-0 w-6 h-6"</code> + Icon <code>size={12}</code></li>
+              <li><code>size="medium"</code> : Ajouter <code>className="p-0 w-6 h-6"</code> + Icon <code>size={14}</code> (test)</li>
               <li><code>size="large"</code> : Ajouter <code>className="p-0 w-8 h-8"</code> + Icon <code>size={14}</code></li>
             </ul>
           </div>
@@ -322,13 +322,13 @@ export const IconsOnly: Story = {
 
         {/* Size Medium */}
         <VStack gap={3}>
-          <h4 className="text-sm font-medium">Size Medium (défaut) - Recommandé : className="p-0 w-6 h-6"</h4>
+          <h4 className="text-sm font-medium">Size Medium (défaut) - Recommandé : className="p-0 w-6 h-6" + Icon size={14} (test)</h4>
           <HStack gap={3} align="center">
-            <Button variant="normal" className="p-0 w-6 h-6"><Icon name="Plus" size={12} /></Button>
-            <Button variant="secondary" className="p-0 w-6 h-6"><Icon name="Settings" size={12} /></Button>
-            <Button variant="ghost" className="p-0 w-6 h-6"><Icon name="Trash" size={12} /></Button>
-            <Button variant="outline" className="p-0 w-6 h-6"><Icon name="Pencil" size={12} /></Button>
-            <Button variant="destructive" className="p-0 w-6 h-6"><Icon name="X" size={12} /></Button>
+            <Button variant="normal" className="p-0 w-6 h-6"><Icon name="Plus" size={14} /></Button>
+            <Button variant="secondary" className="p-0 w-6 h-6"><Icon name="Settings" size={14} /></Button>
+            <Button variant="ghost" className="p-0 w-6 h-6"><Icon name="Trash" size={14} /></Button>
+            <Button variant="outline" className="p-0 w-6 h-6"><Icon name="Pencil" size={14} /></Button>
+            <Button variant="destructive" className="p-0 w-6 h-6"><Icon name="X" size={14} /></Button>
           </HStack>
         </VStack>
 
@@ -363,8 +363,8 @@ export const IconsOnly: Story = {
         <VStack gap={3}>
           <h4 className="text-sm font-medium">Avec Indicator (notifications, alertes)</h4>
           <HStack gap={3} align="center">
-            <Button variant="normal" indicator className="p-0 w-6 h-6"><Icon name="Bell" size={12} /></Button>
-            <Button variant="secondary" indicator className="p-0 w-6 h-6"><Icon name="Mail" size={12} /></Button>
+            <Button variant="normal" indicator className="p-0 w-6 h-6"><Icon name="Bell" size={14} /></Button>
+            <Button variant="secondary" indicator className="p-0 w-6 h-6"><Icon name="Mail" size={14} /></Button>
             <Button variant="ghost" indicator size="small" className="p-1 w-4 h-4"><Icon name="Bell" size={10} /></Button>
             <Button variant="outline" indicator size="small" className="p-1 w-4 h-4"><Icon name="Mail" size={10} /></Button>
           </HStack>
@@ -374,9 +374,9 @@ export const IconsOnly: Story = {
         <VStack gap={3}>
           <h4 className="text-sm font-medium">États désactivés</h4>
           <HStack gap={3} align="center">
-            <Button variant="normal" disabled className="p-0 w-6 h-6"><Icon name="Plus" size={12} /></Button>
-            <Button variant="secondary" disabled className="p-0 w-6 h-6"><Icon name="Settings" size={12} /></Button>
-            <Button variant="ghost" disabled className="p-0 w-6 h-6"><Icon name="Trash" size={12} /></Button>
+            <Button variant="normal" disabled className="p-0 w-6 h-6"><Icon name="Plus" size={14} /></Button>
+            <Button variant="secondary" disabled className="p-0 w-6 h-6"><Icon name="Settings" size={14} /></Button>
+            <Button variant="ghost" disabled className="p-0 w-6 h-6"><Icon name="Trash" size={14} /></Button>
             <Button variant="normal" size="small" disabled className="p-1 w-4 h-4"><Icon name="Plus" size={10} /></Button>
           </HStack>
         </VStack>
@@ -387,20 +387,20 @@ export const IconsOnly: Story = {
           <HStack gap={4}>
             <Layout bg="white" padding={3} className="border border-grey rounded">
               <HStack gap={2}>
-                <Button variant="normal" className="p-0 w-6 h-6"><Icon name="Plus" size={12} /></Button>
-                <Button variant="ghost" className="p-0 w-6 h-6"><Icon name="Settings" size={12} /></Button>
+                <Button variant="normal" className="p-0 w-6 h-6"><Icon name="Plus" size={14} /></Button>
+                <Button variant="ghost" className="p-0 w-6 h-6"><Icon name="Settings" size={14} /></Button>
               </HStack>
             </Layout>
             <Layout bg="grey" padding={3} className="border border-grey rounded">
               <HStack gap={2}>
-                <Button variant="normal" className="p-0 w-6 h-6"><Icon name="Plus" size={12} /></Button>
-                <Button variant="ghost" className="p-0 w-6 h-6"><Icon name="Settings" size={12} /></Button>
+                <Button variant="normal" className="p-0 w-6 h-6"><Icon name="Plus" size={14} /></Button>
+                <Button variant="ghost" className="p-0 w-6 h-6"><Icon name="Settings" size={14} /></Button>
               </HStack>
             </Layout>
             <Layout bg="black" padding={3} className="border border-grey rounded">
               <HStack gap={2}>
-                <Button variant="normal" className="p-0 w-6 h-6"><Icon name="Plus" size={12} /></Button>
-                <Button variant="ghost" className="p-0 w-6 h-6"><Icon name="Settings" size={12} /></Button>
+                <Button variant="normal" className="p-0 w-6 h-6"><Icon name="Plus" size={14} /></Button>
+                <Button variant="ghost" className="p-0 w-6 h-6"><Icon name="Settings" size={14} /></Button>
               </HStack>
             </Layout>
           </HStack>
@@ -504,7 +504,7 @@ export const Medium: Story = {
       <HStack gap={3} align="center">
         <Button size="medium">Medium Button</Button>
         <Button size="medium">
-          <Icon name="Plus" size={12} />
+          <Icon name="Plus" size={14} />
           Avec icon
         </Button>
       </HStack>

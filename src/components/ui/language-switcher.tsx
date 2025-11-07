@@ -25,7 +25,7 @@ export const LanguageSwitcher = ({
   languages,
   currentLanguage,
   onLanguageChange,
-  size = "large",
+  size = "medium",
   className,
   disabled = false,
   debug = false,
@@ -49,8 +49,12 @@ export const LanguageSwitcher = ({
   }
 
   // Déterminer les dimensions du bouton selon le size
-  const buttonSizeClasses = size === "small" ? "p-1 w-4 h-4" : "w-auto min-w-[2rem] h-6 px-2"
-  const iconSize = size === "small" ? 8 : 12
+  // Pour les boutons icône uniquement :
+  // - small: p-1 w-4 h-4 + icon size={10}
+  // - medium: p-0 w-6 h-6 + icon size={14}
+  // - large: p-0 w-8 h-8 + icon size={14}
+  const buttonSizeClasses = size === "small" ? "p-1 w-4 h-4" : size === "large" ? "p-0 w-8 h-8" : "p-0 w-6 h-6"
+  const iconSize = size === "small" ? 10 : 14
 
   // Vérification de sécurité pour currentLanguage et extraction du code
   const languageCode = currentLanguage?.code

@@ -51,7 +51,7 @@ const PageTitle: React.FC<PageTitleProps> = ({
           className="p-0 w-6 h-6"
           onClick={handleBackButtonClick}
         >
-          <IconProvider icon="ArrowLeft" />
+          <IconProvider icon="ArrowLeft" size={14} />
         </Button>
       )}
       <div className="flex-1 min-w-0 overflow-hidden">
@@ -63,7 +63,7 @@ const PageTitle: React.FC<PageTitleProps> = ({
           className="p-0 w-6 h-6"
           onClick={onButtonClick}
         >
-          <IconProvider icon={buttonIcon} />
+          <IconProvider icon={buttonIcon} size={14} />
         </Button>
       )}
     </HStack>
