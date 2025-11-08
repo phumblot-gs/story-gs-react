@@ -268,6 +268,7 @@ import {
 } from "./components/ui/table";
 import { Textarea } from "./components/ui/textarea";
 import { Text } from "./components/ui/text";
+import { Stepper } from "./components/ui/stepper";
 import {
   Tooltip,
   TooltipTrigger,
@@ -569,6 +570,8 @@ export { Table, TableHeader, TableBody, TableFooter, TableHead, TableRow, TableC
 export { Textarea };
 export { Text };
 export type { TextProps } from "./components/ui/text";
+export { Stepper };
+export type { StepperProps, StepperStep, StepperStepState } from "./components/ui/stepper";
 export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider };
 
 // Backward compatibility - ModalLayer is now Modal in layout
