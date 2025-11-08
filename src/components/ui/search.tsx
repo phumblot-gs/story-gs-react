@@ -86,36 +86,36 @@ const Search = React.forwardRef<HTMLInputElement, SearchProps>(
     }
 
     return (
-      <div className={cn("relative w-full flex-1 min-w-0", containerClassName)}>
+      <div className={cn("relative w-fit", containerClassName)}>
+        {/* Icône Search */}
         <div
           className={cn(
-            "absolute top-1/2 -translate-y-1/2 pointer-events-none rounded-full transition-colors duration-200",
+            "absolute top-1/2 -translate-y-1/2 pointer-events-none rounded-full transition-colors duration-200 z-10",
             "flex items-center justify-center",
+            "w-4 h-4 left-[5px]",
             getSearchIconColor()
           )}
-          style={{ left: '12px', width: '20px', height: '20px' }}
         >
           <Icon name="Search" size={12} />
         </div>
+        
         <input
           type="search"
           value={currentValue}
           className={cn(
             // Base styles - même que Select avec rounded-full
-            "flex h-[30px] w-full items-center rounded-full border py-1",
+            "flex h-6 items-center rounded-full border py-1",
             "text-sm font-light transition-colors duration-200",
             "focus:outline-none focus:ring-0",
             "disabled:cursor-not-allowed disabled:opacity-50",
             "placeholder:text-grey-strongest",
             // Masquer le bouton clear natif du navigateur
             "[&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden",
+            // Padding - toujours pr-6 pour éviter le changement de taille quand le bouton clear apparaît
+            "pl-6 pr-6",
             getBackgroundStyles(),
             className
           )}
-          style={{
-            paddingLeft: '40px',
-            paddingRight: hasValue ? '36px' : '15px'
-          }}
           ref={ref}
           disabled={disabled}
           onChange={handleChange}
@@ -123,16 +123,18 @@ const Search = React.forwardRef<HTMLInputElement, SearchProps>(
           onBlur={handleBlur}
           {...props}
         />
+        
+        {/* Bouton clear positionné en absolu par rapport au wrapper */}
         {hasValue && !disabled && (
-          <div className="absolute top-1/2 -translate-y-1/2" style={{ right: '8px' }}>
+          <div className="absolute top-1/2 -translate-y-1/2 right-1 flex items-center justify-center z-10">
             <Button
               type="button"
               variant="ghost"
               size="small"
-              className="p-0 w-5 h-5 hover:bg-transparent"
+              className="p-0 w-4 h-4 hover:bg-transparent [&_svg]:h-[10px] [&_svg]:w-[10px]"
               onClick={handleClear}
             >
-              <Icon name="X" size={12} />
+              <Icon name="X" size={10} />
             </Button>
           </div>
         )}
