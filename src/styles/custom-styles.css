@@ -6,6 +6,101 @@
  * pour pouvoir utiliser les variables CSS définies dans figma-tokens.css
  */
 
+/* Styles pour Stepper */
+/* Force l'état actif pour les étapes du Stepper (utilise pressed) */
+[data-bg="white"] .stepper-step.stepper-active,
+[data-bg="grey"] .stepper-step.stepper-active {
+  background: var(--button-w-normal-bg-pressed) !important;
+  color: var(--button-w-normal-fg-pressed) !important;
+}
+
+[data-bg="white"] .stepper-step.stepper-active.btn-secondary,
+[data-bg="grey"] .stepper-step.stepper-active.btn-secondary {
+  background: var(--button-w-secondary-bg-pressed) !important;
+  color: var(--button-w-secondary-fg-pressed) !important;
+}
+
+[data-bg="white"] .stepper-step.stepper-active.btn-outline,
+[data-bg="grey"] .stepper-step.stepper-active.btn-outline {
+  background: var(--button-w-outline-bg-pressed) !important;
+  color: var(--button-w-outline-fg-pressed) !important;
+  border: 1px solid var(--button-w-outline-fg-pressed) !important;
+}
+
+[data-bg="white"] .stepper-step.stepper-active.btn-ghost,
+[data-bg="grey"] .stepper-step.stepper-active.btn-ghost {
+  background: var(--button-w-ghost-bg-pressed) !important;
+  color: var(--button-w-ghost-fg-pressed) !important;
+}
+
+[data-bg="black"] .stepper-step.stepper-active {
+  background: var(--button-b-normal-bg-pressed) !important;
+  color: var(--button-b-normal-fg-pressed) !important;
+}
+
+[data-bg="black"] .stepper-step.stepper-active.btn-secondary {
+  background: var(--button-b-secondary-bg-pressed) !important;
+  color: var(--button-b-secondary-fg-pressed) !important;
+}
+
+[data-bg="black"] .stepper-step.stepper-active.btn-outline {
+  background: var(--button-b-outline-bg-pressed) !important;
+  color: var(--button-b-outline-fg-pressed) !important;
+  border: 1px solid var(--button-b-outline-fg-pressed) !important;
+}
+
+[data-bg="black"] .stepper-step.stepper-active.btn-ghost {
+  background: var(--button-b-ghost-bg-pressed) !important;
+  color: var(--button-b-ghost-fg-pressed) !important;
+}
+
+/* Force l'état complété pour les étapes du Stepper (utilise hover) */
+[data-bg="white"] .stepper-step.stepper-completed,
+[data-bg="grey"] .stepper-step.stepper-completed {
+  background: var(--button-w-normal-bg-hover) !important;
+  color: var(--button-w-normal-fg-hover) !important;
+}
+
+[data-bg="white"] .stepper-step.stepper-completed.btn-secondary,
+[data-bg="grey"] .stepper-step.stepper-completed.btn-secondary {
+  background: var(--button-w-secondary-bg-hover) !important;
+  color: var(--button-w-secondary-fg-hover) !important;
+}
+
+[data-bg="white"] .stepper-step.stepper-completed.btn-outline,
+[data-bg="grey"] .stepper-step.stepper-completed.btn-outline {
+  background: var(--button-w-outline-bg-hover) !important;
+  color: var(--button-w-outline-fg-hover) !important;
+  border: 1px solid var(--button-w-outline-fg-hover) !important;
+}
+
+[data-bg="white"] .stepper-step.stepper-completed.btn-ghost,
+[data-bg="grey"] .stepper-step.stepper-completed.btn-ghost {
+  background: var(--button-w-ghost-bg-hover) !important;
+  color: var(--button-w-ghost-fg-hover) !important;
+}
+
+[data-bg="black"] .stepper-step.stepper-completed {
+  background: var(--button-b-normal-bg-hover) !important;
+  color: var(--button-b-normal-fg-hover) !important;
+}
+
+[data-bg="black"] .stepper-step.stepper-completed.btn-secondary {
+  background: var(--button-b-secondary-bg-hover) !important;
+  color: var(--button-b-secondary-fg-hover) !important;
+}
+
+[data-bg="black"] .stepper-step.stepper-completed.btn-outline {
+  background: var(--button-b-outline-bg-hover) !important;
+  color: var(--button-b-outline-fg-hover) !important;
+  border: 1px solid var(--button-b-outline-fg-hover) !important;
+}
+
+[data-bg="black"] .stepper-step.stepper-completed.btn-ghost {
+  background: var(--button-b-ghost-bg-hover) !important;
+  color: var(--button-b-ghost-fg-hover) !important;
+}
+
 /* Styles pour btn-plus (ButtonPlus pill container) */
 /* White/Grey background: utilise button-action-plus-w-color */
 [data-bg="white"] .btn-plus,
