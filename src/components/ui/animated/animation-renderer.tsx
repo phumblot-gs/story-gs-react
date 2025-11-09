@@ -7,7 +7,6 @@ export interface AnimationProps {
   bgColor?: string
   duration?: number
   checkDelay?: number
-  className?: string
 }
 
 /**

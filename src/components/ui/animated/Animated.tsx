@@ -125,7 +125,6 @@ export const Animated: React.FC<AnimatedProps> = ({
     bgColor: defaultBgColor ? getColorValue(defaultBgColor) : undefined,
     duration,
     checkDelay,
-    className,
   })
 
   if (!animationElement) {
@@ -137,6 +136,7 @@ export const Animated: React.FC<AnimatedProps> = ({
     <div
       className={cn(
         "inline-flex items-center justify-center flex-shrink-0",
+        className,
         onClick && "cursor-pointer",
         debug && "ring-2 ring-pink"
       )}

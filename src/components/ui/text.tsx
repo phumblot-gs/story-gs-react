@@ -4,7 +4,7 @@ import { useBgContext } from "@/components/layout/BgContext"
 
 export interface TextProps extends React.HTMLAttributes<HTMLElement> {
   /** Élément HTML à rendre (par défaut: span) */
-  as?: 'span' | 'p' | 'div' | 'strong' | 'em' | 'small';
+  as?: 'span' | 'p' | 'div' | 'strong' | 'em' | 'small' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
 }
 
 

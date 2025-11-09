@@ -1,12 +1,10 @@
 import React from "react"
-import { cn } from "@/lib/utils"
 
 export interface SuccessAnimationProps {
   color: string
   bgColor?: string
   duration?: number
   checkDelay?: number
-  className?: string
 }
 
 /**
@@ -19,7 +17,6 @@ export const SuccessAnimation: React.FC<SuccessAnimationProps> = ({
   bgColor = "var(--color-green)",
   duration = 0.8,
   checkDelay = 0.8,
-  className,
 }) => {
   const containerStyle: React.CSSProperties = {
     backgroundColor: bgColor,
@@ -33,7 +30,7 @@ export const SuccessAnimation: React.FC<SuccessAnimationProps> = ({
   return (
     <div
       style={containerStyle}
-      className={cn("w-full h-full", className)}
+      className="w-full h-full"
     >
       <svg
         className="w-2/3 h-2/3"
