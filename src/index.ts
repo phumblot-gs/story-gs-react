@@ -382,6 +382,7 @@ export { SegmentedControl, SegmentedControlList, SegmentedControlTrigger, Segmen
 export { Tabs, TabsList, TabsTrigger, TabsContent };
 export { FolderBrowser };
 export { Icon } from "./components/ui/icons";
+export { Animated } from "./components/ui/animated";
 
 // Export additional UI components
 export { Toggle, ToggleGroup, ToggleGroupItem };
@@ -613,6 +614,7 @@ export type {
 };
 
 export type { IconProps } from "./components/ui/icons";
+export type { AnimatedProps, AnimatedName } from "./components/ui/animated";
 
 // Backward compatibility types
 export type ButtonBackground = "white" | "grey" | "black";  // Deprecated, use Layout bg instead
