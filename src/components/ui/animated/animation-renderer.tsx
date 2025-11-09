@@ -3,11 +3,11 @@ import { AnimatedName } from "./types"
 import { SuccessAnimation } from "./animations/success"
 
 export interface AnimationProps {
-  size: number
-  color?: string
+  color: string
   bgColor?: string
   duration?: number
   checkDelay?: number
+  className?: string
 }
 
 /**

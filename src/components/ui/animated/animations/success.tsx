@@ -1,30 +1,27 @@
 import React from "react"
+import { cn } from "@/lib/utils"
 
 export interface SuccessAnimationProps {
-  size: number
-  color?: string
+  color: string
   bgColor?: string
   duration?: number
   checkDelay?: number
+  className?: string
 }
 
 /**
- * Animation de succès avec badge et coche
+ * Success animation with badge and checkmark
  * 
- * Affiche un badge animé avec une coche qui apparaît après l'animation du contour.
+ * Displays an animated badge with a checkmark that appears after the contour animation.
  */
 export const SuccessAnimation: React.FC<SuccessAnimationProps> = ({
-  size = 44,
   color = "white",
-  bgColor = "#4CAF50",
+  bgColor = "var(--color-green)",
   duration = 0.8,
   checkDelay = 0.8,
+  className,
 }) => {
-  const svgSize = Math.round(size * (2 / 3))
-
   const containerStyle: React.CSSProperties = {
-    width: size,
-    height: size,
     backgroundColor: bgColor,
     borderRadius: "50%",
     display: "inline-flex",
@@ -34,10 +31,12 @@ export const SuccessAnimation: React.FC<SuccessAnimationProps> = ({
   }
 
   return (
-    <div style={containerStyle}>
+    <div
+      style={containerStyle}
+      className={cn("w-full h-full", className)}
+    >
       <svg
-        width={svgSize}
-        height={svgSize}
+        className="w-2/3 h-2/3"
         viewBox="0 0 11 11"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"

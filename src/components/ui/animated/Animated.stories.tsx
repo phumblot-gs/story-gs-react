@@ -12,35 +12,59 @@ const meta: Meta<typeof Animated> = {
     docs: {
       description: {
         component: `
-Le composant \`Animated\` permet d'afficher des animations pour illustrer le comportement de l'application.
-Similaire au composant \`Icon\`, mais pour les animations.
+The \`Animated\` component displays animations to illustrate application behavior.
+Similar to the \`Icon\` component, but for animations.
 
 ## Features
 
-- **Système de noms** : Utilise une prop \`name\` pour sélectionner l'animation, similaire aux \`Icon\`
-- **Personnalisation** : Contrôle de la taille, des couleurs et du timing des animations
-- **Réutilisable** : Structure extensible pour ajouter facilement de nouvelles animations
+- **Name-based system** : Uses a \`name\` prop to select the animation, similar to \`Icon\`
+- **Customization** : Control colors and animation timing
+- **Size control** : Use Tailwind classes (\`w-x\` and \`h-x\`) to control size
+- **Reusable** : Extensible structure to easily add new animations
 
-## Animations disponibles
+## Available animations
 
-- \`success\` : Animation de succès avec badge et coche
+- \`success\` : Success animation with badge and checkmark
+
+## Color tokens
+
+The \`bgColor\` prop accepts color tokens from the design system or hex values. Available color tokens:
+
+- \`green\` : Green (#89cc52)
+- \`green-primary\` : Primary green (#9edeab)
+- \`blue\` : Blue (#74d4da)
+- \`blue-primary\` : Primary blue (#cdedff)
+- \`red-strong\` : Strong red (#dd3733)
+- \`yellow\` : Yellow (#ffd331)
+- \`orange\` : Orange (#ff9900)
+- \`pink\` : Pink (#ffaad4)
+- \`purple\` : Purple (#a44c9f)
+- \`khaki\` : Khaki (#b7bb28)
+- \`pastel-blue\` : Pastel blue (#74d4da)
+- \`pastel-green\` : Pastel green (#a0e0ad)
+- \`pastel-yellow\` : Pastel yellow (#ebed8c)
+
+You can also use hex values directly (e.g., \`#2196F3\`).
 
 ## Usage
 
 \`\`\`tsx
-// Animation de succès par défaut
-<Animated name="success" />
+// Default success animation (use className for size)
+<Animated name="success" className="w-11 h-11" />
 
-// Avec taille personnalisée
-<Animated name="success" size={60} />
+// Custom size using Tailwind classes
+<Animated name="success" className="w-16 h-16" />
 
-// Avec couleurs personnalisées
-<Animated name="success" size={60} color="white" bgColor="#2196F3" />
+// Custom colors using color tokens
+<Animated name="success" className="w-16 h-16" color="white" bgColor="blue-primary" />
 
-// Avec timing personnalisé
+// Custom colors using hex values (still supported)
+<Animated name="success" className="w-16 h-16" color="white" bgColor="#2196F3" />
+
+// Custom timing
 <Animated 
   name="success" 
-  size={80} 
+  className="w-20 h-20"
   duration={1.2} 
   checkDelay={1.0} 
 />
@@ -60,33 +84,25 @@ Similaire au composant \`Icon\`, mais pour les animations.
         defaultValue: { summary: "success" },
       },
     },
-    size: {
-      control: { type: "number", min: 20, max: 200, step: 4 },
-      description: "Taille de l'animation en pixels",
-      table: {
-        type: { summary: "number" },
-        defaultValue: { summary: "44" },
-      },
-    },
     color: {
       control: "color",
-      description: "Couleur du badge/icône",
+      description: "Badge/icon color",
       table: {
         type: { summary: "string" },
         defaultValue: { summary: "white" },
       },
     },
     bgColor: {
-      control: "color",
-      description: "Couleur de fond du cercle",
+      control: "text",
+      description: "Circle background color. Can be a color token (green, blue-primary, red-strong, etc.) or hex value",
       table: {
-        type: { summary: "string" },
-        defaultValue: { summary: "#4CAF50 (pour success)" },
+        type: { summary: "ColorToken | string" },
+        defaultValue: { summary: "green (for success)" },
       },
     },
     duration: {
       control: { type: "number", min: 0.1, max: 3, step: 0.1 },
-      description: "Durée de l'animation du badge en secondes",
+      description: "Badge animation duration in seconds",
       table: {
         type: { summary: "number" },
         defaultValue: { summary: "0.8" },
@@ -94,7 +110,7 @@ Similaire au composant \`Icon\`, mais pour les animations.
     },
     checkDelay: {
       control: { type: "number", min: 0, max: 3, step: 0.1 },
-      description: "Délai avant l'apparition de la coche en secondes",
+      description: "Delay before checkmark appears in seconds",
       table: {
         type: { summary: "number" },
         defaultValue: { summary: "0.8" },
@@ -102,11 +118,11 @@ Similaire au composant \`Icon\`, mais pour les animations.
     },
     className: {
       control: "text",
-      description: "Classes CSS Tailwind additionnelles",
+      description: "Additional Tailwind CSS classes. Use w-x and h-x to control size",
     },
     debug: {
       control: "boolean",
-      description: "Mode debug : affiche un border rose et log les clics",
+      description: "Debug mode: displays pink border and logs clicks",
     },
   },
   decorators: [
@@ -122,81 +138,81 @@ export default meta
 type Story = StoryObj<typeof Animated>
 
 /**
- * Animation de succès par défaut avec les valeurs standard.
+ * Default success animation with standard values.
  */
 export const Default: Story = {
   args: {
     name: "success",
-    size: 44,
+    className: "w-11 h-11",
     color: "white",
-    bgColor: "#4CAF50",
+    bgColor: "green",
     duration: 0.8,
     checkDelay: 0.8,
   },
 }
 
 /**
- * Différentes tailles d'animation de succès.
+ * Different sizes of success animation using Tailwind classes.
  */
 export const Sizes: Story = {
   render: () => (
     <div className="flex items-center gap-8">
       <div className="flex flex-col items-center gap-2">
-        <Animated name="success" size={32} />
-        <span className="text-xs text-grey-strongest">32px</span>
+        <Animated name="success" className="w-8 h-8" />
+        <span className="text-xs text-grey-strongest">w-8 h-8 (32px)</span>
       </div>
       <div className="flex flex-col items-center gap-2">
-        <Animated name="success" size={44} />
-        <span className="text-xs text-grey-strongest">44px (défaut)</span>
+        <Animated name="success" className="w-11 h-11" />
+        <span className="text-xs text-grey-strongest">w-11 h-11 (44px, default)</span>
       </div>
       <div className="flex flex-col items-center gap-2">
-        <Animated name="success" size={60} />
-        <span className="text-xs text-grey-strongest">60px</span>
+        <Animated name="success" className="w-16 h-16" />
+        <span className="text-xs text-grey-strongest">w-16 h-16 (64px)</span>
       </div>
       <div className="flex flex-col items-center gap-2">
-        <Animated name="success" size={80} />
-        <span className="text-xs text-grey-strongest">80px</span>
+        <Animated name="success" className="w-20 h-20" />
+        <span className="text-xs text-grey-strongest">w-20 h-20 (80px)</span>
       </div>
       <div className="flex flex-col items-center gap-2">
-        <Animated name="success" size={100} />
-        <span className="text-xs text-grey-strongest">100px</span>
+        <Animated name="success" className="w-24 h-24" />
+        <span className="text-xs text-grey-strongest">w-24 h-24 (96px)</span>
       </div>
     </div>
   ),
 }
 
 /**
- * Différentes variantes de couleurs pour l'animation de succès.
+ * Different color variants for the success animation.
  */
 export const ColorVariants: Story = {
   render: () => (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col items-center gap-2">
-        <h3 className="text-sm font-medium mb-2">Succès (vert)</h3>
-        <Animated name="success" size={60} color="white" bgColor="#4CAF50" />
+        <h3 className="text-sm font-medium mb-2">Success (green token)</h3>
+        <Animated name="success" className="w-16 h-16" color="white" bgColor="green" />
       </div>
       <div className="flex flex-col items-center gap-2">
-        <h3 className="text-sm font-medium mb-2">Info (bleu)</h3>
-        <Animated name="success" size={60} color="white" bgColor="#2196F3" />
+        <h3 className="text-sm font-medium mb-2">Info (blue-primary token)</h3>
+        <Animated name="success" className="w-16 h-16" color="white" bgColor="blue-primary" />
       </div>
       <div className="flex flex-col items-center gap-2">
-        <h3 className="text-sm font-medium mb-2">Warning (orange)</h3>
-        <Animated name="success" size={60} color="white" bgColor="#FF9800" />
+        <h3 className="text-sm font-medium mb-2">Warning (orange token)</h3>
+        <Animated name="success" className="w-16 h-16" color="white" bgColor="orange" />
       </div>
       <div className="flex flex-col items-center gap-2">
-        <h3 className="text-sm font-medium mb-2">Violet/Or</h3>
-        <Animated name="success" size={60} color="#FFD700" bgColor="#764ba2" />
+        <h3 className="text-sm font-medium mb-2">Error (red-strong token)</h3>
+        <Animated name="success" className="w-16 h-16" color="white" bgColor="red-strong" />
       </div>
       <div className="flex flex-col items-center gap-2">
-        <h3 className="text-sm font-medium mb-2">Dark/Or</h3>
-        <Animated name="success" size={60} color="#FFD700" bgColor="#333333" />
+        <h3 className="text-sm font-medium mb-2">Purple/Gold (hex values)</h3>
+        <Animated name="success" className="w-16 h-16" color="#FFD700" bgColor="#764ba2" />
       </div>
     </div>
   ),
 }
 
 /**
- * Animation avec timing personnalisé.
+ * Animation with custom timing.
  */
 export const CustomTiming: Story = {
   render: () => {
@@ -211,12 +227,12 @@ export const CustomTiming: Story = {
         <Animated
           key={key}
           name="success"
-          size={80}
+          className="w-20 h-20"
           duration={1.2}
           checkDelay={1.0}
         />
         <Button onClick={restart} variant="secondary" size="small">
-          Rejouer l'animation
+          Replay animation
         </Button>
       </div>
     )
@@ -224,14 +240,14 @@ export const CustomTiming: Story = {
 }
 
 /**
- * Animation rapide et lente pour comparer les timings.
+ * Fast and slow animations to compare timings.
  */
 export const TimingComparison: Story = {
   render: () => (
     <div className="flex items-center gap-12">
       <div className="flex flex-col items-center gap-2">
-        <h3 className="text-sm font-medium mb-2">Rapide</h3>
-        <Animated name="success" size={60} duration={0.4} checkDelay={0.4} />
+        <h3 className="text-sm font-medium mb-2">Fast</h3>
+        <Animated name="success" className="w-16 h-16" duration={0.4} checkDelay={0.4} />
         <p className="text-xs text-grey-strongest mt-2">
           duration: 0.4s
           <br />
@@ -240,7 +256,7 @@ export const TimingComparison: Story = {
       </div>
       <div className="flex flex-col items-center gap-2">
         <h3 className="text-sm font-medium mb-2">Normal</h3>
-        <Animated name="success" size={60} duration={0.8} checkDelay={0.8} />
+        <Animated name="success" className="w-16 h-16" duration={0.8} checkDelay={0.8} />
         <p className="text-xs text-grey-strongest mt-2">
           duration: 0.8s
           <br />
@@ -248,8 +264,8 @@ export const TimingComparison: Story = {
         </p>
       </div>
       <div className="flex flex-col items-center gap-2">
-        <h3 className="text-sm font-medium mb-2">Lent</h3>
-        <Animated name="success" size={60} duration={1.5} checkDelay={1.5} />
+        <h3 className="text-sm font-medium mb-2">Slow</h3>
+        <Animated name="success" className="w-16 h-16" duration={1.5} checkDelay={1.5} />
         <p className="text-xs text-grey-strongest mt-2">
           duration: 1.5s
           <br />
@@ -261,7 +277,7 @@ export const TimingComparison: Story = {
 }
 
 /**
- * Animation sur différents fonds pour tester la visibilité.
+ * Animation on different backgrounds to test visibility.
  */
 export const AllBackgrounds: Story = {
   render: () => (
@@ -270,9 +286,9 @@ export const AllBackgrounds: Story = {
         <h3 className="text-sm font-medium">White Background</h3>
         <Layout bg="white" padding={6}>
           <div className="flex items-center gap-4">
-            <Animated name="success" size={60} />
-            <Animated name="success" size={60} bgColor="#2196F3" />
-            <Animated name="success" size={60} bgColor="#FF9800" />
+            <Animated name="success" className="w-16 h-16" />
+            <Animated name="success" className="w-16 h-16" bgColor="blue-primary" />
+            <Animated name="success" className="w-16 h-16" bgColor="orange" />
           </div>
         </Layout>
       </div>
@@ -280,9 +296,9 @@ export const AllBackgrounds: Story = {
         <h3 className="text-sm font-medium">Grey Background</h3>
         <Layout bg="grey" padding={6}>
           <div className="flex items-center gap-4">
-            <Animated name="success" size={60} />
-            <Animated name="success" size={60} bgColor="#2196F3" />
-            <Animated name="success" size={60} bgColor="#FF9800" />
+            <Animated name="success" className="w-16 h-16" />
+            <Animated name="success" className="w-16 h-16" bgColor="blue-primary" />
+            <Animated name="success" className="w-16 h-16" bgColor="orange" />
           </div>
         </Layout>
       </div>
@@ -290,9 +306,9 @@ export const AllBackgrounds: Story = {
         <h3 className="text-sm font-medium">Black Background</h3>
         <Layout bg="black" padding={6}>
           <div className="flex items-center gap-4">
-            <Animated name="success" size={60} />
-            <Animated name="success" size={60} bgColor="#2196F3" />
-            <Animated name="success" size={60} bgColor="#FF9800" />
+            <Animated name="success" className="w-16 h-16" />
+            <Animated name="success" className="w-16 h-16" bgColor="blue-primary" />
+            <Animated name="success" className="w-16 h-16" bgColor="orange" />
           </div>
         </Layout>
       </div>
@@ -301,12 +317,12 @@ export const AllBackgrounds: Story = {
 }
 
 /**
- * Mode debug activé pour voir les interactions.
+ * Debug mode enabled to see interactions.
  */
 export const DebugMode: Story = {
   args: {
     name: "success",
-    size: 60,
+    className: "w-16 h-16",
     debug: true,
   },
 }

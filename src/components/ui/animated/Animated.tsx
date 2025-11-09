@@ -3,56 +3,86 @@ import { AnimatedName } from "./types"
 import { renderAnimation, AnimationProps } from "./animation-renderer"
 import { cn } from "@/lib/utils"
 
+/**
+ * Available color tokens from the design system
+ */
+export type ColorToken =
+  | "green"
+  | "green-primary"
+  | "blue"
+  | "blue-primary"
+  | "red-strong"
+  | "yellow"
+  | "orange"
+  | "pink"
+  | "purple"
+  | "khaki"
+  | "pastel-blue"
+  | "pastel-green"
+  | "pastel-yellow"
+
+/**
+ * Converts a color token to CSS variable
+ */
+const getColorValue = (token: ColorToken | string): string => {
+  // If it's already a hex color or CSS variable, return as is
+  if (token.startsWith("#") || token.startsWith("rgb") || token.startsWith("var(")) {
+    return token
+  }
+  // Convert token to CSS variable
+  return `var(--color-${token})`
+}
+
 export interface AnimatedProps {
-  /** Nom de l'animation à afficher */
+  /** Animation name to display */
   name: AnimatedName
 
-  /** Taille de l'animation en pixels (défaut: 44) */
-  size?: number
-
-  /** Couleur du badge/icône (défaut: "white") */
+  /** Badge/icon color (default: "white"). Can be a color token or hex value */
   color?: string
 
-  /** Couleur de fond du cercle (défaut: "#4CAF50" pour success) */
-  bgColor?: string
+  /** Circle background color (default: "green" for success). Can be a color token (e.g., "green", "blue-primary", "red-strong") or hex value */
+  bgColor?: ColorToken | string
 
-  /** Durée de l'animation du badge en secondes (défaut: 0.8) */
+  /** Badge animation duration in seconds (default: 0.8) */
   duration?: number
 
-  /** Délai avant l'apparition de la coche en secondes (défaut: 0.8) */
+  /** Delay before checkmark appears in seconds (default: 0.8) */
   checkDelay?: number
 
-  /** Classes CSS Tailwind additionnelles */
+  /** Additional Tailwind CSS classes. Use w-x and h-x to control size */
   className?: string
 
-  /** Handler pour le clic */
+  /** Click handler */
   onClick?: (e: React.MouseEvent<HTMLDivElement>) => void
 
-  /** Mode debug : affiche un border rose et log les clics dans la console */
+  /** Debug mode: displays pink border and logs clicks to console */
   debug?: boolean
 }
 
 /**
- * Composant Animated réutilisable
+ * Reusable Animated component
  *
- * Permet d'afficher des animations pour illustrer le comportement de l'application.
- * Similaire au composant Icon, mais pour les animations.
+ * Displays animations to illustrate application behavior.
+ * Similar to the Icon component, but for animations.
  *
  * @example
  * ```tsx
- * // Animation de succès par défaut
- * <Animated name="success" />
+ * // Default success animation
+ * <Animated name="success" className="w-11 h-11" />
  *
- * // Animation de succès avec taille personnalisée
- * <Animated name="success" size={60} />
+ * // Success animation with custom size using Tailwind classes
+ * <Animated name="success" className="w-16 h-16" />
  *
- * // Animation de succès avec couleurs personnalisées
- * <Animated name="success" size={60} color="white" bgColor="#2196F3" />
+ * // Success animation with custom colors using color tokens
+ * <Animated name="success" className="w-16 h-16" color="white" bgColor="blue-primary" />
  *
- * // Animation avec timing personnalisé
+ * // Success animation with custom colors using hex values (still supported)
+ * <Animated name="success" className="w-16 h-16" color="white" bgColor="#2196F3" />
+ *
+ * // Animation with custom timing
  * <Animated 
  *   name="success" 
- *   size={80} 
+ *   className="w-20 h-20"
  *   duration={1.2} 
  *   checkDelay={1.0} 
  * />
@@ -60,7 +90,6 @@ export interface AnimatedProps {
  */
 export const Animated: React.FC<AnimatedProps> = ({
   name,
-  size = 44,
   color,
   bgColor,
   duration = 0.8,
@@ -74,7 +103,6 @@ export const Animated: React.FC<AnimatedProps> = ({
       if (debug) {
         console.log("[Animated Click]", {
           name,
-          size,
           color,
           bgColor,
           duration,
@@ -85,19 +113,19 @@ export const Animated: React.FC<AnimatedProps> = ({
       }
       onClick?.(e)
     },
-    [debug, name, size, color, bgColor, duration, checkDelay, className, onClick]
+    [debug, name, color, bgColor, duration, checkDelay, className, onClick]
   )
 
-  // Déterminer les valeurs par défaut selon le type d'animation
-  const defaultBgColor = bgColor || (name === "success" ? "#4CAF50" : undefined)
+  // Determine default values based on animation type
+  const defaultBgColor = bgColor || (name === "success" ? "green" : undefined)
   const defaultColor = color || "white"
 
   const animationElement = renderAnimation(name, {
-    size,
-    color: defaultColor,
-    bgColor: defaultBgColor,
+    color: getColorValue(defaultColor),
+    bgColor: defaultBgColor ? getColorValue(defaultBgColor) : undefined,
     duration,
     checkDelay,
+    className,
   })
 
   if (!animationElement) {
@@ -110,8 +138,7 @@ export const Animated: React.FC<AnimatedProps> = ({
       className={cn(
         "inline-flex items-center justify-center flex-shrink-0",
         onClick && "cursor-pointer",
-        debug && "ring-2 ring-pink",
-        className
+        debug && "ring-2 ring-pink"
       )}
       onClick={debug || onClick ? handleClick : undefined}
       role={onClick ? "button" : undefined}

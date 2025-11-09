@@ -614,7 +614,7 @@ export type {
 };
 
 export type { IconProps } from "./components/ui/icons";
-export type { AnimatedProps, AnimatedName } from "./components/ui/animated";
+export type { AnimatedProps, AnimatedName, ColorToken } from "./components/ui/animated";
 
 // Backward compatibility types
 export type ButtonBackground = "white" | "grey" | "black";  // Deprecated, use Layout bg instead
