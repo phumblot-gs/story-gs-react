@@ -585,6 +585,18 @@
   line-height: var(--font-lh-normal); /* 1.5 */
 }
 
+/* Styles pour Pagination - page active simule variant=normal hover */
+[data-bg="white"] .pagination-active.btn-normal,
+[data-bg="grey"] .pagination-active.btn-normal {
+  background: var(--button-w-normal-bg-hover) !important;
+  color: var(--button-w-normal-fg-hover) !important;
+}
+
+[data-bg="black"] .pagination-active.btn-normal {
+  background: var(--button-b-normal-bg-hover) !important;
+  color: var(--button-b-normal-fg-hover) !important;
+}
+
 /* Styles pour Slider - ciblage des éléments Radix UI générés */
 /* Radix UI génère une structure avec des span imbriqués */
 /* Ces styles garantissent que les couleurs s'appliquent correctement */

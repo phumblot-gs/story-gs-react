@@ -218,12 +218,7 @@ import {
 } from "./components/ui/navigation-menu";
 import {
   Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-  PaginationEllipsis,
+  type PaginationProps,
 } from "./components/ui/pagination";
 import { Popover, PopoverTrigger, PopoverContent } from "./components/ui/popover";
 import { Progress } from "./components/ui/progress";
@@ -532,12 +527,7 @@ export {
 };
 export {
   Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-  PaginationEllipsis,
+  type PaginationProps,
 };
 export { Popover, PopoverTrigger, PopoverContent };
 export { Progress };
