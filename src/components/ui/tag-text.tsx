@@ -81,7 +81,7 @@ export const TagText = React.forwardRef<HTMLDivElement, TagTextProps>(
         {...props}
       >
         <TagCross onClick={handleRemove} disabled={disabled} />
-        <span className="tag-text-label text-[9px] leading-[16px] font-['Avenir_Next',_sans-serif] font-normal whitespace-nowrap overflow-hidden text-ellipsis">
+        <span className="tag-text-label text-[9px] leading-[16px] font-['Avenir_Next',_sans-serif] font-normal whitespace-nowrap overflow-hidden text-ellipsis flex-1 min-w-0">
           {children}
         </span>
         {debug && (

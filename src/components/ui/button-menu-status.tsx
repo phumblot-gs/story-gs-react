@@ -269,7 +269,7 @@ export const ButtonMenuStatus = React.forwardRef<HTMLButtonElement, ButtonMenuSt
                 }}
               >
                 <MediaStatus status={option.status} width={12} height={3} />
-                <span>{option.label}</span>
+                <span className="whitespace-nowrap overflow-hidden text-ellipsis flex-1 min-w-0">{option.label}</span>
               </DropdownMenuItem>
             ))}
           </VStack>

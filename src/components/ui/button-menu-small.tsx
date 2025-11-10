@@ -263,7 +263,7 @@ export const ButtonMenuSmall = React.forwardRef<HTMLButtonElement, ButtonMenuSma
                       {action.icon}
                     </span>
                   )}
-                  <span>{action.label}</span>
+                  <span className="whitespace-nowrap overflow-hidden text-ellipsis flex-1 min-w-0">{action.label}</span>
                 </DropdownMenuItem>
               )
             })}

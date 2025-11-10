@@ -234,7 +234,7 @@ const SelectTrigger = React.forwardRef<
       onMouseUp={() => setIsPressed(false)}
       {...props}
     >
-      <span className="flex-1 text-left">{children}</span>
+      <span className="flex-1 text-left whitespace-nowrap overflow-hidden text-ellipsis min-w-0">{children}</span>
       <div className="ml-2">
         <SelectPrimitive.Icon asChild>
           <div
@@ -367,7 +367,7 @@ const SelectItem = React.forwardRef<
       )}
       {...props}
     >
-      <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
+      <SelectPrimitive.ItemText className="whitespace-nowrap overflow-hidden text-ellipsis">{children}</SelectPrimitive.ItemText>
     </SelectPrimitive.Item>
   );
 });

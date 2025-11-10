@@ -68,7 +68,7 @@ const WorkflowStep = React.forwardRef<HTMLButtonElement, WorkflowStepProps>(
         size="medium"
         disabled={isDisabled}
         className={cn(
-          "whitespace-nowrap",
+          "whitespace-nowrap overflow-hidden text-ellipsis",
           className
         )}
         onClick={handleClick}
