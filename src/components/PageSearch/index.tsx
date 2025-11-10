@@ -20,11 +20,12 @@ const PageSearch: React.FC<PageSearchProps> = ({
     <Layout
       bg="grey"
       className={cn(
-        "border-b border-grey-stronger",
+        "border-b",
         "flex items-center justify-between gap-10",
         "px-4 py-0",
         className
       )}
+      style={{ borderBottomColor: "var(--layout-w-color-border-default)" }}
     >
       {/* Left Side */}
       {leftContent && (

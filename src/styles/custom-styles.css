@@ -525,6 +525,9 @@
   /* Card - Black background (utilisé quand parent est black) */
   --card-b-color-bg-default: #3a3a3a;
   --card-b-color-fg-default: #ffffff;
+  
+  /* Layout - White background */
+  --layout-w-color-border-default: #E7E7E7;
 }
 
 /* Styles pour Card component */
