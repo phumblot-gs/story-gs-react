@@ -1,7 +1,7 @@
 /**
  * Variables CSS générées automatiquement depuis les tokens Figma
  * NE PAS MODIFIER DIRECTEMENT - Généré par scripts/generate-css-tokens.cjs
- * Date: 2025-11-10T17:42:20.147Z
+ * Date: 2025-11-10T19:23:12.123Z
  */
 
 :root {
@@ -135,7 +135,7 @@
   /* Alias pour compatibilité */
   --bg-white: var(--color-white);
   --bg-black: var(--color-black);
-  --bg-grey: var(--color-grey);
+  --bg-grey: var(--color-grey-light);
   --bg-grey-lighter: var(--color-grey-lighter);
   --bg-grey-strongest: var(--color-grey-strongest);
   --text-grey-stronger: var(--color-grey-stronger);
@@ -288,7 +288,7 @@
   /* Alias pour compatibilité */
   --bg-white: var(--color-white);
   --bg-black: var(--color-black);
-  --bg-grey: var(--color-grey);
+  --bg-grey: var(--color-grey-light);
   --bg-grey-lighter: var(--color-grey-lighter);
   --bg-grey-strongest: var(--color-grey-strongest);
   --text-grey-stronger: var(--color-grey-stronger);

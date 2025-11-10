@@ -184,7 +184,7 @@ function generateThemeCSS(theme, tokens, selector) {
   css += `\n  /* Alias pour compatibilité */\n`;
   css += `  --bg-white: var(--color-white);\n`;
   css += `  --bg-black: var(--color-black);\n`;
-  css += `  --bg-grey: var(--color-grey);\n`;
+  css += `  --bg-grey: var(--color-grey-light);\n`;
   css += `  --bg-grey-lighter: var(--color-grey-lighter);\n`;
   css += `  --bg-grey-strongest: var(--color-grey-strongest);\n`;
   css += `  --text-grey-stronger: var(--color-grey-stronger);\n`;
