@@ -7,10 +7,8 @@ import { useBgContext } from "@/components/layout/BgContext"
 export interface PaginationProps {
   /** Current page number (1-indexed) */
   currentPage: number
-  /** Total number of items */
-  totalItems: number
-  /** Number of items per page */
-  itemsPerPage: number
+  /** Total number of pages */
+  totalPages: number
   /** Callback when page changes */
   onPageChange?: (page: number) => void
   /** Maximum number of page buttons to show (excluding prev/next) */
@@ -19,15 +17,6 @@ export interface PaginationProps {
   className?: string
   /** Debug mode */
   debug?: boolean
-}
-
-/**
- * Calculate the range of items currently displayed
- */
-function getItemRange(currentPage: number, itemsPerPage: number, totalItems: number): string {
-  const start = (currentPage - 1) * itemsPerPage + 1
-  const end = Math.min(currentPage * itemsPerPage, totalItems)
-  return `${start} - ${end} sur ${totalItems}`
 }
 
 /**
@@ -77,8 +66,7 @@ const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
   (
     {
       currentPage,
-      totalItems,
-      itemsPerPage,
+      totalPages,
       onPageChange,
       maxVisiblePages = 5,
       className,
@@ -87,8 +75,6 @@ const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
     ref
   ) => {
     const bg = useBgContext()
-    const totalPages = Math.ceil(totalItems / itemsPerPage)
-    const itemRange = getItemRange(currentPage, itemsPerPage, totalItems)
     const pageNumbers = generatePageNumbers(currentPage, totalPages, maxVisiblePages)
 
     const handlePageChange = React.useCallback(
@@ -100,14 +86,12 @@ const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
               page,
               currentPage,
               totalPages,
-              totalItems,
-              itemsPerPage,
               bg,
             })
           }
         }
       },
-      [currentPage, totalPages, totalItems, itemsPerPage, onPageChange, debug, bg]
+      [currentPage, totalPages, onPageChange, debug, bg]
     )
 
     const handlePrevious = React.useCallback(() => {
@@ -129,16 +113,13 @@ const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
       <div
         ref={ref}
         className={cn(
-          "flex items-center justify-between w-full",
+          "flex items-center justify-end w-full",
           debug && "ring-2 ring-pink ring-offset-2 relative",
           className
         )}
         data-bg={bg || undefined}
       >
-        {/* Left side: Item range text */}
-        <span className={cn("text-base font-regular", textColorClass)}>{itemRange}</span>
-
-        {/* Right side: Pagination controls */}
+        {/* Pagination controls */}
         <div className="flex items-center gap-1">
           {/* Previous button */}
           <Button
