@@ -584,3 +584,18 @@
   font-weight: var(--font-weight-medium); /* 500 */
   line-height: var(--font-lh-normal); /* 1.5 */
 }
+
+/* Styles pour Slider - ciblage des éléments Radix UI générés */
+/* Radix UI génère une structure avec des span imbriqués */
+/* Ces styles garantissent que les couleurs s'appliquent correctement */
+[data-bg="grey"] [data-radix-slider-track] {
+  background-color: var(--color-white) !important;
+}
+
+[data-bg="grey"] [data-radix-slider-range] {
+  background-color: var(--color-black) !important;
+}
+
+[data-bg="grey"] [data-radix-slider-thumb] {
+  background-color: var(--color-black) !important;
+}
