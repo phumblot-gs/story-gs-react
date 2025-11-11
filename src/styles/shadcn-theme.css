@@ -90,7 +90,7 @@
   --text-braun: 184 128 41; /* #B88029 */
 
   /* Status colors */
-  --status-ignored-color: var(--color-status-ignored-color, #EAEAEA);
+  --status-ignored-color: var(--color-status-ignored-color, #EFEFEF);
   --status-selected-color: var(--color-status-selected-color, #74D4DA);
   --status-reshoot-color: var(--color-status-reshoot-color, #A44C9F);
   --status-for-approval-color: var(--color-status-for-approval-color, #FFD331);

@@ -72,7 +72,7 @@ You can customize the width and background color:
 
 **Available background values:**
 - \`white\`: White background (#ffffff)
-- \`grey\`: Grey background (#eaeaea)
+- \`grey\`: Grey background (#efefef)
 - \`black\`: Black background (#292828) - default
 
 **Width:**

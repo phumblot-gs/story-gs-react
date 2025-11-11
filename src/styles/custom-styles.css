@@ -515,7 +515,7 @@
 /* Variables CSS pour Card - basées sur les tokens Figma */
 :root {
   /* Card - White background (utilisé quand parent est white) */
-  --card-w-color-bg-default: #eaeaea;
+  --card-w-color-bg-default: var(--color-grey-light);
   --card-w-color-fg-default: #292828;
   
   /* Card - Grey background (utilisé quand parent est grey) */

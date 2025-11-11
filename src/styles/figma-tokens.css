@@ -1,7 +1,7 @@
 /**
  * Variables CSS générées automatiquement depuis les tokens Figma
  * NE PAS MODIFIER DIRECTEMENT - Généré par scripts/generate-css-tokens.cjs
- * Date: 2025-11-11T11:18:11.070Z
+ * Date: 2025-11-11T14:26:53.878Z
  */
 
 :root {
@@ -24,6 +24,7 @@
   --color-pastel-yellow-secondary: #fff8d0;
   --color-grey: #eaeaea;
   --color-khaki: #b7bb28;
+  --canvas: #efefef;
   --spacing-large-standard: 1.25rem;
   --spacing-medium: 0.625rem;
   --spacing-small: 0.3125rem;
@@ -177,6 +178,7 @@
   --color-pastel-yellow-secondary: #fff8d0;
   --color-grey: #eaeaea;
   --color-khaki: #bbbf28;
+  --canvas: #efefef;
   --spacing-large-standard: 1.25rem;
   --spacing-medium: 0.625rem;
   --spacing-small: 0.3125rem;
@@ -323,9 +325,9 @@
   --button-w-indicator: #ffd331;
   --button-w-secondary-bg-default: #f3f3f3;
   --button-w-secondary-fg-default: #292828;
-  --button-g-ghost-bg-default: #eaeaea;
+  --button-g-ghost-bg-default: var(--color-grey-light);
   --button-g-ghost-bg-pressed: #292828;
-  --button-g-ghost-bg-disabled: #eaeaea;
+  --button-g-ghost-bg-disabled: var(--color-grey-light);
   --button-g-ghost-fg-default: #292828;
   --button-g-ghost-fg-pressed: #cdedff;
   --button-g-ghost-fg-disabled: #c1c1c1;
@@ -359,13 +361,13 @@
   --button-status-w-reshoot-fg-active: #ffffff;
   --button-status-w-ignored-bg-default: #f3f3f3;
   --button-status-w-ignored-fg-default: #292828;
-  --button-status-w-ignored-bg-hover: #eaeaea;
+  --button-status-w-ignored-bg-hover: var(--color-grey-light);
   --button-status-w-ignored-fg-hover: #ffffff;
   --button-status-w-ignored-bg-pressed: #292828;
   --button-status-w-ignored-fg-pressed: #cdedff;
   --button-status-w-ignored-bg-disabled: #f3f3f3;
   --button-status-w-ignored-fg-disabled: #c1c1c1;
-  --button-status-w-ignored-bg-active: #eaeaea;
+  --button-status-w-ignored-bg-active: var(--color-grey-light);
   --button-status-w-ignored-fg-active: #ffffff;
   --button-status-w-selected-bg-default: #f3f3f3;
   --button-status-w-selected-fg-default: #292828;
@@ -449,13 +451,13 @@
   --button-status-g-reshoot-fg-active: #ffffff;
   --button-status-g-ignored-bg-default: #ffffff;
   --button-status-g-ignored-fg-default: #292828;
-  --button-status-g-ignored-bg-hover: #eaeaea;
+  --button-status-g-ignored-bg-hover: var(--color-grey-light);
   --button-status-g-ignored-fg-hover: #ffffff;
   --button-status-g-ignored-bg-pressed: #292828;
   --button-status-g-ignored-fg-pressed: #cdedff;
   --button-status-g-ignored-bg-disabled: #ffffff;
   --button-status-g-ignored-fg-disabled: #c1c1c1;
-  --button-status-g-ignored-bg-active: #eaeaea;
+  --button-status-g-ignored-bg-active: var(--color-grey-light);
   --button-status-g-ignored-fg-active: #ffffff;
   --button-status-g-selected-bg-default: #ffffff;
   --button-status-g-selected-fg-default: #292828;
@@ -539,13 +541,13 @@
   --button-status-b-reshoot-fg-active: #ffffff;
   --button-status-b-ignored-bg-default: #3a3a3a;
   --button-status-b-ignored-fg-default: #ffffff;
-  --button-status-b-ignored-bg-hover: #eaeaea;
+  --button-status-b-ignored-bg-hover: var(--color-grey-light);
   --button-status-b-ignored-fg-hover: #ffffff;
   --button-status-b-ignored-bg-pressed: #292828;
   --button-status-b-ignored-fg-pressed: #cdedff;
   --button-status-b-ignored-bg-disabled: #3a3a3a;
   --button-status-b-ignored-fg-disabled: #c1c1c1;
-  --button-status-b-ignored-bg-active: #eaeaea;
+  --button-status-b-ignored-bg-active: var(--color-grey-light);
   --button-status-b-ignored-fg-active: #ffffff;
   --button-status-b-selected-bg-default: #3a3a3a;
   --button-status-b-selected-fg-default: #ffffff;
@@ -787,13 +789,13 @@
   --button-g-secondary-fg-pressed: #cdedff;
   --button-g-secondary-bg-disabled: #ffffff;
   --button-g-secondary-fg-disabled: #c1c1c1;
-  --button-g-outline-bg-default: #eaeaea;
+  --button-g-outline-bg-default: var(--color-grey-light);
   --button-g-outline-fg-default: #292828;
   --button-g-outline-bg-hover: #292828;
   --button-g-outline-fg-hover: #ffffff;
   --button-g-outline-bg-pressed: #292828;
   --button-g-outline-fg-pressed: #cdedff;
-  --button-g-outline-bg-disabled: #eaeaea;
+  --button-g-outline-bg-disabled: var(--color-grey-light);
   --button-g-outline-fg-disabled: #c1c1c1;
   --button-b-normal-bg-default: #cdedff;
   --button-b-normal-fg-default: #292828;
@@ -881,7 +883,7 @@
 }
 
 [data-bg="grey"] {
-  --background: #eaeaea;
+  --background: var(--color-grey-light);
   --foreground: #292828;
   --card: #ffffff;
   --card-foreground: #292828;

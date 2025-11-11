@@ -39,7 +39,7 @@ import { Layout, Button } from '@story-gs-react';
 </Layout>
 \`\`\`
 
-**Available background values:** \`white\` (#ffffff), \`grey\` (#eaeaea), \`black\` (#292828)
+**Available background values:** \`white\` (#ffffff), \`grey\` (#efefef), \`black\` (#292828)
 
 ## Context Inheritance
 
@@ -235,7 +235,7 @@ export const BackgroundContexts: Story = {
         <div className="text-center">
           <h2 className="gs-typo-h2 mb-2">Contexte Grey</h2>
           <p className="text-sm text-grey-stronger">
-            Fond gris (#eaeaea)
+            Fond gris (#efefef)
           </p>
         </div>
       </Layout>

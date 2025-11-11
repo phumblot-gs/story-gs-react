@@ -5,8 +5,8 @@ const path = require('path');
 
 // Charger les tokens
 const figmaData = require('../src/styles/figma-primitives.json');
-const primitives = figmaData;
-const tokens = figmaData;
+const primitives = figmaData.primitives;
+const tokens = figmaData.tokens;
 
 /**
  * Convertit px en rem (base 16px)
@@ -1318,31 +1318,31 @@ function generateCSS() {
 `;
 
   // Thème light (par défaut)
-  css += generateThemeCSS('light', primitives.primitives.light, ':root');
+  css += generateThemeCSS('light', primitives.light, ':root');
   css += '\n';
 
   // Thème dark
-  css += generateThemeCSS('dark', primitives.primitives.dark, '[data-theme="dark"]');
+  css += generateThemeCSS('dark', primitives.dark, '[data-theme="dark"]');
   css += '\n';
 
   // Variables Button tokens
   css += `/* Button tokens */\n`;
   css += ':root {\n';
-  css += generateButtonTokensCSS(tokens.tokens.light);
+  css += generateButtonTokensCSS(tokens.light);
   css += '}\n\n';
 
   // Variables contextuelles shadcn (fond white, grey, black)
   css += `/* Variables shadcn contextuelles par type de fond */\n`;
-  css += generateShadcnContextCSS(tokens.tokens.light, 'white');
+  css += generateShadcnContextCSS(tokens.light, 'white');
   css += '\n';
-  css += generateShadcnContextCSS(tokens.tokens.light, 'grey');
+  css += generateShadcnContextCSS(tokens.light, 'grey');
   css += '\n';
-  css += generateShadcnContextCSS(tokens.tokens.light, 'black');
+  css += generateShadcnContextCSS(tokens.light, 'black');
   css += '\n';
 
   // Classes Button contextuelles
   css += `/* Classes Button contextuelles */\n`;
-  css += generateButtonClassesCSS(tokens.tokens.light);
+  css += generateButtonClassesCSS(tokens.light);
 
   // Classes pour les thèmes
   css += `/* Classes de thème */\n`;
@@ -1357,6 +1357,34 @@ function generateCSS() {
   css += `\n/* Styles personnalisés pour les composants - générés automatiquement */\n`;
   css += generateComponentStyles();
 
+  // Post-traitement : remplacer #eaeaea par var(--color-grey-light) dans les tokens de background
+  // mais pas dans la définition de --color-grey elle-même
+  css = css.replace(
+    /(--[^:]+-bg-(?:default|disabled|hover|pressed|active|default)[^;]*):\s*#eaeaea;/gi,
+    '$1: var(--color-grey-light);'
+  );
+  // Remplacer aussi dans les autres tokens de background (card, etc.)
+  css = css.replace(
+    /(--[^:]+-bg-[^;]*):\s*#eaeaea;/gi,
+    (match, varName) => {
+      // Ne pas remplacer --color-grey lui-même
+      if (varName === '--color-grey') {
+        return match;
+      }
+      return `${varName}: var(--color-grey-light);`;
+    }
+  );
+  // Remplacer --background: #eaeaea dans le contexte [data-bg="grey"]
+  css = css.replace(
+    /(\[data-bg="grey"\]\s*\{[^}]*?--background):\s*#eaeaea;/gi,
+    '$1: var(--color-grey-light);'
+  );
+  // Remplacer aussi --background: #eaeaea de manière générale (mais pas --color-grey)
+  css = css.replace(
+    /(--background):\s*#eaeaea;/gi,
+    '$1: var(--color-grey-light);'
+  );
+
   return css;
 }
 
@@ -1370,7 +1398,7 @@ function generateTailwindConfig() {
     fontSize: {},
   };
 
-  const prims = primitives.primitives.light;
+  const prims = primitives.light;
 
   // Extraire les couleurs
   for (const [key, value] of Object.entries(prims)) {

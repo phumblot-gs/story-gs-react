@@ -24,7 +24,7 @@ export function useThemeValues() {
     // Background colors
     bgWhite: "#FFFFFF",
     bgBlack: "#292828",
-    bgGrey: "#EAEAEA",
+    bgGrey: "#EFEFEF",
     bgGreyLighter: "#F3F3F3",
     bgGreyStrongest: "#595959",
     
