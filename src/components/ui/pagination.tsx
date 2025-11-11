@@ -124,13 +124,13 @@ const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
           {/* Previous button */}
           <Button
             variant="secondary"
-            size="small"
-            className="p-1 w-4 h-4"
+            size="medium"
+            className="!p-1 !w-6 !h-6"
             onClick={handlePrevious}
             disabled={currentPage === 1}
             aria-label="Page précédente"
           >
-            <Icon name="ArrowLeft" size={10} />
+            <Icon name="ArrowLeft" size={14} />
           </Button>
 
           {/* Page number buttons */}
@@ -140,7 +140,7 @@ const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
                 <span
                   key={`ellipsis-${index}`}
                   className={cn(
-                    "flex items-center justify-center w-4 h-4 text-base font-regular",
+                    "flex items-center justify-center w-6 h-6 text-base font-regular",
                     textColorClass
                   )}
                   aria-hidden="true"
@@ -156,9 +156,9 @@ const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
               <Button
                 key={page}
                 variant={isActive ? "normal" : "ghost"}
-                size="small"
+                size="medium"
                 className={cn(
-                  "p-1 w-4 h-4",
+                  "!p-1 !w-6 !h-6",
                   isActive && "pagination-active"
                 )}
                 onClick={() => handlePageChange(page)}
@@ -173,13 +173,13 @@ const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
           {/* Next button */}
           <Button
             variant="secondary"
-            size="small"
-            className="p-1 w-4 h-4"
+            size="medium"
+            className="!p-1 !w-6 !h-6"
             onClick={handleNext}
             disabled={currentPage === totalPages}
             aria-label="Page suivante"
           >
-            <Icon name="ArrowRight" size={10} />
+            <Icon name="ArrowRight" size={14} />
           </Button>
         </div>
 

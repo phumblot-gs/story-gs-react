@@ -32,7 +32,7 @@ const PageSearch: React.FC<PageSearchProps> = ({
         <HStack 
           gap={2} 
           align="center" 
-          className={cn("py-3.5 flex-1 min-w-0", leftContentMaxWidth)}
+          className={cn("py-2 flex-1 min-w-0", leftContentMaxWidth)}
         >
           {leftContent}
         </HStack>
