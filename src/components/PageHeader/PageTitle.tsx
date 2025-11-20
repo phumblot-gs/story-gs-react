@@ -54,7 +54,7 @@ const PageTitle: React.FC<PageTitleProps> = ({
           <IconProvider icon="ArrowLeft" size={14} />
         </Button>
       )}
-      <div className="flex-1 min-w-0 overflow-hidden">
+      <div className="flex-1 min-w-0 overflow-hidden flex items-center">
         <TruncatedText text={title} as="h2" className="gs-typo-h2 whitespace-nowrap" tooltipSide="bottom" />
       </div>
       {showButton && (
