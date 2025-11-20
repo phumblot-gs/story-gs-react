@@ -221,7 +221,7 @@ export const ButtonMenu = React.forwardRef<HTMLButtonElement, ButtonMenuProps>(
         </DropdownMenuTrigger>
         <DropdownMenuContent
           className={cn(
-            "min-w-[8rem] rounded-sm border-0 popup-action overflow-y-auto",
+            "rounded-sm border-0 popup-action overflow-y-auto",
             menuMaxHeight,
             getMenuBackgroundClass()
           )}
@@ -237,7 +237,7 @@ export const ButtonMenu = React.forwardRef<HTMLButtonElement, ButtonMenuProps>(
                 key={index}
                 disabled={action.disabled || disabled}
                 className={cn(
-                  "w-full px-4 py-2 text-left text-sm whitespace-nowrap rounded-sm cursor-pointer popup-action-item",
+                  "w-full px-4 h-6 text-left text-sm whitespace-nowrap rounded-sm cursor-pointer popup-action-item popup-action-item-menu",
                   "flex items-center gap-2",
                   "data-[disabled]:opacity-50 data-[disabled]:cursor-not-allowed"
                 )}

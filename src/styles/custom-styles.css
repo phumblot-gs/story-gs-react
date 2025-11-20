@@ -290,6 +290,9 @@
   color: var(--color-white);
 }
 
+/* Styles spécifiques pour ButtonMenu et ButtonMenuStatus sur fond white/grey (dans ActionBar) */
+/* NOTE: Ces styles sont également définis APRÈS les styles pour black (voir plus bas) pour garantir la priorité */
+
 /* Hover state avec data-highlighted (Radix UI) - syntaxe avec attribut data */
 [data-bg="white"] .popup-action-item[data-highlighted],
 [data-bg="grey"] .popup-action-item[data-highlighted],
@@ -299,11 +302,27 @@
   color: var(--color-black);
 }
 
+/* Hover state spécifique pour ButtonMenu et ButtonMenuStatus sur fond white/grey (dans ActionBar) */
+[data-bg="white"] .popup-action-item-menu[data-highlighted],
+[data-bg="grey"] .popup-action-item-menu[data-highlighted],
+[data-bg="white"] .popup-action-item-menu[data-highlighted="true"],
+[data-bg="grey"] .popup-action-item-menu[data-highlighted="true"] {
+  background: var(--color-white) !important;
+  color: var(--color-black) !important;
+}
+
 /* Focus state (utilisé par Radix UI pour le hover également) */
 [data-bg="white"] .popup-action-item:focus-visible,
 [data-bg="grey"] .popup-action-item:focus-visible {
   background: var(--color-white);
   color: var(--color-black);
+}
+
+/* Focus state spécifique pour ButtonMenu et ButtonMenuStatus sur fond white/grey (dans ActionBar) */
+[data-bg="white"] .popup-action-item-menu:focus-visible,
+[data-bg="grey"] .popup-action-item-menu:focus-visible {
+  background: var(--color-white) !important;
+  color: var(--color-black) !important;
 }
 
 /* Active/pressed state */
@@ -313,10 +332,18 @@
   color: var(--color-black);
 }
 
-/* Sur fond black : background black-secondary pour les items, texte white */
+/* Sur fond black : background black-secondary pour les items par défaut, texte white */
 [data-bg="black"] .popup-action-item {
   background: var(--color-black-secondary);
   color: var(--color-white);
+}
+
+/* Sur fond black : background black pour ButtonMenu et ButtonMenuStatus (pas ButtonMenuSmall) */
+/* IMPORTANT: Ces styles ne s'appliquent que si data-bg="black" (pas dans ActionBar) */
+.popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu,
+[data-bg="black"] .popup-action-item.popup-action-item-menu {
+  background: var(--color-black) !important;
+  color: var(--color-white) !important;
 }
 
 /* Hover state avec data-highlighted (Radix UI) - syntaxe avec attribut data */
@@ -326,10 +353,23 @@
   color: var(--color-black);
 }
 
+/* Hover state spécifique pour ButtonMenu et ButtonMenuStatus sur fond black */
+[data-bg="black"] .popup-action-item-menu[data-highlighted],
+[data-bg="black"] .popup-action-item-menu[data-highlighted="true"] {
+  background: var(--color-white) !important;
+  color: var(--color-black) !important;
+}
+
 /* Focus state */
 [data-bg="black"] .popup-action-item:focus-visible {
   background: var(--color-white);
   color: var(--color-black);
+}
+
+/* Focus state spécifique pour ButtonMenu et ButtonMenuStatus sur fond black */
+[data-bg="black"] .popup-action-item-menu:focus-visible {
+  background: var(--color-white) !important;
+  color: var(--color-black) !important;
 }
 
 /* Active/pressed state */
@@ -343,6 +383,39 @@
 .popup-action-item[data-disabled] {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+/* IMPORTANT: Styles pour ButtonMenu et ButtonMenuStatus sur fond white/grey (dans ActionBar) */
+/* Ces styles DOIVENT être APRÈS les styles pour black pour garantir la priorité */
+/* État par défaut pour ButtonMenu et ButtonMenuStatus sur fond white/grey */
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu,
+[data-bg="white"] .popup-action-item.popup-action-item-menu,
+[data-bg="grey"] .popup-action-item.popup-action-item-menu {
+  background: var(--color-black-secondary) !important;
+  color: var(--color-white) !important;
+}
+
+/* Hover state pour ButtonMenu et ButtonMenuStatus sur fond white/grey (dans ActionBar) */
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu[data-highlighted],
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu[data-highlighted],
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu[data-highlighted="true"],
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu[data-highlighted="true"],
+[data-bg="white"] .popup-action-item.popup-action-item-menu[data-highlighted],
+[data-bg="grey"] .popup-action-item.popup-action-item-menu[data-highlighted],
+[data-bg="white"] .popup-action-item.popup-action-item-menu[data-highlighted="true"],
+[data-bg="grey"] .popup-action-item.popup-action-item-menu[data-highlighted="true"] {
+  background: var(--color-white) !important;
+  color: var(--color-black) !important;
+}
+
+/* Focus state pour ButtonMenu et ButtonMenuStatus sur fond white/grey (dans ActionBar) */
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu:focus-visible,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu:focus-visible,
+[data-bg="white"] .popup-action-item.popup-action-item-menu:focus-visible,
+[data-bg="grey"] .popup-action-item.popup-action-item-menu:focus-visible {
+  background: var(--color-white) !important;
+  color: var(--color-black) !important;
 }
 
 /* Styles spécifiques pour ButtonMenuSmall - items avec bg-black au lieu de bg-black-secondary */

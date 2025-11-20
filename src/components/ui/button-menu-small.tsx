@@ -236,7 +236,7 @@ export const ButtonMenuSmall = React.forwardRef<HTMLButtonElement, ButtonMenuSma
         </DropdownMenuTrigger>
         <DropdownMenuContent
           className={cn(
-            "min-w-[8rem] rounded-sm border-0 popup-action overflow-y-auto p-0",
+            "rounded-sm border-0 popup-action overflow-y-auto p-0",
             menuMaxHeight,
             getMenuBackgroundClass()
           )}
