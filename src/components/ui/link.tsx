@@ -39,16 +39,25 @@ export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
     const bgContext = useBgContext();
     
     // Déterminer la couleur du texte selon le fond
+    // Si le contexte n'est pas disponible, on assume un fond noir (cas ActionBar)
     const textColorClass = 
-      bgContext === 'black' 
+      bgContext === 'black' || bgContext === undefined
         ? 'text-white hover:text-grey-stronger' 
         : 'text-black hover:text-grey-stronger';
     
     // Si utilisé comme bouton, utiliser un span au lieu d'un <a>
     if (asButton) {
+      const handleClick = (e: React.MouseEvent<HTMLElement>) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (onClick) {
+          onClick(e);
+        }
+      };
+      
       return (
         <span
-          onClick={onClick}
+          onClick={handleClick}
           className={cn(
             // Styles par défaut
             'text-sm italic',

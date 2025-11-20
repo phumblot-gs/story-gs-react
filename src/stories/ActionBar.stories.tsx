@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useState, useEffect } from "react";
-import { useArgs } from "storybook/preview-api";
 import { ActionBar, ActionBarProvider } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { Layout, VStack, HStack } from "@/components/layout";
@@ -174,7 +173,6 @@ export const Default: Story = {
     deselectAllTranslationKey: "actionBar.deselectAll",
   },
   render: function Render(args) {
-    const [, updateArgs] = useArgs();
     const [selectedCount, setSelectedCount] = useState(args.selectedCount ?? 0);
 
     // Synchroniser avec les args quand ils changent depuis les contrôles
@@ -187,7 +185,6 @@ export const Default: Story = {
     // Synchroniser showSelectionInfo avec les args
     const handleDeselectAll = () => {
       setSelectedCount(0);
-      updateArgs({ selectedCount: 0 });
       args.onDeselectAll?.();
     };
 
@@ -204,20 +201,17 @@ export const Default: Story = {
               <Button onClick={() => {
                 const newCount = selectedCount + 1;
                 setSelectedCount(newCount);
-                updateArgs({ selectedCount: newCount });
               }}>
                 Select Item
               </Button>
               <Button onClick={() => {
                 const newCount = Math.max(0, selectedCount - 1);
                 setSelectedCount(newCount);
-                updateArgs({ selectedCount: newCount });
               }}>
                 Deselect Item
               </Button>
               <Button onClick={() => {
                 setSelectedCount(0);
-                updateArgs({ selectedCount: 0 });
               }}>
                 Clear Selection
               </Button>
