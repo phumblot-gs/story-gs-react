@@ -323,18 +323,18 @@ const SelectItem = React.forwardRef<
     switch (bg) {
       case "white":
         // Quand le dropdown a fond noir (bg="white")
-        // Défaut: fond black-secondary, texte white
+        // Défaut: fond black, texte white
         // Hover: fond grey-lighter, texte black
         // Focus: fond grey-lighter, texte black
         // Pressed: fond grey-lighter, texte blue-primary
-        return "bg-black-secondary text-white hover:bg-grey-lighter hover:text-black focus:bg-grey-lighter focus:text-black active:bg-grey-lighter active:text-blue-primary";
+        return "bg-black text-white hover:bg-grey-lighter hover:text-black focus:bg-grey-lighter focus:text-black active:bg-grey-lighter active:text-blue-primary";
       case "grey":
         // Quand le dropdown a fond noir (bg="grey")
-        // Défaut: fond black-secondary, texte white
+        // Défaut: fond black, texte white
         // Hover: fond white, texte black
         // Focus: fond white, texte black
         // Pressed: fond white, texte blue-primary
-        return "bg-black-secondary text-white hover:bg-white hover:text-black focus:bg-white focus:text-black active:bg-white active:text-blue-primary";
+        return "bg-black text-white hover:bg-white hover:text-black focus:bg-white focus:text-black active:bg-white active:text-blue-primary";
       case "black":
         // Quand le dropdown a fond noir (bg="black")
         // Défaut: fond black-secondary, texte white

@@ -7,6 +7,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useBgContext } from "@/components/layout/BgContext"
+import { useIsInActionBar } from "@/components/layout/ActionBar"
 import { VStack } from "@/components/layout"
 import { cn } from "@/lib/utils"
 
@@ -143,6 +144,7 @@ export const ButtonMenu = React.forwardRef<HTMLButtonElement, ButtonMenuProps>(
     ref
   ) => {
     const bg = useBgContext()
+    const isInActionBar = useIsInActionBar()
     const [internalOpen, setInternalOpen] = React.useState(defaultOpen)
     
     // Mode contrôlé si open est fourni, sinon mode non-contrôlé
@@ -160,8 +162,10 @@ export const ButtonMenu = React.forwardRef<HTMLButtonElement, ButtonMenuProps>(
     )
 
     // Couleur de fond du menu selon data-bg
+    // Si dans ActionBar, traiter comme bg="white" pour les styles de menu
+    const effectiveBg = isInActionBar ? "white" : bg
     const getMenuBackgroundClass = () => {
-      switch (bg) {
+      switch (effectiveBg) {
         case "white":
         case "grey":
           return "bg-black"
@@ -170,6 +174,17 @@ export const ButtonMenu = React.forwardRef<HTMLButtonElement, ButtonMenuProps>(
         default:
           return "bg-black"
       }
+    }
+
+    // Dans ActionBar, forcer l'ouverture vers le haut et ajuster le sideOffset
+    const effectiveMenuSide = isInActionBar ? "top" : menuSide
+    
+    // Ajuster le sideOffset : +10px vers le haut si dans ActionBar
+    const getSideOffset = () => {
+      if (isInActionBar) {
+        return 15 // +10px vers le haut (5px de base + 10px)
+      }
+      return 5
     }
 
     // Debug log uniquement quand isOpen change pour éviter les doubles logs
@@ -211,10 +226,10 @@ export const ButtonMenu = React.forwardRef<HTMLButtonElement, ButtonMenuProps>(
             getMenuBackgroundClass()
           )}
           align={menuAlign}
-          side={menuSide}
-          sideOffset={5}
+          side={effectiveMenuSide}
+          sideOffset={getSideOffset()}
           collisionPadding={8}
-          data-bg={bg || undefined}
+          data-bg={effectiveBg || undefined}
         >
           <VStack gap={2} padding={2}>
             {actions.map((action, index) => (

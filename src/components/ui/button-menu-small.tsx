@@ -8,6 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useBgContext } from "@/components/layout/BgContext"
+import { useIsInActionBar } from "@/components/layout/ActionBar"
 import { VStack } from "@/components/layout"
 import { cn } from "@/lib/utils"
 import { ButtonMenuAction } from "./button-menu"
@@ -155,6 +156,7 @@ export const ButtonMenuSmall = React.forwardRef<HTMLButtonElement, ButtonMenuSma
     ref
   ) => {
     const bg = useBgContext()
+    const isInActionBar = useIsInActionBar()
     const [internalOpen, setInternalOpen] = React.useState(defaultOpen)
     
     // Mode contrôlé si open est fourni, sinon mode non-contrôlé
@@ -172,8 +174,10 @@ export const ButtonMenuSmall = React.forwardRef<HTMLButtonElement, ButtonMenuSma
     )
 
     // Couleur de fond du menu selon data-bg
+    // Si dans ActionBar, traiter comme bg="white" pour les styles de menu
+    const effectiveBg = isInActionBar ? "white" : bg
     const getMenuBackgroundClass = () => {
-      switch (bg) {
+      switch (effectiveBg) {
         case "white":
         case "grey":
           return "bg-black"
@@ -182,6 +186,17 @@ export const ButtonMenuSmall = React.forwardRef<HTMLButtonElement, ButtonMenuSma
         default:
           return "bg-black"
       }
+    }
+
+    // Dans ActionBar, forcer l'ouverture vers le haut et ajuster le sideOffset
+    const effectiveMenuSide = isInActionBar ? "top" : menuSide
+    
+    // Ajuster le sideOffset : +10px vers le haut si dans ActionBar
+    const getSideOffset = () => {
+      if (isInActionBar) {
+        return 15 // +10px vers le haut (5px de base + 10px)
+      }
+      return 5
     }
 
     // Debug log uniquement quand isOpen change pour éviter les doubles logs
@@ -226,10 +241,10 @@ export const ButtonMenuSmall = React.forwardRef<HTMLButtonElement, ButtonMenuSma
             getMenuBackgroundClass()
           )}
           align={menuAlign}
-          side={menuSide}
-          sideOffset={5}
+          side={effectiveMenuSide}
+          sideOffset={getSideOffset()}
           collisionPadding={8}
-          data-bg={bg || undefined}
+          data-bg={effectiveBg || undefined}
         >
           <VStack gap={0} padding={0}>
             {actions.map((item, index) => {
@@ -245,7 +260,7 @@ export const ButtonMenuSmall = React.forwardRef<HTMLButtonElement, ButtonMenuSma
                   key={index}
                   disabled={action.disabled || disabled}
                   className={cn(
-                    "w-full px-4 py-2 text-left text-sm whitespace-nowrap rounded-sm cursor-pointer popup-action-item",
+                    "w-full px-4 h-6 text-left text-sm whitespace-nowrap rounded-sm cursor-pointer popup-action-item popup-action-item-small",
                     "flex items-center gap-2",
                     "data-[disabled]:opacity-50 data-[disabled]:cursor-not-allowed"
                   )}

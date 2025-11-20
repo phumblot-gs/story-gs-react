@@ -1,9 +1,16 @@
-import React, { useEffect, useId } from 'react';
+import React, { createContext, useContext, useEffect, useId } from 'react';
 import { cn } from '@/lib/utils';
 import { HStack } from './HStack';
 import { Link } from '@/components/ui/link';
 import { useActionBarContext } from './ActionBarContext';
 import { useTranslationSafe } from '@/contexts/TranslationContext';
+
+// Contexte pour indiquer qu'un composant est dans un ActionBar
+const IsInActionBarContext = createContext<boolean>(false);
+
+export function useIsInActionBar() {
+  return useContext(IsInActionBarContext);
+}
 
 export interface ActionBarProps {
   /** Nombre d'éléments sélectionnés */
@@ -152,7 +159,9 @@ export function ActionBar({
             </HStack>
           )}
           <HStack gap={2} align="center">
-            {children}
+            <IsInActionBarContext.Provider value={true}>
+              {children}
+            </IsInActionBarContext.Provider>
           </HStack>
         </HStack>
       </div>
@@ -190,7 +199,9 @@ export function ActionBar({
           </HStack>
         )}
         <HStack gap={2} align="center">
-          {children}
+          <IsInActionBarContext.Provider value={true}>
+            {children}
+          </IsInActionBarContext.Provider>
         </HStack>
       </HStack>
     </div>

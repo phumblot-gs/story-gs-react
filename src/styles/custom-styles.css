@@ -345,6 +345,72 @@
   cursor: not-allowed;
 }
 
+/* Styles spécifiques pour ButtonMenuSmall - items avec bg-black au lieu de bg-black-secondary */
+/* Sur fond white ou grey : background black pour les items ButtonMenuSmall */
+.popup-action[data-bg="white"] .popup-action-item-small,
+.popup-action[data-bg="grey"] .popup-action-item-small,
+[data-bg="white"] .popup-action-item-small,
+[data-bg="grey"] .popup-action-item-small {
+  background: var(--color-black) !important;
+  color: var(--color-white) !important;
+}
+
+/* Hover state pour ButtonMenuSmall sur fond white/grey */
+.popup-action[data-bg="white"] .popup-action-item-small[data-highlighted],
+.popup-action[data-bg="grey"] .popup-action-item-small[data-highlighted],
+.popup-action[data-bg="white"] .popup-action-item-small[data-highlighted="true"],
+.popup-action[data-bg="grey"] .popup-action-item-small[data-highlighted="true"],
+[data-bg="white"] .popup-action-item-small[data-highlighted],
+[data-bg="grey"] .popup-action-item-small[data-highlighted],
+[data-bg="white"] .popup-action-item-small[data-highlighted="true"],
+[data-bg="grey"] .popup-action-item-small[data-highlighted="true"] {
+  background: var(--color-white) !important;
+  color: var(--color-black) !important;
+}
+
+/* Focus state pour ButtonMenuSmall sur fond white/grey */
+.popup-action[data-bg="white"] .popup-action-item-small:focus-visible,
+.popup-action[data-bg="grey"] .popup-action-item-small:focus-visible,
+[data-bg="white"] .popup-action-item-small:focus-visible,
+[data-bg="grey"] .popup-action-item-small:focus-visible {
+  background: var(--color-white) !important;
+  color: var(--color-black) !important;
+}
+
+/* Active/pressed state pour ButtonMenuSmall sur fond white/grey */
+.popup-action[data-bg="white"] .popup-action-item-small:active:not(:disabled),
+.popup-action[data-bg="grey"] .popup-action-item-small:active:not(:disabled),
+[data-bg="white"] .popup-action-item-small:active:not(:disabled),
+[data-bg="grey"] .popup-action-item-small:active:not(:disabled) {
+  background: var(--color-blue-primary) !important;
+  color: var(--color-black) !important;
+}
+
+/* Sur fond black : background black-secondary pour les items ButtonMenuSmall (inchangé) */
+[data-bg="black"] .popup-action-item-small {
+  background: var(--color-black-secondary) !important;
+  color: var(--color-white);
+}
+
+/* Hover state pour ButtonMenuSmall sur fond black */
+[data-bg="black"] .popup-action-item-small[data-highlighted],
+[data-bg="black"] .popup-action-item-small[data-highlighted="true"] {
+  background: var(--color-white) !important;
+  color: var(--color-black);
+}
+
+/* Focus state pour ButtonMenuSmall sur fond black */
+[data-bg="black"] .popup-action-item-small:focus-visible {
+  background: var(--color-white) !important;
+  color: var(--color-black);
+}
+
+/* Active/pressed state pour ButtonMenuSmall sur fond black */
+[data-bg="black"] .popup-action-item-small:active:not(:disabled) {
+  background: var(--color-blue-primary) !important;
+  color: var(--color-black);
+}
+
 /* Styles pour Progress component */
 /* Background par défaut du composant Progress */
 /* Sur fond white : utilise muted (grey-lighter) */
