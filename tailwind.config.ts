@@ -275,7 +275,7 @@ export default {
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
-				'gradient-flow': 'gradient-slide 1s ease infinite'  // Changé de 3s à 1s
+				'gradient-flow': 'gradient-slide 3s ease infinite'  // Animation ralentie
 			}
 		}
 	},

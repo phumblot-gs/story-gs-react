@@ -1,7 +1,7 @@
 import React, { useEffect, useId } from 'react';
 import { cn } from '@/lib/utils';
 import { HStack } from './HStack';
-import { Button } from '@/components/ui/button';
+import { Link } from '@/components/ui/link';
 import { useActionBarContext } from './ActionBarContext';
 import { useTranslationSafe } from '@/contexts/TranslationContext';
 
@@ -123,7 +123,11 @@ export function ActionBar({
   // Si un container est fourni, rendre l'ActionBar dans le container
   if (container) {
     return (
-      <div className={cn('absolute bottom-0 left-0 right-0 z-50', className)}>
+      <div className={cn(
+        'absolute bottom-0 left-0 right-0 z-50',
+        'animate-in slide-in-from-bottom duration-300 ease-out',
+        className
+      )}>
         <HStack
           bg="black"
           justify={showSelectionInfo ? "between" : "end"}
@@ -138,13 +142,12 @@ export function ActionBar({
                 {translationKey ? t(translationKey, { count: selectedCount, plural }) : `${selectedCount} sélectionné${plural}`}
               </span>
               {onDeselectAll && (
-                <Button
-                  variant="link"
+                <Link
+                  asButton
                   onClick={onDeselectAll}
-                  className="text-white hover:text-grey-light p-0 h-auto"
                 >
                   {t(deselectAllTranslationKey, {})}
-                </Button>
+                </Link>
               )}
             </HStack>
           )}
@@ -158,7 +161,11 @@ export function ActionBar({
 
   // Rendu par défaut : position fixe en bas de la fenêtre
   return (
-    <div className={cn('fixed bottom-0 left-0 right-0 z-50', className)}>
+    <div className={cn(
+      'fixed bottom-0 left-0 right-0 z-50',
+      'animate-in slide-in-from-bottom duration-300 ease-out',
+      className
+    )}>
       <HStack
         bg="black"
         justify={showSelectionInfo ? "between" : "end"}
@@ -173,13 +180,12 @@ export function ActionBar({
               {translationKey ? t(translationKey, { count: selectedCount, plural }) : `${selectedCount} sélectionné${plural}`}
             </span>
             {onDeselectAll && (
-              <Button
-                variant="link"
+              <Link
+                asButton
                 onClick={onDeselectAll}
-                className="text-white hover:text-grey-light p-0 h-auto"
               >
                 {t('actionBar.deselectAll', {})}
-              </Button>
+              </Link>
             )}
           </HStack>
         )}

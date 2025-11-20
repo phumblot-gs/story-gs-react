@@ -48,7 +48,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
       <HStack
         justify="between"
         align="center"
-        className="px-4 py-3"
+        className="px-4 py-2"
       >
         {/* Left Side - with flex-shrink to allow truncation */}
         <HStack gap={4} align="center" className="flex-shrink overflow-hidden">
@@ -86,7 +86,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
 
       {/* Gradient border at bottom using CSS variables for customization */}
       <div className={cn(
-        "absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-header-gradient-start to-header-gradient-end",
+        "absolute bottom-0 left-0 right-0 h-[3px] bg-gradient-to-r from-header-gradient-start to-header-gradient-end",
         isIdle && "bg-size-200 animate-gradient-flow"
       )} />
     </Layout>

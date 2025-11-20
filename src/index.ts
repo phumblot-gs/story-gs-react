@@ -363,6 +363,7 @@ export * from "./components/ui/icon-provider";
 // Export UI components
 export { buttonVariants };
 export { Button };
+export { Link } from "./components/ui/link";
 export { ButtonMenu };
 export { ButtonMenuStatus };
 export { ButtonMenuSmall };
@@ -574,6 +575,7 @@ export { PageSearch };
 
 // Export types
 export type {
+  LinkProps,
   ButtonProps,
   ButtonSize,
   ButtonVariant,

@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import PageHeader from "./index";
 import { Button } from "@/components/ui/button";
 import { IconProvider } from "@/components/ui/icon-provider";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { TranslationProvider } from "@/contexts/TranslationContext";
 import { MemoryRouter } from "react-router-dom";
@@ -536,34 +536,21 @@ export const WithActivityAnimation: Story = {
     showBackButton: false,
   },
   render: (args) => {
-    // Use useState to simulate activity status
-    const [isIdle, setIsIdle] = useState(false);
-    
-    // Toggle animation every 3 seconds for demonstration
-    useEffect(() => {
-      const interval = setInterval(() => {
-        setIsIdle(prev => !prev);
-      }, 3000);
-      
-      return () => clearInterval(interval);
-    }, []);
-    
+    // Keep animation active continuously for better visibility
     return (
       <div>
         <PageHeader 
           {...args}
           logo={<GsLogo />}
           rightContent={<RightSideButtons />}
-          isIdle={isIdle}
+          isIdle={true}
         />
         <div className="p-4">
           <p className="mb-2 text-center">
-            {isIdle 
-              ? "✅ Animation ACTIVÉE (isIdle=true) - Requête en cours - bordure gradient animée" 
-              : "⏸️ Animation DÉSACTIVÉE (isIdle=false) - Aucune requête - bordure gradient statique"}
+            ✅ Animation ACTIVÉE (isIdle=true) - Requête en cours - bordure gradient animée
           </p>
           <p className="text-sm text-gray-500 text-center">
-            L'animation bascule automatiquement toutes les 3 secondes pour la démonstration.
+            L'animation reste active en continu pour une meilleure visibilité.
           </p>
         </div>
       </div>
@@ -572,7 +559,7 @@ export const WithActivityAnimation: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Cette story démontre l\'animation de la bordure gradient. Quand `isIdle=true`, l\'animation est activée (requête en cours). Quand `isIdle=false`, l\'animation est désactivée (aucune requête).'
+        story: 'Cette story démontre l\'animation de la bordure gradient. L\'animation reste active en continu (`isIdle=true`) pour une meilleure visibilité.'
       }
     }
   }
