@@ -4,6 +4,11 @@ import { ActionBar, ActionBarProvider } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { Layout, VStack, HStack } from "@/components/layout";
 import { TranslationProvider } from "@/contexts/TranslationContext";
+import { ButtonMenuStatus } from "@/components/ui/button-menu-status";
+import { ButtonMenu } from "@/components/ui/button-menu";
+import { ButtonMenuSmall } from "@/components/ui/button-menu-small";
+import { MediaStatus } from "@/utils/mediaStatus";
+import { Icon } from "@/components/ui/icons";
 
 const meta = {
   title: "Components/ActionBar",
@@ -399,6 +404,77 @@ export const CustomStyling: Story = {
           }}
         >
           <Button variant="normal">Custom Action</Button>
+        </ActionBar>
+      </>
+    );
+  },
+};
+
+export const WithMenuComponents: Story = {
+  render: () => {
+    const [selectedCount, setSelectedCount] = useState(5);
+
+    const statusOptions = [
+      { status: MediaStatus.SELECTED, label: "Sélectionné" },
+      { status: MediaStatus.VALIDATED, label: "Validé" },
+      { status: MediaStatus.BROADCAST, label: "Diffusé" },
+    ];
+
+    const menuActions = [
+      { label: "Éditer", onClick: () => console.log("Éditer") },
+      { label: "Dupliquer", onClick: () => console.log("Dupliquer") },
+      { label: "Supprimer", onClick: () => console.log("Supprimer") },
+    ];
+
+    const menuSmallActions = [
+      { label: "Refuser", onClick: () => console.log("Refuser") },
+      { label: "À valider", onClick: () => console.log("À valider") },
+      { label: "Valider", onClick: () => console.log("Valider") },
+    ];
+
+    return (
+      <>
+        <Layout bg="grey" padding={8} className="min-h-screen pb-20">
+          <VStack gap={6}>
+            <h2 className="gs-typo-h1">ActionBar with Menu Components</h2>
+            <p className="text-sm text-grey-stronger">
+              ActionBar avec ButtonMenuStatus, ButtonMenu et ButtonMenuSmall dans la partie droite.
+            </p>
+            <HStack gap={4}>
+              <Button onClick={() => setSelectedCount(prev => prev + 1)}>
+                Select Item
+              </Button>
+              <Button onClick={() => setSelectedCount(prev => Math.max(0, prev - 1))}>
+                Deselect Item
+              </Button>
+            </HStack>
+            <div className="text-sm">
+              Currently selected: {selectedCount} item{selectedCount !== 1 ? 's' : ''}
+            </div>
+          </VStack>
+        </Layout>
+        <ActionBar
+          selectedCount={selectedCount}
+          translationKey="actionBar.filesSelected"
+          onDeselectAll={() => setSelectedCount(0)}
+        >
+          <ButtonMenuStatus
+            variant="secondary"
+            currentStatus={MediaStatus.SELECTED}
+            statusOptions={statusOptions}
+          />
+          <ButtonMenu
+            variant="secondary"
+            actions={menuActions}
+          >
+            Menu 1
+          </ButtonMenu>
+          <ButtonMenuSmall
+            variant="normal"
+            actions={menuSmallActions}
+          >
+            Menu 2
+          </ButtonMenuSmall>
         </ActionBar>
       </>
     );

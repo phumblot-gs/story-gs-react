@@ -137,7 +137,7 @@ export function ActionBar({
           {...hStackProps}
         >
           {showSelectionInfo && (
-            <HStack gap={3} align="center">
+            <HStack gap={4} align="center">
               <span className="text-white text-sm">
                 {translationKey ? t(translationKey, { count: selectedCount, plural }) : `${selectedCount} sélectionné${plural}`}
               </span>
@@ -175,7 +175,7 @@ export function ActionBar({
         {...hStackProps}
       >
         {showSelectionInfo && (
-          <HStack gap={3} align="center">
+          <HStack gap={4} align="center">
             <span className="text-white text-sm">
               {translationKey ? t(translationKey, { count: selectedCount, plural }) : `${selectedCount} sélectionné${plural}`}
             </span>
