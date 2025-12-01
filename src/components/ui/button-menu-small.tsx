@@ -250,7 +250,7 @@ export const ButtonMenuSmall = React.forwardRef<HTMLButtonElement, ButtonMenuSma
             {actions.map((item, index) => {
               // Render separator if item is a separator
               if ('separator' in item && item.separator === true) {
-                return <DropdownMenuSeparator key={`separator-${index}`} className="bg-white m-0" />
+                return <DropdownMenuSeparator key={`separator-${index}`} className="bg-black-secondary m-0" />
               }
 
               // Render regular action item

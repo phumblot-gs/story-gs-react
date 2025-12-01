@@ -27,16 +27,16 @@ const Search = React.forwardRef<HTMLInputElement, SearchProps>(
 
       switch (bg) {
         case "white":
-          // Le composant s'affiche sur fond blanc - le champ doit être grey-lighter
-          return "bg-grey-lighter text-black border-grey-lighter hover:border-black focus:border-black"
+          // Le composant s'affiche sur fond blanc - bordure invisible (même couleur que bg)
+          return "bg-grey-lighter text-black border-grey-lighter hover:border-black/50 focus:border-black/50 hover:border-[0.5px] focus:border-[0.5px]"
         case "black":
-          // Le composant s'affiche sur fond noir - le champ doit être white
-          return "bg-white text-black border-grey-strongest hover:border-white focus:border-white"
+          // Le composant s'affiche sur fond noir - bordure invisible (même couleur que bg)
+          return "bg-white text-black border-white hover:border-white/50 focus:border-white/50 hover:border-[0.5px] focus:border-[0.5px]"
         case "grey":
-          // Le composant s'affiche sur fond gris - le champ doit être blanc
-          return "bg-white text-black border-grey hover:border-black focus:border-black"
+          // Le composant s'affiche sur fond gris - bordure invisible (même couleur que bg)
+          return "bg-white text-black border-white hover:border-black/50 focus:border-black/50 hover:border-[0.5px] focus:border-[0.5px]"
         default:
-          return "bg-grey-lighter text-black border-grey-lighter hover:border-black focus:border-black"
+          return "bg-grey-lighter text-black border-grey-lighter hover:border-black/50 focus:border-black/50 hover:border-[0.5px] focus:border-[0.5px]"
       }
     }
 
