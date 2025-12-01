@@ -555,11 +555,39 @@
   gap: var(--spacing-xlarge, 1.875rem);
   overflow: hidden;
   flex: 1;
+  position: relative;
+}
+
+/* Indicateur animé de l'onglet actif */
+.tabs-list::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; /* Aligné avec la bordure du tabs-header */
+  left: var(--indicator-left, 0px);
+  width: var(--indicator-width, 0px);
+  height: 3px;
+  background-color: currentColor;
+  transition: left 0.3s ease, width 0.3s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Couleur de l'indicateur selon le contexte */
+[data-bg="white"] .tabs-list::after {
+  background-color: var(--tabs-w-color-stroke-default);
+}
+
+[data-bg="grey"] .tabs-list::after {
+  background-color: var(--tabs-g-color-stroke-default);
+}
+
+[data-bg="black"] .tabs-list::after {
+  background-color: var(--tabs-b-color-stroke-default);
 }
 
 /* TabsTrigger - chaque onglet */
 .tabs-trigger {
-  padding: var(--spacing-medium, 0.625rem) 0;
+  padding: var(--spacing-medium, 0.625rem) 2px; /* Padding horizontal pour compenser le changement de largeur en gras */
   font-size: var(--font-size-base, 0.8125rem);
   line-height: var(--font-lh-none, 1);
   font-weight: var(--font-weight-regular, 400);
@@ -571,12 +599,14 @@
   border-top: 0;
   border-left: 0;
   border-right: 0;
+  position: relative;
 }
 
 /* TabsTrigger - état actif */
 .tabs-trigger[data-state="active"] {
   font-weight: 600; /* Demi Bold */
-  border-bottom-color: currentColor;
+  /* La bordure est maintenant gérée par le pseudo-élément ::after de .tabs-list */
+  /* Le padding horizontal compense le changement de largeur du texte en gras */
 }
 
 /* TabsTrigger - White background */
@@ -584,26 +614,14 @@
   color: var(--tabs-w-color-fg-default);
 }
 
-[data-bg="white"] .tabs-trigger[data-state="active"] {
-  border-bottom-color: var(--tabs-w-color-stroke-default);
-}
-
 /* TabsTrigger - Grey background */
 [data-bg="grey"] .tabs-trigger {
   color: var(--tabs-g-color-fg-default);
 }
 
-[data-bg="grey"] .tabs-trigger[data-state="active"] {
-  border-bottom-color: var(--tabs-g-color-stroke-default);
-}
-
 /* TabsTrigger - Black background */
 [data-bg="black"] .tabs-trigger {
   color: var(--tabs-b-color-fg-default);
-}
-
-[data-bg="black"] .tabs-trigger[data-state="active"] {
-  border-bottom-color: var(--tabs-b-color-stroke-default);
 }
 
 /* Boutons de navigation */

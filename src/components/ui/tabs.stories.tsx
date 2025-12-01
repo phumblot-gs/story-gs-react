@@ -134,7 +134,7 @@ When \`debug\` is enabled:
     },
     className: {
       control: 'text',
-      description: 'Additional Tailwind CSS classes',
+      description: 'Additional Tailwind CSS classes applied to the div.tabs-header (in TabsList, not on TabsPrimitive.Root)',
     },
   },
   args: {
@@ -567,5 +567,131 @@ export const NestedLayouts: Story = {
   ),
   parameters: {
     layout: 'fullscreen',
+  },
+};
+
+export const CustomStyling: Story = {
+  render: () => (
+    <Layout bg="white" padding={6}>
+      <VStack gap={6}>
+        <div>
+          <h3 className="gs-typo-h3 mb-2">Personnalisation avec className</h3>
+          <p className="text-sm text-grey-stronger mb-4">
+            Le prop <code>className</code> sur <code>Tabs</code> s'applique à la <code>div.tabs-header</code> (dans TabsList).
+            Le prop <code>className</code> sur <code>TabsList</code> s'applique au <code>TabsPrimitive.List</code>.
+          </p>
+        </div>
+
+        <VStack gap={8}>
+          {/* Exemple 1: Grid layout */}
+          <div>
+            <h4 className="text-sm font-medium mb-2">Exemple 1 : Grid layout sur tabs-list</h4>
+            <p className="text-xs text-grey-stronger mb-3">
+              <code>className="w-full"</code> sur Tabs (appliqué à div.tabs-header) + 
+              <code>className="grid grid-cols-3 gap-4"</code> sur TabsList (appliqué à TabsPrimitive.List)
+            </p>
+            <Tabs defaultValue="tab1" className="w-full">
+              <TabsList className="grid grid-cols-3 gap-4">
+                <TabsTrigger value="tab1">Tab 1</TabsTrigger>
+                <TabsTrigger value="tab2">Tab 2</TabsTrigger>
+                <TabsTrigger value="tab3">Tab 3</TabsTrigger>
+              </TabsList>
+              <TabsContent value="tab1">
+                <div className="p-8">
+                  <p className="text-[13px]">Contenu Tab 1</p>
+                </div>
+              </TabsContent>
+              <TabsContent value="tab2">
+                <div className="p-8">
+                  <p className="text-[13px]">Contenu Tab 2</p>
+                </div>
+              </TabsContent>
+              <TabsContent value="tab3">
+                <div className="p-8">
+                  <p className="text-[13px]">Contenu Tab 3</p>
+                </div>
+              </TabsContent>
+            </Tabs>
+          </div>
+
+          {/* Exemple 2: Padding sur tabs-list */}
+          <div>
+            <h4 className="text-sm font-medium mb-2">Exemple 2 : Padding vertical sur tabs-list</h4>
+            <p className="text-xs text-grey-stronger mb-3">
+              <code>className="py-5"</code> sur TabsList appliqué au TabsPrimitive.List
+            </p>
+            <Tabs defaultValue="tab1" className="w-[403px]">
+              <TabsList className="py-5">
+                <TabsTrigger value="tab1">Plans</TabsTrigger>
+                <TabsTrigger value="tab2">Fonctionnalités</TabsTrigger>
+                <TabsTrigger value="tab3">Tarifs</TabsTrigger>
+              </TabsList>
+              <TabsContent value="tab1">
+                <div className="p-8">
+                  <p className="text-[13px]">Contenu Plans</p>
+                </div>
+              </TabsContent>
+              <TabsContent value="tab2">
+                <div className="p-8">
+                  <p className="text-[13px]">Contenu Fonctionnalités</p>
+                </div>
+              </TabsContent>
+              <TabsContent value="tab3">
+                <div className="p-8">
+                  <p className="text-[13px]">Contenu Tarifs</p>
+                </div>
+              </TabsContent>
+            </Tabs>
+          </div>
+
+          {/* Exemple 3: Combinaison des deux */}
+          <div>
+            <h4 className="text-sm font-medium mb-2">Exemple 3 : Combinaison className sur Tabs et TabsList</h4>
+            <p className="text-xs text-grey-stronger mb-3">
+              <code>className="border-2 border-blue rounded p-4"</code> sur Tabs (appliqué à div.tabs-header) + 
+              <code>className="bg-grey-lighter rounded px-2"</code> sur TabsList (appliqué à TabsPrimitive.List)
+            </p>
+            <Tabs defaultValue="tab1" className="border-2 border-blue rounded p-4">
+              <TabsList className="bg-grey-lighter rounded px-2">
+                <TabsTrigger value="tab1">Tab 1</TabsTrigger>
+                <TabsTrigger value="tab2">Tab 2</TabsTrigger>
+                <TabsTrigger value="tab3">Tab 3</TabsTrigger>
+              </TabsList>
+              <TabsContent value="tab1">
+                <div className="p-8">
+                  <p className="text-[13px]">Contenu Tab 1</p>
+                </div>
+              </TabsContent>
+              <TabsContent value="tab2">
+                <div className="p-8">
+                  <p className="text-[13px]">Contenu Tab 2</p>
+                </div>
+              </TabsContent>
+              <TabsContent value="tab3">
+                <div className="p-8">
+                  <p className="text-[13px]">Contenu Tab 3</p>
+                </div>
+              </TabsContent>
+            </Tabs>
+          </div>
+
+          <div className="p-4 bg-grey-lighter rounded">
+            <p className="text-xs font-medium mb-2">📝 Notes importantes :</p>
+            <ul className="text-xs space-y-1 list-disc list-inside text-grey-stronger">
+              <li><code>className</code> sur <code>Tabs</code> s'applique à la <code>div.tabs-header</code> (dans TabsList, pas sur TabsPrimitive.Root)</li>
+              <li><code>className</code> sur <code>TabsList</code> s'applique au <code>TabsPrimitive.List</code> (la liste d'onglets)</li>
+              <li>Chaque composant a sa propre prop <code>className</code> pour un contrôle précis du styling</li>
+            </ul>
+          </div>
+        </VStack>
+      </VStack>
+    </Layout>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story: "Documentation de l'application de classes CSS personnalisées avec `className` et `listClassName`.",
+      },
+    },
   },
 };

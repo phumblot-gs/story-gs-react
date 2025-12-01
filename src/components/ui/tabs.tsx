@@ -5,6 +5,9 @@ import { ChevronLeft, ChevronRight } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useBgContext } from "@/components/layout/BgContext"
 
+// Contexte pour transmettre le className de Tabs à TabsList
+const TabsHeaderClassNameContext = React.createContext<string | undefined>(undefined)
+
 interface TabsProps extends React.ComponentPropsWithoutRef<typeof TabsPrimitive.Root> {
   debug?: boolean
 }
@@ -28,12 +31,14 @@ const Tabs = React.forwardRef<
   }, [debug, bg, onValueChange, props.defaultValue, props.value]);
 
   return (
-    <TabsPrimitive.Root
-      ref={ref}
-      className={cn(debug && "ring-2 ring-pink ring-offset-2", className)}
-      onValueChange={debug ? handleValueChange : onValueChange}
-      {...props}
-    />
+    <TabsHeaderClassNameContext.Provider value={className}>
+      <TabsPrimitive.Root
+        ref={ref}
+        className={debug ? "ring-2 ring-pink ring-offset-2" : undefined}
+        onValueChange={debug ? handleValueChange : onValueChange}
+        {...props}
+      />
+    </TabsHeaderClassNameContext.Provider>
   )
 })
 Tabs.displayName = TabsPrimitive.Root.displayName
@@ -48,11 +53,13 @@ const TabsList = React.forwardRef<
   TabsListProps
 >(({ className, debug, ...props }, ref) => {
   const bg = useBgContext()
+  const headerClassName = React.useContext(TabsHeaderClassNameContext)
   const listRef = React.useRef<HTMLDivElement>(null)
   const [showNavButtons, setShowNavButtons] = React.useState(false)
   const [canScrollLeft, setCanScrollLeft] = React.useState(false)
   const [canScrollRight, setCanScrollRight] = React.useState(false)
   const [activeTabLabel, setActiveTabLabel] = React.useState<string>('none')
+  const [indicatorStyle, setIndicatorStyle] = React.useState<{ left: number; width: number } | null>(null)
 
   // Combiner les refs
   React.useEffect(() => {
@@ -90,6 +97,58 @@ const TabsList = React.forwardRef<
       observer.disconnect()
     }
   }, [])
+
+  // Calculer la position et la largeur de l'onglet actif pour l'animation de bordure
+  const updateIndicatorPosition = React.useCallback(() => {
+    if (!listRef.current) return
+
+    const activeTab = listRef.current.querySelector('[data-state="active"]') as HTMLElement
+    if (!activeTab) {
+      setIndicatorStyle(null)
+      return
+    }
+
+    const listRect = listRef.current.getBoundingClientRect()
+    const tabRect = activeTab.getBoundingClientRect()
+    
+    // Calculer la position relative à la liste (en tenant compte du scroll)
+    const left = activeTab.offsetLeft
+    const width = activeTab.offsetWidth
+
+    setIndicatorStyle({ left, width })
+  }, [])
+
+  // Observer les changements d'onglet actif pour mettre à jour la position de l'indicateur
+  React.useEffect(() => {
+    if (!listRef.current) return
+
+    // Initialiser la position
+    updateIndicatorPosition()
+
+    // Observer les changements d'attribut data-state
+    const observer = new MutationObserver(() => {
+      updateIndicatorPosition()
+    })
+
+    // Observer tous les triggers dans la liste
+    const triggers = listRef.current.querySelectorAll('[data-state]')
+    triggers.forEach((trigger) => {
+      observer.observe(trigger, { attributes: true, attributeFilter: ['data-state'] })
+    })
+
+    // Observer aussi les changements de taille (resize)
+    const resizeObserver = new ResizeObserver(() => {
+      updateIndicatorPosition()
+    })
+    if (listRef.current) {
+      resizeObserver.observe(listRef.current)
+    }
+
+    return () => {
+      observer.disconnect()
+      resizeObserver.disconnect()
+    }
+  }, [updateIndicatorPosition, props.children])
 
   // Observer les changements d'attribut data-state pour mettre à jour le label debug
   React.useEffect(() => {
@@ -174,6 +233,8 @@ const TabsList = React.forwardRef<
     const { scrollWidth, clientWidth, scrollLeft } = listRef.current
     setCanScrollLeft(scrollLeft > 0)
     setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 1)
+    // Mettre à jour la position de l'indicateur lors du scroll
+    updateIndicatorPosition()
   }
 
   const scrollLeft = () => {
@@ -187,7 +248,7 @@ const TabsList = React.forwardRef<
   }
 
   return (
-    <div className={cn("tabs-header", debug && "relative", className)} data-bg={bg || undefined}>
+    <div className={cn("tabs-header", debug && "relative", headerClassName)} data-bg={bg || undefined}>
       {debug && (
         <span className="absolute -top-6 left-0 text-xs bg-pink text-white px-1 rounded whitespace-nowrap z-10">
           Active: {activeTabLabel}
@@ -197,6 +258,10 @@ const TabsList = React.forwardRef<
         ref={listRef}
         className={cn("tabs-list", className)}
         onScroll={handleScroll}
+        style={{
+          '--indicator-left': indicatorStyle ? `${indicatorStyle.left}px` : '0px',
+          '--indicator-width': indicatorStyle ? `${indicatorStyle.width}px` : '0px',
+        } as React.CSSProperties}
         {...props}
       />
       {showNavButtons && (
