@@ -374,7 +374,7 @@ export { LanguageSwitcher };
 export { FileBrowser };
 export { Select, SelectTrigger, SelectContent, SelectItem, SelectValue };
 export { SelectAutocomplete };
-export type { SelectAutocompleteOption };
+export type { SelectAutocompleteOption, SelectedOption };
 export { Input };
 export { InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator };
 export { Search };

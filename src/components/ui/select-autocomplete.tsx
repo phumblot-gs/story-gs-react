@@ -21,8 +21,16 @@ export interface SelectAutocompleteOption {
   searchText?: string;
 }
 
+/**
+ * Objet retourné par onChange contenant la value (ID) et le label de l'option sélectionnée
+ */
+export interface SelectedOption {
+  value: string;
+  label: string;
+}
+
 export interface SelectAutocompleteProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange" | "onSelect" | "size" | "value"> {
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange" | "onSelect" | "size" | "value" | "defaultValue"> {
   /**
    * Liste d'options pour le mode local
    */
@@ -59,9 +67,24 @@ export interface SelectAutocompleteProps
   onSelect?: (option: SelectAutocompleteOption) => void;
 
   /**
-   * Callback appelé lors du changement de valeur de l'input
+   * Callback appelé lors de la sélection d'une option
+   * Reçoit un objet avec la value (ID) et le label de l'option sélectionnée
    */
-  onChange?: (value: string) => void;
+  onChange?: (selected: SelectedOption) => void;
+
+  /**
+   * Valeur sélectionnée (contrôlée)
+   * Peut être une string (ID) ou un objet { value, label }
+   * Remplace la propriété value de InputHTMLAttributes
+   */
+  value?: string | SelectedOption;
+
+  /**
+   * Valeur par défaut (non-contrôlée)
+   * Peut être une string (ID) ou un objet { value, label }
+   * Remplace la propriété defaultValue de InputHTMLAttributes
+   */
+  defaultValue?: string | SelectedOption;
 
   /**
    * Ouvre automatiquement le popover au focus
@@ -120,11 +143,6 @@ export interface SelectAutocompleteProps
   size?: "normal" | "small";
 
   /**
-   * Valeur contrôlée
-   */
-  value?: string;
-
-  /**
    * Maximum height of the dropdown menu.
    * Default: `max-h-[calc(100vh-2rem)]` to adapt to available space.
    * You can customize with Tailwind classes like `max-h-[40vh]`, `max-h-96`, etc.
@@ -170,7 +188,9 @@ const SelectAutocomplete = React.forwardRef<HTMLInputElement, SelectAutocomplete
     ref
   ) => {
     const bg = useBgContext();
-    const [internalValue, setInternalValue] = React.useState(defaultValue || "");
+    const [internalValue, setInternalValue] = React.useState<SelectedOption | string>(
+      defaultValue ?? ""
+    );
     const [searchText, setSearchText] = React.useState(""); // Texte de recherche saisi par l'utilisateur
     const [isOpen, setIsOpen] = React.useState(false);
     const [filteredOptions, setFilteredOptions] = React.useState<SelectAutocompleteOption[]>(options);
@@ -183,8 +203,13 @@ const SelectAutocomplete = React.forwardRef<HTMLInputElement, SelectAutocomplete
     const abortControllerRef = React.useRef<AbortController>();
     const [popoverWidth, setPopoverWidth] = React.useState<number | undefined>(undefined);
 
-    // Valeur sélectionnée (ID)
-    const selectedValue = valueProp !== undefined ? String(valueProp) : internalValue;
+    // Normaliser la valeur sélectionnée : extraire l'ID (value) que ce soit une string ou un objet
+    const selectedValue = React.useMemo(() => {
+      if (valueProp === undefined) {
+        return typeof internalValue === "string" ? internalValue : internalValue?.value || "";
+      }
+      return typeof valueProp === "string" ? valueProp : valueProp?.value || "";
+    }, [valueProp, internalValue]);
     
     // Trouver l'option sélectionnée pour obtenir son label
     const selectedOption = React.useMemo(() => {
@@ -198,8 +223,12 @@ const SelectAutocomplete = React.forwardRef<HTMLInputElement, SelectAutocomplete
         return searchText;
       }
       // Sinon, afficher le label de l'option sélectionnée
+      // Si valueProp est un objet avec label, l'utiliser, sinon utiliser selectedOption
+      if (valueProp && typeof valueProp === "object" && "label" in valueProp) {
+        return valueProp.label;
+      }
       return selectedOption?.label || "";
-    }, [isOpen, searchText, selectedOption]);
+    }, [isOpen, searchText, selectedOption, valueProp]);
 
     const hasValue = Boolean(selectedValue);
 
@@ -328,12 +357,19 @@ const SelectAutocomplete = React.forwardRef<HTMLInputElement, SelectAutocomplete
     // Gestion de la sélection
     const handleSelect = React.useCallback(
       (option: SelectAutocompleteOption) => {
-        // Mettre à jour la value (ID) sélectionnée
+        // Créer l'objet SelectedOption avec value et label
+        const selected: SelectedOption = {
+          value: option.value,
+          label: option.label,
+        };
+
+        // Mettre à jour la valeur sélectionnée
         if (valueProp === undefined) {
-          setInternalValue(option.value);
+          setInternalValue(selected);
         }
-        // Retourner la value dans onChange, pas le label
-        onChange?.(option.value);
+        
+        // Retourner l'objet complet avec value et label dans onChange
+        onChange?.(selected);
         onSelect?.(option);
         
         // Réinitialiser le texte de recherche
@@ -598,10 +634,11 @@ const SelectAutocomplete = React.forwardRef<HTMLInputElement, SelectAutocomplete
                 onClick={(e) => {
                   e.stopPropagation();
                   e.preventDefault();
+                  const emptySelected: SelectedOption = { value: "", label: "" };
                   if (valueProp === undefined) {
-                    setInternalValue("");
+                    setInternalValue(emptySelected);
                   }
-                  onChange?.("");
+                  onChange?.(emptySelected);
                   setSearchText("");
                   setFilteredOptions(options);
                   inputRef.current?.focus();
@@ -653,7 +690,7 @@ const SelectAutocomplete = React.forwardRef<HTMLInputElement, SelectAutocomplete
               <div
                 ref={listRef}
                 className={cn(
-                  "popup-action overflow-y-auto p-0",
+                  "popup-action overflow-y-auto py-2",
                   menuMaxHeight,
                   listClassName
                 )}
