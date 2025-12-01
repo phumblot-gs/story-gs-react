@@ -18,6 +18,8 @@ import {
   SelectItem,
   SelectValue,
 } from "./components/ui/select";
+import { SelectAutocomplete } from "./components/ui/select-autocomplete";
+import type { SelectAutocompleteOption } from "./components/ui/select-autocomplete";
 import { Input } from "./components/ui/input";
 import { InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator } from "./components/ui/input-otp";
 import { Search } from "./components/ui/search";
@@ -371,6 +373,8 @@ export { ButtonPlus };
 export { LanguageSwitcher };
 export { FileBrowser };
 export { Select, SelectTrigger, SelectContent, SelectItem, SelectValue };
+export { SelectAutocomplete };
+export type { SelectAutocompleteOption };
 export { Input };
 export { InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator };
 export { Search };
