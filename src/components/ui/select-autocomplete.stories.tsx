@@ -10,15 +10,17 @@ const meta: Meta<typeof SelectAutocomplete> = {
     layout: "centered",
     docs: {
       description: {
-        component: `SelectAutocomplete component avec recherche et autocomplétion. Basé sur Input + Popover pour une meilleure flexibilité.
+        component: `SelectAutocomplete component with search and autocomplete functionality. Based on Input + Popover for better flexibility.
 
 ## Features
-- Mode local : Filtre les options fournies côté client
-- Mode remote : Recherche serveur avec debounce
-- Navigation clavier complète (flèches, Enter, Escape)
-- Support des valeurs personnalisées
-- Taille normal/small
-- Adaptation automatique selon le background context
+- Local mode: Filters options provided client-side
+- Remote mode: Server search with debounce
+- Full keyboard navigation (arrows, Enter, Escape)
+- Custom value support
+- Normal/small size
+- Automatic adaptation based on background context
+- **Returns the value (ID) in onChange, not the label**
+- Search on searchText if provided, otherwise on label
 
 ## Basic Usage
 
@@ -32,8 +34,51 @@ const options = [
 
 <SelectAutocomplete
   options={options}
-  onSelect={(option) => console.log(option)}
+  onChange={(value) => {
+    // value contains the ID: "1" or "2", not the label
+    console.log(value);
+  }}
+  onSelect={(option) => {
+    // option contains { value: "1", label: "Option 1" }
+    console.log(option);
+  }}
 />
+\`\`\`
+
+## Value vs Label Behavior
+
+The component displays the label in the input field but returns the value (ID) in the onChange callback:
+
+\`\`\`tsx
+const options = [
+  { value: "12345", label: "Production A (30/11/2024)" },
+  { value: "67890", label: "Production B (01/12/2024)" },
+];
+
+<SelectAutocomplete
+  value={selectedId}  // Contains the ID: "12345"
+  onChange={(value) => {
+    // value is "12345", not "Production A (30/11/2024)"
+    setSelectedId(value);
+  }}
+  options={options}
+/>
+// Input displays: "Production A (30/11/2024)" (label)
+// But onChange receives: "12345" (value)
+\`\`\`
+
+## Search with searchText
+
+You can provide an optional searchText to improve search:
+
+\`\`\`tsx
+const options = [
+  { 
+    value: "12345", 
+    label: "Production A (30/11/2024)",
+    searchText: "Production A 30/11/2024" // Text used for search
+  },
+];
 \`\`\`
 
 ## Mode Remote
@@ -56,32 +101,32 @@ const options = [
     size: {
       control: 'select',
       options: ['normal', 'small'],
-      description: 'Taille du composant',
+      description: 'Component size',
     },
     searchMode: {
       control: 'select',
       options: ['local', 'remote'],
-      description: 'Mode de recherche (local ou remote)',
+      description: 'Search mode (local or remote)',
     },
     openOnFocus: {
       control: 'boolean',
-      description: 'Ouvre automatiquement le popover au focus',
+      description: 'Automatically opens popover on focus',
     },
     closeOnSelect: {
       control: 'boolean',
-      description: 'Ferme automatiquement après sélection',
+      description: 'Automatically closes after selection',
     },
     allowCustomValue: {
       control: 'boolean',
-      description: 'Permet de sélectionner une valeur personnalisée',
+      description: 'Allows selecting a custom value',
     },
     disabled: {
       control: 'boolean',
-      description: 'État désactivé',
+      description: 'Disabled state',
     },
     debug: {
       control: 'boolean',
-      description: 'Mode debug pour les logs',
+      description: 'Debug mode for logs',
     },
   },
 };
@@ -115,7 +160,7 @@ const groupedOptions: SelectAutocompleteOption[] = [
 export const Default: Story = {
   args: {
     options: basicOptions,
-    placeholder: "Rechercher une option...",
+    placeholder: "Search for an option...",
   },
   render: (args) => {
     const [value, setValue] = useState("");
@@ -128,11 +173,12 @@ export const Default: Story = {
             onChange={setValue}
             onSelect={(option) => {
               console.log("Selected:", option);
-              setValue(option.label);
+              // onChange retourne maintenant la value (ID), pas le label
+              setValue(option.value);
             }}
           />
           <p className="text-sm text-grey-stronger">
-            Valeur sélectionnée : {value || "Aucune"}
+            Selected value: {value || "None"}
           </p>
         </VStack>
       </Layout>
@@ -143,7 +189,7 @@ export const Default: Story = {
 export const WithManyOptions: Story = {
   args: {
     options: manyOptions,
-    placeholder: "Rechercher parmi 50 options...",
+    placeholder: "Search among 50 options...",
   },
   render: (args) => {
     const [value, setValue] = useState("");
@@ -156,11 +202,12 @@ export const WithManyOptions: Story = {
             onChange={setValue}
             onSelect={(option) => {
               console.log("Selected:", option);
-              setValue(option.label);
+              // onChange retourne maintenant la value (ID), pas le label
+              setValue(option.value);
             }}
           />
           <p className="text-sm text-grey-stronger">
-            Valeur sélectionnée : {value || "Aucune"}
+            Selected value: {value || "None"}
           </p>
         </VStack>
       </Layout>
@@ -171,7 +218,7 @@ export const WithManyOptions: Story = {
 export const RemoteSearch: Story = {
   args: {
     searchMode: "remote",
-    placeholder: "Rechercher sur le serveur...",
+    placeholder: "Search on server...",
     searchDebounceMs: 500,
   },
   render: (args) => {
@@ -209,10 +256,10 @@ export const RemoteSearch: Story = {
           />
           <VStack gap={2}>
             <p className="text-sm text-grey-stronger">
-              Valeur sélectionnée : {value || "Aucune"}
+              Selected value: {value || "None"}
             </p>
             <p className="text-xs text-grey-strongest">
-              Recherches effectuées : {searchCount}
+              Searches performed: {searchCount}
             </p>
           </VStack>
         </VStack>
@@ -222,7 +269,7 @@ export const RemoteSearch: Story = {
   parameters: {
     docs: {
       description: {
-        story: "Mode remote avec recherche serveur. Le debounce est configuré à 500ms pour limiter les requêtes.",
+        story: "Remote mode with server search. Debounce is set to 500ms to limit requests.",
       },
     },
   },
@@ -232,7 +279,7 @@ export const WithCustomValue: Story = {
   args: {
     options: basicOptions,
     allowCustomValue: true,
-    placeholder: "Rechercher ou saisir une valeur...",
+    placeholder: "Search or enter a value...",
   },
   render: (args) => {
     const [value, setValue] = useState("");
@@ -245,14 +292,15 @@ export const WithCustomValue: Story = {
             onChange={setValue}
             onSelect={(option) => {
               console.log("Selected:", option);
-              setValue(option.label);
+              // onChange retourne maintenant la value (ID), pas le label
+              setValue(option.value);
             }}
           />
           <p className="text-sm text-grey-stronger">
-            Valeur sélectionnée : {value || "Aucune"}
+            Selected value: {value || "None"}
           </p>
           <p className="text-xs text-grey-strongest">
-            Vous pouvez sélectionner une option ou taper une valeur personnalisée et appuyer sur Enter.
+            You can select an option or type a custom value and press Enter.
           </p>
         </VStack>
       </Layout>
@@ -261,7 +309,7 @@ export const WithCustomValue: Story = {
   parameters: {
     docs: {
       description: {
-        story: "Avec allowCustomValue=true, vous pouvez sélectionner une valeur qui n'est pas dans les options en appuyant sur Enter.",
+        story: "With allowCustomValue=true, you can select a value that is not in the options by pressing Enter.",
       },
     },
   },
@@ -284,11 +332,12 @@ export const SmallSize: Story = {
             onChange={setValue}
             onSelect={(option) => {
               console.log("Selected:", option);
-              setValue(option.label);
+              // onChange retourne maintenant la value (ID), pas le label
+              setValue(option.value);
             }}
           />
           <p className="text-xs text-grey-stronger">
-            Valeur sélectionnée : {value || "Aucune"}
+            Selected value: {value || "None"}
           </p>
         </VStack>
       </Layout>
@@ -310,7 +359,7 @@ export const BackgroundVariants: Story = {
             options={basicOptions}
             value={valueWhite}
             onChange={setValueWhite}
-            onSelect={(option) => setValueWhite(option.label)}
+            onSelect={(option) => setValueWhite(option.value)}
             placeholder="Rechercher..."
           />
         </VStack>
@@ -321,7 +370,7 @@ export const BackgroundVariants: Story = {
             options={basicOptions}
             value={valueBlack}
             onChange={setValueBlack}
-            onSelect={(option) => setValueBlack(option.label)}
+            onSelect={(option) => setValueBlack(option.value)}
             placeholder="Rechercher..."
           />
         </VStack>
@@ -332,7 +381,7 @@ export const BackgroundVariants: Story = {
             options={basicOptions}
             value={valueGrey}
             onChange={setValueGrey}
-            onSelect={(option) => setValueGrey(option.label)}
+            onSelect={(option) => setValueGrey(option.value)}
             placeholder="Rechercher..."
           />
         </VStack>
@@ -343,7 +392,7 @@ export const BackgroundVariants: Story = {
     layout: 'fullscreen',
     docs: {
       description: {
-        story: "Le SelectAutocomplete s'adapte automatiquement au background du Layout parent.",
+        story: "SelectAutocomplete automatically adapts to the background of the parent Layout.",
       },
     },
   },
@@ -359,35 +408,35 @@ export const States: Story = {
       <Layout bg="white" padding={6}>
         <VStack gap={6}>
           <VStack gap={3}>
-            <h3 className="text-sm font-medium">État Normal</h3>
+            <h3 className="text-sm font-medium">Normal State</h3>
             <SelectAutocomplete
               options={basicOptions}
               value={value1}
               onChange={setValue1}
-              onSelect={(option) => setValue1(option.label)}
-              placeholder="Rechercher..."
+              onSelect={(option) => setValue1(option.value)}
+              placeholder="Search..."
             />
           </VStack>
 
           <VStack gap={3}>
-            <h3 className="text-sm font-medium">Avec Valeur Sélectionnée</h3>
+            <h3 className="text-sm font-medium">With Selected Value</h3>
             <SelectAutocomplete
               options={basicOptions}
               value={value2}
               onChange={setValue2}
-              onSelect={(option) => setValue2(option.label)}
-              placeholder="Rechercher..."
+              onSelect={(option) => setValue2(option.value)}
+              placeholder="Search..."
             />
           </VStack>
 
           <VStack gap={3}>
-            <h3 className="text-sm font-medium">État Désactivé</h3>
+            <h3 className="text-sm font-medium">Disabled State</h3>
             <SelectAutocomplete
               options={basicOptions}
               value={value3}
               onChange={setValue3}
-              onSelect={(option) => setValue3(option.label)}
-              placeholder="Rechercher..."
+              onSelect={(option) => setValue3(option.value)}
+              placeholder="Search..."
               disabled
             />
           </VStack>
@@ -398,7 +447,7 @@ export const States: Story = {
   parameters: {
     docs: {
       description: {
-        story: "Différents états du composant : normal, avec valeur sélectionnée, désactivé.",
+        story: "Different component states: normal, with selected value, disabled.",
       },
     },
   },
@@ -407,7 +456,7 @@ export const States: Story = {
 export const WithFilterFunction: Story = {
   args: {
     options: groupedOptions,
-    placeholder: "Rechercher une ville...",
+    placeholder: "Search for a city...",
   },
   render: (args) => {
     const [value, setValue] = useState("");
@@ -436,7 +485,7 @@ export const WithFilterFunction: Story = {
             }}
           />
           <p className="text-sm text-grey-stronger">
-            Valeur sélectionnée : {value || "Aucune"}
+            Selected value: {value || "None"}
           </p>
           <p className="text-xs text-grey-strongest">
             Essayez de rechercher "France", "UK" ou "USA" pour filtrer par groupe.
@@ -448,7 +497,7 @@ export const WithFilterFunction: Story = {
   parameters: {
     docs: {
       description: {
-        story: "Exemple avec une fonction de filtrage personnalisée qui recherche dans le label ET le groupe.",
+        story: "Example with a custom filter function that searches in both the label AND the group.",
       },
     },
   },
@@ -491,7 +540,7 @@ export const WithManyOptionsAndScroll: Story = {
         <VStack gap={4}>
           <div>
             <p className="text-sm text-grey-stronger mb-2">
-              SelectAutocomplete avec hauteur limitée à 40vh et scroll automatique
+              SelectAutocomplete with height limited to 40vh and automatic scrolling
             </p>
             <SelectAutocomplete
               options={manyOptions}
@@ -499,19 +548,19 @@ export const WithManyOptionsAndScroll: Story = {
               onChange={setValue}
               onSelect={(option) => {
                 console.log("Selected:", option);
-                setValue(option.label);
+                setValue(option.value);
               }}
-              placeholder="Rechercher parmi 25 options..."
+              placeholder="Search among 25 options..."
               menuMaxHeight="max-h-[40vh]"
             />
           </div>
           <p className="text-sm text-grey-stronger">
-            Valeur sélectionnée : {value || "Aucune"}
+            Selected value: {value || "None"}
           </p>
-          <p className="text-xs text-grey-strongest">
-            Le menu déroulant a une hauteur maximale de 40vh. Quand toutes les options ne rentrent pas,
-            un scroll vertical apparaît automatiquement.
-          </p>
+            <p className="text-xs text-grey-strongest">
+              The dropdown menu has a maximum height of 40vh. When all options don't fit,
+              vertical scrolling appears automatically.
+            </p>
         </VStack>
       </Layout>
     );
@@ -519,7 +568,7 @@ export const WithManyOptionsAndScroll: Story = {
   parameters: {
     docs: {
       description: {
-        story: "Exemple avec beaucoup d'options (25) et hauteur limitée à 40vh pour tester le scroll vertical. Le menu déroulant affiche un scroll automatique quand le contenu dépasse la hauteur maximale.",
+        story: "Example with many options (25) and height limited to 40vh to test vertical scrolling. The dropdown menu displays automatic scrolling when content exceeds the maximum height.",
       },
     },
   },
@@ -528,7 +577,7 @@ export const WithManyOptionsAndScroll: Story = {
 export const WithDebug: Story = {
   args: {
     options: basicOptions,
-    placeholder: "Select avec debug activé",
+    placeholder: "Select with debug enabled",
     debug: true,
   },
   render: (args) => {
@@ -542,14 +591,15 @@ export const WithDebug: Story = {
             onChange={setValue}
             onSelect={(option) => {
               console.log("Selected:", option);
-              setValue(option.label);
+              // onChange retourne maintenant la value (ID), pas le label
+              setValue(option.value);
             }}
           />
           <p className="text-sm text-grey-stronger">
-            Valeur sélectionnée : {value || "Aucune"}
+            Selected value: {value || "None"}
           </p>
           <p className="text-xs text-grey-strongest">
-            Ouvrez la console pour voir les logs de debug.
+            Open the console to see debug logs.
           </p>
         </VStack>
       </Layout>
@@ -558,7 +608,7 @@ export const WithDebug: Story = {
   parameters: {
     docs: {
       description: {
-        story: "Mode debug activé - voir la console pour les logs.",
+        story: "Debug mode enabled - see console for logs.",
       },
     },
   },

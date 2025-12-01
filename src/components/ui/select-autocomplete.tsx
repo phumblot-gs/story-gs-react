@@ -14,6 +14,11 @@ export interface SelectAutocompleteOption {
   disabled?: boolean;
   group?: string;
   icon?: React.ReactNode;
+  /**
+   * Texte utilisé pour la recherche (optionnel)
+   * Si non fourni, la recherche se fait sur le label
+   */
+  searchText?: string;
 }
 
 export interface SelectAutocompleteProps
@@ -166,6 +171,7 @@ const SelectAutocomplete = React.forwardRef<HTMLInputElement, SelectAutocomplete
   ) => {
     const bg = useBgContext();
     const [internalValue, setInternalValue] = React.useState(defaultValue || "");
+    const [searchText, setSearchText] = React.useState(""); // Texte de recherche saisi par l'utilisateur
     const [isOpen, setIsOpen] = React.useState(false);
     const [filteredOptions, setFilteredOptions] = React.useState<SelectAutocompleteOption[]>(options);
     const [isSearching, setIsSearching] = React.useState(false);
@@ -177,16 +183,35 @@ const SelectAutocomplete = React.forwardRef<HTMLInputElement, SelectAutocomplete
     const abortControllerRef = React.useRef<AbortController>();
     const [popoverWidth, setPopoverWidth] = React.useState<number | undefined>(undefined);
 
-    const currentValue = (valueProp !== undefined ? String(valueProp) : internalValue) || "";
-    const hasValue = Boolean(currentValue);
+    // Valeur sélectionnée (ID)
+    const selectedValue = valueProp !== undefined ? String(valueProp) : internalValue;
+    
+    // Trouver l'option sélectionnée pour obtenir son label
+    const selectedOption = React.useMemo(() => {
+      return options.find(opt => opt.value === selectedValue);
+    }, [options, selectedValue]);
+
+    // Texte à afficher dans l'input : label de l'option sélectionnée ou texte de recherche
+    const displayText = React.useMemo(() => {
+      if (isOpen && searchText) {
+        // Pendant la recherche, afficher le texte saisi
+        return searchText;
+      }
+      // Sinon, afficher le label de l'option sélectionnée
+      return selectedOption?.label || "";
+    }, [isOpen, searchText, selectedOption]);
+
+    const hasValue = Boolean(selectedValue);
 
     // Combiner refs
     React.useImperativeHandle(ref, () => inputRef.current as HTMLInputElement);
 
     // Fonction de filtrage par défaut
+    // Utilise searchText si fourni, sinon label
     const defaultFilterFunction = React.useCallback(
       (option: SelectAutocompleteOption, searchTerm: string) => {
-        return option.label.toLowerCase().includes(searchTerm.toLowerCase());
+        const textToSearch = option.searchText || option.label;
+        return textToSearch.toLowerCase().includes(searchTerm.toLowerCase());
       },
       []
     );
@@ -241,15 +266,14 @@ const SelectAutocomplete = React.forwardRef<HTMLInputElement, SelectAutocomplete
       [onSearch, debug]
     );
 
-    // Gestion du changement de valeur
+    // Gestion du changement de valeur (texte saisi dans l'input)
     const handleChange = React.useCallback(
       (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newValue = e.target.value;
+        const newSearchText = e.target.value;
+        setSearchText(newSearchText);
 
-        if (valueProp === undefined) {
-          setInternalValue(newValue);
-        }
-        onChange?.(newValue);
+        // Ne pas changer la value sélectionnée pendant la recherche
+        // La value ne change que lors de la sélection d'une option
 
         // Ouvrir le popover si fermé
         if (!isOpen) {
@@ -265,15 +289,15 @@ const SelectAutocomplete = React.forwardRef<HTMLInputElement, SelectAutocomplete
         }
 
         if (searchMode === "local") {
-          filterLocalOptions(newValue);
+          filterLocalOptions(newSearchText);
         } else {
           // Debounce pour la recherche remote
           searchTimeoutRef.current = setTimeout(() => {
-            performRemoteSearch(newValue);
+            performRemoteSearch(newSearchText);
           }, searchDebounceMs);
         }
       },
-      [valueProp, onChange, isOpen, searchMode, filterLocalOptions, performRemoteSearch, searchDebounceMs]
+      [isOpen, searchMode, filterLocalOptions, performRemoteSearch, searchDebounceMs]
     );
 
     // Gestion du focus
@@ -282,14 +306,14 @@ const SelectAutocomplete = React.forwardRef<HTMLInputElement, SelectAutocomplete
         props.onFocus?.(e);
         if (openOnFocus && !disabled) {
           setIsOpen(true);
-          if (searchMode === "local" && currentValue) {
-            filterLocalOptions(String(currentValue));
-          } else if (searchMode === "local" && !currentValue) {
+          // Réinitialiser le texte de recherche au focus
+          setSearchText("");
+          if (searchMode === "local") {
             setFilteredOptions(options);
           }
         }
       },
-      [props, openOnFocus, disabled, searchMode, currentValue, filterLocalOptions, options]
+      [props, openOnFocus, disabled, searchMode, options]
     );
 
     // Gestion du blur - ne pas fermer si on clique dans le popover
@@ -304,11 +328,16 @@ const SelectAutocomplete = React.forwardRef<HTMLInputElement, SelectAutocomplete
     // Gestion de la sélection
     const handleSelect = React.useCallback(
       (option: SelectAutocompleteOption) => {
+        // Mettre à jour la value (ID) sélectionnée
         if (valueProp === undefined) {
-          setInternalValue(option.label);
+          setInternalValue(option.value);
         }
-        onChange?.(option.label);
+        // Retourner la value dans onChange, pas le label
+        onChange?.(option.value);
         onSelect?.(option);
+        
+        // Réinitialiser le texte de recherche
+        setSearchText("");
 
         if (closeOnSelect) {
           setIsOpen(false);
@@ -352,12 +381,11 @@ const SelectAutocomplete = React.forwardRef<HTMLInputElement, SelectAutocomplete
               if (!option.disabled) {
                 handleSelect(option);
               }
-            } else if (allowCustomValue && currentValue) {
+            } else if (allowCustomValue && searchText) {
               // Permettre la sélection de la valeur personnalisée
-              const valueStr = String(currentValue);
               const customOption: SelectAutocompleteOption = {
-                value: valueStr,
-                label: valueStr,
+                value: searchText,
+                label: searchText,
               };
               handleSelect(customOption);
             }
@@ -367,12 +395,14 @@ const SelectAutocomplete = React.forwardRef<HTMLInputElement, SelectAutocomplete
             e.preventDefault();
             setIsOpen(false);
             setHighlightedIndex(-1);
+            setSearchText(""); // Réinitialiser pour afficher le label de l'option sélectionnée
             inputRef.current?.blur();
             break;
 
           case "Tab":
             setIsOpen(false);
             setHighlightedIndex(-1);
+            setSearchText(""); // Réinitialiser pour afficher le label de l'option sélectionnée
             break;
         }
       },
@@ -384,21 +414,27 @@ const SelectAutocomplete = React.forwardRef<HTMLInputElement, SelectAutocomplete
         highlightedIndex,
         handleSelect,
         allowCustomValue,
-        currentValue,
+        searchText,
       ]
     );
 
     // Mettre à jour les options filtrées quand les options changent
     React.useEffect(() => {
       if (searchMode === "local") {
-        const valueStr = String(currentValue || "");
-        if (!valueStr.trim()) {
+        if (!searchText.trim()) {
           setFilteredOptions(options);
         } else {
-          filterLocalOptions(valueStr);
+          filterLocalOptions(searchText);
         }
       }
-    }, [options, searchMode, currentValue, filterLocalOptions]);
+    }, [options, searchMode, searchText, filterLocalOptions]);
+
+    // Réinitialiser le texte de recherche quand la value change (depuis l'extérieur)
+    React.useEffect(() => {
+      if (!isOpen) {
+        setSearchText("");
+      }
+    }, [selectedValue, isOpen]);
 
     // Scroll vers l'option surlignée
     React.useEffect(() => {
@@ -484,7 +520,9 @@ const SelectAutocomplete = React.forwardRef<HTMLInputElement, SelectAutocomplete
     if (debug) {
       console.log("[SelectAutocomplete]", {
         isOpen,
-        currentValue,
+        selectedValue,
+        displayText,
+        searchText,
         filteredOptionsCount: filteredOptions.length,
         highlightedIndex,
         isSearching,
@@ -504,6 +542,8 @@ const SelectAutocomplete = React.forwardRef<HTMLInputElement, SelectAutocomplete
         // Fermer seulement si on clique vraiment en dehors
         setIsOpen(false);
         setHighlightedIndex(-1);
+        // Réinitialiser le texte de recherche pour afficher le label de l'option sélectionnée
+        setSearchText("");
       },
       []
     );
@@ -513,6 +553,8 @@ const SelectAutocomplete = React.forwardRef<HTMLInputElement, SelectAutocomplete
       setIsOpen(open);
       if (!open) {
         setHighlightedIndex(-1);
+        // Réinitialiser le texte de recherche pour afficher le label de l'option sélectionnée
+        setSearchText("");
       }
     }, []);
 
@@ -520,31 +562,32 @@ const SelectAutocomplete = React.forwardRef<HTMLInputElement, SelectAutocomplete
       <PopoverPrimitive.Root open={isOpen} onOpenChange={handleOpenChange}>
         <PopoverPrimitive.Anchor asChild>
           <div ref={containerRef} className={cn("relative w-full", className)}>
-            <Input
-              ref={inputRef}
-              value={currentValue}
-              onChange={handleChange}
-              onFocus={handleFocus}
-              onBlur={handleBlur}
-              onKeyDown={handleKeyDown}
-              onClick={() => {
-                // Ouvrir au clic si fermé
-                if (!isOpen && !disabled) {
-                  setIsOpen(true);
-                  if (searchMode === "local" && !currentValue) {
-                    setFilteredOptions(options);
-                  }
+          <Input
+            ref={inputRef}
+            value={displayText}
+            onChange={handleChange}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            onKeyDown={handleKeyDown}
+            onClick={() => {
+              // Ouvrir au clic si fermé
+              if (!isOpen && !disabled) {
+                setIsOpen(true);
+                setSearchText("");
+                if (searchMode === "local") {
+                  setFilteredOptions(options);
                 }
-              }}
-              placeholder={searchPlaceholder || placeholder}
-              disabled={disabled}
-              className={cn(sizeStyles.input, "pr-8")}
-              role="combobox"
-              aria-expanded={isOpen}
-              aria-haspopup="listbox"
-              aria-autocomplete="list"
-              {...props}
-            />
+              }
+            }}
+            placeholder={searchPlaceholder || placeholder}
+            disabled={disabled}
+            className={cn(sizeStyles.input, "pr-8")}
+            role="combobox"
+            aria-expanded={isOpen}
+            aria-haspopup="listbox"
+            aria-autocomplete="list"
+            {...props}
+          />
 
           {/* Icône dropdown/clear */}
           <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none z-10">
@@ -559,6 +602,7 @@ const SelectAutocomplete = React.forwardRef<HTMLInputElement, SelectAutocomplete
                     setInternalValue("");
                   }
                   onChange?.("");
+                  setSearchText("");
                   setFilteredOptions(options);
                   inputRef.current?.focus();
                   // Garder le popover ouvert après clear
@@ -602,6 +646,7 @@ const SelectAutocomplete = React.forwardRef<HTMLInputElement, SelectAutocomplete
               onEscapeKeyDown={() => {
                 setIsOpen(false);
                 setHighlightedIndex(-1);
+                setSearchText(""); // Réinitialiser pour afficher le label de l'option sélectionnée
                 inputRef.current?.blur();
               }}
             >
@@ -670,4 +715,5 @@ const SelectAutocomplete = React.forwardRef<HTMLInputElement, SelectAutocomplete
 SelectAutocomplete.displayName = "SelectAutocomplete";
 
 export { SelectAutocomplete };
+
 
