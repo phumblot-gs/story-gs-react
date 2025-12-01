@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { SelectAutocomplete, SelectAutocompleteOption } from "./select-autocomplete";
+import { SelectAutocomplete, SelectAutocompleteOption, SelectedOption } from "./select-autocomplete";
 import { Layout, VStack } from "@/components/layout";
 import { useState } from "react";
 
@@ -19,7 +19,7 @@ const meta: Meta<typeof SelectAutocomplete> = {
 - Custom value support
 - Normal/small size
 - Automatic adaptation based on background context
-- **Returns the value (ID) in onChange, not the label**
+- **Returns an object { value, label } in onChange, giving access to both ID and display text**
 - Search on searchText if provided, otherwise on label
 
 ## Basic Usage
@@ -34,12 +34,13 @@ const options = [
 
 <SelectAutocomplete
   options={options}
-  onChange={(value) => {
-    // value contains the ID: "1" or "2", not the label
-    console.log(value);
+  onChange={(selected) => {
+    // selected contains { value: "1", label: "Option 1" }
+    console.log(selected.value); // "1"
+    console.log(selected.label); // "Option 1"
   }}
   onSelect={(option) => {
-    // option contains { value: "1", label: "Option 1" }
+    // option contains the full SelectAutocompleteOption
     console.log(option);
   }}
 />
@@ -47,7 +48,7 @@ const options = [
 
 ## Value vs Label Behavior
 
-The component displays the label in the input field but returns the value (ID) in the onChange callback:
+The component displays the label in the input field and returns an object with both value (ID) and label in the onChange callback. This ensures you always have access to both the unique identifier and the display text, even when multiple items share the same label:
 
 \`\`\`tsx
 const options = [
@@ -57,14 +58,15 @@ const options = [
 
 <SelectAutocomplete
   value={selectedId}  // Contains the ID: "12345"
-  onChange={(value) => {
-    // value is "12345", not "Production A (30/11/2024)"
-    setSelectedId(value);
+  onChange={(selected) => {
+    // selected.value is "12345"
+    // selected.label is "Production A (30/11/2024)"
+    setSelectedId(selected.value);
   }}
   options={options}
 />
 // Input displays: "Production A (30/11/2024)" (label)
-// But onChange receives: "12345" (value)
+// onChange receives: { value: "12345", label: "Production A (30/11/2024)" }
 \`\`\`
 
 ## Search with searchText
@@ -170,11 +172,13 @@ export const Default: Story = {
           <SelectAutocomplete
             {...args}
             value={value}
-            onChange={setValue}
+            onChange={(selected) => {
+              console.log("Selected:", selected);
+              // onChange retourne maintenant un objet { value, label }
+              setValue(selected.value);
+            }}
             onSelect={(option) => {
-              console.log("Selected:", option);
-              // onChange retourne maintenant la value (ID), pas le label
-              setValue(option.value);
+              console.log("Option:", option);
             }}
           />
           <p className="text-sm text-grey-stronger">
@@ -199,11 +203,13 @@ export const WithManyOptions: Story = {
           <SelectAutocomplete
             {...args}
             value={value}
-            onChange={setValue}
+            onChange={(selected) => {
+              console.log("Selected:", selected);
+              // onChange retourne maintenant un objet { value, label }
+              setValue(selected.value);
+            }}
             onSelect={(option) => {
-              console.log("Selected:", option);
-              // onChange retourne maintenant la value (ID), pas le label
-              setValue(option.value);
+              console.log("Option:", option);
             }}
           />
           <p className="text-sm text-grey-stronger">
@@ -247,11 +253,11 @@ export const RemoteSearch: Story = {
           <SelectAutocomplete
             {...args}
             value={value}
-            onChange={setValue}
+            onChange={(selected) => setValue(selected.value)}
             onSearch={mockSearch}
             onSelect={(option) => {
               console.log("Selected:", option);
-              setValue(option.label);
+              // Note: onChange already handles the value, onSelect is just for logging
             }}
           />
           <VStack gap={2}>
@@ -289,11 +295,13 @@ export const WithCustomValue: Story = {
           <SelectAutocomplete
             {...args}
             value={value}
-            onChange={setValue}
+            onChange={(selected) => {
+              console.log("Selected:", selected);
+              // onChange retourne maintenant un objet { value, label }
+              setValue(selected.value);
+            }}
             onSelect={(option) => {
-              console.log("Selected:", option);
-              // onChange retourne maintenant la value (ID), pas le label
-              setValue(option.value);
+              console.log("Option:", option);
             }}
           />
           <p className="text-sm text-grey-stronger">
@@ -329,11 +337,13 @@ export const SmallSize: Story = {
           <SelectAutocomplete
             {...args}
             value={value}
-            onChange={setValue}
+            onChange={(selected) => {
+              console.log("Selected:", selected);
+              // onChange retourne maintenant un objet { value, label }
+              setValue(selected.value);
+            }}
             onSelect={(option) => {
-              console.log("Selected:", option);
-              // onChange retourne maintenant la value (ID), pas le label
-              setValue(option.value);
+              console.log("Option:", option);
             }}
           />
           <p className="text-xs text-grey-stronger">
@@ -358,9 +368,8 @@ export const BackgroundVariants: Story = {
           <SelectAutocomplete
             options={basicOptions}
             value={valueWhite}
-            onChange={setValueWhite}
-            onSelect={(option) => setValueWhite(option.value)}
-            placeholder="Rechercher..."
+            onChange={(selected) => setValueWhite(selected.value)}
+            placeholder="Search..."
           />
         </VStack>
 
@@ -369,9 +378,8 @@ export const BackgroundVariants: Story = {
           <SelectAutocomplete
             options={basicOptions}
             value={valueBlack}
-            onChange={setValueBlack}
-            onSelect={(option) => setValueBlack(option.value)}
-            placeholder="Rechercher..."
+            onChange={(selected) => setValueBlack(selected.value)}
+            placeholder="Search..."
           />
         </VStack>
 
@@ -380,9 +388,8 @@ export const BackgroundVariants: Story = {
           <SelectAutocomplete
             options={basicOptions}
             value={valueGrey}
-            onChange={setValueGrey}
-            onSelect={(option) => setValueGrey(option.value)}
-            placeholder="Rechercher..."
+            onChange={(selected) => setValueGrey(selected.value)}
+            placeholder="Search..."
           />
         </VStack>
       </VStack>
@@ -413,7 +420,7 @@ export const States: Story = {
               options={basicOptions}
               value={value1}
               onChange={setValue1}
-              onSelect={(option) => setValue1(option.value)}
+              onChange={(selected) => setValue1(selected.value)}
               placeholder="Search..."
             />
           </VStack>
@@ -424,7 +431,7 @@ export const States: Story = {
               options={basicOptions}
               value={value2}
               onChange={setValue2}
-              onSelect={(option) => setValue2(option.value)}
+              onChange={(selected) => setValue2(selected.value)}
               placeholder="Search..."
             />
           </VStack>
@@ -435,7 +442,7 @@ export const States: Story = {
               options={basicOptions}
               value={value3}
               onChange={setValue3}
-              onSelect={(option) => setValue3(option.value)}
+              onChange={(selected) => setValue3(selected.value)}
               placeholder="Search..."
               disabled
             />
@@ -477,11 +484,11 @@ export const WithFilterFunction: Story = {
           <SelectAutocomplete
             {...args}
             value={value}
-            onChange={setValue}
+            onChange={(selected) => setValue(selected.value)}
             filterFunction={customFilter}
             onSelect={(option) => {
               console.log("Selected:", option);
-              setValue(option.label);
+              // Note: onChange already handles the value, onSelect is just for logging
             }}
           />
           <p className="text-sm text-grey-stronger">
@@ -545,10 +552,9 @@ export const WithManyOptionsAndScroll: Story = {
             <SelectAutocomplete
               options={manyOptions}
               value={value}
-              onChange={setValue}
-              onSelect={(option) => {
-                console.log("Selected:", option);
-                setValue(option.value);
+              onChange={(selected) => {
+                console.log("Selected:", selected);
+                setValue(selected.value);
               }}
               placeholder="Search among 25 options..."
               menuMaxHeight="max-h-[40vh]"
@@ -588,11 +594,13 @@ export const WithDebug: Story = {
           <SelectAutocomplete
             {...args}
             value={value}
-            onChange={setValue}
+            onChange={(selected) => {
+              console.log("Selected:", selected);
+              // onChange retourne maintenant un objet { value, label }
+              setValue(selected.value);
+            }}
             onSelect={(option) => {
-              console.log("Selected:", option);
-              // onChange retourne maintenant la value (ID), pas le label
-              setValue(option.value);
+              console.log("Option:", option);
             }}
           />
           <p className="text-sm text-grey-stronger">
