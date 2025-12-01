@@ -419,7 +419,6 @@ export const States: Story = {
             <SelectAutocomplete
               options={basicOptions}
               value={value1}
-              onChange={setValue1}
               onChange={(selected) => setValue1(selected.value)}
               placeholder="Search..."
             />
@@ -430,7 +429,6 @@ export const States: Story = {
             <SelectAutocomplete
               options={basicOptions}
               value={value2}
-              onChange={setValue2}
               onChange={(selected) => setValue2(selected.value)}
               placeholder="Search..."
             />
@@ -441,7 +439,6 @@ export const States: Story = {
             <SelectAutocomplete
               options={basicOptions}
               value={value3}
-              onChange={setValue3}
               onChange={(selected) => setValue3(selected.value)}
               placeholder="Search..."
               disabled

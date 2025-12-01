@@ -26,10 +26,14 @@ export interface StepperProps {
   className?: string
   /** Mode debug pour afficher les logs */
   debug?: boolean
+  /** Permet de rendre les étapes completed cliquables même sans onClick explicite */
+  allowCompletedClick?: boolean
+  /** Callback appelé lors du clic sur une étape completed sans onClick explicite */
+  onStepClick?: (stepIndex: number, step: StepperStep) => void
 }
 
 const Stepper = React.forwardRef<HTMLDivElement, StepperProps>(
-  ({ steps, variant = "normal", className, debug = false }, ref) => {
+  ({ steps, variant = "normal", className, debug = false, allowCompletedClick = false, onStepClick }, ref) => {
     const bg = useBgContext()
 
     // Détermine les variables CSS pour la ligne de connexion selon le variant et l'état
@@ -115,6 +119,20 @@ const Stepper = React.forwardRef<HTMLDivElement, StepperProps>(
           const nextStepState = index < steps.length - 1 ? (steps[index + 1].state || "future") : "future"
           const connectorState = isCompleted || isActive ? state : nextStepState
 
+          // Détermine si l'étape est cliquable
+          const hasExplicitOnClick = Boolean(step.onClick)
+          const isClickableCompleted = allowCompletedClick && isCompleted && !hasExplicitOnClick
+          const isClickable = hasExplicitOnClick || isClickableCompleted
+
+          // Gère le clic : utilise onClick explicite ou onStepClick si disponible
+          const handleClick = () => {
+            if (step.onClick) {
+              step.onClick()
+            } else if (isClickableCompleted && onStepClick) {
+              onStepClick(index, step)
+            }
+          }
+
           return (
             <React.Fragment key={index}>
               {/* Étape */}
@@ -126,12 +144,12 @@ const Stepper = React.forwardRef<HTMLDivElement, StepperProps>(
                     `btn-${variant}`,
                     isCompleted && "stepper-completed",
                     isActive && "stepper-active",
-                    step.onClick && "cursor-pointer",
-                    !step.onClick && "cursor-default"
+                    isClickable && "cursor-pointer",
+                    !isClickable && "cursor-default"
                   )}
                   style={getStepButtonStyle(state, variant, bg)}
-                  onClick={step.onClick}
-                  disabled={!step.onClick}
+                  onClick={isClickable ? handleClick : undefined}
+                  disabled={!isClickable}
                   aria-label={step.title || `Étape ${index + 1}`}
                 >
                   {isCompleted ? (
