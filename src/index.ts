@@ -316,6 +316,8 @@ import type {
 import type {
   FileItem,
   FileBrowserProps,
+  FileBrowserAction,
+  FileBrowserAction,
   DateFilter,
   SortConfig,
   SortField,
@@ -597,6 +599,7 @@ export type {
   LanguageSwitcherProps,
   FileItem,
   FileBrowserProps,
+  FileBrowserAction,
   DateFilter,
   SortConfig,
   SortField,

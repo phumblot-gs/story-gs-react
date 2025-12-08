@@ -26,6 +26,8 @@ export interface FileItem {
 
 export type HeightMode = "auto" | "fill-container" | "max-height";
 
+export type FileBrowserAction = "rename" | "move" | "download" | "share" | "delete";
+
 export interface FileBrowserProps {
   files: FileItem[];
   currentPath: string;
@@ -60,6 +62,9 @@ export interface FileBrowserProps {
   onDateFilterChange?: (filter: string) => void;
   onSortChange?: (sortConfig: SortConfig) => void;
   onSelectionChange?: (selectedItems: FileItem[]) => void;
+  // Action control
+  disabledActions?: FileBrowserAction[];  // Actions grisées (visibles mais non cliquables)
+  hiddenActions?: FileBrowserAction[];    // Actions masquées complètement
 }
 
 export type DateFilter = "all" | "today" | "7days" | "30days" | "thisYear" | "lastYear" | "beforeLastYear";
@@ -111,6 +116,8 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
   onDateFilterChange,
   onSortChange,
   onSelectionChange,
+  disabledActions = [],
+  hiddenActions = [],
 }) => {
   const { t } = useTranslationSafe(translations, language);
   const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
@@ -480,8 +487,32 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
     }
   };
 
+  const getSelectedItems = () => sortedFiles.filter(f => selectedItems.has(f.id));
+  const hasSelection = selectedItems.size > 0;
+
+  // Calculer les actions disponibles, désactivées et masquées
+  const actionConfig = useMemo(() => {
+    const allActions: FileBrowserAction[] = ["rename", "move", "download", "share", "delete"];
+    const disabledSet = new Set(disabledActions);
+    const hiddenSet = new Set(hiddenActions);
+    
+    // Actions disponibles (non masquées)
+    const availableActions = allActions.filter(action => !hiddenSet.has(action));
+    
+    return {
+      availableActions,
+      isDisabled: (action: FileBrowserAction) => disabledSet.has(action) || hiddenSet.has(action),
+      isHidden: (action: FileBrowserAction) => hiddenSet.has(action),
+    };
+  }, [disabledActions, hiddenActions]);
+
   // Actions sur un item
   const handleAction = (action: string, items: FileItem[]) => {
+    // Empêcher l'exécution si l'action est désactivée ou masquée
+    if (actionConfig.isDisabled(action as FileBrowserAction)) {
+      return;
+    }
+
     switch (action) {
       case "rename":
         onRename?.(items);
@@ -500,9 +531,6 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
         break;
     }
   };
-
-  const getSelectedItems = () => sortedFiles.filter(f => selectedItems.has(f.id));
-  const hasSelection = selectedItems.size > 0;
 
   // Gestionnaires drag & drop
   const handleDragEnter = useCallback((e: React.DragEvent) => {
@@ -776,17 +804,31 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
                   })} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem
-                    value="rename"
-                    disabled={selectedItems.size > 1}
-                    className={selectedItems.size > 1 ? "opacity-50 cursor-not-allowed" : ""}
-                  >
-                    {t('fileBrowser.rename')}
-                  </SelectItem>
-                  <SelectItem value="move">{t('fileBrowser.moveTo')}</SelectItem>
-                  <SelectItem value="download">{t('fileBrowser.download')}</SelectItem>
-                  <SelectItem value="share">{t('fileBrowser.share')}</SelectItem>
-                  <SelectItem value="delete">{t('fileBrowser.delete')}</SelectItem>
+                  {actionConfig.availableActions.map((action) => {
+                    // Conserver la logique existante pour rename : désactiver si plusieurs items sélectionnés
+                    // (seulement si rename n'est ni dans hiddenActions ni dans disabledActions)
+                    const isRenameDisabledBySelection = action === "rename" && selectedItems.size > 1;
+                    const isDisabled = actionConfig.isDisabled(action) || isRenameDisabledBySelection;
+                    
+                    const actionLabels: Record<FileBrowserAction, string> = {
+                      rename: t('fileBrowser.rename'),
+                      move: t('fileBrowser.moveTo'),
+                      download: t('fileBrowser.download'),
+                      share: t('fileBrowser.share'),
+                      delete: t('fileBrowser.delete'),
+                    };
+
+                    return (
+                      <SelectItem
+                        key={action}
+                        value={action}
+                        disabled={isDisabled}
+                        className={isDisabled ? "opacity-50 cursor-not-allowed" : ""}
+                      >
+                        {actionLabels[action]}
+                      </SelectItem>
+                    );
+                  })}
                 </SelectContent>
               </Select>
             )}
@@ -916,86 +958,42 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
                     <td className="px-4 py-2">
                       {isHovered && !isDisabled && (
                         <div className="flex items-center justify-end space-x-1">
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="medium"
-                                className="p-0 w-6 h-6"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleAction("rename", [item]);
-                                }}
-                              >
-                                <IconProvider icon="Pencil" size={14} />
-                              </Button>
-                            </TooltipTrigger>
-                            <TooltipContent>{t('fileBrowser.rename')}</TooltipContent>
-                          </Tooltip>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="medium"
-                                className="p-0 w-6 h-6"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleAction("move", [item]);
-                                }}
-                              >
-                                <IconProvider icon="FolderMoved" size={14} />
-                              </Button>
-                            </TooltipTrigger>
-                            <TooltipContent>{t('fileBrowser.moveTo')}</TooltipContent>
-                          </Tooltip>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="medium"
-                                className="p-0 w-6 h-6"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleAction("download", [item]);
-                                }}
-                              >
-                                <IconProvider icon="Download" size={14} />
-                              </Button>
-                            </TooltipTrigger>
-                            <TooltipContent>{t('fileBrowser.download')}</TooltipContent>
-                          </Tooltip>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="medium"
-                                className="p-0 w-6 h-6"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleAction("share", [item]);
-                                }}
-                              >
-                                <IconProvider icon="Share" size={14} />
-                              </Button>
-                            </TooltipTrigger>
-                            <TooltipContent>{t('fileBrowser.share')}</TooltipContent>
-                          </Tooltip>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="medium"
-                                className="p-0 w-6 h-6"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleAction("delete", [item]);
-                                }}
-                              >
-                                <IconProvider icon="Trash" size={14} />
-                              </Button>
-                            </TooltipTrigger>
-                            <TooltipContent>{t('fileBrowser.delete')}</TooltipContent>
-                          </Tooltip>
+                          {actionConfig.availableActions.map((action) => {
+                            const isActionDisabled = actionConfig.isDisabled(action);
+                            
+                            const actionConfigs: Record<FileBrowserAction, { icon: IconName; tooltip: string }> = {
+                              rename: { icon: "Pencil", tooltip: t('fileBrowser.rename') },
+                              move: { icon: "FolderMoved", tooltip: t('fileBrowser.moveTo') },
+                              download: { icon: "Download", tooltip: t('fileBrowser.download') },
+                              share: { icon: "Share", tooltip: t('fileBrowser.share') },
+                              delete: { icon: "Trash", tooltip: t('fileBrowser.delete') },
+                            };
+
+                            const config = actionConfigs[action];
+
+                            return (
+                              <Tooltip key={action}>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    size="medium"
+                                    className="p-0 w-6 h-6"
+                                    disabled={isActionDisabled}
+                                    aria-disabled={isActionDisabled}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      if (!isActionDisabled) {
+                                        handleAction(action, [item]);
+                                      }
+                                    }}
+                                  >
+                                    <IconProvider icon={config.icon} size={14} />
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>{config.tooltip}</TooltipContent>
+                              </Tooltip>
+                            );
+                          })}
                         </div>
                       )}
                     </td>
