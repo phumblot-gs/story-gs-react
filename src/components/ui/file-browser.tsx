@@ -1023,7 +1023,13 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
                 <span>{t('fileBrowser.loading')}</span>
               </span>
             ) : (
-              t('fileBrowser.showMoreItems')
+              (() => {
+                // Calculer le nombre d'éléments restants à charger
+                const remainingCount = totalFiles !== null && totalFiles !== undefined
+                  ? totalFiles - sortedFiles.length  // Nombre exact restant si totalFiles est connu
+                  : maxFilesLimit - sortedFiles.length;  // Nombre maximum restant sinon
+                return t('fileBrowser.showMoreItems', { count: formatNumber(remainingCount) });
+              })()
             )}
           </Button>
         </div>
