@@ -115,6 +115,139 @@ export const componentTranslations: TranslationMap = {
     IT: "sfoglia file",
     DE: "Dateien durchsuchen"
   },
+  "fileBrowser.showMoreItems": {
+    EN: "Show {count} more items",
+    FR: "Afficher {count} élément{plural} supplémentaire{plural}",
+    ES: "Mostrar {count} elemento{plural} más",
+    IT: "Mostra {count} elemento{plural} in più",
+    DE: "{count} weitere Elemente anzeigen"
+  },
+  "fileBrowser.noFiles": {
+    EN: "No files",
+    FR: "Aucun fichier",
+    ES: "Sin archivos",
+    IT: "Nessun file",
+    DE: "Keine Dateien"
+  },
+  "fileBrowser.filesLimitReached": {
+    EN: "{count} files (limit reached)",
+    FR: "{count} fichier{plural} (limite atteinte)",
+    ES: "{count} archivo{plural} (límite alcanzado)",
+    IT: "{count} file{plural} (limite raggiunto)",
+    DE: "{count} Dateien (Limit erreicht)"
+  },
+  "fileBrowser.filesAndMore": {
+    EN: "{count} files and more...",
+    FR: "{count} fichier{plural} et plus...",
+    ES: "{count} archivo{plural} y más...",
+    IT: "{count} file{plural} e altro...",
+    DE: "{count} Dateien und mehr..."
+  },
+  "fileBrowser.filesCount": {
+    EN: "{count} file",
+    FR: "{count} fichier",
+    ES: "{count} archivo",
+    IT: "{count} file",
+    DE: "{count} Datei"
+  },
+  "fileBrowser.filesCount_plural": {
+    EN: "{count} files",
+    FR: "{count} fichiers",
+    ES: "{count} archivos",
+    IT: "{count} file",
+    DE: "{count} Dateien"
+  },
+  "fileBrowser.limitWarning": {
+    EN: "The maximum limit of {limit} files has been reached. Use filters to refine your search.",
+    FR: "La limite maximale de {limit} fichiers a été atteinte. Utilisez les filtres pour affiner votre recherche.",
+    ES: "Se ha alcanzado el límite máximo de {limit} archivos. Use filtros para refinar su búsqueda.",
+    IT: "È stato raggiunto il limite massimo di {limit} file. Utilizza i filtri per affinare la ricerca.",
+    DE: "Das maximale Limit von {limit} Dateien wurde erreicht. Verwenden Sie Filter, um Ihre Suche zu verfeinern."
+  },
+  "fileBrowser.noFilesInFolder": {
+    EN: "No files in this folder",
+    FR: "Aucun fichier dans ce dossier",
+    ES: "No hay archivos en esta carpeta",
+    IT: "Nessun file in questa cartella",
+    DE: "Keine Dateien in diesem Ordner"
+  },
+  "fileBrowser.dateFilter.all": {
+    EN: "All",
+    FR: "Tous",
+    ES: "Todos",
+    IT: "Tutti",
+    DE: "Alle"
+  },
+  "fileBrowser.dateFilter.today": {
+    EN: "Today",
+    FR: "Aujourd'hui",
+    ES: "Hoy",
+    IT: "Oggi",
+    DE: "Heute"
+  },
+  "fileBrowser.dateFilter.last7Days": {
+    EN: "Last 7 days",
+    FR: "7 derniers jours",
+    ES: "Últimos 7 días",
+    IT: "Ultimi 7 giorni",
+    DE: "Letzte 7 Tage"
+  },
+  "fileBrowser.dateFilter.last30Days": {
+    EN: "Last 30 days",
+    FR: "30 derniers jours",
+    ES: "Últimos 30 días",
+    IT: "Ultimi 30 giorni",
+    DE: "Letzte 30 Tage"
+  },
+  "fileBrowser.dateFilter.thisYear": {
+    EN: "This year ({year})",
+    FR: "Cette année ({year})",
+    ES: "Este año ({year})",
+    IT: "Quest'anno ({year})",
+    DE: "Dieses Jahr ({year})"
+  },
+  "fileBrowser.dateFilter.lastYear": {
+    EN: "Last year ({year})",
+    FR: "Année dernière ({year})",
+    ES: "Año pasado ({year})",
+    IT: "Anno scorso ({year})",
+    DE: "Letztes Jahr ({year})"
+  },
+  "fileBrowser.dateFilter.beforeYear": {
+    EN: "Before {year}",
+    FR: "Avant {year}",
+    ES: "Antes de {year}",
+    IT: "Prima del {year}",
+    DE: "Vor {year}"
+  },
+  "fileBrowser.dropToImport": {
+    EN: "Drop to import into {folder}",
+    FR: "Déposer pour importer dans {folder}",
+    ES: "Soltar para importar en {folder}",
+    IT: "Rilascia per importare in {folder}",
+    DE: "Zum Importieren in {folder} ablegen"
+  },
+  "fileBrowser.newFolder": {
+    EN: "New folder",
+    FR: "Nouveau dossier",
+    ES: "Nueva carpeta",
+    IT: "Nuova cartella",
+    DE: "Neuer Ordner"
+  },
+  "fileBrowser.importFiles": {
+    EN: "Import files",
+    FR: "Importer des fichiers",
+    ES: "Importar archivos",
+    IT: "Importa file",
+    DE: "Dateien importieren"
+  },
+  "fileBrowser.importFolders": {
+    EN: "Import folders",
+    FR: "Importer des dossiers",
+    ES: "Importar carpetas",
+    IT: "Importa cartelle",
+    DE: "Ordner importieren"
+  },
 
   // FolderBrowser
   "folderBrowser.rootFolder": {

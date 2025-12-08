@@ -19,7 +19,8 @@ import {
   SelectValue,
 } from "./components/ui/select";
 import { SelectAutocomplete } from "./components/ui/select-autocomplete";
-import type { SelectAutocompleteOption } from "./components/ui/select-autocomplete";
+import type { SelectAutocompleteOption, SelectedOption } from "./components/ui/select-autocomplete";
+import type { LinkProps } from "./components/ui/link";
 import { Input } from "./components/ui/input";
 import { InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator } from "./components/ui/input-otp";
 import { Search } from "./components/ui/search";
