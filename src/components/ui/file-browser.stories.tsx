@@ -1,7 +1,7 @@
 import React from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { fn } from "storybook/test";
-import { FileBrowser, type FileItem } from "./file-browser";
+import { FileBrowser, type FileItem, type FileBrowserAction } from "./file-browser";
 
 const meta: Meta<typeof FileBrowser> = {
   title: "Components/FileBrowser",
@@ -62,6 +62,14 @@ const meta: Meta<typeof FileBrowser> = {
     maxFilesLimit: {
       control: "number",
       description: "Limite maximale de fichiers",
+    },
+    disabledActions: {
+      control: "object",
+      description: "Actions désactivées (grisées mais visibles)",
+    },
+    hiddenActions: {
+      control: "object",
+      description: "Actions masquées complètement",
     },
   },
   args: {
@@ -682,6 +690,42 @@ export const InteractivePagination: Story = {
     docs: {
       description: {
         story: "Pagination interactive : Cliquez sur 'Afficher les éléments suivants' pour charger plus de fichiers par lots de 500. Le total est de 5432 fichiers.",
+      },
+    },
+  },
+};
+
+export const WithDisabledActions: Story = {
+  args: {
+    files: mockFiles,
+    currentPath: "/",
+    labelRootFolder: "Mes fichiers",
+    showUploadButton: true,
+    debug: false,
+    disabledActions: ["rename", "move", "share", "delete"] as FileBrowserAction[],
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: "Actions désactivées : rename, move, share et delete sont grisées (visibles mais non cliquables) dans le menu déroulant et les boutons d'actions des lignes. Seule l'action download reste active.",
+      },
+    },
+  },
+};
+
+export const WithHiddenActions: Story = {
+  args: {
+    files: mockFiles,
+    currentPath: "/",
+    labelRootFolder: "Mes fichiers",
+    showUploadButton: true,
+    debug: false,
+    hiddenActions: ["share"] as FileBrowserAction[],
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: "Action masquée : share est complètement masquée dans le menu déroulant et les boutons d'actions des lignes. Les autres actions (rename, move, download, delete) restent visibles et actives.",
       },
     },
   },
