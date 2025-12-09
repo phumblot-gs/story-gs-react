@@ -8,6 +8,10 @@ import { Button } from "./components/ui/button";
 import { ButtonMenu } from "./components/ui/button-menu";
 import { ButtonMenuStatus } from "./components/ui/button-menu-status";
 import { ButtonMenuSmall } from "./components/ui/button-menu-small";
+import { ButtonThumbnailStars } from "./components/ui/button-thumbnail-stars";
+import { ButtonThumbnailTags } from "./components/ui/button-thumbnail-tags";
+import { ButtonThumbnailLabels } from "./components/ui/button-thumbnail-labels";
+import { ButtonThumbnailComments } from "./components/ui/button-thumbnail-comments";
 import { ButtonPlus } from "./components/ui/button-plus";
 import { LanguageSwitcher } from "./components/ui/language-switcher";
 import { FileBrowser } from "./components/ui/file-browser";
@@ -301,6 +305,25 @@ import type {
 } from "./components/ui/button-menu-small";
 
 import type {
+  ButtonThumbnailStarsProps
+} from "./components/ui/button-thumbnail-stars";
+
+import type {
+  ButtonThumbnailTagsProps,
+  TagsData
+} from "./components/ui/button-thumbnail-tags";
+
+import type {
+  ButtonThumbnailLabelsProps,
+  LabelColor
+} from "./components/ui/button-thumbnail-labels";
+
+import type {
+  ButtonThumbnailCommentsProps,
+  CommentData
+} from "./components/ui/button-thumbnail-comments";
+
+import type {
   ButtonPlusProps
 } from "./components/ui/button-plus";
 
@@ -316,7 +339,6 @@ import type {
 import type {
   FileItem,
   FileBrowserProps,
-  FileBrowserAction,
   FileBrowserAction,
   DateFilter,
   SortConfig,
@@ -372,6 +394,10 @@ export { Link } from "./components/ui/link";
 export { ButtonMenu };
 export { ButtonMenuStatus };
 export { ButtonMenuSmall };
+export { ButtonThumbnailStars };
+export { ButtonThumbnailTags };
+export { ButtonThumbnailLabels };
+export { ButtonThumbnailComments };
 export { ButtonPlus };
 export { LanguageSwitcher };
 export { FileBrowser };
@@ -592,6 +618,13 @@ export type {
   ButtonMenuStatusProps,
   ButtonMenuSmallProps,
   ButtonMenuSmallItem,
+  ButtonThumbnailStarsProps,
+  ButtonThumbnailTagsProps,
+  TagsData,
+  ButtonThumbnailLabelsProps,
+  LabelColor,
+  ButtonThumbnailCommentsProps,
+  CommentData,
   ButtonPlusProps,
   AvatarSize,
   IconName,
@@ -634,6 +667,8 @@ export type { ModalProps as ModalLayerProps };
 // Export status components
 export * from "./components/ButtonStatus";
 export * from "./components/StatusIndicator";
+export { default as MediaStatus } from "./components/MediaStatus";
+export type { MediaStatusProps } from "./components/MediaStatus";
 
 // Export utilities
 export * from "./utils/mediaStatus";

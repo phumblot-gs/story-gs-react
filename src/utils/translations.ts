@@ -1,6 +1,9 @@
 
 import { format as formatDate } from "date-fns";
-import { fr, enUS, es, it } from "date-fns/locale";
+import { enUS } from "date-fns/locale/en-US";
+import { fr } from "date-fns/locale/fr";
+import { es } from "date-fns/locale/es";
+import { it } from "date-fns/locale/it";
 import { componentTranslations } from './component-translations';
 
 // Type for translation entries

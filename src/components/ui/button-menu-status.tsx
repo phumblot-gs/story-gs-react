@@ -25,6 +25,8 @@ export interface ButtonMenuStatusProps extends Omit<ToggleProps, "onClick" | "is
   statusOptions: ButtonMenuStatusOption[]
   /** Callback called when the button is clicked */
   onClick?: React.MouseEventHandler<HTMLButtonElement>
+  /** Callback called when a status is selected from the menu */
+  onStatusChange?: (status: MediaStatusEnum) => void
   /** Callback called when the button receives focus */
   onFocus?: React.FocusEventHandler<HTMLButtonElement>
   /** Callback called when the button loses focus */
@@ -133,6 +135,7 @@ export const ButtonMenuStatus = React.forwardRef<HTMLButtonElement, ButtonMenuSt
       className,
       disabled,
       onClick,
+      onStatusChange,
       onFocus,
       onBlur,
       open: openProp,
@@ -280,6 +283,7 @@ export const ButtonMenuStatus = React.forwardRef<HTMLButtonElement, ButtonMenuSt
                   if (debug) {
                     console.log("[ButtonMenuStatus] Status clicked:", option.status, option.label)
                   }
+                  onStatusChange?.(option.status)
                   handleOpenChange(false)
                 }}
               >

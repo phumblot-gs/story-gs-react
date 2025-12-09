@@ -2,7 +2,7 @@
 import React from "react";
 import { MediaStatus as MediaStatusEnum, getMediaStatusColorClass } from "@/utils/mediaStatus";
 
-interface MediaStatusProps {
+export interface MediaStatusProps {
   status: MediaStatusEnum;
   className?: string;
   width?: number;

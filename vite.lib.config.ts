@@ -159,6 +159,7 @@ export default defineConfig({
         'tailwind-merge',
         'cmdk',
         'date-fns',
+        /^date-fns\/locale/,
         'embla-carousel-react',
         'input-otp',
         'lucide-react',
