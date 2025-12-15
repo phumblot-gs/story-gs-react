@@ -17,7 +17,7 @@ export const renderIcon = (
     case "Check":
       return <CustomIcons.CustomCheckIcon />;
     case "X":
-      return <CustomIcons.CustomXIcon />;
+      return <CustomIcons.CustomXIcon size={size} />;
     case "Alert":
       return <CustomIcons.CustomAlertIcon />;
     case "Status":

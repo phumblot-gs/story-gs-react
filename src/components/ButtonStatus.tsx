@@ -68,15 +68,23 @@ export const ButtonStatus: React.FC<ButtonStatusProps> = ({
   // Get size classes
   const sizeClasses = sizeVariants({ size });
   
-  // Icon size is always 12px regardless of button size
-  const iconSize = 12;
+  // Calculate icon size based on button size
+  const iconSize = size === "small" ? 8 : size === "large" ? 16 : 12;
+  
+  // Icon size classes based on button size
+  const iconSizeClasses = size === "small" 
+    ? "[&_svg]:w-[8px] [&_svg]:h-[8px]" 
+    : size === "large" 
+    ? "[&_svg]:w-[16px] [&_svg]:h-[16px]" 
+    : "[&_svg]:w-[12px] [&_svg]:h-[12px]";
   
   return (
     <div className="relative">
       <Button
         className={cn(
-          "relative rounded-full flex items-center justify-center font-light transition-colors duration-200 p-0 [&_svg]:w-[12px] [&_svg]:h-[12px]",
+          "relative rounded-full flex items-center justify-center font-light transition-colors duration-200 p-0",
           sizeClasses,
+          iconSizeClasses,
           "relative transition-colors",
           // Default state
           `[&_svg]:${statusColorClass}`,

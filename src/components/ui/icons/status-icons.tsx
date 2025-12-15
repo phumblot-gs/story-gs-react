@@ -14,8 +14,8 @@ export const CustomCheckIcon = () => (
   </svg>
 )
 
-export const CustomXIcon = () => (
-  <svg width="12" height="12" viewBox="0 0 10 10" preserveAspectRatio="xMidYMid meet" fill="none" xmlns="http://www.w3.org/2000/svg">
+export const CustomXIcon = ({ size = 12 }) => (
+  <svg width={size} height={size} viewBox="0 0 10 10" preserveAspectRatio="xMidYMid meet" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M9.25911 0.740906L0.740906 9.25911" stroke="currentColor" strokeWidth="0.5" strokeMiterlimit="10" strokeLinecap="round"/>
     <path d="M0.740906 0.740906L9.25911 9.25911" stroke="currentColor" strokeWidth="0.5" strokeMiterlimit="10" strokeLinecap="round"/>
   </svg>
