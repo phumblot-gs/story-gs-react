@@ -18,10 +18,12 @@ try {
   }
 } catch (error) {
   if (error.code === 'ENOENT') {
+    // Package non trouvé, ce n'est pas une erreur critique
     console.log('⚠️  Package @tmcp/session-manager not found, skipping patch');
   } else {
-    console.error('❌ Error applying patch:', error.message);
-    process.exit(1);
+    // Autre erreur, on log mais on n'interrompt pas l'installation
+    console.warn('⚠️  Warning: Could not apply patch to @tmcp/session-manager:', error.message);
   }
+  // Ne pas faire process.exit(1) pour ne pas bloquer l'installation
 }
 

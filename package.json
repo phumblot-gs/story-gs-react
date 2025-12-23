@@ -1,6 +1,6 @@
 {
   "name": "@gs/gs-components-library",
-  "version": "1.7.3",
+  "version": "1.7.4",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -15,7 +15,7 @@
     "storybook:serve": "storybook dev -p 8080 --host 0.0.0.0 --no-open",
     "build-storybook": "storybook build",
     "prepublishOnly": "npm run build:lib",
-    "postinstall": "patch-package || node scripts/apply-mcp-patch.cjs"
+    "postinstall": "patch-package 2>/dev/null || node scripts/apply-mcp-patch.cjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
@@ -223,7 +223,8 @@
     "./style.css": "./dist/style.css"
   },
   "files": [
-    "dist"
+    "dist",
+    "scripts"
   ],
   "sideEffects": [
     "*.css"
