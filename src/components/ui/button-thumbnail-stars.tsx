@@ -147,6 +147,7 @@ export const ButtonThumbnailStars = React.forwardRef<HTMLButtonElement, ButtonTh
     // - large: p-0 w-8 h-8 + icon size={14}
     const buttonSizeClasses = size === "small" ? "p-1 w-5 h-4" : size === "large" ? "p-0 w-10 h-8" : "p-0 w-8 h-6"
     const iconSize = size === "small" ? 10 : size === "large" ? 14 : 12
+    const gapClass = size === "small" ? "gap-[1px]" : size === "large" ? "gap-[3px]" : "gap-[2px]"
 
     // Créer les actions prédéfinies (0 à 5 étoiles)
     const starActions = React.useMemo(() => {
@@ -174,7 +175,7 @@ export const ButtonThumbnailStars = React.forwardRef<HTMLButtonElement, ButtonTh
         return <Icon name="Star" size={iconSize} />
       }
       return (
-        <div className="flex items-center gap-[2px] text-yellow">
+        <div className={cn("flex items-center text-yellow", gapClass)}>
           {Array.from({ length: count }).map((_, index) => (
             <Icon key={index} name="StarFilled" size={iconSize} />
           ))}
