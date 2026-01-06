@@ -10,13 +10,25 @@ export interface SearchProps extends Omit<React.InputHTMLAttributes<HTMLInputEle
   containerClassName?: string
 }
 
-const Search = React.forwardRef<HTMLInputElement, SearchProps>(
+const Search = React.forwardRef<HTMLInputElement | HTMLTextAreaElement, SearchProps>(
   ({ className, containerClassName, disabled, value, defaultValue, onClear, ...props }, ref) => {
     const bg = useBgContext()
     const [internalValue, setInternalValue] = React.useState(defaultValue || "")
     const [isFocused, setIsFocused] = React.useState(false)
     const currentValue = value !== undefined ? value : internalValue
     const hasValue = Boolean(currentValue)
+    // Détecter tous les types de retours à la ligne : \n, \r\n, \r
+    const hasNewlines = typeof currentValue === 'string' && /\r\n|\r|\n/.test(currentValue)
+    const inputRef = React.useRef<HTMLInputElement>(null)
+    const textareaRef = React.useRef<HTMLTextAreaElement>(null)
+    
+    // Exposer le ref approprié
+    React.useImperativeHandle(ref, () => {
+      if (hasNewlines && textareaRef.current) {
+        return textareaRef.current as any
+      }
+      return inputRef.current as any
+    }, [hasNewlines])
 
     // Styles basés sur le Select - même logique avec ajustement selon bg
     const getBackgroundStyles = () => {
@@ -68,65 +80,147 @@ const Search = React.forwardRef<HTMLInputElement, SearchProps>(
       onClear?.()
     }
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => {
       if (value === undefined) {
         setInternalValue(e.target.value)
       }
-      props.onChange?.(e)
+      // Type assertion pour compatibilité avec les deux types d'événements
+      props.onChange?.(e as React.ChangeEvent<HTMLInputElement>)
+    }
+    
+    // Intercepter le collage pour détecter les retours à la ligne avant qu'ils ne soient supprimés
+    const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+      const pastedText = e.clipboardData.getData('text')
+      
+      // Détecter les retours à la ligne dans le texte collé
+      if (/\r\n|\r|\n/.test(pastedText)) {
+        e.preventDefault()
+        
+        // Obtenir la position du curseur
+        const input = e.currentTarget
+        const start = input.selectionStart || 0
+        const end = input.selectionEnd || 0
+        const currentText = typeof currentValue === 'string' ? currentValue : ''
+        
+        // Construire la nouvelle valeur avec le texte collé
+        const newValue = currentText.slice(0, start) + pastedText + currentText.slice(end)
+        
+        // Mettre à jour la valeur
+        if (value === undefined) {
+          setInternalValue(newValue)
+        }
+        
+        // Créer un événement de changement synthétique
+        const syntheticEvent = {
+          ...e,
+          target: { ...input, value: newValue },
+          currentTarget: { ...input, value: newValue }
+        } as React.ChangeEvent<HTMLInputElement>
+        
+        props.onChange?.(syntheticEvent)
+        
+        // Basculer vers textarea en forçant le re-render
+        // Le hasNewlines sera mis à jour automatiquement avec la nouvelle valeur
+        setTimeout(() => {
+          if (textareaRef.current) {
+            textareaRef.current.focus()
+            // Positionner le curseur à la fin du texte collé
+            const newCursorPos = start + pastedText.length
+            textareaRef.current.setSelectionRange(newCursorPos, newCursorPos)
+          }
+        }, 0)
+      } else {
+        // Pas de retours à la ligne, laisser le comportement par défaut
+        props.onPaste?.(e)
+      }
     }
 
-    const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    const handleFocus = (e: React.FocusEvent<HTMLInputElement> | React.FocusEvent<HTMLTextAreaElement>) => {
       setIsFocused(true)
-      props.onFocus?.(e)
+      props.onFocus?.(e as React.FocusEvent<HTMLInputElement>)
     }
 
-    const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    const handleBlur = (e: React.FocusEvent<HTMLInputElement> | React.FocusEvent<HTMLTextAreaElement>) => {
       setIsFocused(false)
-      props.onBlur?.(e)
+      props.onBlur?.(e as React.FocusEvent<HTMLInputElement>)
     }
+    
+    // Styles communs pour input et textarea
+    const commonStyles = cn(
+      // Base styles - même que Select avec rounded-full
+      "flex items-center rounded-full border py-1",
+      "text-sm font-light transition-colors duration-200",
+      "focus:outline-none focus:ring-0",
+      "disabled:cursor-not-allowed disabled:opacity-50",
+      "placeholder:text-grey-strongest",
+      // Padding - toujours pr-6 pour éviter le changement de taille quand le bouton clear apparaît
+      "pl-6 pr-6",
+      getBackgroundStyles(),
+      className
+    )
+    
+    // Styles spécifiques pour textarea
+    const textareaStyles = cn(
+      commonStyles,
+      "rounded-lg", // Pas rounded-full pour textarea
+      "min-h-[2rem] max-h-[10rem] resize-none overflow-y-auto",
+      "items-start py-1", // Ajustement du padding vertical
+      "w-[172px]"
+    )
 
     return (
       <div className={cn("relative w-fit", containerClassName)}>
         {/* Icône Search */}
         <div
           className={cn(
-            "absolute top-1/2 -translate-y-1/2 pointer-events-none rounded-full transition-colors duration-200 z-10",
+            "absolute pointer-events-none rounded-full transition-colors duration-200 z-10",
             "flex items-center justify-center",
             "w-4 h-4 left-[5px]",
+            hasNewlines ? "top-1" : "top-1/2 -translate-y-1/2",
             getSearchIconColor()
           )}
         >
           <Icon name="Search" size={12} />
         </div>
         
-        <input
-          type="search"
-          value={currentValue}
-          className={cn(
-            // Base styles - même que Select avec rounded-full
-            "flex h-6 items-center rounded-full border py-1",
-            "text-sm font-light transition-colors duration-200",
-            "focus:outline-none focus:ring-0",
-            "disabled:cursor-not-allowed disabled:opacity-50",
-            "placeholder:text-grey-strongest",
-            // Masquer le bouton clear natif du navigateur
-            "[&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden",
-            // Padding - toujours pr-6 pour éviter le changement de taille quand le bouton clear apparaît
-            "pl-6 pr-6",
-            getBackgroundStyles(),
-            className
-          )}
-          ref={ref}
-          disabled={disabled}
-          onChange={handleChange}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
-          {...props}
-        />
+        {hasNewlines ? (
+          <textarea
+            value={currentValue}
+            className={textareaStyles}
+            ref={textareaRef}
+            disabled={disabled}
+            onChange={handleChange}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            rows={Math.max(1, Math.min((currentValue as string).split(/\r\n|\r|\n/).length, 10))}
+            {...(props as React.TextareaHTMLAttributes<HTMLTextAreaElement>)}
+          />
+        ) : (
+          <input
+            type="search"
+            value={currentValue}
+            className={cn(
+              commonStyles,
+              "h-6",
+              // Masquer le bouton clear natif du navigateur
+              "[&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden"
+            )}
+            ref={inputRef}
+            disabled={disabled}
+            onChange={handleChange}
+            onPaste={handlePaste}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            {...props}
+          />
+        )}
         
         {/* Bouton clear positionné en absolu par rapport au wrapper */}
         {hasValue && !disabled && (
-          <div className="absolute top-1/2 -translate-y-1/2 right-1 flex items-center justify-center z-10">
+          <div className={cn(
+            "absolute right-1 flex items-center justify-center z-10",
+            hasNewlines ? "top-1" : "top-1/2 -translate-y-1/2"
+          )}>
             <Button
               type="button"
               variant="ghost"
