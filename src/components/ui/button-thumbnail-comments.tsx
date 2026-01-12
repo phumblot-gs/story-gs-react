@@ -89,6 +89,13 @@ export interface ButtonThumbnailCommentsProps extends Omit<ToggleProps, "onClick
    * Par défaut : `"start"` (menu aligné à gauche)
    */
   menuAlign?: "start" | "center" | "end"
+  /**
+   * Indique s'il y a des annotations.
+   * Si `true`, le bouton affichera l'indicateur visuel même s'il n'y a pas de commentaires.
+   * 
+   * Par défaut : `false`
+   */
+  hasAnnotations?: boolean
 }
 
 export const ButtonThumbnailComments = React.forwardRef<HTMLButtonElement, ButtonThumbnailCommentsProps>(
@@ -108,6 +115,7 @@ export const ButtonThumbnailComments = React.forwardRef<HTMLButtonElement, Butto
       menuMaxHeight = "max-h-[calc(100vh-2rem)]",
       menuSide = "bottom",
       menuAlign = "start",
+      hasAnnotations = false,
       ...buttonProps
     },
     ref
@@ -167,8 +175,8 @@ export const ButtonThumbnailComments = React.forwardRef<HTMLButtonElement, Butto
       return value.filter((comment) => comment.type === "Comment").length
     }, [value])
 
-    // Vérifier s'il y a au moins un commentaire de type "Comment"
-    const hasComments = commentCount > 0
+    // Vérifier s'il y a au moins un commentaire de type "Comment" ou des annotations
+    const hasComments = commentCount > 0 || hasAnnotations
 
     // Gérer l'ajout d'un commentaire
     const handleAddComment = React.useCallback(
