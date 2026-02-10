@@ -141,3 +141,109 @@ input[type="search"]::-webkit-search-decoration {
   appearance: none;
   display: none;
 }
+
+/* Surcharges menuBgContext white/grey : hover = selected = fond noir, texte blanc (après Tailwind pour battre focus:bg-accent) */
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu[data-highlighted],
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu[data-highlighted="true"],
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu:focus,
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu:focus-visible,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu[data-highlighted],
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu[data-highlighted="true"],
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu:focus,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu:focus-visible {
+  background: var(--color-black) !important;
+  color: var(--color-white) !important;
+}
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu[data-highlighted] .label-menu-text,
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu:focus .label-menu-text,
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu:focus-visible .label-menu-text,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu[data-highlighted] .label-menu-text,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu:focus .label-menu-text,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu:focus-visible .label-menu-text {
+  color: var(--color-white) !important;
+}
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu[data-highlighted] > span:last-child,
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu:focus > span:last-child,
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu:focus-visible > span:last-child,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu[data-highlighted] > span:last-child,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu:focus > span:last-child,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu:focus-visible > span:last-child {
+  color: var(--color-white) !important;
+}
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-compact[data-highlighted],
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-compact:focus,
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-compact:focus-visible,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-compact[data-highlighted],
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-compact:focus,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-compact:focus-visible {
+  background: var(--color-black) !important;
+}
+
+/* ButtonThumbnailStars uniquement : sur fond white/grey, hover/selected = fond blanc, texte noir */
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-stars[data-highlighted],
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-stars[data-highlighted="true"],
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-stars:focus,
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-stars:focus-visible,
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-stars[data-selected="true"],
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-stars[data-highlighted],
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-stars[data-highlighted="true"],
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-stars:focus,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-stars:focus-visible,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-stars[data-selected="true"] {
+  background: var(--color-white) !important;
+  color: var(--color-black) !important;
+}
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-stars[data-highlighted] .label-menu-text,
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-stars:focus .label-menu-text,
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-stars[data-selected="true"] .label-menu-text,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-stars[data-highlighted] .label-menu-text,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-stars:focus .label-menu-text,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-stars[data-selected="true"] .label-menu-text {
+  color: var(--color-black) !important;
+}
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-stars[data-highlighted] > span:last-child,
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-stars:focus > span:last-child,
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-stars[data-selected="true"] > span:last-child,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-stars[data-highlighted] > span:last-child,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-stars:focus > span:last-child,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-stars[data-selected="true"] > span:last-child {
+  color: var(--color-black) !important;
+}
+
+/* ButtonThumbnailLabels uniquement : sur fond white/grey, hover/selected = fond blanc, texte noir */
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-highlighted],
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-highlighted="true"],
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-labels:focus,
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-labels:focus-visible,
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"],
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-highlighted],
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-highlighted="true"],
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-labels:focus,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-labels:focus-visible,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"] {
+  background: var(--color-white) !important;
+  color: var(--color-black) !important;
+}
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-highlighted] .label-menu-text,
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-labels:focus .label-menu-text,
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"] .label-menu-text,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-highlighted] .label-menu-text,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-labels:focus .label-menu-text,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"] .label-menu-text {
+  color: var(--color-black) !important;
+}
+
+/* ButtonThumbnailLabels avec menuBgContext black : hover/selected = fond noir, texte blanc (après Tailwind) */
+.popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-highlighted],
+.popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-highlighted="true"],
+.popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-labels:focus,
+.popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-labels:focus-visible,
+.popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"] {
+  background: var(--color-black) !important;
+  color: var(--color-white) !important;
+}
+.popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-highlighted] .label-menu-text,
+.popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-labels:focus .label-menu-text,
+.popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"] .label-menu-text {
+  color: var(--color-white) !important;
+}

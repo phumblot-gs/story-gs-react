@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { useBgContext } from "@/components/layout/BgContext"
 import { useIsInActionBar } from "@/components/layout/ActionBar"
-import { VStack, HStack } from "@/components/layout"
+import { VStack } from "@/components/layout"
 import { cn } from "@/lib/utils"
 import { Icon } from "@/components/ui/icons"
 import { TagText } from "@/components/ui/tag-text"
@@ -230,6 +230,7 @@ export const ButtonThumbnailTags = React.forwardRef<HTMLButtonElement, ButtonThu
             onFocus={onFocus}
             onBlur={onBlur}
             {...buttonProps}
+            data-open={isOpen ? "true" : "false"}
           >
             {buttonContent}
           </Toggle>

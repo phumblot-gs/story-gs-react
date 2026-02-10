@@ -10,11 +10,12 @@ import { useBgContext } from "@/components/layout/BgContext"
 import { useIsInActionBar } from "@/components/layout/ActionBar"
 import { VStack } from "@/components/layout"
 import { cn } from "@/lib/utils"
+import { useTranslationSafe, TranslationMap } from "@/contexts/TranslationContext"
 
-export type LabelColor = "blue" | "green" | "orange" | "pink" | "purple" | "red" | "yellow" | "white" | null
+export type LabelColor = "blue" | "green" | "orange" | "pink" | "purple" | "red" | "yellow" | "white" | "transparent"
 
 export interface ButtonThumbnailLabelsProps extends Omit<ToggleProps, "onClick" | "isActive" | "value"> {
-  /** Couleur du label sélectionnée (null pour transparent) */
+  /** Couleur du label sélectionnée */
   value?: LabelColor
   /** Callback appelé lorsqu'une couleur est sélectionnée */
   onClick?: (value: LabelColor) => void
@@ -22,6 +23,23 @@ export interface ButtonThumbnailLabelsProps extends Omit<ToggleProps, "onClick" 
   onFocus?: React.FocusEventHandler<HTMLButtonElement>
   /** Callback appelé lorsque le bouton perd le focus */
   onBlur?: React.FocusEventHandler<HTMLButtonElement>
+  /**
+   * Mode d'affichage du menu
+   * - `false` (défaut) : Menu normal avec labels à côté des couleurs
+   * - `true` : Menu compact (grille 3x3 sans labels)
+   */
+  compact?: boolean
+  /**
+   * Traductions personnalisées pour les noms de couleurs
+   * Format : { [key]: { FR: string, EN: string, ... } }
+   * Clés disponibles : 'label.none', 'label.blue', 'label.green', 'label.orange', 'label.pink', 'label.purple', 'label.red', 'label.yellow', 'label.white'
+   */
+  translations?: Partial<TranslationMap>
+  /**
+   * Langue personnalisée (code ISO, ex: 'FR', 'EN')
+   * Si non fournie, utilise la langue du TranslationProvider ou 'EN' par défaut
+   */
+  language?: string
   /**
    * État contrôlé d'ouverture du menu.
    * 
@@ -72,30 +90,39 @@ export interface ButtonThumbnailLabelsProps extends Omit<ToggleProps, "onClick" 
    * Par défaut : `"start"` (menu aligné à gauche)
    */
   menuAlign?: "start" | "center" | "end"
+  /**
+   * Contexte de fond forcé pour le menu uniquement.
+   * Si défini, le menu utilise ces couleurs comme s'il était sur ce fond (ex. toujours fond clair).
+   * Le bouton continue d'utiliser le bgContext du parent.
+   */
+  menuBgContext?: "white" | "grey" | "black"
 }
 
 // Définition des couleurs disponibles dans l'ordre de la grille (3x3)
-const LABEL_COLORS: Array<{ value: LabelColor; label: string; cssVar: string }> = [
-  { value: null, label: "Aucune couleur", cssVar: "transparent" }, // Transparent avec bordure pointillée
-  { value: "blue", label: "Bleu", cssVar: "var(--label-blue)" },
-  { value: "green", label: "Vert", cssVar: "var(--label-green)" },
-  { value: "orange", label: "Orange", cssVar: "var(--label-orange)" },
-  { value: "pink", label: "Rose", cssVar: "var(--label-pink)" },
-  { value: "purple", label: "Violet", cssVar: "var(--label-purple)" },
-  { value: "red", label: "Rouge", cssVar: "var(--label-red)" },
-  { value: "yellow", label: "Jaune", cssVar: "var(--color-yellow)" },
-  { value: "white", label: "Blanc", cssVar: "var(--label-white)" },
+const LABEL_COLORS: Array<{ value: LabelColor; translationKey: string; cssVar: string }> = [
+  { value: "transparent", translationKey: "label.none", cssVar: "transparent" }, // Transparent avec bordure pointillée
+  { value: "blue", translationKey: "label.blue", cssVar: "var(--label-blue)" },
+  { value: "green", translationKey: "label.green", cssVar: "var(--label-green)" },
+  { value: "orange", translationKey: "label.orange", cssVar: "var(--label-orange)" },
+  { value: "pink", translationKey: "label.pink", cssVar: "var(--label-pink)" },
+  { value: "purple", translationKey: "label.purple", cssVar: "var(--label-purple)" },
+  { value: "red", translationKey: "label.red", cssVar: "var(--label-red)" },
+  { value: "yellow", translationKey: "label.yellow", cssVar: "var(--color-yellow)" },
+  { value: "white", translationKey: "label.white", cssVar: "var(--label-white)" },
 ]
 
 export const ButtonThumbnailLabels = React.forwardRef<HTMLButtonElement, ButtonThumbnailLabelsProps>(
   (
     {
-      value = null,
+      value = "transparent",
       className,
       disabled,
       onClick,
       onFocus,
       onBlur,
+      compact = false,
+      translations,
+      language,
       open: openProp,
       defaultOpen = false,
       onOpenChange,
@@ -103,6 +130,7 @@ export const ButtonThumbnailLabels = React.forwardRef<HTMLButtonElement, ButtonT
       menuMaxHeight = "max-h-[calc(100vh-2rem)]",
       menuSide = "bottom",
       menuAlign = "start",
+      menuBgContext,
       ...buttonProps
     },
     ref
@@ -110,6 +138,9 @@ export const ButtonThumbnailLabels = React.forwardRef<HTMLButtonElement, ButtonT
     const bg = useBgContext()
     const isInActionBar = useIsInActionBar()
     const [internalOpen, setInternalOpen] = React.useState(defaultOpen)
+    
+    // Utiliser useTranslationSafe pour obtenir la fonction de traduction (pattern aligné avec FileBrowser/FolderBrowser)
+    const { t } = useTranslationSafe(translations, language)
     
     // Extraire size de buttonProps
     const size = buttonProps.size || "medium"
@@ -128,15 +159,17 @@ export const ButtonThumbnailLabels = React.forwardRef<HTMLButtonElement, ButtonT
       [isControlled, onOpenChange]
     )
 
-    // Couleur de fond du menu selon data-bg
+    // Contexte du bouton : suit le parent (pas de data-bg sur le bouton, il hérite)
+    // Contexte du menu : menuBgContext si fourni, sinon même logique qu'avant
     const effectiveBg = isInActionBar ? "white" : bg
-    const getMenuBackgroundClass = () => {
-      switch (effectiveBg) {
+    const menuEffectiveBg = menuBgContext ?? effectiveBg
+    const getMenuBackgroundClass = (menuBg: typeof menuEffectiveBg) => {
+      switch (menuBg) {
         case "white":
         case "grey":
           return "bg-black"
         case "black":
-          return "bg-black-secondary"
+          return "bg-white"
         default:
           return "bg-black"
       }
@@ -168,53 +201,74 @@ export const ButtonThumbnailLabels = React.forwardRef<HTMLButtonElement, ButtonT
       [debug, onClick, handleOpenChange]
     )
 
-    // Rendre une couleur pour le menu
-    const renderColorSwatch = (color: LabelColor, cssVar: string, size: number) => {
-      if (color === null) {
-        // Transparent avec bordure pointillée
-        return (
+    // Rendre une couleur pour le menu. En mode compact : cercle avec fond. En mode normal : rectangle seul (sans disque).
+    const renderColorSwatch = (color: LabelColor, cssVar: string, size: number, isSelected: boolean, compactMode: boolean) => {
+      const colorInnerSize = size
+      const circleSize = 24
+
+      if (color === "transparent") {
+        const transparentRect = (
           <div
-            className="rounded-sm border border-dotted border-white/50"
+            className={`border border-dotted border-adaptive ${isSelected ? "border-black hover:border-black" : "hover:border-black"}`}
             style={{
-              width: `${size}px`,
-              height: `${size * 0.8}px`,
+              width: `${colorInnerSize}px`,
+              height: `${colorInnerSize * 0.7}px`,
               backgroundColor: "transparent",
               borderWidth: "1px",
             }}
           />
         )
+        if (!compactMode) return transparentRect
+        return (
+          <div
+            className={cn(
+              "rounded-full flex items-center justify-center",
+              menuEffectiveBg === "black" ? "bg-grey hover:bg-white" : "bg-black-secondary/50 hover:bg-white",
+              isSelected && "bg-white"
+            )}
+            style={{ width: `${circleSize}px`, height: `${circleSize}px` }}
+          >
+            {transparentRect}
+          </div>
+        )
       }
-      return (
+
+      const colorRect = (
         <div
-          className="rounded-sm border border-transparent"
           style={{
-            width: `${size}px`,
-            height: `${size * 0.8}px`,
+            width: `${colorInnerSize}px`,
+            height: `${colorInnerSize * 0.7}px`,
             backgroundColor: cssVar,
-            borderWidth: "1px",
           }}
         />
+      )
+      if (!compactMode) return colorRect
+      return (
+        <div
+          className={cn(
+            "rounded-full flex items-center justify-center",
+            menuEffectiveBg === "black" ? "bg-grey hover:bg-white" : "bg-black-secondary/50 hover:bg-white",
+            isSelected && "bg-white"
+          )}
+          style={{ width: `${circleSize}px`, height: `${circleSize}px` }}
+        >
+          {colorRect}
+        </div>
       )
     }
 
     // Contenu du bouton (menu fermé) - affiche la couleur actuelle
     const buttonContent = React.useMemo(() => {
       const currentColor = LABEL_COLORS.find((c) => c.value === value)
-      if (!currentColor || currentColor.value === null) {
+      if (!currentColor || currentColor.value === "transparent") {
         // Si pas de couleur définie, afficher transparent avec bordure pointillée
-        // Utiliser une couleur de bordure qui s'adapte au contexte bg
-        const borderColorClass = bg === "black" 
-          ? "border-white/50" 
-          : bg === "grey"
-          ? "border-black/50"
-          : "border-black/50"
-        
+        // La bordure s'adapte automatiquement au hover et à l'état ouvert via CSS
         return (
           <div
-            className={cn("rounded-sm border border-dotted", borderColorClass)}
+            className="border border-dotted border-adaptive"
             style={{
               width: `${colorSize}px`,
-              height: `${colorSize * 0.8}px`,
+              height: `${colorSize * 0.7}px`,
               backgroundColor: "transparent",
               borderWidth: "1px",
             }}
@@ -224,10 +278,10 @@ export const ButtonThumbnailLabels = React.forwardRef<HTMLButtonElement, ButtonT
       // Afficher la couleur sélectionnée sans bordure visible
       return (
         <div
-          className="rounded-sm border border-transparent"
+          className="border border-transparent"
           style={{
             width: `${colorSize}px`,
-            height: `${colorSize * 0.8}px`,
+            height: `${colorSize * 0.7}px`,
             backgroundColor: currentColor.cssVar,
             borderWidth: "1px",
           }}
@@ -259,49 +313,90 @@ export const ButtonThumbnailLabels = React.forwardRef<HTMLButtonElement, ButtonT
             onFocus={onFocus}
             onBlur={onBlur}
             {...buttonProps}
+            data-open={isOpen ? "true" : "false"}
           >
             {buttonContent}
           </Toggle>
         </DropdownMenuTrigger>
         <DropdownMenuContent
           className={cn(
-            "rounded-sm border-0 popup-action overflow-y-auto",
+            "border-0 overflow-y-auto",
             menuMaxHeight,
-            getMenuBackgroundClass()
+            getMenuBackgroundClass(menuEffectiveBg)
           )}
           align={menuAlign}
           side={effectiveMenuSide}
           sideOffset={getSideOffset()}
           collisionPadding={8}
-          data-bg={effectiveBg || undefined}
         >
-          <VStack gap={2} padding={2}>
-            {/* Grille 3x3 des couleurs */}
-            <div className="grid grid-cols-3 gap-2">
-              {LABEL_COLORS.map((colorOption) => (
-                <DropdownMenuItem
-                  key={colorOption.value ?? "transparent"}
-                  disabled={disabled}
-                  className={cn(
-                    "w-full h-auto p-0 text-left rounded-sm cursor-pointer",
-                    "flex items-center justify-center",
-                    "bg-transparent hover:bg-transparent focus:bg-transparent active:bg-transparent",
-                    "data-[highlighted]:bg-transparent",
-                    "data-[disabled]:opacity-50 data-[disabled]:cursor-not-allowed"
-                  )}
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    if (debug) {
-                      console.log("[ButtonThumbnailLabels] Color option clicked:", colorOption.value)
-                    }
-                    handleColorClick(colorOption.value)
-                  }}
-                >
-                  {renderColorSwatch(colorOption.value, colorOption.cssVar, colorSize)}
-                </DropdownMenuItem>
-              ))}
-            </div>
+          <div className="popup-action w-full h-full" data-bg={menuEffectiveBg || undefined}>
+            <VStack gap={2} padding={2}>
+            {compact ? (
+              /* Menu compact : Grille 3x3 des couleurs sans labels */
+              <div className="grid grid-cols-3 gap-2 justify-items-center">
+                {LABEL_COLORS.map((colorOption) => {
+                  const isSelected = value === colorOption.value
+                  return (
+                    <DropdownMenuItem
+                      key={colorOption.value ?? "transparent"}
+                      disabled={disabled}
+                      className={cn(
+                        "w-auto h-auto p-0 rounded-full cursor-pointer",
+                        "flex items-center justify-center",
+                        "popup-action-item popup-action-item-menu popup-action-item-compact popup-action-item-labels",
+                        "bg-transparent",
+                        "data-[disabled]:opacity-50 data-[disabled]:cursor-not-allowed"
+                      )}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        if (debug) {
+                          console.log("[ButtonThumbnailLabels] Color option clicked:", colorOption.value)
+                        }
+                        handleColorClick(colorOption.value)
+                      }}
+                    >
+                      {renderColorSwatch(colorOption.value, colorOption.cssVar, colorSize, isSelected, true)}
+                    </DropdownMenuItem>
+                  )
+                })}
+              </div>
+            ) : (
+              /* Menu normal : Liste verticale avec labels */
+              <VStack gap={2} padding={0}>
+                {LABEL_COLORS.map((colorOption) => {
+                  const isSelected = value === colorOption.value
+                  const labelText = t(colorOption.translationKey)
+                  return (
+                    <DropdownMenuItem
+                      key={colorOption.value ?? "transparent"}
+                      disabled={disabled}
+                      data-selected={isSelected ? "true" : "false"}
+                      className={cn(
+                        "w-full px-4 h-6 text-left text-sm whitespace-nowrap rounded-sm cursor-pointer popup-action-item popup-action-item-menu popup-action-item-labels",
+                        "flex items-center gap-2",
+                        "data-[disabled]:opacity-50 data-[disabled]:cursor-not-allowed"
+                      )}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        if (debug) {
+                          console.log("[ButtonThumbnailLabels] Color option clicked:", colorOption.value)
+                        }
+                        handleColorClick(colorOption.value)
+                      }}
+                    >
+                      <span className="flex-shrink-0 flex items-center justify-center">
+                        {renderColorSwatch(colorOption.value, colorOption.cssVar, colorSize, isSelected, false)}
+                      </span>
+                      <span className="whitespace-nowrap overflow-hidden text-ellipsis flex-1 min-w-0 label-menu-text">
+                        {labelText}
+                      </span>
+                    </DropdownMenuItem>
+                  )
+                })}
+              </VStack>
+            )}
           </VStack>
+          </div>
         </DropdownMenuContent>
       </DropdownMenu>
     )

@@ -60,6 +60,9 @@ export interface SidePanelProps {
   
   /** Mode debug */
   debug?: boolean;
+
+  /** Titre pour l'accessibilité (lecteurs d'écran). Masqué visuellement si fourni. Défaut: "Panneau" */
+  title?: string;
 }
 
 /**
@@ -121,6 +124,7 @@ export function SidePanel({
   className,
   bodyClassName,
   debug = false,
+  title: accessibilityTitle = "Panneau",
 }: SidePanelProps) {
   // Normaliser la largeur
   const normalizedWidth = typeof width === "number" ? `${width}px` : width;
@@ -162,7 +166,9 @@ export function SidePanel({
             ...(topOffset && { height: `calc(100% - ${typeof topOffset === "number" ? `${topOffset}px` : topOffset})` }),
           }}
           data-bg={bg}
+          aria-describedby={undefined}
         >
+          <SheetPrimitive.Title className="sr-only">{accessibilityTitle}</SheetPrimitive.Title>
           <div className="flex flex-col h-full">
             {/* Header */}
             {(showCloseButton || headerContent) && (

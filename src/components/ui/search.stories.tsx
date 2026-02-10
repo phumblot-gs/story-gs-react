@@ -10,11 +10,31 @@ const meta: Meta<typeof Search> = {
     layout: "centered",
     docs: {
       description: {
-        component: "Composant Search avec icône de recherche. S'adapte automatiquement au background du Layout parent (white/grey/black) via BgContext.",
+        component:
+          "Composant Search avec icône de recherche. S'adapte automatiquement au background du Layout parent (white/grey/black) via BgContext. Optionnel : le champ peut s'élargir avec le contenu (growWithContent) avec minWidth/maxWidth.",
       },
     },
   },
   tags: ["autodocs"],
+  argTypes: {
+    growWithContent: {
+      control: "boolean",
+      description:
+        "Si true, le champ s'élargit automatiquement selon le texte saisi (largeur = ligne la plus longue en textarea). Défaut: false.",
+    },
+    minWidth: {
+      control: "text",
+      description: "Largeur minimale (ex: 120, \"8rem\"). Utilisée au démarrage et pour borner la croissance.",
+    },
+    maxWidth: {
+      control: "text",
+      description: "Largeur maximale (ex: 400, \"100%\"). Le champ ne dépasse pas cette largeur quand growWithContent est true.",
+    },
+    maxRows: {
+      control: { type: "number", min: 1, max: 20 },
+      description: "Nombre maximum de lignes affichées en mode textarea (après collage avec retours à la ligne). Défaut: 10.",
+    },
+  },
 };
 
 export default meta;
@@ -105,4 +125,55 @@ export const Sizes: Story = {
       </VStack>
     </Layout>
   ),
+};
+
+export const GrowWithContent: Story = {
+  args: {
+    growWithContent: true,
+    minWidth: 120,
+    maxWidth: 400,
+    placeholder: "Tapez pour voir le champ s'élargir...",
+  },
+  render: (args) => (
+    <Layout bg="white" padding={4}>
+      <VStack gap={4} className="w-full max-w-md">
+        <p className="text-sm text-grey-stronger">
+          Le champ démarre à la largeur min (120px) et s'agrandit avec le texte, sans dépasser 400px.
+        </p>
+        <Search {...args} />
+        <Search
+          growWithContent
+          minWidth={80}
+          maxWidth="100%"
+          placeholder="min 80px, max 100%"
+        />
+      </VStack>
+    </Layout>
+  ),
+};
+
+export const GrowWithContentControlled: Story = {
+  render: () => {
+    const [value, setValue] = useState("");
+    return (
+      <Layout bg="white" padding={4}>
+        <VStack gap={3} className="w-full max-w-md">
+          <Search
+            growWithContent
+            minWidth={120}
+            maxWidth={360}
+            placeholder="Rechercher..."
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+          />
+          {value && (
+            <p className="text-xs text-grey-stronger">
+              Longueur: {value.length} caractères · Ligne la plus longue:{" "}
+              {Math.max(...value.split(/\r\n|\r|\n/).map((l) => l.length))} caractères
+            </p>
+          )}
+        </VStack>
+      </Layout>
+    );
+  },
 };

@@ -612,5 +612,69 @@ export const componentTranslations: TranslationMap = {
     ES: "Deseleccionar todo",
     IT: "Deseleziona tutto",
     DE: "Alles abwählen"
-  }
+  },
+  // ButtonThumbnailLabels
+  "label.none": {
+    EN: "None",
+    FR: "Aucun",
+    ES: "Ninguno",
+    IT: "Nessuno",
+    DE: "Keine"
+  },
+  "label.blue": {
+    EN: "Blue",
+    FR: "Bleu",
+    ES: "Azul",
+    IT: "Blu",
+    DE: "Blau"
+  },
+  "label.green": {
+    EN: "Green",
+    FR: "Vert",
+    ES: "Verde",
+    IT: "Verde",
+    DE: "Grün"
+  },
+  "label.orange": {
+    EN: "Orange",
+    FR: "Orange",
+    ES: "Naranja",
+    IT: "Arancione",
+    DE: "Orange"
+  },
+  "label.pink": {
+    EN: "Pink",
+    FR: "Rose",
+    ES: "Rosa",
+    IT: "Rosa",
+    DE: "Rosa"
+  },
+  "label.purple": {
+    EN: "Purple",
+    FR: "Violet",
+    ES: "Morado",
+    IT: "Viola",
+    DE: "Lila"
+  },
+  "label.red": {
+    EN: "Red",
+    FR: "Rouge",
+    ES: "Rojo",
+    IT: "Rosso",
+    DE: "Rot"
+  },
+  "label.yellow": {
+    EN: "Yellow",
+    FR: "Jaune",
+    ES: "Amarillo",
+    IT: "Giallo",
+    DE: "Gelb"
+  },
+  "label.white": {
+    EN: "White",
+    FR: "Blanc",
+    ES: "Blanco",
+    IT: "Bianco",
+    DE: "Weiß"
+  },
 };

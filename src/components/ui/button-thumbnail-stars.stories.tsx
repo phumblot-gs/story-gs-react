@@ -10,12 +10,12 @@ const meta = {
     layout: "centered",
     docs: {
       description: {
-        component: `ButtonThumbnailStars component that extends Toggle with a dropdown menu for selecting star ratings (0 to 5). The toggle displays a star icon and the current rating value. The dropdown menu shows all available star ratings from 0 to 5.
+        component: `ButtonThumbnailStars component that extends Toggle with a dropdown menu for selecting star ratings (0 to 5). The toggle displays a star icon and the current rating value. The dropdown menu can display ratings in two modes: normal (with labels) or compact (2x3 grid).
 
 ## Features
 - Built on Toggle component (inherits all Toggle/Button features)
 - Displays a star icon and rating value when closed
-- Dropdown menu with predefined star rating options (0 to 5)
+- Two menu display modes: normal (with labels) or compact (grid)
 - Visual feedback when menu is open (Toggle's isActive state)
 - Automatic styling based on data-bg context (white, grey, black)
 - Auto-positioning menu (drops where there's space)
@@ -28,10 +28,17 @@ const meta = {
 - **0 stars**: Shows an empty star icon (no number)
 - **1-5 stars**: Shows a filled yellow star icon + the number
 
-### When Open
+### When Open - Normal Mode (default)
 - Shows a vertical list of 6 options (0 to 5 stars)
-- Each option displays the corresponding star(s) in yellow
-- Clicking an option triggers \`onClick(value)\` with the selected rating
+- Each option displays 5 stars: yellow for selected value, black for remaining
+- Labels show the numerical value
+- Selected item has visual feedback
+
+### When Open - Compact Mode (\`compact={true}\`)
+- Shows a 2x3 grid of star rating options
+- Each option displays a single star (black for 0, yellow for 1-5) and the number
+- Options have rounded grey background
+- Selected option has darker background
 
 ## Basic Usage
 
@@ -67,7 +74,7 @@ const [open, setOpen] = useState(false);
 
 ## Background Context Adaptation
 
-The menu styles adapt automatically based on the parent Layout's \`data-bg\`:
+The button and menu styles adapt automatically based on the parent Layout's \`data-bg\`. Use \`menuBgContext\` to force the menu to use a different background context while the button keeps adapting to the parent.
 
 - **White/Grey backgrounds**: 
   - Menu container: black background
@@ -76,6 +83,16 @@ The menu styles adapt automatically based on the parent Layout's \`data-bg\`:
 - **Black background**: 
   - Menu container: black-secondary background
   - Menu items: black background
+
+## Forced Menu Background (\`menuBgContext\`)
+
+When set, the menu is styled as if it were on that background (e.g. \`menuBgContext="white"\` on a black layout: button stays black, menu uses white/grey styling).
+
+\`\`\`tsx
+<Layout bg="black">
+  <ButtonThumbnailStars value={3} onClick={...} menuBgContext="white" />
+</Layout>
+\`\`\`
 `,
       },
     },
@@ -141,6 +158,15 @@ The menu styles adapt automatically based on the parent Layout's \`data-bg\`:
       control: "select",
       options: ["start", "center", "end"],
       description: "Preferred alignment of the menu relative to the button. The menu will automatically adjust if there's not enough space. Default: 'start'",
+    },
+    compact: {
+      control: "boolean",
+      description: "Display mode: false (default) = normal menu with labels, true = compact 2x3 grid without labels",
+    },
+    menuBgContext: {
+      control: "select",
+      options: [undefined, "white", "grey", "black"],
+      description: "Force the menu background context (button keeps adapting to parent). When set, the menu is styled as if on that background.",
     },
   },
 } satisfies Meta<typeof ButtonThumbnailStars>
@@ -450,6 +476,81 @@ export const DebugMode: Story = {
         </VStack>
       </Layout>
     )
+  },
+}
+
+export const NormalMenu: Story = {
+  render: () => {
+    const [rating, setRating] = useState(3)
+    return (
+      <Layout bg="white" padding={6}>
+        <VStack gap={4}>
+          <p className="text-sm text-grey-stronger">
+            Menu normal (par défaut) avec labels
+          </p>
+          <ButtonThumbnailStars
+            value={rating}
+            onClick={(value) => setRating(value)}
+            compact={false}
+          />
+        </VStack>
+      </Layout>
+    )
+  },
+}
+
+export const CompactMenu: Story = {
+  render: () => {
+    const [rating, setRating] = useState(3)
+    return (
+      <Layout bg="white" padding={6}>
+        <VStack gap={4}>
+          <p className="text-sm text-grey-stronger">
+            Menu compact (grille 2x3 sans labels)
+          </p>
+          <ButtonThumbnailStars
+            value={rating}
+            onClick={(value) => setRating(value)}
+            compact={true}
+          />
+        </VStack>
+      </Layout>
+    )
+  },
+}
+
+export const MenuBgContext: Story = {
+  render: () => {
+    const [rating, setRating] = useState(3)
+    return (
+      <VStack gap={6} padding={6}>
+        <VStack as={Layout} bg="black" padding={6} gap={4} className="border border-grey rounded">
+          <h3 className="gs-typo-h3 text-white">Fond noir — menu forcé en fond clair (menuBgContext="white")</h3>
+          <p className="text-sm text-white/80 mb-2">
+            Le bouton reste adapté au fond noir ; le menu s&apos;affiche comme sur un fond blanc.
+          </p>
+          <ButtonThumbnailStars
+            value={rating}
+            onClick={(value) => setRating(value)}
+            menuBgContext="white"
+          />
+        </VStack>
+        <VStack as={Layout} bg="white" padding={6} gap={4} className="border border-grey rounded">
+          <h3 className="gs-typo-h3">Fond blanc — menu forcé en fond noir (menuBgContext="black")</h3>
+          <p className="text-sm text-grey-stronger mb-2">
+            Le bouton reste adapté au fond blanc ; le menu s&apos;affiche comme sur un fond noir.
+          </p>
+          <ButtonThumbnailStars
+            value={rating}
+            onClick={(value) => setRating(value)}
+            menuBgContext="black"
+          />
+        </VStack>
+      </VStack>
+    )
+  },
+  parameters: {
+    layout: "fullscreen",
   },
 }
 

@@ -28,7 +28,7 @@ export interface CommentData {
   versionIndex: number
 }
 
-export interface ButtonThumbnailCommentsProps extends Omit<ToggleProps, "onClick" | "isActive" | "value"> {
+export interface ButtonThumbnailCommentsProps extends Omit<ToggleProps, "onClick" | "isActive" | "value" | "hasAnnotations"> {
   /** Tableau des commentaires */
   value?: CommentData[]
   /** Callback appelé lorsqu'un commentaire est ajouté */
@@ -233,6 +233,7 @@ export const ButtonThumbnailComments = React.forwardRef<HTMLButtonElement, Butto
             onFocus={onFocus}
             onBlur={onBlur}
             {...buttonProps}
+            data-open={isOpen ? "true" : "false"}
           >
             {buttonContent}
           </Toggle>

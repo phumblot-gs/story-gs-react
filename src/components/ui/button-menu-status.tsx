@@ -205,7 +205,7 @@ export const ButtonMenuStatus = React.forwardRef<HTMLButtonElement, ButtonMenuSt
         case "grey":
           return "bg-black"
         case "black":
-          return "bg-black-secondary"
+          return "bg-white"
         default:
           return "bg-black"
       }

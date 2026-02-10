@@ -670,6 +670,27 @@ export * from "./components/StatusIndicator";
 export { default as MediaStatus } from "./components/MediaStatus";
 export type { MediaStatusProps } from "./components/MediaStatus";
 
+// Export Thumbnail component
+export {
+  Thumbnail,
+  AlertIndicator,
+  VedetteIndicator,
+  UrgentIndicator,
+  Three60Indicator,
+  ViewIndicator,
+} from "./components/Thumbnail";
+export type {
+  ThumbnailProps,
+  ThumbnailSize,
+  ThumbnailPresetSize,
+  ThumbnailAction,
+  AlertIndicatorProps,
+  VedetteIndicatorProps,
+  UrgentIndicatorProps,
+  Three60IndicatorProps,
+  ViewIndicatorProps,
+} from "./components/Thumbnail";
+
 // Export utilities
 export * from "./utils/mediaStatus";
 export * from "./lib/utils";

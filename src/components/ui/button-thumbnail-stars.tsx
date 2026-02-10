@@ -71,6 +71,18 @@ export interface ButtonThumbnailStarsProps extends Omit<ToggleProps, "onClick" |
    * Par défaut : `"start"` (menu aligné à gauche)
    */
   menuAlign?: "start" | "center" | "end"
+  /**
+   * Mode d'affichage du menu
+   * - `false` (défaut) : Menu normal avec labels à côté des étoiles
+   * - `true` : Menu compact (grille 2x3 sans labels)
+   */
+  compact?: boolean
+  /**
+   * Contexte de fond forcé pour le menu uniquement.
+   * Si défini, le menu utilise ces couleurs comme s'il était sur ce fond (ex. toujours fond clair).
+   * Le bouton continue d'utiliser le bgContext du parent.
+   */
+  menuBgContext?: "white" | "grey" | "black"
 }
 
 export const ButtonThumbnailStars = React.forwardRef<HTMLButtonElement, ButtonThumbnailStarsProps>(
@@ -89,6 +101,8 @@ export const ButtonThumbnailStars = React.forwardRef<HTMLButtonElement, ButtonTh
       menuMaxHeight = "max-h-[calc(100vh-2rem)]",
       menuSide = "bottom",
       menuAlign = "start",
+      compact = false,
+      menuBgContext,
       ...buttonProps
     },
     ref
@@ -117,15 +131,17 @@ export const ButtonThumbnailStars = React.forwardRef<HTMLButtonElement, ButtonTh
       [isControlled, onOpenChange]
     )
 
-    // Couleur de fond du menu selon data-bg
+    // Contexte du bouton : suit le parent (pas de data-bg sur le bouton, il hérite)
+    // Contexte du menu : menuBgContext si fourni, sinon même logique qu'avant
     const effectiveBg = isInActionBar ? "white" : bg
-    const getMenuBackgroundClass = () => {
-      switch (effectiveBg) {
+    const menuEffectiveBg = menuBgContext ?? effectiveBg
+    const getMenuBackgroundClass = (menuBg: typeof menuEffectiveBg) => {
+      switch (menuBg) {
         case "white":
         case "grey":
           return "bg-black"
         case "black":
-          return "bg-black-secondary"
+          return "bg-white"
         default:
           return "bg-black"
       }
@@ -153,7 +169,7 @@ export const ButtonThumbnailStars = React.forwardRef<HTMLButtonElement, ButtonTh
     const starActions = React.useMemo(() => {
       return Array.from({ length: 6 }, (_, index) => ({
         value: index,
-        label: `${index} étoile${index > 1 ? 's' : ''}`,
+        label: `${index}`,
       }))
     }, [])
 
@@ -169,30 +185,35 @@ export const ButtonThumbnailStars = React.forwardRef<HTMLButtonElement, ButtonTh
       [debug, onClick, handleOpenChange]
     )
 
-    // Rendre les étoiles pour le menu
+    // Rendre les étoiles pour le menu : toujours 5 étoiles pleines (jaunes pour la valeur, noires pour compléter)
     const renderStars = (count: number) => {
-      if (count === 0) {
-        return <Icon name="Star" size={iconSize} />
-      }
       return (
-        <div className={cn("flex items-center text-yellow", gapClass)}>
-          {Array.from({ length: count }).map((_, index) => (
-            <Icon key={index} name="StarFilled" size={iconSize} />
-          ))}
+        <div className={cn("flex items-center", gapClass)}>
+          {Array.from({ length: 5 }).map((_, index) => {
+            const isFilled = index < count
+            return (
+              <Icon
+                key={index}
+                name="StarFilled"
+                size={iconSize}
+                className={isFilled ? "text-yellow" : "text-black"}
+              />
+            )
+          })}
         </div>
       )
     }
 
     // Contenu du bouton (menu fermé)
     const buttonContent = React.useMemo(() => {
-      const textSizeClass = size === "small" ? "text-[9px]" : "text-xs"
+      const textSizeClass = size === "small" ? "text-[9px] mt-0.5" : "text-xs"
       if (normalizedValue === 0) {
         // Si 0 étoile, afficher une étoile vide sans numéro
         return <Icon name="Star" size={iconSize} />
       }
       // Sinon, afficher une étoile et le nombre
       return (
-        <div className="flex items-center gap-1">
+        <div className={"flex items-center" + (size === "small" ? "" : " gap-1")}>
           <span className="text-yellow">
             <Icon name="StarFilled" size={iconSize} className="mt-0.5" />
           </span>
@@ -225,49 +246,95 @@ export const ButtonThumbnailStars = React.forwardRef<HTMLButtonElement, ButtonTh
             onFocus={onFocus}
             onBlur={onBlur}
             {...buttonProps}
+            data-open={isOpen ? "true" : "false"}
           >
             {buttonContent}
           </Toggle>
         </DropdownMenuTrigger>
         <DropdownMenuContent
           className={cn(
-            "rounded-sm border-0 popup-action overflow-y-auto",
+            "rounded-sm border-0 overflow-y-auto",
             menuMaxHeight,
-            getMenuBackgroundClass()
+            getMenuBackgroundClass(menuEffectiveBg)
           )}
           align={menuAlign}
           side={effectiveMenuSide}
           sideOffset={getSideOffset()}
           collisionPadding={8}
-          data-bg={effectiveBg || undefined}
         >
-          <VStack gap={2} padding={2}>
-            {starActions.map((action) => (
-              <DropdownMenuItem
-                key={action.value}
-                disabled={disabled}
-                className={cn(
-                  "w-full px-4 h-6 text-left text-sm whitespace-nowrap rounded-sm cursor-pointer popup-action-item popup-action-item-menu",
-                  "flex items-center gap-2",
-                  "data-[disabled]:opacity-50 data-[disabled]:cursor-not-allowed"
-                )}
-                onClick={(e) => {
-                  e.stopPropagation()
-                  if (debug) {
-                    console.log("[ButtonThumbnailStars] Action clicked:", action.value)
-                  }
-                  handleStarClick(action.value)
-                }}
-              >
-                <span className="flex-shrink-0 flex items-center justify-center">
-                  {renderStars(action.value)}
-                </span>
-                <span className="whitespace-nowrap overflow-hidden text-ellipsis flex-1 min-w-0">
-                  {action.label}
-                </span>
-              </DropdownMenuItem>
-            ))}
+          <div className="popup-action w-full h-full" data-bg={menuEffectiveBg || undefined}>
+            <VStack gap={2} padding={2}>
+            {compact ? (
+              /* Menu compact : Grille 2x3 des étoiles avec nombres */
+              <div className="grid grid-cols-3 gap-2 justify-items-center">
+                {starActions.map((action) => {
+                  const isSelected = normalizedValue === action.value
+                  return (
+                    <DropdownMenuItem
+                      key={action.value}
+                      disabled={disabled}
+                      data-selected={isSelected ? "true" : "false"}
+                      className={cn(
+                        "w-auto h-auto p-1 gap-1 rounded-full cursor-pointer",
+                        "flex flex-row items-center justify-center",
+                        "transition-colors",
+                        "popup-action-item popup-action-item-menu popup-action-item-stars",
+                        isSelected ? "" : "bg-black-secondary/50 hover:bg-black-secondary",
+                        "data-[highlighted]:bg-transparent",
+                        "data-[disabled]:opacity-50 data-[disabled]:cursor-not-allowed"
+                      )}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        if (debug) {
+                          console.log("[ButtonThumbnailStars] Action clicked:", action.value)
+                        }
+                        handleStarClick(action.value)
+                      }}
+                    >
+                      <span className={(action.value === 0 ? "text-black" : "text-yellow") + " inline-flex"}>
+                        <Icon name="StarFilled" size={iconSize} />
+                      </span>
+                      <span className="text-sm leading-none label-menu-text">{action.label}</span>
+                    </DropdownMenuItem>
+                  )
+                })}
+              </div>
+            ) : (
+              /* Menu normal : Liste verticale avec étoiles et labels */
+              <VStack gap={2} padding={0}>
+                {starActions.map((action) => {
+                  const isSelected = normalizedValue === action.value
+                  return (
+                    <DropdownMenuItem
+                      key={action.value}
+                      disabled={disabled}
+                      data-selected={isSelected ? "true" : "false"}
+                      className={cn(
+                        "w-full px-4 h-6 text-left text-sm whitespace-nowrap rounded-sm cursor-pointer popup-action-item popup-action-item-menu popup-action-item-stars",
+                        "flex items-center gap-2",
+                        "data-[disabled]:opacity-50 data-[disabled]:cursor-not-allowed"
+                      )}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        if (debug) {
+                          console.log("[ButtonThumbnailStars] Action clicked:", action.value)
+                        }
+                        handleStarClick(action.value)
+                      }}
+                    >
+                      <span className="flex-shrink-0 flex items-center justify-center">
+                        {renderStars(action.value)}
+                      </span>
+                      <span className="whitespace-nowrap overflow-hidden text-ellipsis flex-1 min-w-0 label-menu-text">
+                        {action.label}
+                      </span>
+                    </DropdownMenuItem>
+                  )
+                })}
+              </VStack>
+            )}
           </VStack>
+          </div>
         </DropdownMenuContent>
       </DropdownMenu>
     )

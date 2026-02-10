@@ -98,12 +98,12 @@ const buttonVariants = cva(
       {
         variant: "outline",
         size: "medium",
-        class: "py-[2px]",
+        class: "py-[4px]",
       },
       {
         variant: "outline",
         size: "large",
-        class: "py-[13px]",
+        class: "py-[14px]",
       },
     ],
     defaultVariants: {
@@ -117,12 +117,13 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   variant?: ButtonVariant | ShadcnVariant;
   size?: ButtonSize | ShadcnSize;
   indicator?: boolean;
+  hasActiveElement?: boolean;
   asChild?: boolean;
   debug?: boolean;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ variant, size, indicator, debug, className, children, asChild = false, onClick, onFocus, onBlur, ...props }, ref) => {
+  ({ variant, size, indicator, hasActiveElement, debug, className, children, asChild = false, onClick, onFocus, onBlur, ...props }, ref) => {
     const Comp = asChild ? Slot : "button";
     const normalizedVariant = normalizeVariant(variant);
     const normalizedSize = normalizeSize(size);
@@ -183,6 +184,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       <Comp
         ref={ref}
         data-bg={bg || undefined}
+        data-has-active-element={hasActiveElement ? "true" : undefined}
         className={cn(
           buttonVariants({
             variant: normalizedVariant,

@@ -222,13 +222,45 @@ const SelectAutocomplete = React.forwardRef<HTMLInputElement, SelectAutocomplete
         // Pendant la recherche, afficher le texte saisi
         return searchText;
       }
-      // Sinon, afficher le label de l'option sélectionnée
-      // Si valueProp est un objet avec label, l'utiliser, sinon utiliser selectedOption
+      
+      // Priorité 1: Si valueProp est un objet avec label, l'utiliser directement (mode contrôlé)
       if (valueProp && typeof valueProp === "object" && "label" in valueProp) {
         return valueProp.label;
       }
-      return selectedOption?.label || "";
-    }, [isOpen, searchText, selectedOption, valueProp]);
+      
+      // Priorité 2: Si valueProp est défini (mode contrôlé), utiliser selectedOption pour trouver le label
+      // Cela gère le cas où valueProp est une string
+      if (valueProp !== undefined && valueProp !== "") {
+        if (selectedOption?.label) {
+          return selectedOption.label;
+        }
+        // Si valueProp est une string et qu'aucune option n'est trouvée, afficher la string si allowCustomValue
+        if (typeof valueProp === "string" && valueProp && allowCustomValue) {
+          return valueProp;
+        }
+        // Sinon, chaîne vide pour mode contrôlé sans option trouvée
+        return "";
+      }
+      
+      // Priorité 3: Si internalValue est un objet avec label (defaultValue), l'utiliser
+      if (internalValue && typeof internalValue === "object" && "label" in internalValue) {
+        return internalValue.label;
+      }
+      
+      // Priorité 4: Utiliser le label de l'option trouvée dans options (même si defaultValue était une string)
+      if (selectedOption?.label) {
+        return selectedOption.label;
+      }
+      
+      // Priorité 5: Si aucune option trouvée mais qu'on a une valeur string et allowCustomValue est true
+      // On peut afficher la valeur brute temporairement (cas où les options ne sont pas encore chargées)
+      if (allowCustomValue && internalValue && typeof internalValue === "string") {
+        return internalValue;
+      }
+      
+      // Sinon, chaîne vide
+      return "";
+    }, [isOpen, searchText, selectedOption, valueProp, internalValue, allowCustomValue]);
 
     const hasValue = Boolean(selectedValue);
 

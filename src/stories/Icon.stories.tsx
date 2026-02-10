@@ -27,6 +27,12 @@ import { Icon } from '@story-gs-react';
 <Icon name="Settings" size={16} />
 \`\`\`
 
+### Avec épaisseur de trait personnalisée
+
+\`\`\`tsx
+<Icon name="Plus" strokeWidth={1} />
+\`\`\`
+
 ### Avec couleur
 
 \`\`\`tsx
@@ -54,6 +60,10 @@ import { Icon } from '@story-gs-react';
     size: {
       control: { type: 'number', min: 8, max: 48, step: 2 },
       description: 'Taille de l\'icône en pixels',
+    },
+    strokeWidth: {
+      control: { type: 'number', min: 0.25, max: 3, step: 0.25 },
+      description: 'Épaisseur du trait de l\'icône (défaut: 0.5 pour les icônes custom, 2 pour Lucide)',
     },
     className: {
       control: 'text',
@@ -167,6 +177,114 @@ export const Sizes: Story = {
             <span className="text-xs">32px</span>
           </div>
         </HStack>
+      </VStack>
+    </Layout>
+  ),
+};
+
+export const StrokeWidth: Story = {
+  render: () => (
+    <Layout bg="white" padding={6}>
+      <VStack gap={6}>
+        <div>
+          <h3 className="gs-typo-h3">Différentes épaisseurs de trait</h3>
+          <p className="text-sm text-grey-stronger mt-1">
+            Le paramètre strokeWidth permet de personnaliser l'épaisseur des traits des icônes.
+            La valeur par défaut est 0.5 pour les icônes custom et 2 pour les icônes Lucide.
+          </p>
+        </div>
+
+        <VStack gap={4}>
+          <div>
+            <h4 className="text-sm font-medium mb-2">Icône Custom (Plus)</h4>
+            <HStack gap={6} align="center">
+              <div className="flex flex-col items-center gap-2">
+                <Icon name="Plus" size={24} strokeWidth={0.25} />
+                <span className="text-xs">0.25</span>
+              </div>
+              <div className="flex flex-col items-center gap-2">
+                <Icon name="Plus" size={24} strokeWidth={0.5} />
+                <span className="text-xs">0.5 (défaut)</span>
+              </div>
+              <div className="flex flex-col items-center gap-2">
+                <Icon name="Plus" size={24} strokeWidth={0.75} />
+                <span className="text-xs">0.75</span>
+              </div>
+              <div className="flex flex-col items-center gap-2">
+                <Icon name="Plus" size={24} strokeWidth={1} />
+                <span className="text-xs">1</span>
+              </div>
+              <div className="flex flex-col items-center gap-2">
+                <Icon name="Plus" size={24} strokeWidth={1.5} />
+                <span className="text-xs">1.5</span>
+              </div>
+              <div className="flex flex-col items-center gap-2">
+                <Icon name="Plus" size={24} strokeWidth={2} />
+                <span className="text-xs">2</span>
+              </div>
+            </HStack>
+          </div>
+
+          <div>
+            <h4 className="text-sm font-medium mb-2">Icône Custom (Star)</h4>
+            <HStack gap={6} align="center">
+              <div className="flex flex-col items-center gap-2">
+                <Icon name="Star" size={24} strokeWidth={0.25} />
+                <span className="text-xs">0.25</span>
+              </div>
+              <div className="flex flex-col items-center gap-2">
+                <Icon name="Star" size={24} strokeWidth={0.5} />
+                <span className="text-xs">0.5 (défaut)</span>
+              </div>
+              <div className="flex flex-col items-center gap-2">
+                <Icon name="Star" size={24} strokeWidth={0.75} />
+                <span className="text-xs">0.75</span>
+              </div>
+              <div className="flex flex-col items-center gap-2">
+                <Icon name="Star" size={24} strokeWidth={1} />
+                <span className="text-xs">1</span>
+              </div>
+              <div className="flex flex-col items-center gap-2">
+                <Icon name="Star" size={24} strokeWidth={1.5} />
+                <span className="text-xs">1.5</span>
+              </div>
+              <div className="flex flex-col items-center gap-2">
+                <Icon name="Star" size={24} strokeWidth={2} />
+                <span className="text-xs">2</span>
+              </div>
+            </HStack>
+          </div>
+
+          <div>
+            <h4 className="text-sm font-medium mb-2">Icône Lucide (Download)</h4>
+            <HStack gap={6} align="center">
+              <div className="flex flex-col items-center gap-2">
+                <Icon name="Download" size={24} strokeWidth={0.5} />
+                <span className="text-xs">0.5</span>
+              </div>
+              <div className="flex flex-col items-center gap-2">
+                <Icon name="Download" size={24} strokeWidth={1} />
+                <span className="text-xs">1</span>
+              </div>
+              <div className="flex flex-col items-center gap-2">
+                <Icon name="Download" size={24} strokeWidth={1.5} />
+                <span className="text-xs">1.5</span>
+              </div>
+              <div className="flex flex-col items-center gap-2">
+                <Icon name="Download" size={24} strokeWidth={2} />
+                <span className="text-xs">2 (défaut Lucide)</span>
+              </div>
+              <div className="flex flex-col items-center gap-2">
+                <Icon name="Download" size={24} strokeWidth={2.5} />
+                <span className="text-xs">2.5</span>
+              </div>
+              <div className="flex flex-col items-center gap-2">
+                <Icon name="Download" size={24} strokeWidth={3} />
+                <span className="text-xs">3</span>
+              </div>
+            </HStack>
+          </div>
+        </VStack>
       </VStack>
     </Layout>
   ),

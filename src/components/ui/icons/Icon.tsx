@@ -10,6 +10,9 @@ export interface IconProps {
   /** Taille de l'icône en pixels (défaut: 12) */
   size?: number;
 
+  /** Épaisseur du trait de l'icône (défaut: 2 pour Lucide icons) */
+  strokeWidth?: number;
+
   /** Classes CSS Tailwind additionnelles */
   className?: string;
 
@@ -53,6 +56,7 @@ export interface IconProps {
 export const Icon: React.FC<IconProps> = ({
   name,
   size = 12,
+  strokeWidth,
   className,
   color,
   onClick,
@@ -64,6 +68,7 @@ export const Icon: React.FC<IconProps> = ({
         console.log("[Icon Click]", {
           name,
           size,
+          strokeWidth,
           className,
           color,
           event: e,
@@ -71,10 +76,10 @@ export const Icon: React.FC<IconProps> = ({
       }
       onClick?.(e);
     },
-    [debug, name, size, className, color, onClick]
+    [debug, name, size, strokeWidth, className, color, onClick]
   );
 
-  const iconElement = renderIcon(name, size);
+  const iconElement = renderIcon(name, size, strokeWidth);
 
   if (!iconElement) {
     console.warn(`[Icon] Icon "${name}" not found`);

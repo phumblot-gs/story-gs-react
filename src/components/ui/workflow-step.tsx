@@ -51,11 +51,11 @@ const WorkflowStep = React.forwardRef<HTMLButtonElement, WorkflowStepProps>(
       switch (state) {
         case "active":
         case "inactive":
-          return "secondary";
-        case "current":
           return "outline";
-        default:
+        case "current":
           return "secondary";
+        default:
+          return "outline";
       }
     };
 
@@ -69,7 +69,8 @@ const WorkflowStep = React.forwardRef<HTMLButtonElement, WorkflowStepProps>(
         disabled={isDisabled}
         className={cn(
           "whitespace-nowrap overflow-hidden text-ellipsis",
-          className
+          className,
+          state === "current" ? "border-black !bg-black !text-white" : "!border-grey",
         )}
         onClick={handleClick}
         onFocus={onFocus || debug ? handleFocus : undefined}

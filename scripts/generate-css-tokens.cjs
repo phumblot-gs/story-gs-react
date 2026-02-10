@@ -388,6 +388,94 @@ function generateButtonClassesCSS(tokens) {
 }
 
 /**
+ * Génère les règles CSS pour Button hasActiveElement (filtre actif)
+ * Fond = hover, texte et icône = blue-primary
+ */
+function generateButtonHasActiveElementCSS() {
+  return `
+/* Button hasActiveElement (filtre actif) : fond = hover, texte et icône = blue-primary */
+[data-bg="white"].btn-normal[data-has-active-element="true"]:not(:disabled) {
+  background: var(--button-w-normal-bg-hover);
+  color: var(--color-blue-primary);
+}
+[data-bg="white"].btn-secondary[data-has-active-element="true"]:not(:disabled) {
+  background: var(--button-w-secondary-bg-hover);
+  color: var(--color-blue-primary);
+}
+[data-bg="white"].btn-ghost[data-has-active-element="true"]:not(:disabled) {
+  background: var(--button-w-ghost-bg-hover);
+  color: var(--color-blue-primary);
+}
+[data-bg="white"].btn-outline[data-has-active-element="true"]:not(:disabled) {
+  background: var(--button-w-outline-bg-hover);
+  color: var(--color-blue-primary);
+}
+[data-bg="white"].btn-destructive[data-has-active-element="true"]:not(:disabled) {
+  background: var(--button-w-destructive-bg-hover);
+  color: var(--color-blue-primary);
+}
+[data-bg="white"].btn-link[data-has-active-element="true"]:not(:disabled) {
+  color: var(--color-blue-primary);
+}
+
+[data-bg="grey"].btn-normal[data-has-active-element="true"]:not(:disabled) {
+  background: var(--button-g-normal-bg-hover);
+  color: var(--color-blue-primary);
+}
+[data-bg="grey"].btn-secondary[data-has-active-element="true"]:not(:disabled) {
+  background: var(--button-g-secondary-bg-hover);
+  color: var(--color-blue-primary);
+}
+[data-bg="grey"].btn-ghost[data-has-active-element="true"]:not(:disabled) {
+  background: var(--button-g-ghost-bg-hover);
+  color: var(--color-blue-primary);
+}
+[data-bg="grey"].btn-outline[data-has-active-element="true"]:not(:disabled) {
+  background: var(--button-g-outline-bg-hover);
+  color: var(--color-blue-primary);
+}
+[data-bg="grey"].btn-destructive[data-has-active-element="true"]:not(:disabled) {
+  background: var(--button-g-destructive-bg-hover);
+  color: var(--color-blue-primary);
+}
+[data-bg="grey"].btn-link[data-has-active-element="true"]:not(:disabled) {
+  color: var(--color-blue-primary);
+}
+
+[data-bg="black"].btn-normal[data-has-active-element="true"]:not(:disabled) {
+  background: var(--color-blue-primary);
+  color: var(--color-black);
+}
+[data-bg="black"].btn-secondary[data-has-active-element="true"]:not(:disabled) {
+  background: var(--color-blue-primary);
+  color: var(--color-black);
+}
+[data-bg="black"].btn-ghost[data-has-active-element="true"]:not(:disabled) {
+  background: var(--color-blue-primary);
+  color: var(--color-black);
+}
+[data-bg="black"].btn-outline[data-has-active-element="true"]:not(:disabled) {
+  background: var(--color-blue-primary);
+  color: var(--color-black);
+}
+[data-bg="black"].btn-destructive[data-has-active-element="true"]:not(:disabled) {
+  background: var(--color-blue-primary);
+  color: var(--color-black);
+}
+[data-bg="black"].btn-link[data-has-active-element="true"]:not(:disabled) {
+  color: var(--color-black);
+}
+
+[data-has-active-element="true"]:not(:disabled) svg {
+  color: var(--color-blue-primary);
+}
+[data-bg="black"] [data-has-active-element="true"]:not(:disabled) svg {
+  color: var(--color-black);
+}
+`;
+}
+
+/**
  * Génère les styles personnalisés pour les composants (Checkbox, RadioGroup, Switch, Grade, Tags, Label, etc.)
  * Ces styles sont ajoutés après la génération automatique pour éviter qu'ils soient écrasés
  */
@@ -1343,6 +1431,9 @@ function generateCSS() {
   // Classes Button contextuelles
   css += `/* Classes Button contextuelles */\n`;
   css += generateButtonClassesCSS(tokens.light);
+
+  // Button hasActiveElement (filtre actif)
+  css += generateButtonHasActiveElementCSS();
 
   // Classes pour les thèmes
   css += `/* Classes de thème */\n`;

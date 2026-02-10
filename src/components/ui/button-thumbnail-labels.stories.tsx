@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 import { ButtonThumbnailLabels, LabelColor } from "@/components/ui/button-thumbnail-labels"
 import { Layout, VStack, HStack } from "@/components/layout"
 import { useState } from "react"
+import { cn } from "@/lib/utils"
 
 const meta = {
   title: "UI/ButtonThumbnailLabels",
@@ -10,13 +11,14 @@ const meta = {
     layout: "centered",
     docs: {
       description: {
-        component: `ButtonThumbnailLabels component that extends Toggle with a dropdown menu for selecting label colors. The toggle displays the current selected color (or transparent with dashed border if none). The dropdown menu shows a 3x3 grid of available colors.
+        component: `ButtonThumbnailLabels component that extends Toggle with a dropdown menu for selecting label colors. The toggle displays the current selected color (or transparent with dashed border if none). The dropdown menu can display colors in two modes: normal (with labels) or compact (3x3 grid).
 
 ## Features
 - Built on Toggle component (inherits all Toggle/Button features)
 - Displays the current selected color when closed
 - Shows transparent with dashed border if no color is selected
-- Dropdown menu with a 3x3 grid of color options
+- Two menu display modes: normal (with labels) or compact (grid)
+- Internationalization support with customizable translations
 - Visual feedback when menu is open (Toggle's isActive state)
 - Automatic styling based on data-bg context (white, grey, black)
 - Auto-positioning menu (drops where there's space)
@@ -29,11 +31,19 @@ const meta = {
 - **No color selected**: Shows transparent square with dashed border
 - **Color selected**: Shows a square with the selected color
 
-### When Open
-- Shows a 3x3 grid of color options
+### When Open - Normal Mode (default)
+- Shows a vertical list of color options with labels
+- Each option displays the color in a circle with background:
+  - Selected color: white background circle
+  - Other colors: grey background circle (\`--color-black-secondary\`)
+- Labels are internationalized (FR/EN by default, customizable)
+- Selected item has white background with black text
+
+### When Open - Compact Mode (\`compact={true}\`)
+- Shows a 3x3 grid of color options without labels
 - First option is transparent (dashed border)
-- Other options display solid color squares
-- Clicking an option triggers \`onClick(value)\` with the selected color (or null for transparent)
+- Other options display solid color squares in circles
+- Selected color has white background circle, others have grey background
 
 ## Available Colors
 
@@ -79,9 +89,33 @@ const [open, setOpen] = useState(false);
 />
 \`\`\`
 
+## Internationalization
+
+The component supports internationalization through the \`TranslationProvider\` or via props:
+
+\`\`\`tsx
+// Using TranslationProvider (automatic)
+<TranslationProvider>
+  <ButtonThumbnailLabels value={color} onClick={setColor} />
+</TranslationProvider>
+
+// With custom translations
+<ButtonThumbnailLabels 
+  value={color} 
+  onClick={setColor}
+  translations={{
+    "label.blue": { FR: "Bleu", EN: "Blue", ES: "Azul" },
+    "label.red": { FR: "Rouge", EN: "Red", ES: "Rojo" }
+  }}
+  language="ES"
+/>
+\`\`\`
+
+Available translation keys: \`label.none\`, \`label.blue\`, \`label.green\`, \`label.orange\`, \`label.pink\`, \`label.purple\`, \`label.red\`, \`label.yellow\`, \`label.white\`
+
 ## Background Context Adaptation
 
-The menu styles adapt automatically based on the parent Layout's \`data-bg\`:
+The button and menu styles adapt automatically based on the parent Layout's \`data-bg\`. Use \`menuBgContext\` to force the menu to use a different background context while the button keeps adapting to the parent.
 
 - **White/Grey backgrounds**: 
   - Menu container: black background
@@ -90,6 +124,16 @@ The menu styles adapt automatically based on the parent Layout's \`data-bg\`:
 - **Black background**: 
   - Menu container: black-secondary background
   - Menu items: black background
+
+## Forced Menu Background (\`menuBgContext\`)
+
+When set, the menu is styled as if it were on that background (e.g. \`menuBgContext="white"\` on a black layout: button stays black, menu uses white/grey styling).
+
+\`\`\`tsx
+<Layout bg="black">
+  <ButtonThumbnailLabels value="blue" onClick={...} menuBgContext="white" />
+</Layout>
+\`\`\`
 `,
       },
     },
@@ -156,6 +200,19 @@ The menu styles adapt automatically based on the parent Layout's \`data-bg\`:
       control: "select",
       options: ["start", "center", "end"],
       description: "Preferred alignment of the menu relative to the button. The menu will automatically adjust if there's not enough space. Default: 'start'",
+    },
+    compact: {
+      control: "boolean",
+      description: "Display mode: false (default) = normal menu with labels, true = compact 3x3 grid without labels",
+    },
+    language: {
+      control: "text",
+      description: "Custom language code (e.g., 'FR', 'EN', 'ES'). If not provided, uses TranslationProvider language or 'EN' by default",
+    },
+    menuBgContext: {
+      control: "select",
+      options: [undefined, "white", "grey", "black"],
+      description: "Force the menu background context (button keeps adapting to parent). When set, the menu is styled as if on that background.",
     },
   },
 } satisfies Meta<typeof ButtonThumbnailLabels>
@@ -468,6 +525,148 @@ export const DebugMode: Story = {
         </VStack>
       </Layout>
     )
+  },
+}
+
+export const NormalMenu: Story = {
+  render: () => {
+    const [color, setColor] = useState<LabelColor>("orange")
+    return (
+      <Layout bg="white" padding={6}>
+        <VStack gap={4}>
+          <p className="text-sm text-grey-stronger">
+            Menu normal (par défaut) avec labels traduits
+          </p>
+          <ButtonThumbnailLabels
+            value={color}
+            onClick={(value) => setColor(value)}
+            compact={false}
+          />
+        </VStack>
+      </Layout>
+    )
+  },
+}
+
+export const CompactMenu: Story = {
+  render: () => {
+    const [color, setColor] = useState<LabelColor>("orange")
+    return (
+      <Layout bg="white" padding={6}>
+        <VStack gap={4}>
+          <p className="text-sm text-grey-stronger">
+            Menu compact (grille 3x3 sans labels)
+          </p>
+          <ButtonThumbnailLabels
+            value={color}
+            onClick={(value) => setColor(value)}
+            compact={true}
+          />
+        </VStack>
+      </Layout>
+    )
+  },
+}
+
+export const Internationalization: Story = {
+  render: () => {
+    const [color, setColor] = useState<LabelColor>("orange")
+    const [lang, setLang] = useState<"FR" | "EN" | "ES">("FR")
+    
+    const customTranslations = {
+      "label.none": { FR: "Aucun", EN: "None", ES: "Ninguno" },
+      "label.blue": { FR: "Bleu", EN: "Blue", ES: "Azul" },
+      "label.green": { FR: "Vert", EN: "Green", ES: "Verde" },
+      "label.orange": { FR: "Orange", EN: "Orange", ES: "Naranja" },
+      "label.pink": { FR: "Rose", EN: "Pink", ES: "Rosa" },
+      "label.purple": { FR: "Violet", EN: "Purple", ES: "Morado" },
+      "label.red": { FR: "Rouge", EN: "Red", ES: "Rojo" },
+      "label.yellow": { FR: "Jaune", EN: "Yellow", ES: "Amarillo" },
+      "label.white": { FR: "Blanc", EN: "White", ES: "Blanco" },
+    }
+    
+    return (
+      <Layout bg="white" padding={6}>
+        <VStack gap={4}>
+          <div>
+            <p className="text-sm text-grey-stronger mb-2">
+              Langue actuelle: {lang}
+            </p>
+            <HStack gap={2} className="mb-4">
+              <button
+                onClick={() => setLang("FR")}
+                className={cn(
+                  "px-3 py-1 rounded text-sm",
+                  lang === "FR" ? "bg-black text-white" : "bg-grey text-black"
+                )}
+              >
+                FR
+              </button>
+              <button
+                onClick={() => setLang("EN")}
+                className={cn(
+                  "px-3 py-1 rounded text-sm",
+                  lang === "EN" ? "bg-black text-white" : "bg-grey text-black"
+                )}
+              >
+                EN
+              </button>
+              <button
+                onClick={() => setLang("ES")}
+                className={cn(
+                  "px-3 py-1 rounded text-sm",
+                  lang === "ES" ? "bg-black text-white" : "bg-grey text-black"
+                )}
+              >
+                ES
+              </button>
+            </HStack>
+          </div>
+          <ButtonThumbnailLabels
+            value={color}
+            onClick={(value) => setColor(value)}
+            translations={customTranslations}
+            language={lang}
+            compact={false}
+          />
+        </VStack>
+      </Layout>
+    )
+  },
+}
+
+export const MenuBgContext: Story = {
+  render: () => {
+    const [color, setColor] = useState<LabelColor>("blue")
+    return (
+      <VStack gap={6} padding={6}>
+        <VStack as={Layout} bg="black" padding={6} gap={4} className="border border-grey rounded">
+          <h3 className="gs-typo-h3 text-white">Fond noir — menu forcé en fond clair (menuBgContext="white")</h3>
+          <p className="text-sm text-white/80 mb-2">
+            Le bouton reste adapté au fond noir ; le menu s&apos;affiche comme sur un fond blanc.
+          </p>
+          <ButtonThumbnailLabels
+            value={color}
+            onClick={(value) => setColor(value)}
+            menuBgContext="white"
+          />
+        </VStack>
+        <VStack as={Layout} bg="white" padding={6} gap={4} className="border border-grey rounded">
+          <h3 className="gs-typo-h3">Fond blanc — menu forcé en fond noir (menuBgContext="black")</h3>
+          <p className="text-sm text-grey-stronger mb-2">
+            Le bouton reste adapté au fond blanc ; le menu s&apos;affiche comme sur un fond noir.
+          </p>
+          <ButtonThumbnailLabels
+            value={color}
+            onClick={(value) => setColor(value)}
+            menuBgContext="black"
+          />
+        </VStack>
+      </VStack>
+    )
+  },
+  parameters: {
+    layout: "fullscreen",
   },
 }
 

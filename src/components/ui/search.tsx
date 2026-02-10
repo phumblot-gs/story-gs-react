@@ -8,10 +8,37 @@ export interface SearchProps extends Omit<React.InputHTMLAttributes<HTMLInputEle
   onClear?: () => void
   /** Classes CSS pour le conteneur wrapper */
   containerClassName?: string
+  /**
+   * Si true, le champ s'élargit automatiquement selon le contenu saisi.
+   * Défaut: false.
+   * En mode textarea, la largeur suit la ligne la plus longue.
+   */
+  growWithContent?: boolean
+  /** Largeur minimale (ex: "120px", 120). Pris en compte au démarrage et pour la croissance. */
+  minWidth?: string | number
+  /** Largeur maximale (ex: "400px", 400). Le champ ne dépasse pas cette largeur quand growWithContent est true. */
+  maxWidth?: string | number
+  /** Nombre maximum de lignes affichées en mode textarea (après collage avec retours à la ligne). Défaut: 10. */
+  maxRows?: number
 }
 
 const Search = React.forwardRef<HTMLInputElement | HTMLTextAreaElement, SearchProps>(
-  ({ className, containerClassName, disabled, value, defaultValue, onClear, ...props }, ref) => {
+  (
+    {
+      className,
+      containerClassName,
+      disabled,
+      value,
+      defaultValue,
+      onClear,
+      growWithContent = false,
+      minWidth,
+      maxWidth,
+      maxRows = 10,
+      ...props
+    },
+    ref
+  ) => {
     const bg = useBgContext()
     const [internalValue, setInternalValue] = React.useState(defaultValue || "")
     const [isFocused, setIsFocused] = React.useState(false)
@@ -21,6 +48,7 @@ const Search = React.forwardRef<HTMLInputElement | HTMLTextAreaElement, SearchPr
     const hasNewlines = typeof currentValue === 'string' && /\r\n|\r|\n/.test(currentValue)
     const inputRef = React.useRef<HTMLInputElement>(null)
     const textareaRef = React.useRef<HTMLTextAreaElement>(null)
+    const mirrorRef = React.useRef<HTMLSpanElement>(null)
     
     // Exposer le ref approprié
     React.useImperativeHandle(ref, () => {
@@ -144,6 +172,49 @@ const Search = React.forwardRef<HTMLInputElement | HTMLTextAreaElement, SearchPr
       setIsFocused(false)
       props.onBlur?.(e as React.FocusEvent<HTMLInputElement>)
     }
+
+    // Texte utilisé pour mesurer la largeur : valeur entière (input) ou ligne la plus longue (textarea)
+    const measureText = React.useMemo(() => {
+      const str = typeof currentValue === 'string' ? currentValue : ''
+      if (hasNewlines) {
+        const lines = str.split(/\r\n|\r|\n/)
+        return lines.reduce((longest, line) => (line.length > longest.length ? line : longest), '')
+      }
+      return str
+    }, [currentValue, hasNewlines])
+
+    // Appliquer largeur min/max (normaliser number -> "Npx")
+    const minWidthStyle = minWidth != null ? (typeof minWidth === 'number' ? `${minWidth}px` : minWidth) : undefined
+    const maxWidthStyle = maxWidth != null ? (typeof maxWidth === 'number' ? `${maxWidth}px` : maxWidth) : undefined
+
+    // Valeurs numériques en px pour le clamp (quand min/max sont en px)
+    const minWidthPx = minWidth != null
+      ? (typeof minWidth === 'number' ? minWidth : (typeof minWidth === 'string' && minWidth.endsWith('px') ? parseFloat(minWidth) : null))
+      : null
+    const maxWidthPx = maxWidth != null
+      ? (typeof maxWidth === 'number' ? maxWidth : (typeof maxWidth === 'string' && maxWidth.endsWith('px') ? parseFloat(maxWidth) : null))
+      : null
+
+    // Mesurer et appliquer la largeur quand growWithContent est true (clamp entre min et max)
+    React.useLayoutEffect(() => {
+      if (!growWithContent || !mirrorRef.current) return
+      const el = hasNewlines ? textareaRef.current : inputRef.current
+      if (!el) return
+
+      if (measureText === '') {
+        el.style.width = minWidthStyle ?? ''
+        return
+      }
+
+      const mirror = mirrorRef.current
+      mirror.textContent = measureText
+      const rawMeasured = mirror.scrollWidth + (hasNewlines ? 16 : 2)
+      let widthPx = rawMeasured
+      if (minWidthPx != null) widthPx = Math.max(widthPx, minWidthPx)
+      if (maxWidthPx != null) widthPx = Math.min(widthPx, maxWidthPx)
+      el.style.width = `${widthPx}px`
+    }, [growWithContent, measureText, hasNewlines, minWidthStyle, minWidthPx, maxWidthPx])
+
     
     // Styles communs pour input et textarea
     const commonStyles = cn(
@@ -159,17 +230,33 @@ const Search = React.forwardRef<HTMLInputElement | HTMLTextAreaElement, SearchPr
       className
     )
     
-    // Styles spécifiques pour textarea
+    // Styles spécifiques pour textarea (padding droit accru pour la scrollbar)
     const textareaStyles = cn(
       commonStyles,
       "rounded-lg", // Pas rounded-full pour textarea
-      "min-h-[2rem] max-h-[10rem] resize-none overflow-y-auto",
+      "min-h-[2rem] max-h-[10rem] resize-none",
       "items-start py-1", // Ajustement du padding vertical
-      "w-[172px]"
+      "pr-5", // Plus que pr-6 pour laisser la place à la scrollbar
     )
+
+    const sizeStyle: React.CSSProperties = { ...(props.style ?? {}) }
+    if (minWidthStyle) sizeStyle.minWidth = minWidthStyle
+    if (maxWidthStyle) sizeStyle.maxWidth = maxWidthStyle
 
     return (
       <div className={cn("relative w-fit", containerClassName)}>
+        {/* Miroir invisible pour mesurer la largeur du contenu (même police et padding que l'input) */}
+        {growWithContent && (
+          <span
+            ref={mirrorRef}
+            aria-hidden
+            className={cn(
+              "absolute left-0 top-0 whitespace-pre text-sm font-light pointer-events-none invisible",
+              "pl-6 pr-6"
+            )}
+            style={{ visibility: 'hidden', position: 'absolute', left: -9999 }}
+          />
+        )}
         {/* Icône Search */}
         <div
           className={cn(
@@ -187,12 +274,13 @@ const Search = React.forwardRef<HTMLInputElement | HTMLTextAreaElement, SearchPr
           <textarea
             value={currentValue}
             className={textareaStyles}
+            style={sizeStyle}
             ref={textareaRef}
             disabled={disabled}
             onChange={handleChange}
             onFocus={handleFocus}
             onBlur={handleBlur}
-            rows={Math.max(1, Math.min((currentValue as string).split(/\r\n|\r|\n/).length, 10))}
+            rows={Math.max(1, Math.min((currentValue as string).split(/\r\n|\r|\n/).length, maxRows))}
             {...(props as React.TextareaHTMLAttributes<HTMLTextAreaElement>)}
           />
         ) : (
@@ -205,6 +293,7 @@ const Search = React.forwardRef<HTMLInputElement | HTMLTextAreaElement, SearchPr
               // Masquer le bouton clear natif du navigateur
               "[&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden"
             )}
+            style={sizeStyle}
             ref={inputRef}
             disabled={disabled}
             onChange={handleChange}
@@ -215,11 +304,11 @@ const Search = React.forwardRef<HTMLInputElement | HTMLTextAreaElement, SearchPr
           />
         )}
         
-        {/* Bouton clear positionné en absolu par rapport au wrapper */}
+        {/* Bouton clear positionné en absolu par rapport au wrapper (décalé à gauche en textarea pour éviter la scrollbar) */}
         {hasValue && !disabled && (
           <div className={cn(
-            "absolute right-1 flex items-center justify-center z-10",
-            hasNewlines ? "top-1" : "top-1/2 -translate-y-1/2"
+            "absolute flex items-center justify-center z-10",
+            hasNewlines ? "right-4 top-1" : "right-1 top-1/2 -translate-y-1/2"
           )}>
             <Button
               type="button"
