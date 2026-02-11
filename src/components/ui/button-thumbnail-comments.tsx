@@ -220,7 +220,7 @@ export const ButtonThumbnailComments = React.forwardRef<HTMLButtonElement, Butto
     }, [debug, isOpen, bg, value, commentCount])
 
     return (
-      <DropdownMenu open={isOpen} onOpenChange={handleOpenChange}>
+      <DropdownMenu open={isOpen} onOpenChange={handleOpenChange} modal={false}>
         <DropdownMenuTrigger asChild>
           <Toggle
             ref={ref}

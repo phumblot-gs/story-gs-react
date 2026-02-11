@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useMemo } from "react";
+import React, { useRef, useCallback, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import { Layout, VStack } from "@/components/layout";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -238,6 +238,15 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
   // Ref pour capturer l'événement de clic (pour shiftKey, etc.)
   const clickEventRef = useRef<React.PointerEvent | null>(null);
 
+  // État pour gérer les menus mutuellement exclusifs
+  type MenuId = "stars" | "labels" | "tags" | "comments" | "actions" | null;
+  const [openMenu, setOpenMenu] = useState<MenuId>(null);
+
+  // Handler pour gérer l'ouverture/fermeture des menus
+  const handleMenuOpenChange = useCallback((menuId: MenuId, open: boolean) => {
+    setOpenMenu(open ? menuId : null);
+  }, []);
+
   // Calcul de la configuration de taille (prédéfinie ou personnalisée)
   const config = useMemo(() => {
     // Configurations prédéfinies
@@ -420,7 +429,7 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
 
               {/* Search icon */}
               <span className="search-icon absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white opacity-0 transition-opacity">
-                <span className="absolute mt-[7px] ml-[13px] text-lg">+</span>
+                <Icon name="Plus" strokeWidth={2} size={size === "small" ? 7 : 12} className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 ${size === "small" ? "ml-[-1px]" : "ml-[-2px]"} ${size === "small" ? "mt-[-4px]" : "mt-[-5px]"}`} />
                 <Icon name="Search" size={config.iconSize} strokeWidth={1} />
               </span>
             </div>
@@ -495,6 +504,8 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
                 menuSide="top"
                 menuAlign={size === "small" ? "start" : "end"}
                 menuBgContext="white"
+                open={openMenu === "stars"}
+                onOpenChange={(open) => handleMenuOpenChange("stars", open)}
               />
             )}
 
@@ -509,6 +520,8 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
                 menuSide="top"
                 menuAlign={size === "small" ? "start" : "end"}
                 menuBgContext="white"
+                open={openMenu === "labels"}
+                onOpenChange={(open) => handleMenuOpenChange("labels", open)}
               />
             )}
 
@@ -522,6 +535,8 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
                 className="p-0 w-4 h-4"
                 menuSide="top"
                 menuAlign="end"
+                open={openMenu === "tags"}
+                onOpenChange={(open) => handleMenuOpenChange("tags", open)}
               />
             )}
 
@@ -535,11 +550,16 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
                 className="p-0 w-4 h-4"
                 menuSide="top"
                 menuAlign="end"
+                open={openMenu === "comments"}
+                onOpenChange={(open) => handleMenuOpenChange("comments", open)}
               />
             )}
 
             {actions && actions.length > 0 && (
-              <DropdownMenu>
+              <DropdownMenu
+                open={openMenu === "actions"}
+                onOpenChange={(open) => handleMenuOpenChange("actions", open)}
+              >
                 <DropdownMenuTrigger asChild>
                   <Button
                     className="p-0 w-6 h-6"

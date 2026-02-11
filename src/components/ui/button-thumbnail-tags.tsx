@@ -217,7 +217,7 @@ export const ButtonThumbnailTags = React.forwardRef<HTMLButtonElement, ButtonThu
     }, [debug, isOpen, bg, value, activeTags])
 
     return (
-      <DropdownMenu open={isOpen} onOpenChange={handleOpenChange}>
+      <DropdownMenu open={isOpen} onOpenChange={handleOpenChange} modal={false}>
         <DropdownMenuTrigger asChild>
           <Toggle
             ref={ref}

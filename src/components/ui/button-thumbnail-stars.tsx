@@ -233,7 +233,7 @@ export const ButtonThumbnailStars = React.forwardRef<HTMLButtonElement, ButtonTh
     }, [debug, isOpen, bg, normalizedValue])
 
     return (
-      <DropdownMenu open={isOpen} onOpenChange={handleOpenChange}>
+      <DropdownMenu open={isOpen} onOpenChange={handleOpenChange} modal={false}>
         <DropdownMenuTrigger asChild>
           <Toggle
             ref={ref}

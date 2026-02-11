@@ -7,6 +7,13 @@ export type {
   ThumbnailAction,
 } from "./Thumbnail";
 
+// Menu context for coordinating menus
+export {
+  ThumbnailMenuProvider,
+  useThumbnailMenu,
+  useThumbnailMenuControl,
+} from "./ThumbnailMenuContext";
+
 // Re-export LabelColor for convenience
 export type { LabelColor } from "@/components/ui/button-thumbnail-labels";
 
