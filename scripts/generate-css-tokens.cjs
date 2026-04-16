@@ -668,6 +668,12 @@ function generateComponentStyles() {
   background-color: #292828; /* black */
 }
 
+/* Disabled ON on light bg: container grey-stronger → pill grey-lighter for contrast */
+[data-bg="white"].button-toggle-default[data-state="on"]:disabled .button-toggle-pill,
+[data-bg="grey"].button-toggle-default[data-state="on"]:disabled .button-toggle-pill {
+  background-color: #f3f3f3; /* grey-lighter */
+}
+
 .button-toggle-default:disabled .button-toggle-pill {
   background-color: #c1c1c1; /* grey-stronger */
 }
@@ -689,6 +695,12 @@ function generateComponentStyles() {
 
 [data-bg="black"].button-toggle-default[data-state="off"]:not(:disabled) .button-toggle-text {
   color: #ffffff; /* white */
+}
+
+/* Disabled ON on light bg: container grey-stronger → text grey-lighter for contrast */
+[data-bg="white"].button-toggle-default[data-state="on"]:disabled .button-toggle-text,
+[data-bg="grey"].button-toggle-default[data-state="on"]:disabled .button-toggle-text {
+  color: #f3f3f3; /* grey-lighter */
 }
 
 .button-toggle-default:disabled .button-toggle-text {

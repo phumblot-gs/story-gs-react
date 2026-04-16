@@ -1,7 +1,7 @@
 /**
  * Variables CSS générées automatiquement depuis les tokens Figma
  * NE PAS MODIFIER DIRECTEMENT - Généré par scripts/generate-css-tokens.cjs
- * Date: 2026-02-11T10:31:02.334Z
+ * Date: 2026-04-16T21:24:00.363Z
  */
 
 :root {
@@ -1558,6 +1558,12 @@
   background-color: #292828; /* black */
 }
 
+/* Disabled ON on light bg: container grey-stronger → pill grey-lighter for contrast */
+[data-bg="white"].button-toggle-default[data-state="on"]:disabled .button-toggle-pill,
+[data-bg="grey"].button-toggle-default[data-state="on"]:disabled .button-toggle-pill {
+  background-color: #f3f3f3; /* grey-lighter */
+}
+
 .button-toggle-default:disabled .button-toggle-pill {
   background-color: #c1c1c1; /* grey-stronger */
 }
@@ -1579,6 +1585,12 @@
 
 [data-bg="black"].button-toggle-default[data-state="off"]:not(:disabled) .button-toggle-text {
   color: #ffffff; /* white */
+}
+
+/* Disabled ON on light bg: container grey-stronger → text grey-lighter for contrast */
+[data-bg="white"].button-toggle-default[data-state="on"]:disabled .button-toggle-text,
+[data-bg="grey"].button-toggle-default[data-state="on"]:disabled .button-toggle-text {
+  color: #f3f3f3; /* grey-lighter */
 }
 
 .button-toggle-default:disabled .button-toggle-text {
