@@ -46,12 +46,13 @@ Tabs.displayName = TabsPrimitive.Root.displayName
 interface TabsListProps extends React.ComponentPropsWithoutRef<typeof TabsPrimitive.List> {
   className?: string
   debug?: boolean
+  rightSlot?: React.ReactNode
 }
 
 const TabsList = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.List>,
   TabsListProps
->(({ className, debug, ...props }, ref) => {
+>(({ className, debug, rightSlot, ...props }, ref) => {
   const bg = useBgContext()
   const headerClassName = React.useContext(TabsHeaderClassNameContext)
   const listRef = React.useRef<HTMLDivElement>(null)
@@ -285,6 +286,11 @@ const TabsList = React.forwardRef<
             <ChevronRight className="h-4 w-4" />
           </button>
         </>
+      )}
+      {rightSlot && (
+        <div className="tabs-right-slot">
+          {rightSlot}
+        </div>
       )}
     </div>
   )

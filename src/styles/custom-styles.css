@@ -596,25 +596,12 @@
 }
 
 /* Styles pour Tabs component */
-/* TabHeader - ligne de séparation et conteneur des onglets */
+/* TabHeader - conteneur des onglets (la bordure est portée par .tabs-list pour ne pas s'étendre sous le rightSlot) */
 .tabs-header {
-  border-bottom: 1px solid;
   display: flex;
   align-items: center;
   gap: var(--spacing-xlarge, 1.875rem);
   position: relative;
-}
-
-[data-bg="white"] .tabs-header {
-  border-color: var(--tabs-w-color-stroke-default);
-}
-
-[data-bg="grey"] .tabs-header {
-  border-color: var(--tabs-g-color-stroke-default);
-}
-
-[data-bg="black"] .tabs-header {
-  border-color: var(--tabs-b-color-stroke-default);
 }
 
 /* TabsList - conteneur scrollable des onglets */
@@ -625,6 +612,19 @@
   overflow: hidden;
   flex: 1;
   position: relative;
+  border-bottom: 1px solid;
+}
+
+[data-bg="white"] .tabs-list {
+  border-color: var(--tabs-w-color-stroke-default);
+}
+
+[data-bg="grey"] .tabs-list {
+  border-color: var(--tabs-g-color-stroke-default);
+}
+
+[data-bg="black"] .tabs-list {
+  border-color: var(--tabs-b-color-stroke-default);
 }
 
 /* Indicateur animé de l'onglet actif */
@@ -715,6 +715,44 @@
   opacity: 0.3;
   cursor: not-allowed;
 }
+
+/* Right slot - contenu aligné à droite (bouton, lien, etc.) */
+.tabs-right-slot {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-medium, 0.625rem);
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+/* Wrapper pour un onglet de type "vue" (nom + bouton menu optionnel) */
+.tabs-view-wrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xsmall, 0.25rem);
+  position: relative;
+}
+
+/* Bouton menu sur la vue active — visible uniquement au hover du wrapper ou quand le menu est ouvert */
+.tabs-view-menu-button {
+  opacity: 0;
+  transition: opacity 0.15s, background-color 0.2s, color 0.2s;
+}
+
+.tabs-view-wrapper:hover .tabs-view-menu-button,
+.tabs-view-wrapper--menu-open .tabs-view-menu-button,
+.tabs-view-menu-button:focus-visible,
+.tabs-view-menu-button--open {
+  opacity: 1;
+}
+
+/* État ouvert : fond bleu primaire, icône noire (match Select open state) */
+.tabs-view-menu-button--open,
+.tabs-view-menu-button--open:hover {
+  background-color: var(--color-blue-primary) !important;
+  color: var(--color-black, #000) !important;
+}
+
 
 /* TabBody - conteneur du contenu */
 .tabs-body {

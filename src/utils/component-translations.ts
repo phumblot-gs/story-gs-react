@@ -677,4 +677,160 @@ export const componentTranslations: TranslationMap = {
     IT: "Bianco",
     DE: "Weiß"
   },
+
+  // TabsWithViews
+  "tabsWithViews.createView": {
+    EN: "+ Create a view",
+    FR: "+ Créer une vue",
+    ES: "+ Crear una vista",
+    IT: "+ Crea una vista",
+    DE: "+ Ansicht erstellen"
+  },
+  "tabsWithViews.rename": {
+    EN: "Rename",
+    FR: "Renommer",
+    ES: "Renombrar",
+    IT: "Rinomina",
+    DE: "Umbenennen"
+  },
+  "tabsWithViews.delete": {
+    EN: "Delete",
+    FR: "Supprimer",
+    ES: "Eliminar",
+    IT: "Elimina",
+    DE: "Löschen"
+  },
+  "tabsWithViews.viewActions": {
+    EN: "View actions",
+    FR: "Actions de la vue",
+    ES: "Acciones de la vista",
+    IT: "Azioni della vista",
+    DE: "Ansichtsaktionen"
+  },
+  "tabsWithViews.createTitle": {
+    EN: "Create a new view",
+    FR: "Créer une nouvelle vue",
+    ES: "Crear una nueva vista",
+    IT: "Crea una nuova vista",
+    DE: "Neue Ansicht erstellen"
+  },
+  "tabsWithViews.renameTitle": {
+    EN: "Rename the view",
+    FR: "Renommer la vue",
+    ES: "Renombrar la vista",
+    IT: "Rinomina la vista",
+    DE: "Ansicht umbenennen"
+  },
+  "tabsWithViews.deleteConfirmTitle": {
+    EN: "Delete the view",
+    FR: "Supprimer la vue",
+    ES: "Eliminar la vista",
+    IT: "Elimina la vista",
+    DE: "Ansicht löschen"
+  },
+  "tabsWithViews.deleteConfirmMessage": {
+    EN: "Are you sure you want to delete the view \"{name}\"?",
+    FR: "Êtes-vous sûr de vouloir supprimer la vue « {name} » ?",
+    ES: "¿Está seguro de que desea eliminar la vista \"{name}\"?",
+    IT: "Sei sicuro di voler eliminare la vista \"{name}\"?",
+    DE: "Möchten Sie die Ansicht \"{name}\" wirklich löschen?"
+  },
+  "tabsWithViews.nameLabel": {
+    EN: "View name",
+    FR: "Nom de la vue",
+    ES: "Nombre de la vista",
+    IT: "Nome della vista",
+    DE: "Name der Ansicht"
+  },
+  "tabsWithViews.namePlaceholder": {
+    EN: "Enter a name",
+    FR: "Entrez un nom",
+    ES: "Ingrese un nombre",
+    IT: "Inserisci un nome",
+    DE: "Namen eingeben"
+  },
+  "tabsWithViews.visibilityLabel": {
+    EN: "Visibility",
+    FR: "Visibilité",
+    ES: "Visibilidad",
+    IT: "Visibilità",
+    DE: "Sichtbarkeit"
+  },
+  "tabsWithViews.public": {
+    EN: "Public",
+    FR: "Publique",
+    ES: "Pública",
+    IT: "Pubblica",
+    DE: "Öffentlich"
+  },
+  "tabsWithViews.private": {
+    EN: "Private",
+    FR: "Privée",
+    ES: "Privada",
+    IT: "Privata",
+    DE: "Privat"
+  },
+  "tabsWithViews.publicHelp": {
+    EN: "Visible to all users",
+    FR: "Visible par tous les utilisateurs",
+    ES: "Visible para todos los usuarios",
+    IT: "Visibile a tutti gli utenti",
+    DE: "Für alle Benutzer sichtbar"
+  },
+  "tabsWithViews.privateHelp": {
+    EN: "Visible only to you",
+    FR: "Visible uniquement par vous",
+    ES: "Visible solo para ti",
+    IT: "Visibile solo a te",
+    DE: "Nur für Sie sichtbar"
+  },
+  "tabsWithViews.filtersLabel": {
+    EN: "Applied filters",
+    FR: "Filtres appliqués",
+    ES: "Filtros aplicados",
+    IT: "Filtri applicati",
+    DE: "Angewendete Filter"
+  },
+  "tabsWithViews.noFilters": {
+    EN: "No filters",
+    FR: "Aucun filtre",
+    ES: "Sin filtros",
+    IT: "Nessun filtro",
+    DE: "Keine Filter"
+  },
+  "tabsWithViews.create": {
+    EN: "Create",
+    FR: "Créer",
+    ES: "Crear",
+    IT: "Crea",
+    DE: "Erstellen"
+  },
+  "tabsWithViews.save": {
+    EN: "Save",
+    FR: "Enregistrer",
+    ES: "Guardar",
+    IT: "Salva",
+    DE: "Speichern"
+  },
+  "tabsWithViews.cancel": {
+    EN: "Cancel",
+    FR: "Annuler",
+    ES: "Cancelar",
+    IT: "Annulla",
+    DE: "Abbrechen"
+  },
+  "tabsWithViews.confirmDelete": {
+    EN: "Delete",
+    FR: "Supprimer",
+    ES: "Eliminar",
+    IT: "Elimina",
+    DE: "Löschen"
+  },
+  "tabsWithViews.nameRequired": {
+    EN: "Please enter a name",
+    FR: "Veuillez saisir un nom",
+    ES: "Ingrese un nombre",
+    IT: "Inserisci un nome",
+    DE: "Bitte geben Sie einen Namen ein"
+  },
 };

@@ -40,6 +40,14 @@ import {
   TabsTrigger,
   TabsContent,
 } from "./components/ui/tabs";
+import { TabsWithViews } from "./components/ui/tabs-with-views";
+import type {
+  TabsWithViewsProps,
+  TabsFixedTab,
+  View,
+  ViewVisibility,
+  CreateViewInput,
+} from "./components/ui/tabs-with-views";
 import { Modal } from "./components/layout/Modal";
 import { FullFrame } from "./components/layout/FullFrame";
 import { FolderBrowser } from "./components/ui/folder-browser";
@@ -409,6 +417,8 @@ export { InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator };
 export { Search };
 export { SegmentedControl, SegmentedControlList, SegmentedControlTrigger, SegmentedControlContent };
 export { Tabs, TabsList, TabsTrigger, TabsContent };
+export { TabsWithViews };
+export type { TabsWithViewsProps, TabsFixedTab, View, ViewVisibility, CreateViewInput };
 export { FolderBrowser };
 export { Icon } from "./components/ui/icons";
 export { Animated } from "./components/ui/animated";
