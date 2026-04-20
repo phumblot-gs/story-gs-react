@@ -16,6 +16,39 @@ function pxToRem(px) {
 }
 
 /**
+ * Convertit une couleur hexadécimale en triplet HSL (format "H S% L%").
+ * Nécessaire pour les variables shadcn consommées via `hsl(var(--x))`.
+ */
+function hexToHslTriplet(hex) {
+  let h = hex.replace(/^#/, '');
+  if (h.length === 3) h = h.split('').map((c) => c + c).join('');
+  const r = parseInt(h.slice(0, 2), 16) / 255;
+  const g = parseInt(h.slice(2, 4), 16) / 255;
+  const b = parseInt(h.slice(4, 6), 16) / 255;
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  const l = (max + min) / 2;
+  let hue = 0;
+  let sat = 0;
+  if (max !== min) {
+    const d = max - min;
+    sat = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    if (max === r) hue = (g - b) / d + (g < b ? 6 : 0);
+    else if (max === g) hue = (b - r) / d + 2;
+    else hue = (r - g) / d + 4;
+    hue *= 60;
+  }
+  return `${Math.round(hue)} ${Math.round(sat * 100)}% ${Math.round(l * 100)}%`;
+}
+
+// Tokens shadcn dont la valeur DOIT être un triplet HSL (consommés via hsl(var(--x))).
+// Les tokens "de surface" (--background, --primary, ...) ne sont pas inclus ici car ils sont
+// actuellement en hex et non consommés via hsl() en pratique côté consommateurs — les corriger
+// casserait les rares usages directs qui attendent du hex. border/input sont la source
+// avérée du bug (règle universelle `* { border-color: hsl(var(--border)) }`).
+const SHADCN_TOKENS_FORCE_HSL = new Set(['Border', 'Input']);
+
+/**
  * Convertit les noms de tokens Figma en noms de variables CSS
  */
 function tokenToCSSVar(tokenName) {
@@ -226,7 +259,9 @@ function generateShadcnContextCSS(tokens, context) {
       const cssVar = '--' + baseName.replace(/([A-Z])/g, '-$1').toLowerCase().replace(/^-/, '');
 
       if (typeof value === 'string') {
-        css += `  ${cssVar}: ${value};\n`;
+        const mustBeHsl = SHADCN_TOKENS_FORCE_HSL.has(baseName) && /^#[0-9a-fA-F]{3,8}$/.test(value);
+        const emitted = mustBeHsl ? hexToHslTriplet(value) : value;
+        css += `  ${cssVar}: ${emitted};\n`;
       }
     }
   }

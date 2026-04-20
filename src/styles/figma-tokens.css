@@ -1,7 +1,7 @@
 /**
  * Variables CSS générées automatiquement depuis les tokens Figma
  * NE PAS MODIFIER DIRECTEMENT - Généré par scripts/generate-css-tokens.cjs
- * Date: 2026-04-16T21:24:00.363Z
+ * Date: 2026-04-20T16:53:41.810Z
  */
 
 :root {
@@ -878,8 +878,8 @@
   --destructive: #dd3733;
   --desctructive-foreground: #ffffff;
   --ring: #292828;
-  --border: #d9d7d7;
-  --input: #d9d7d7;
+  --border: 0 3% 85%;
+  --input: 0 3% 85%;
 }
 
 [data-bg="grey"] {
@@ -900,8 +900,8 @@
   --destructive: #dd3733;
   --desctructive-foreground: #ffffff;
   --ring: #292828;
-  --border: #d9d7d7;
-  --input: #d9d7d7;
+  --border: 0 3% 85%;
+  --input: 0 3% 85%;
 }
 
 [data-bg="black"] {
@@ -921,8 +921,8 @@
   --destructive: #dd3733;
   --desctructive-foreground: #ffffff;
   --ring: #ffffff;
-  --border: #d9d7d7;
-  --input: #d9d7d7;
+  --border: 0 3% 85%;
+  --input: 0 3% 85%;
 }
 
 /* Classes Button contextuelles */
