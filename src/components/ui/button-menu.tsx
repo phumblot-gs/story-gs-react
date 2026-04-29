@@ -16,6 +16,8 @@ export interface ButtonMenuAction {
   onClick: () => void
   disabled?: boolean
   icon?: React.ReactNode
+  /** Whether this action is selected. The corresponding menu item will have hover-like styling. */
+  selected?: boolean
 }
 
 export interface ButtonMenuProps extends Omit<ToggleProps, "onClick" | "isActive"> {
@@ -170,7 +172,7 @@ export const ButtonMenu = React.forwardRef<HTMLButtonElement, ButtonMenuProps>(
         case "grey":
           return "bg-black"
         case "black":
-          return "bg-black-secondary"
+          return "bg-white"
         default:
           return "bg-black"
       }
@@ -236,6 +238,7 @@ export const ButtonMenu = React.forwardRef<HTMLButtonElement, ButtonMenuProps>(
               <DropdownMenuItem
                 key={index}
                 disabled={action.disabled || disabled}
+                data-selected={action.selected ? "true" : "false"}
                 className={cn(
                   "w-full px-4 h-6 text-left text-sm whitespace-nowrap rounded-sm cursor-pointer popup-action-item popup-action-item-menu",
                   "flex items-center gap-2",

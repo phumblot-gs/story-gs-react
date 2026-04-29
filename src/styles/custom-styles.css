@@ -101,6 +101,40 @@
   color: var(--button-b-ghost-fg-hover) !important;
 }
 
+/* Button hasActiveElement sur fond black : fond bleu (blue-primary), texte et icône noir */
+[data-bg="black"].btn-normal[data-has-active-element="true"]:not(:disabled),
+[data-bg="black"] .btn-normal[data-has-active-element="true"]:not(:disabled) {
+  background: var(--color-blue-primary) !important;
+  color: var(--color-black) !important;
+}
+[data-bg="black"].btn-secondary[data-has-active-element="true"]:not(:disabled),
+[data-bg="black"] .btn-secondary[data-has-active-element="true"]:not(:disabled) {
+  background: var(--color-blue-primary) !important;
+  color: var(--color-black) !important;
+}
+[data-bg="black"].btn-ghost[data-has-active-element="true"]:not(:disabled),
+[data-bg="black"] .btn-ghost[data-has-active-element="true"]:not(:disabled) {
+  background: var(--color-blue-primary) !important;
+  color: var(--color-black) !important;
+}
+[data-bg="black"].btn-outline[data-has-active-element="true"]:not(:disabled),
+[data-bg="black"] .btn-outline[data-has-active-element="true"]:not(:disabled) {
+  background: var(--color-blue-primary) !important;
+  color: var(--color-black) !important;
+}
+[data-bg="black"].btn-destructive[data-has-active-element="true"]:not(:disabled),
+[data-bg="black"] .btn-destructive[data-has-active-element="true"]:not(:disabled) {
+  background: var(--color-blue-primary) !important;
+  color: var(--color-black) !important;
+}
+[data-bg="black"].btn-link[data-has-active-element="true"]:not(:disabled),
+[data-bg="black"] .btn-link[data-has-active-element="true"]:not(:disabled) {
+  color: var(--color-black) !important;
+}
+[data-bg="black"] [data-has-active-element="true"]:not(:disabled) svg {
+  color: var(--color-black) !important;
+}
+
 /* Styles pour btn-plus (ButtonPlus pill container) */
 /* White/Grey background: utilise button-action-plus-w-color */
 [data-bg="white"] .btn-plus,
@@ -277,9 +311,9 @@
   background: var(--color-black);
 }
 
-/* Sur fond black : background black-secondary */
+/* Sur fond black : background blanc pour ButtonMenu */
 [data-bg="black"] .popup-action {
-  background: var(--color-black-secondary);
+  background: var(--color-white);
 }
 
 /* Styles pour popup-action-item (items du menu déroulant) */
@@ -338,12 +372,13 @@
   color: var(--color-white);
 }
 
-/* Sur fond black : background black pour ButtonMenu et ButtonMenuStatus (pas ButtonMenuSmall) */
+/* Sur fond black : background gris pour ButtonMenu et ButtonMenuStatus (pas ButtonMenuSmall) */
 /* IMPORTANT: Ces styles ne s'appliquent que si data-bg="black" (pas dans ActionBar) */
+/* Items non sélectionnés : fond gris avec texte noir */
 .popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu,
 [data-bg="black"] .popup-action-item.popup-action-item-menu {
-  background: var(--color-black) !important;
-  color: var(--color-white) !important;
+  background: var(--color-grey) !important;
+  color: var(--color-black) !important;
 }
 
 /* Hover state avec data-highlighted (Radix UI) - syntaxe avec attribut data */
@@ -354,22 +389,23 @@
 }
 
 /* Hover state spécifique pour ButtonMenu et ButtonMenuStatus sur fond black */
-[data-bg="black"] .popup-action-item-menu[data-highlighted],
-[data-bg="black"] .popup-action-item-menu[data-highlighted="true"] {
-  background: var(--color-white) !important;
-  color: var(--color-black) !important;
+/* Au hover = au focus (Radix) : même rendu que selected = fond noir, texte blanc (priorité sur focus:bg-accent Tailwind) */
+.popup-action[data-bg="black"] .popup-action-item-menu[data-highlighted],
+.popup-action[data-bg="black"] .popup-action-item-menu[data-highlighted="true"],
+.popup-action[data-bg="black"] .popup-action-item-menu:focus,
+.popup-action[data-bg="black"] .popup-action-item-menu:focus-visible,
+[data-bg="black"] .popup-action-item.popup-action-item-menu[data-highlighted],
+[data-bg="black"] .popup-action-item.popup-action-item-menu[data-highlighted="true"],
+[data-bg="black"] .popup-action-item.popup-action-item-menu:focus,
+[data-bg="black"] .popup-action-item.popup-action-item-menu:focus-visible {
+  background: var(--color-black) !important;
+  color: var(--color-white) !important;
 }
 
-/* Focus state */
+/* Focus state (items génériques, pas menu) */
 [data-bg="black"] .popup-action-item:focus-visible {
   background: var(--color-white);
   color: var(--color-black);
-}
-
-/* Focus state spécifique pour ButtonMenu et ButtonMenuStatus sur fond black */
-[data-bg="black"] .popup-action-item-menu:focus-visible {
-  background: var(--color-white) !important;
-  color: var(--color-black) !important;
 }
 
 /* Active/pressed state */
@@ -396,24 +432,57 @@
   color: var(--color-white) !important;
 }
 
-/* Hover state pour ButtonMenu et ButtonMenuStatus sur fond white/grey (dans ActionBar) */
+/* Hover/focus pour ButtonMenu et ButtonMenuStatus sur fond white/grey : même rendu que selected (fond noir, texte blanc) */
 .popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu[data-highlighted],
 .popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu[data-highlighted],
 .popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu[data-highlighted="true"],
 .popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu[data-highlighted="true"],
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu:focus,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu:focus,
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu:focus-visible,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu:focus-visible,
 [data-bg="white"] .popup-action-item.popup-action-item-menu[data-highlighted],
 [data-bg="grey"] .popup-action-item.popup-action-item-menu[data-highlighted],
 [data-bg="white"] .popup-action-item.popup-action-item-menu[data-highlighted="true"],
-[data-bg="grey"] .popup-action-item.popup-action-item-menu[data-highlighted="true"] {
+[data-bg="grey"] .popup-action-item.popup-action-item-menu[data-highlighted="true"],
+[data-bg="white"] .popup-action-item.popup-action-item-menu:focus,
+[data-bg="grey"] .popup-action-item.popup-action-item-menu:focus,
+[data-bg="white"] .popup-action-item.popup-action-item-menu:focus-visible,
+[data-bg="grey"] .popup-action-item.popup-action-item-menu:focus-visible {
+  background: var(--color-black) !important;
+  color: var(--color-white) !important;
+}
+
+/* ButtonThumbnailStars uniquement : sur fond white/grey, hover/selected = fond blanc, texte noir */
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-stars[data-highlighted],
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-stars[data-highlighted="true"],
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-stars:focus,
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-stars:focus-visible,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-stars[data-highlighted],
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-stars[data-highlighted="true"],
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-stars:focus,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-stars:focus-visible,
+[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-stars[data-highlighted],
+[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-stars:focus,
+[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-stars[data-highlighted],
+[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-stars:focus {
   background: var(--color-white) !important;
   color: var(--color-black) !important;
 }
 
-/* Focus state pour ButtonMenu et ButtonMenuStatus sur fond white/grey (dans ActionBar) */
-.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu:focus-visible,
-.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu:focus-visible,
-[data-bg="white"] .popup-action-item.popup-action-item-menu:focus-visible,
-[data-bg="grey"] .popup-action-item.popup-action-item-menu:focus-visible {
+/* ButtonThumbnailLabels uniquement : sur fond white/grey, hover/selected = fond blanc, texte noir */
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-highlighted],
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-highlighted="true"],
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-labels:focus,
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-labels:focus-visible,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-highlighted],
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-highlighted="true"],
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-labels:focus,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-labels:focus-visible,
+[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-highlighted],
+[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-labels:focus,
+[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-highlighted],
+[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-labels:focus {
   background: var(--color-white) !important;
   color: var(--color-black) !important;
 }
@@ -527,25 +596,12 @@
 }
 
 /* Styles pour Tabs component */
-/* TabHeader - ligne de séparation et conteneur des onglets */
+/* TabHeader - conteneur des onglets (la bordure est portée par .tabs-list pour ne pas s'étendre sous le rightSlot) */
 .tabs-header {
-  border-bottom: 1px solid;
   display: flex;
   align-items: center;
   gap: var(--spacing-xlarge, 1.875rem);
   position: relative;
-}
-
-[data-bg="white"] .tabs-header {
-  border-color: var(--tabs-w-color-stroke-default);
-}
-
-[data-bg="grey"] .tabs-header {
-  border-color: var(--tabs-g-color-stroke-default);
-}
-
-[data-bg="black"] .tabs-header {
-  border-color: var(--tabs-b-color-stroke-default);
 }
 
 /* TabsList - conteneur scrollable des onglets */
@@ -556,6 +612,19 @@
   overflow: hidden;
   flex: 1;
   position: relative;
+  border-bottom: 1px solid;
+}
+
+[data-bg="white"] .tabs-list {
+  border-color: var(--tabs-w-color-stroke-default);
+}
+
+[data-bg="grey"] .tabs-list {
+  border-color: var(--tabs-g-color-stroke-default);
+}
+
+[data-bg="black"] .tabs-list {
+  border-color: var(--tabs-b-color-stroke-default);
 }
 
 /* Indicateur animé de l'onglet actif */
@@ -646,6 +715,44 @@
   opacity: 0.3;
   cursor: not-allowed;
 }
+
+/* Right slot - contenu aligné à droite (bouton, lien, etc.) */
+.tabs-right-slot {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-medium, 0.625rem);
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+/* Wrapper pour un onglet de type "vue" (nom + bouton menu optionnel) */
+.tabs-view-wrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xsmall, 0.25rem);
+  position: relative;
+}
+
+/* Bouton menu sur la vue active — visible uniquement au hover du wrapper ou quand le menu est ouvert */
+.tabs-view-menu-button {
+  opacity: 0;
+  transition: opacity 0.15s, background-color 0.2s, color 0.2s;
+}
+
+.tabs-view-wrapper:hover .tabs-view-menu-button,
+.tabs-view-wrapper--menu-open .tabs-view-menu-button,
+.tabs-view-menu-button:focus-visible,
+.tabs-view-menu-button--open {
+  opacity: 1;
+}
+
+/* État ouvert : fond bleu primaire, icône noire (match Select open state) */
+.tabs-view-menu-button--open,
+.tabs-view-menu-button--open:hover {
+  background-color: var(--color-blue-primary) !important;
+  color: var(--color-black, #000) !important;
+}
+
 
 /* TabBody - conteneur du contenu */
 .tabs-body {
@@ -770,4 +877,315 @@
 
 [data-bg="grey"] [data-radix-slider-thumb] {
   background-color: var(--color-black) !important;
+}
+
+/* Styles pour ButtonThumbnailStars - garder le style hover quand le menu est ouvert */
+/* Sur fond white/grey */
+[data-bg="white"] button[data-open="true"].btn-normal:not(:disabled),
+[data-bg="grey"] button[data-open="true"].btn-normal:not(:disabled) {
+  background: var(--button-w-normal-bg-hover) !important;
+  color: var(--button-w-normal-fg-hover) !important;
+}
+
+[data-bg="white"] button[data-open="true"].btn-secondary:not(:disabled),
+[data-bg="grey"] button[data-open="true"].btn-secondary:not(:disabled) {
+  background: var(--button-w-secondary-bg-hover) !important;
+  color: var(--button-w-secondary-fg-hover) !important;
+}
+
+[data-bg="white"] button[data-open="true"].btn-ghost:not(:disabled),
+[data-bg="grey"] button[data-open="true"].btn-ghost:not(:disabled) {
+  background: var(--button-w-ghost-bg-hover) !important;
+  color: var(--button-w-ghost-fg-hover) !important;
+}
+
+[data-bg="white"] button[data-open="true"].btn-outline:not(:disabled),
+[data-bg="grey"] button[data-open="true"].btn-outline:not(:disabled) {
+  background: var(--button-w-outline-bg-hover) !important;
+  color: var(--button-w-outline-fg-hover) !important;
+}
+
+/* Sur fond black */
+[data-bg="black"] button[data-open="true"].btn-normal:not(:disabled) {
+  background: var(--button-b-normal-bg-hover) !important;
+  color: var(--button-b-normal-fg-hover) !important;
+}
+
+[data-bg="black"] button[data-open="true"].btn-secondary:not(:disabled) {
+  background: var(--button-b-secondary-bg-hover) !important;
+  color: var(--button-b-secondary-fg-hover) !important;
+}
+
+[data-bg="black"] button[data-open="true"].btn-ghost:not(:disabled) {
+  background: var(--button-b-ghost-bg-hover) !important;
+  color: var(--button-b-ghost-fg-hover) !important;
+}
+
+[data-bg="black"] button[data-open="true"].btn-outline:not(:disabled) {
+  background: var(--button-b-outline-bg-hover) !important;
+  color: var(--button-b-outline-fg-hover) !important;
+}
+
+/* Styles pour ButtonThumbnailLabels et ButtonThumbnailStars - item sélectionné dans le menu normal */
+/* Sur fond white/grey : item sélectionné a un fond noir (comme hover) */
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu[data-selected="true"],
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu[data-selected="true"],
+[data-bg="white"] .popup-action-item.popup-action-item-menu[data-selected="true"],
+[data-bg="grey"] .popup-action-item.popup-action-item-menu[data-selected="true"] {
+  background: var(--color-black) !important;
+  color: var(--color-white) !important;
+}
+
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu[data-selected="true"] .label-menu-text,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu[data-selected="true"] .label-menu-text,
+[data-bg="white"] .popup-action-item.popup-action-item-menu[data-selected="true"] .label-menu-text,
+[data-bg="grey"] .popup-action-item.popup-action-item-menu[data-selected="true"] .label-menu-text {
+  color: var(--color-white) !important;
+}
+
+/* ButtonThumbnailStars uniquement : sur fond white/grey, item sélectionné = fond blanc, texte noir */
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-stars[data-selected="true"],
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-stars[data-selected="true"],
+[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-stars[data-selected="true"],
+[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-stars[data-selected="true"] {
+  background: var(--color-white) !important;
+  color: var(--color-black) !important;
+}
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-stars[data-selected="true"] .label-menu-text,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-stars[data-selected="true"] .label-menu-text,
+[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-stars[data-selected="true"] .label-menu-text,
+[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-stars[data-selected="true"] .label-menu-text {
+  color: var(--color-black) !important;
+}
+
+/* ButtonThumbnailLabels uniquement : sur fond white/grey, item sélectionné = fond blanc, texte noir */
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"],
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"],
+[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"],
+[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"] {
+  background: var(--color-white) !important;
+  color: var(--color-black) !important;
+}
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"] .label-menu-text,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"] .label-menu-text,
+[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"] .label-menu-text,
+[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"] .label-menu-text {
+  color: var(--color-black) !important;
+}
+
+/* Sur fond black : item sélectionné a un fond noir avec texte blanc */
+.popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu[data-selected="true"],
+[data-bg="black"] .popup-action-item.popup-action-item-menu[data-selected="true"] {
+  background: var(--color-black) !important;
+  color: var(--color-white) !important;
+}
+
+.popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu[data-selected="true"] .label-menu-text,
+[data-bg="black"] .popup-action-item.popup-action-item-menu[data-selected="true"] .label-menu-text {
+  color: var(--color-white) !important;
+}
+
+/* Texte par défaut pour les items non sélectionnés (fond white/grey = menu sombre, texte blanc) */
+.popup-action-item.popup-action-item-menu .label-menu-text,
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu .label-menu-text,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu .label-menu-text {
+  color: var(--color-white) !important;
+}
+
+/* Sur fond black : texte noir pour les items non sélectionnés (menu clair, items gris) */
+.popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu .label-menu-text,
+[data-bg="black"] .popup-action-item.popup-action-item-menu .label-menu-text {
+  color: var(--color-black) !important;
+}
+
+/* Styles pour ButtonThumbnailLabels et ButtonThumbnailStars - texte lors du hover/focus (même que selected) */
+/* Mode white/grey : texte blanc lors du hover/focus (fond noir) */
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu[data-highlighted] .label-menu-text,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu[data-highlighted] .label-menu-text,
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu:focus .label-menu-text,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu:focus .label-menu-text,
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu:focus-visible .label-menu-text,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu:focus-visible .label-menu-text,
+[data-bg="white"] .popup-action-item.popup-action-item-menu[data-highlighted] .label-menu-text,
+[data-bg="grey"] .popup-action-item.popup-action-item-menu[data-highlighted] .label-menu-text,
+[data-bg="white"] .popup-action-item.popup-action-item-menu:focus .label-menu-text,
+[data-bg="grey"] .popup-action-item.popup-action-item-menu:focus .label-menu-text,
+[data-bg="white"] .popup-action-item.popup-action-item-menu:focus-visible .label-menu-text,
+[data-bg="grey"] .popup-action-item.popup-action-item-menu:focus-visible .label-menu-text {
+  color: var(--color-white) !important;
+}
+
+/* ButtonThumbnailStars uniquement : sur fond white/grey, texte noir lors du hover/selected */
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-stars[data-highlighted] .label-menu-text,
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-stars:focus .label-menu-text,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-stars[data-highlighted] .label-menu-text,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-stars:focus .label-menu-text,
+[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-stars[data-highlighted] .label-menu-text,
+[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-stars[data-selected="true"] .label-menu-text,
+[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-stars[data-highlighted] .label-menu-text,
+[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-stars[data-selected="true"] .label-menu-text {
+  color: var(--color-black) !important;
+}
+
+/* ButtonThumbnailLabels uniquement : sur fond white/grey, texte noir lors du hover/selected */
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-highlighted] .label-menu-text,
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-labels:focus .label-menu-text,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-highlighted] .label-menu-text,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-labels:focus .label-menu-text,
+[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-highlighted] .label-menu-text,
+[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"] .label-menu-text,
+[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-highlighted] .label-menu-text,
+[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"] .label-menu-text {
+  color: var(--color-black) !important;
+}
+
+/* Sur fond black : texte blanc lors du hover/focus (fond noir) pour ButtonThumbnailLabels et Stars - même que selected */
+.popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu[data-highlighted] .label-menu-text,
+.popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu[data-highlighted="true"] .label-menu-text,
+.popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu:focus .label-menu-text,
+.popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu:focus-visible .label-menu-text,
+[data-bg="black"] .popup-action-item.popup-action-item-menu[data-highlighted] .label-menu-text,
+[data-bg="black"] .popup-action-item.popup-action-item-menu[data-highlighted="true"] .label-menu-text,
+[data-bg="black"] .popup-action-item.popup-action-item-menu:focus .label-menu-text,
+[data-bg="black"] .popup-action-item.popup-action-item-menu:focus-visible .label-menu-text {
+  color: var(--color-white) !important;
+}
+
+/* Mode white/grey : texte blanc lors du hover/focus (fond noir) pour ButtonThumbnailStars */
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu[data-highlighted] > span:last-child,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu[data-highlighted] > span:last-child,
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu:focus > span:last-child,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu:focus > span:last-child,
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu:focus-visible > span:last-child,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu:focus-visible > span:last-child,
+[data-bg="white"] .popup-action-item.popup-action-item-menu[data-highlighted] > span:last-child,
+[data-bg="grey"] .popup-action-item.popup-action-item-menu[data-highlighted] > span:last-child,
+[data-bg="white"] .popup-action-item.popup-action-item-menu:focus > span:last-child,
+[data-bg="grey"] .popup-action-item.popup-action-item-menu:focus > span:last-child,
+[data-bg="white"] .popup-action-item.popup-action-item-menu:focus-visible > span:last-child,
+[data-bg="grey"] .popup-action-item.popup-action-item-menu:focus-visible > span:last-child {
+  color: var(--color-white) !important;
+}
+
+/* ButtonThumbnailStars uniquement : sur fond white/grey, > span:last-child en noir lors du hover/selected */
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-stars[data-highlighted] > span:last-child,
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-stars:focus > span:last-child,
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-stars[data-selected="true"] > span:last-child,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-stars[data-highlighted] > span:last-child,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-stars:focus > span:last-child,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-stars[data-selected="true"] > span:last-child,
+[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-stars[data-highlighted] > span:last-child,
+[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-stars[data-selected="true"] > span:last-child,
+[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-stars[data-highlighted] > span:last-child,
+[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-stars[data-selected="true"] > span:last-child {
+  color: var(--color-black) !important;
+}
+
+/* Sur fond black : texte blanc lors du hover/focus/selected (fond noir) pour ButtonThumbnailStars - même rendu */
+.popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu[data-selected="true"] > span:last-child,
+.popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu[data-highlighted] > span:last-child,
+.popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu[data-highlighted="true"] > span:last-child,
+.popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu:focus > span:last-child,
+.popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu:focus-visible > span:last-child,
+[data-bg="black"] .popup-action-item.popup-action-item-menu[data-selected="true"] > span:last-child,
+[data-bg="black"] .popup-action-item.popup-action-item-menu[data-highlighted] > span:last-child,
+[data-bg="black"] .popup-action-item.popup-action-item-menu[data-highlighted="true"] > span:last-child,
+[data-bg="black"] .popup-action-item.popup-action-item-menu:focus > span:last-child,
+[data-bg="black"] .popup-action-item.popup-action-item-menu:focus-visible > span:last-child {
+  color: var(--color-white) !important;
+}
+
+/* Sur fond black : texte noir pour les items non sélectionnés dans le mode normal ButtonThumbnailStars */
+[data-bg="black"] .popup-action-item.popup-action-item-menu > span:last-child {
+  color: var(--color-black) !important;
+}
+
+/* Mode compact ButtonThumbnailStars : texte noir lors du hover (fond blanc) */
+/* Le texte utilise text-white ou text-black selon l'état, mais lors du hover il doit être noir */
+[data-bg="white"] .popup-action-item.popup-action-item-menu[data-highlighted] span.text-white,
+[data-bg="grey"] .popup-action-item.popup-action-item-menu[data-highlighted] span.text-white {
+  color: var(--color-black) !important;
+}
+
+/* Sur fond black : texte blanc lors du hover (fond noir) pour ButtonThumbnailStars compact */
+[data-bg="black"] .popup-action-item.popup-action-item-menu[data-highlighted] span.text-white {
+  color: var(--color-white) !important;
+}
+
+[data-bg="black"] .popup-action-item.popup-action-item-menu:not([data-selected="true"]) span.text-white {
+  color: var(--color-black) !important;
+}
+
+/* Sur fond black : mode compact ButtonThumbnailStars/Labels - items sélectionnés avec fond blanc et texte noir (uniquement compact) */
+.popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-compact[data-selected="true"],
+[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-compact[data-selected="true"] {
+  background: var(--color-white) !important;
+}
+
+[data-bg="black"] .popup-action-item.popup-action-item-menu[data-selected="true"] span.text-black,
+[data-bg="black"] .popup-action-item.popup-action-item-menu[data-highlighted] span.text-black {
+  color: var(--color-black) !important;
+}
+
+/* Mode compact ButtonThumbnailLabels/Stars sur fond white/grey : fond noir lors du hover (comme selected) */
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-compact[data-highlighted],
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-compact[data-highlighted],
+[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-compact[data-highlighted],
+[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-compact[data-highlighted] {
+  background: var(--color-black) !important;
+}
+
+/* Sur fond black : fond noir lors du hover/focus pour le mode compact (même que selected) */
+.popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-compact[data-highlighted],
+.popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-compact:focus,
+.popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-compact:focus-visible,
+[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-compact[data-highlighted],
+[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-compact:focus,
+[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-compact:focus-visible {
+  background: var(--color-black) !important;
+}
+
+/* ButtonThumbnailLabels avec menuBgContext black : hover/selected = fond noir, texte blanc (explicite) */
+.popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-highlighted],
+.popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-highlighted="true"],
+.popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-labels:focus,
+.popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-labels:focus-visible,
+.popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"],
+[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-highlighted],
+[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-labels:focus,
+[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"] {
+  background: var(--color-black) !important;
+  color: var(--color-white) !important;
+}
+.popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-highlighted] .label-menu-text,
+.popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-labels:focus .label-menu-text,
+.popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"] .label-menu-text,
+[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-highlighted] .label-menu-text,
+[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"] .label-menu-text {
+  color: var(--color-white) !important;
+}
+
+/* Styles pour ButtonThumbnailLabels - adapter la bordure du div au hover et à l'état ouvert */
+/* Couleur par défaut selon le bg */
+[data-bg="white"] button .border-adaptive,
+[data-bg="grey"] button .border-adaptive {
+  border-color: rgba(0, 0, 0, 0.5) !important;
+}
+
+[data-bg="black"] button .border-adaptive {
+  border-color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* Sur fond white/grey : en hover ou ouvert, le fond devient black, donc la bordure doit être white */
+[data-bg="white"] button:hover:not(:disabled) .border-adaptive,
+[data-bg="grey"] button:hover:not(:disabled) .border-adaptive,
+[data-bg="white"] button[data-open="true"]:not(:disabled) .border-adaptive,
+[data-bg="grey"] button[data-open="true"]:not(:disabled) .border-adaptive {
+  border-color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* Sur fond black : en hover ou ouvert, le fond devient white, donc la bordure doit être black */
+[data-bg="black"] button:hover:not(:disabled) .border-adaptive,
+[data-bg="black"] button[data-open="true"]:not(:disabled) .border-adaptive {
+  border-color: rgba(0, 0, 0, 0.5) !important;
 }

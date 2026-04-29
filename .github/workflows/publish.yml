@@ -1,0 +1,65 @@
+name: Publish Package to Nexus
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Tag (or branch) to publish, e.g. v1.10.0"
+        required: true
+        default: "v1.10.0"
+
+jobs:
+  publish:
+    name: Build and publish to Nexus
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.ref || github.ref }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Configure npm for Nexus authentication
+        run: |
+          # Public registry for transitive deps (e.g. Storybook scopes)
+          npm config set registry https://registry.npmjs.org/
+          # Scoped registry for @gs packages
+          echo "@gs:registry=https://nexus.grand-shooting.org/repository/npm-gs/" >> ~/.npmrc
+          echo "//nexus.grand-shooting.org/repository/npm-gs/:_auth=${{ secrets.NPM_NEXUS_AUTH }}" >> ~/.npmrc
+
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Run postinstall (apply MCP patch)
+        run: npm run postinstall || true
+
+      - name: Verify package.json version matches the ref
+        run: |
+          PKG_VERSION=$(node -p "require('./package.json').version")
+          REF="${{ github.event.inputs.ref || github.ref }}"
+          # Strip refs/tags/ prefix if present
+          REF_NAME="${REF#refs/tags/}"
+          # Strip leading v if present
+          EXPECTED="${REF_NAME#v}"
+          if [ "$PKG_VERSION" != "$EXPECTED" ]; then
+            echo "::error::package.json version ($PKG_VERSION) does not match ref ($REF_NAME). Aborting publish."
+            exit 1
+          fi
+          echo "Publishing version $PKG_VERSION (ref: $REF_NAME)"
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build library
+        run: npm run build:lib
+
+      - name: Publish to Nexus
+        run: npm publish

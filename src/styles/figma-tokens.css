@@ -1,7 +1,7 @@
 /**
  * Variables CSS générées automatiquement depuis les tokens Figma
  * NE PAS MODIFIER DIRECTEMENT - Généré par scripts/generate-css-tokens.cjs
- * Date: 2025-12-08T11:40:10.161Z
+ * Date: 2026-04-27T20:41:53.636Z
  */
 
 :root {
@@ -878,8 +878,8 @@
   --destructive: #dd3733;
   --desctructive-foreground: #ffffff;
   --ring: #292828;
-  --border: #d9d7d7;
-  --input: #d9d7d7;
+  --border: 0 3% 85%;
+  --input: 0 3% 85%;
 }
 
 [data-bg="grey"] {
@@ -900,8 +900,8 @@
   --destructive: #dd3733;
   --desctructive-foreground: #ffffff;
   --ring: #292828;
-  --border: #d9d7d7;
-  --input: #d9d7d7;
+  --border: 0 3% 85%;
+  --input: 0 3% 85%;
 }
 
 [data-bg="black"] {
@@ -921,8 +921,8 @@
   --destructive: #dd3733;
   --desctructive-foreground: #ffffff;
   --ring: #ffffff;
-  --border: #d9d7d7;
-  --input: #d9d7d7;
+  --border: 0 3% 85%;
+  --input: 0 3% 85%;
 }
 
 /* Classes Button contextuelles */
@@ -1280,6 +1280,86 @@
   text-decoration: none;
 }
 
+
+/* Button hasActiveElement (filtre actif) : fond = hover, texte et icône = blue-primary */
+[data-bg="white"].btn-normal[data-has-active-element="true"]:not(:disabled) {
+  background: var(--button-w-normal-bg-hover);
+  color: var(--color-blue-primary);
+}
+[data-bg="white"].btn-secondary[data-has-active-element="true"]:not(:disabled) {
+  background: var(--button-w-secondary-bg-hover);
+  color: var(--color-blue-primary);
+}
+[data-bg="white"].btn-ghost[data-has-active-element="true"]:not(:disabled) {
+  background: var(--button-w-ghost-bg-hover);
+  color: var(--color-blue-primary);
+}
+[data-bg="white"].btn-outline[data-has-active-element="true"]:not(:disabled) {
+  background: var(--button-w-outline-bg-hover);
+  color: var(--color-blue-primary);
+}
+[data-bg="white"].btn-destructive[data-has-active-element="true"]:not(:disabled) {
+  background: var(--button-w-destructive-bg-hover);
+  color: var(--color-blue-primary);
+}
+[data-bg="white"].btn-link[data-has-active-element="true"]:not(:disabled) {
+  color: var(--color-blue-primary);
+}
+
+[data-bg="grey"].btn-normal[data-has-active-element="true"]:not(:disabled) {
+  background: var(--button-g-normal-bg-hover);
+  color: var(--color-blue-primary);
+}
+[data-bg="grey"].btn-secondary[data-has-active-element="true"]:not(:disabled) {
+  background: var(--button-g-secondary-bg-hover);
+  color: var(--color-blue-primary);
+}
+[data-bg="grey"].btn-ghost[data-has-active-element="true"]:not(:disabled) {
+  background: var(--button-g-ghost-bg-hover);
+  color: var(--color-blue-primary);
+}
+[data-bg="grey"].btn-outline[data-has-active-element="true"]:not(:disabled) {
+  background: var(--button-g-outline-bg-hover);
+  color: var(--color-blue-primary);
+}
+[data-bg="grey"].btn-destructive[data-has-active-element="true"]:not(:disabled) {
+  background: var(--button-g-destructive-bg-hover);
+  color: var(--color-blue-primary);
+}
+[data-bg="grey"].btn-link[data-has-active-element="true"]:not(:disabled) {
+  color: var(--color-blue-primary);
+}
+
+[data-bg="black"].btn-normal[data-has-active-element="true"]:not(:disabled) {
+  background: var(--color-blue-primary);
+  color: var(--color-black);
+}
+[data-bg="black"].btn-secondary[data-has-active-element="true"]:not(:disabled) {
+  background: var(--color-blue-primary);
+  color: var(--color-black);
+}
+[data-bg="black"].btn-ghost[data-has-active-element="true"]:not(:disabled) {
+  background: var(--color-blue-primary);
+  color: var(--color-black);
+}
+[data-bg="black"].btn-outline[data-has-active-element="true"]:not(:disabled) {
+  background: var(--color-blue-primary);
+  color: var(--color-black);
+}
+[data-bg="black"].btn-destructive[data-has-active-element="true"]:not(:disabled) {
+  background: var(--color-blue-primary);
+  color: var(--color-black);
+}
+[data-bg="black"].btn-link[data-has-active-element="true"]:not(:disabled) {
+  color: var(--color-black);
+}
+
+[data-has-active-element="true"]:not(:disabled) svg {
+  color: var(--color-blue-primary);
+}
+[data-bg="black"] [data-has-active-element="true"]:not(:disabled) svg {
+  color: var(--color-black);
+}
 /* Classes de thème */
 .theme-light {
   color-scheme: light;
@@ -1478,6 +1558,12 @@
   background-color: #292828; /* black */
 }
 
+/* Disabled ON on light bg: container grey-stronger → pill grey-lighter for contrast */
+[data-bg="white"].button-toggle-default[data-state="on"]:disabled .button-toggle-pill,
+[data-bg="grey"].button-toggle-default[data-state="on"]:disabled .button-toggle-pill {
+  background-color: #f3f3f3; /* grey-lighter */
+}
+
 .button-toggle-default:disabled .button-toggle-pill {
   background-color: #c1c1c1; /* grey-stronger */
 }
@@ -1499,6 +1585,12 @@
 
 [data-bg="black"].button-toggle-default[data-state="off"]:not(:disabled) .button-toggle-text {
   color: #ffffff; /* white */
+}
+
+/* Disabled ON on light bg: container grey-stronger → text grey-lighter for contrast */
+[data-bg="white"].button-toggle-default[data-state="on"]:disabled .button-toggle-text,
+[data-bg="grey"].button-toggle-default[data-state="on"]:disabled .button-toggle-text {
+  color: #f3f3f3; /* grey-lighter */
 }
 
 .button-toggle-default:disabled .button-toggle-text {

@@ -1,11 +1,13 @@
 {
   "name": "@gs/gs-components-library",
-  "version": "1.7.0",
+  "version": "1.10.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "build:dev": "vite build --mode development",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "lint": "eslint .",
     "preview": "vite preview",
     "build:lib": "npm run generate:tokens && vite build --config vite.lib.config.ts",
@@ -15,7 +17,7 @@
     "storybook:serve": "storybook dev -p 8080 --host 0.0.0.0 --no-open",
     "build-storybook": "storybook build",
     "prepublishOnly": "npm run build:lib",
-    "postinstall": "patch-package || node scripts/apply-mcp-patch.cjs"
+    "postinstall": "patch-package 2>/dev/null || node scripts/apply-mcp-patch.cjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
@@ -82,6 +84,7 @@
     "@storybook/mdx2-csf": "^1.1.0",
     "@storybook/react-vite": "9.1.16",
     "@tailwindcss/typography": "^0.5.15",
+    "@testing-library/react": "^16.3.2",
     "@types/node": "^22.5.5",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
@@ -93,6 +96,8 @@
     "eslint-plugin-storybook": "9.1.16",
     "glob": "^11.0.3",
     "globals": "^15.9.0",
+    "happy-dom": "^20.9.0",
+    "jsdom": "^29.1.0",
     "lovable-tagger": "^1.1.7",
     "patch-package": "^8.0.1",
     "postcss": "^8.4.47",
@@ -105,7 +110,8 @@
     "terser": "^5.44.0",
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.0.1",
-    "vite": "^5.4.1"
+    "vite": "^5.4.1",
+    "vitest": "^2.1.9"
   },
   "description": "A modern UI component library",
   "main": "dist/index.cjs",
@@ -223,7 +229,8 @@
     "./style.css": "./dist/style.css"
   },
   "files": [
-    "dist"
+    "dist",
+    "scripts"
   ],
   "sideEffects": [
     "*.css"

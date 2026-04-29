@@ -1,10 +1,11 @@
 
 import React from "react"
+import { CustomIconProps } from "./types"
 
-export const CustomCheckIcon = () => (
-  <svg width="12" height="12" viewBox="0 0 10 6" preserveAspectRatio="xMidYMid meet" fill="none" xmlns="http://www.w3.org/2000/svg">
+export const CustomCheckIcon: React.FC<CustomIconProps> = ({ size = 12, strokeWidth = 0.5 }) => (
+  <svg width={size} height={size} viewBox="0 0 10 6" preserveAspectRatio="xMidYMid meet" fill="none" xmlns="http://www.w3.org/2000/svg">
     <g clipPath="url(#clip0_303_5348)">
-      <path d="M9.19999 0.449982L4.09999 5.54998L0.799988 2.23798" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M9.19999 0.449982L4.09999 5.54998L0.799988 2.23798" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round"/>
     </g>
     <defs>
       <clipPath id="clip0_303_5348">
@@ -14,24 +15,24 @@ export const CustomCheckIcon = () => (
   </svg>
 )
 
-export const CustomXIcon = () => (
-  <svg width="12" height="12" viewBox="0 0 10 10" preserveAspectRatio="xMidYMid meet" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M9.25911 0.740906L0.740906 9.25911" stroke="currentColor" strokeWidth="0.5" strokeMiterlimit="10" strokeLinecap="round"/>
-    <path d="M0.740906 0.740906L9.25911 9.25911" stroke="currentColor" strokeWidth="0.5" strokeMiterlimit="10" strokeLinecap="round"/>
+export const CustomXIcon: React.FC<CustomIconProps> = ({ size = 12, strokeWidth = 0.5 }) => (
+  <svg width={size} height={size} viewBox="0 0 10 10" preserveAspectRatio="xMidYMid meet" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M9.25911 0.740906L0.740906 9.25911" stroke="currentColor" strokeWidth={strokeWidth} strokeMiterlimit="10" strokeLinecap="round"/>
+    <path d="M0.740906 0.740906L9.25911 9.25911" stroke="currentColor" strokeWidth={strokeWidth} strokeMiterlimit="10" strokeLinecap="round"/>
   </svg>
 )
 
-export const CustomAlertIcon = () => (
-  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+export const CustomAlertIcon: React.FC<CustomIconProps> = ({ size = 12, strokeWidth = 0.5 }) => (
+  <svg width={size} height={size} viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
     <g clipPath="url(#clip0_303_6884)">
-      <path d="M6 2.41464V0.878052" stroke="currentColor" strokeWidth="0.5" strokeMiterlimit="10" strokeLinecap="round"/>
-      <path d="M1.90243 6.51221H0.365845" stroke="currentColor" strokeWidth="0.5" strokeMiterlimit="10" strokeLinecap="round"/>
-      <path d="M11.6341 6.51221H10.0975" stroke="currentColor" strokeWidth="0.5" strokeMiterlimit="10" strokeLinecap="round"/>
-      <path d="M3.10246 3.61463L2.01953 2.53171" stroke="currentColor" strokeWidth="0.5" strokeMiterlimit="10" strokeLinecap="round"/>
-      <path d="M9.98051 2.53171L8.89758 3.61463" stroke="currentColor" strokeWidth="0.5" strokeMiterlimit="10" strokeLinecap="round"/>
-      <path d="M3.43903 11.122V6.67318C3.43903 5.1805 4.59512 3.95123 6 3.95123C7.40488 3.95123 8.56098 5.1805 8.56098 6.67318V11.122H3.43903Z" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M6 11.122V8.0488" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M5.99998 9.07318C6.56573 9.07318 7.02437 8.61454 7.02437 8.04879C7.02437 7.48303 6.56573 7.0244 5.99998 7.0244C5.43422 7.0244 4.97559 7.48303 4.97559 8.04879C4.97559 8.61454 5.43422 9.07318 5.99998 9.07318Z" stroke="currentColor" strokeWidth="0.5" strokeMiterlimit="10"/>
+      <path d="M6 2.41464V0.878052" stroke="currentColor" strokeWidth={strokeWidth} strokeMiterlimit="10" strokeLinecap="round"/>
+      <path d="M1.90243 6.51221H0.365845" stroke="currentColor" strokeWidth={strokeWidth} strokeMiterlimit="10" strokeLinecap="round"/>
+      <path d="M11.6341 6.51221H10.0975" stroke="currentColor" strokeWidth={strokeWidth} strokeMiterlimit="10" strokeLinecap="round"/>
+      <path d="M3.10246 3.61463L2.01953 2.53171" stroke="currentColor" strokeWidth={strokeWidth} strokeMiterlimit="10" strokeLinecap="round"/>
+      <path d="M9.98051 2.53171L8.89758 3.61463" stroke="currentColor" strokeWidth={strokeWidth} strokeMiterlimit="10" strokeLinecap="round"/>
+      <path d="M3.43903 11.122V6.67318C3.43903 5.1805 4.59512 3.95123 6 3.95123C7.40488 3.95123 8.56098 5.1805 8.56098 6.67318V11.122H3.43903Z" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M6 11.122V8.0488" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M5.99998 9.07318C6.56573 9.07318 7.02437 8.61454 7.02437 8.04879C7.02437 7.48303 6.56573 7.0244 5.99998 7.0244C5.43422 7.0244 4.97559 7.48303 4.97559 8.04879C4.97559 8.61454 5.43422 9.07318 5.99998 9.07318Z" stroke="currentColor" strokeWidth={strokeWidth} strokeMiterlimit="10"/>
     </g>
     <defs>
       <clipPath id="clip0_303_6884">
@@ -41,17 +42,17 @@ export const CustomAlertIcon = () => (
   </svg>
 )
 
-export const CustomStatusIcon = () => (
-  <svg width="12" height="12" viewBox="0 0 12 11.65" preserveAspectRatio="xMidYMid meet" fill="none" xmlns="http://www.w3.org/2000/svg">
+export const CustomStatusIcon: React.FC<CustomIconProps> = ({ size = 12 }) => (
+  <svg width={size} height={size} viewBox="0 0 12 11.65" preserveAspectRatio="xMidYMid meet" fill="none" xmlns="http://www.w3.org/2000/svg">
     <rect fill="#a44c9f" x="0" y="0" width="12" height="3"/>
     <rect fill="#ffd331" x="0" y="4.3" width="12" height="3"/>
     <rect fill="#89cc52" x="0" y="8.65" width="12" height="3"/>
   </svg>
 )
 
-export const CustomUrgentIcon = () => (
-  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M5.58552 0.354506L0.740401 6.92926C0.63297 7.06892 0.740401 7.27304 0.91229 7.27304H4.67236C4.81202 7.27304 4.90871 7.40195 4.88722 7.53087L4.03852 11.4628C3.98481 11.6884 4.28561 11.8174 4.42527 11.6347L9.27039 5.05997C9.37782 4.92031 9.27039 4.71619 9.0985 4.71619H5.33843C5.19877 4.71619 5.10208 4.58727 5.12357 4.45836L5.97227 0.526395C6.02599 0.300791 5.72518 0.171874 5.58552 0.354506Z" fill="currentColor" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
+export const CustomUrgentIcon: React.FC<CustomIconProps> = ({ size = 12, strokeWidth = 0.5 }) => (
+  <svg width={size} height={size} viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M5.58552 0.354506L0.740401 6.92926C0.63297 7.06892 0.740401 7.27304 0.91229 7.27304H4.67236C4.81202 7.27304 4.90871 7.40195 4.88722 7.53087L4.03852 11.4628C3.98481 11.6884 4.28561 11.8174 4.42527 11.6347L9.27039 5.05997C9.37782 4.92031 9.27039 4.71619 9.0985 4.71619H5.33843C5.19877 4.71619 5.10208 4.58727 5.12357 4.45836L5.97227 0.526395C6.02599 0.300791 5.72518 0.171874 5.58552 0.354506Z" fill="currentColor" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
 )
 

@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 import { ButtonMenuStatus, ButtonMenuStatusOption } from "@/components/ui/button-menu-status"
 import { Layout, VStack, HStack } from "@/components/layout"
 import { MediaStatus } from "@/utils/mediaStatus"
+import { useState } from "react"
 
 const meta = {
   title: "UI/ButtonMenuStatus",
@@ -38,6 +39,10 @@ const statusOptions: ButtonMenuStatusOption[] = [
   <ButtonMenuStatus 
     currentStatus={MediaStatus.SELECTED}
     statusOptions={statusOptions}
+    onStatusChange={(status) => {
+      console.log("Status changed to:", status);
+      // Update your state here
+    }}
   />
 </Layout>
 \`\`\`
@@ -121,6 +126,10 @@ Controls the alignment of the menu relative to the button:
     onClick: {
       action: "clicked",
       description: "Callback called when the button is clicked",
+    },
+    onStatusChange: {
+      action: "statusChanged",
+      description: "Callback called when a status is selected from the menu",
     },
     onFocus: {
       action: "focused",
@@ -389,6 +398,31 @@ export const DebugMode: Story = {
       </VStack>
     </Layout>
   ),
+}
+
+export const WithStatusChange: Story = {
+  render: () => {
+    const [currentStatus, setCurrentStatus] = useState(MediaStatus.SELECTED)
+    return (
+      <Layout bg="white" padding={6}>
+        <VStack gap={4}>
+          <div>
+            <p className="text-sm text-grey-stronger mb-2">
+              Status actuel: {workflowStatusOptions.find(opt => opt.status === currentStatus)?.label || "Inconnu"}
+            </p>
+            <ButtonMenuStatus
+              currentStatus={currentStatus}
+              statusOptions={workflowStatusOptions}
+              onStatusChange={(status) => {
+                setCurrentStatus(status)
+                console.log("Status changed to:", status)
+              }}
+            />
+          </div>
+        </VStack>
+      </Layout>
+    )
+  },
 }
 
 export const MenuPositioning: Story = {

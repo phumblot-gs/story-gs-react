@@ -250,33 +250,26 @@ export const componentTranslations: TranslationMap = {
   },
 
   // FolderBrowser
-  "folderBrowser.rootFolder": {
-    EN: "My files",
-    FR: "Mes fichiers",
-    ES: "Mis archivos",
-    IT: "I miei file",
-    DE: "Meine Dateien"
+  "folderBrowser.columnName": {
+    EN: "FOLDER NAME",
+    FR: "NOM DU DOSSIER",
+    ES: "NOMBRE DE LA CARPETA",
+    IT: "NOME DELLA CARTELLA",
+    DE: "ORDNERNAME"
   },
-  "folderBrowser.back": {
-    EN: "Back",
-    FR: "Retour",
-    ES: "Atrás",
-    IT: "Indietro",
-    DE: "Zurück"
-  },
-  "folderBrowser.empty": {
+  "folderBrowser.emptyFolder": {
     EN: "This folder is empty",
     FR: "Ce dossier est vide",
     ES: "Esta carpeta está vacía",
     IT: "Questa cartella è vuota",
     DE: "Dieser Ordner ist leer"
   },
-  "folderBrowser.uploadHint": {
-    EN: "Drop files here or click to upload",
-    FR: "Déposez des fichiers ici ou cliquez pour téléverser",
-    ES: "Suelta archivos aquí o haz clic para cargar",
-    IT: "Rilascia i file qui o clicca per caricare",
-    DE: "Dateien hier ablegen oder klicken zum Hochladen"
+  "folderBrowser.select": {
+    EN: "Select",
+    FR: "Sélectionner",
+    ES: "Seleccionar",
+    IT: "Seleziona",
+    DE: "Auswählen"
   },
 
   // Button
@@ -612,5 +605,332 @@ export const componentTranslations: TranslationMap = {
     ES: "Deseleccionar todo",
     IT: "Deseleziona tutto",
     DE: "Alles abwählen"
-  }
+  },
+  // ButtonThumbnailLabels
+  "label.none": {
+    EN: "None",
+    FR: "Aucun",
+    ES: "Ninguno",
+    IT: "Nessuno",
+    DE: "Keine"
+  },
+  "label.blue": {
+    EN: "Blue",
+    FR: "Bleu",
+    ES: "Azul",
+    IT: "Blu",
+    DE: "Blau"
+  },
+  "label.green": {
+    EN: "Green",
+    FR: "Vert",
+    ES: "Verde",
+    IT: "Verde",
+    DE: "Grün"
+  },
+  "label.orange": {
+    EN: "Orange",
+    FR: "Orange",
+    ES: "Naranja",
+    IT: "Arancione",
+    DE: "Orange"
+  },
+  "label.pink": {
+    EN: "Pink",
+    FR: "Rose",
+    ES: "Rosa",
+    IT: "Rosa",
+    DE: "Rosa"
+  },
+  "label.purple": {
+    EN: "Purple",
+    FR: "Violet",
+    ES: "Morado",
+    IT: "Viola",
+    DE: "Lila"
+  },
+  "label.red": {
+    EN: "Red",
+    FR: "Rouge",
+    ES: "Rojo",
+    IT: "Rosso",
+    DE: "Rot"
+  },
+  "label.yellow": {
+    EN: "Yellow",
+    FR: "Jaune",
+    ES: "Amarillo",
+    IT: "Giallo",
+    DE: "Gelb"
+  },
+  "label.white": {
+    EN: "White",
+    FR: "Blanc",
+    ES: "Blanco",
+    IT: "Bianco",
+    DE: "Weiß"
+  },
+
+  // TabsWithViews
+  "tabsWithViews.createView": {
+    EN: "+ Create a view",
+    FR: "+ Créer une vue",
+    ES: "+ Crear una vista",
+    IT: "+ Crea una vista",
+    DE: "+ Ansicht erstellen"
+  },
+  "tabsWithViews.rename": {
+    EN: "Rename",
+    FR: "Renommer",
+    ES: "Renombrar",
+    IT: "Rinomina",
+    DE: "Umbenennen"
+  },
+  "tabsWithViews.delete": {
+    EN: "Delete",
+    FR: "Supprimer",
+    ES: "Eliminar",
+    IT: "Elimina",
+    DE: "Löschen"
+  },
+  "tabsWithViews.viewActions": {
+    EN: "View actions",
+    FR: "Actions de la vue",
+    ES: "Acciones de la vista",
+    IT: "Azioni della vista",
+    DE: "Ansichtsaktionen"
+  },
+  "tabsWithViews.createTitle": {
+    EN: "Create a new view",
+    FR: "Créer une nouvelle vue",
+    ES: "Crear una nueva vista",
+    IT: "Crea una nuova vista",
+    DE: "Neue Ansicht erstellen"
+  },
+  "tabsWithViews.renameTitle": {
+    EN: "Rename the view",
+    FR: "Renommer la vue",
+    ES: "Renombrar la vista",
+    IT: "Rinomina la vista",
+    DE: "Ansicht umbenennen"
+  },
+  "tabsWithViews.deleteConfirmTitle": {
+    EN: "Delete the view",
+    FR: "Supprimer la vue",
+    ES: "Eliminar la vista",
+    IT: "Elimina la vista",
+    DE: "Ansicht löschen"
+  },
+  "tabsWithViews.deleteConfirmMessage": {
+    EN: "Are you sure you want to delete the view \"{name}\"?",
+    FR: "Êtes-vous sûr de vouloir supprimer la vue « {name} » ?",
+    ES: "¿Está seguro de que desea eliminar la vista \"{name}\"?",
+    IT: "Sei sicuro di voler eliminare la vista \"{name}\"?",
+    DE: "Möchten Sie die Ansicht \"{name}\" wirklich löschen?"
+  },
+  "tabsWithViews.nameLabel": {
+    EN: "View name",
+    FR: "Nom de la vue",
+    ES: "Nombre de la vista",
+    IT: "Nome della vista",
+    DE: "Name der Ansicht"
+  },
+  "tabsWithViews.namePlaceholder": {
+    EN: "Enter a name",
+    FR: "Entrez un nom",
+    ES: "Ingrese un nombre",
+    IT: "Inserisci un nome",
+    DE: "Namen eingeben"
+  },
+  "tabsWithViews.visibilityLabel": {
+    EN: "Visibility",
+    FR: "Visibilité",
+    ES: "Visibilidad",
+    IT: "Visibilità",
+    DE: "Sichtbarkeit"
+  },
+  "tabsWithViews.public": {
+    EN: "Public",
+    FR: "Publique",
+    ES: "Pública",
+    IT: "Pubblica",
+    DE: "Öffentlich"
+  },
+  "tabsWithViews.private": {
+    EN: "Private",
+    FR: "Privée",
+    ES: "Privada",
+    IT: "Privata",
+    DE: "Privat"
+  },
+  "tabsWithViews.publicHelp": {
+    EN: "Visible to all users",
+    FR: "Visible par tous les utilisateurs",
+    ES: "Visible para todos los usuarios",
+    IT: "Visibile a tutti gli utenti",
+    DE: "Für alle Benutzer sichtbar"
+  },
+  "tabsWithViews.privateHelp": {
+    EN: "Visible only to you",
+    FR: "Visible uniquement par vous",
+    ES: "Visible solo para ti",
+    IT: "Visibile solo a te",
+    DE: "Nur für Sie sichtbar"
+  },
+  "tabsWithViews.filtersLabel": {
+    EN: "Applied filters",
+    FR: "Filtres appliqués",
+    ES: "Filtros aplicados",
+    IT: "Filtri applicati",
+    DE: "Angewendete Filter"
+  },
+  "tabsWithViews.noFilters": {
+    EN: "No filters",
+    FR: "Aucun filtre",
+    ES: "Sin filtros",
+    IT: "Nessun filtro",
+    DE: "Keine Filter"
+  },
+  "tabsWithViews.create": {
+    EN: "Create",
+    FR: "Créer",
+    ES: "Crear",
+    IT: "Crea",
+    DE: "Erstellen"
+  },
+  "tabsWithViews.save": {
+    EN: "Save",
+    FR: "Enregistrer",
+    ES: "Guardar",
+    IT: "Salva",
+    DE: "Speichern"
+  },
+  "tabsWithViews.cancel": {
+    EN: "Cancel",
+    FR: "Annuler",
+    ES: "Cancelar",
+    IT: "Annulla",
+    DE: "Abbrechen"
+  },
+  "tabsWithViews.confirmDelete": {
+    EN: "Delete",
+    FR: "Supprimer",
+    ES: "Eliminar",
+    IT: "Elimina",
+    DE: "Löschen"
+  },
+  "tabsWithViews.nameRequired": {
+    EN: "Please enter a name",
+    FR: "Veuillez saisir un nom",
+    ES: "Ingrese un nombre",
+    IT: "Inserisci un nome",
+    DE: "Bitte geben Sie einen Namen ein"
+  },
+
+  // ActivityHeatmap
+  "activityHeatmap.legend": {
+    EN: "Learn how we count files",
+    FR: "Comment nous comptons les fichiers",
+    ES: "Cómo contamos los archivos",
+    IT: "Come contiamo i file",
+    DE: "So zählen wir Dateien"
+  },
+  "activityHeatmap.less": {
+    EN: "Less",
+    FR: "Moins",
+    ES: "Menos",
+    IT: "Meno",
+    DE: "Weniger"
+  },
+  "activityHeatmap.more": {
+    EN: "More",
+    FR: "Plus",
+    ES: "Más",
+    IT: "Più",
+    DE: "Mehr"
+  },
+  "activityHeatmap.tooltip": {
+    EN: "{count} {unit} on {date}",
+    FR: "{count} {unit} le {date}",
+    ES: "{count} {unit} el {date}",
+    IT: "{count} {unit} il {date}",
+    DE: "{count} {unit} am {date}"
+  },
+  "activityHeatmap.tooltipEmpty": {
+    EN: "No {unit} on {date}",
+    FR: "Pas de {unit} le {date}",
+    ES: "Sin {unit} el {date}",
+    IT: "0 {unit} il {date}",
+    DE: "0 {unit} am {date}"
+  },
+  "activityHeatmap.unit.file": {
+    EN: "file",
+    FR: "fichier",
+    ES: "archivo",
+    IT: "file",
+    DE: "Datei"
+  },
+  "activityHeatmap.unit.file_plural": {
+    EN: "files",
+    FR: "fichiers",
+    ES: "archivos",
+    IT: "file",
+    DE: "Dateien"
+  },
+  "activityHeatmap.unit.post": {
+    EN: "post",
+    FR: "publication",
+    ES: "publicación",
+    IT: "pubblicazione",
+    DE: "Beitrag"
+  },
+  "activityHeatmap.unit.post_plural": {
+    EN: "posts",
+    FR: "publications",
+    ES: "publicaciones",
+    IT: "pubblicazioni",
+    DE: "Beiträge"
+  },
+  "activityHeatmap.unit.event": {
+    EN: "event",
+    FR: "événement",
+    ES: "evento",
+    IT: "evento",
+    DE: "Ereignis"
+  },
+  "activityHeatmap.unit.event_plural": {
+    EN: "events",
+    FR: "événements",
+    ES: "eventos",
+    IT: "eventi",
+    DE: "Ereignisse"
+  },
+  "activityHeatmap.unit.activity": {
+    EN: "activity",
+    FR: "activité",
+    ES: "actividad",
+    IT: "attività",
+    DE: "Aktivität"
+  },
+  "activityHeatmap.unit.activity_plural": {
+    EN: "activities",
+    FR: "activités",
+    ES: "actividades",
+    IT: "attività",
+    DE: "Aktivitäten"
+  },
+  "activityHeatmap.unit.upload": {
+    EN: "upload",
+    FR: "envoi",
+    ES: "subida",
+    IT: "caricamento",
+    DE: "Upload"
+  },
+  "activityHeatmap.unit.upload_plural": {
+    EN: "uploads",
+    FR: "envois",
+    ES: "subidas",
+    IT: "caricamenti",
+    DE: "Uploads"
+  },
 };

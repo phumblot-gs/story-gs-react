@@ -2,10 +2,11 @@
 import React from "react";
 import { MediaStatus as MediaStatusEnum, getMediaStatusColorClass } from "@/utils/mediaStatus";
 
-interface MediaStatusProps {
+export interface MediaStatusProps {
   status: MediaStatusEnum;
   className?: string;
-  width?: number;
+  /** Width in pixels, or "full" for 100% width */
+  width?: number | "full";
   height?: number;
 }
 
@@ -26,12 +27,13 @@ const MediaStatus: React.FC<MediaStatusProps> = ({
   height = 3
 }) => {
   const statusClass = getMediaStatusColorClass(status);
-  
+  const widthStyle = width === "full" ? "100%" : `${width}px`;
+
   return (
-    <div 
-      className={`flex-none justify-items-center inline-block ${statusClass} ${className}`} 
-      style={{ 
-        width: `${width}px`, 
+    <div
+      className={`flex-none justify-items-center ${width === "full" ? "block" : "inline-block"} ${statusClass} ${className}`}
+      style={{
+        width: widthStyle,
         height: `${height}px`,
       }}
       title={`Status: ${status}`}

@@ -16,6 +16,39 @@ function pxToRem(px) {
 }
 
 /**
+ * Convertit une couleur hexadécimale en triplet HSL (format "H S% L%").
+ * Nécessaire pour les variables shadcn consommées via `hsl(var(--x))`.
+ */
+function hexToHslTriplet(hex) {
+  let h = hex.replace(/^#/, '');
+  if (h.length === 3) h = h.split('').map((c) => c + c).join('');
+  const r = parseInt(h.slice(0, 2), 16) / 255;
+  const g = parseInt(h.slice(2, 4), 16) / 255;
+  const b = parseInt(h.slice(4, 6), 16) / 255;
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  const l = (max + min) / 2;
+  let hue = 0;
+  let sat = 0;
+  if (max !== min) {
+    const d = max - min;
+    sat = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    if (max === r) hue = (g - b) / d + (g < b ? 6 : 0);
+    else if (max === g) hue = (b - r) / d + 2;
+    else hue = (r - g) / d + 4;
+    hue *= 60;
+  }
+  return `${Math.round(hue)} ${Math.round(sat * 100)}% ${Math.round(l * 100)}%`;
+}
+
+// Tokens shadcn dont la valeur DOIT être un triplet HSL (consommés via hsl(var(--x))).
+// Les tokens "de surface" (--background, --primary, ...) ne sont pas inclus ici car ils sont
+// actuellement en hex et non consommés via hsl() en pratique côté consommateurs — les corriger
+// casserait les rares usages directs qui attendent du hex. border/input sont la source
+// avérée du bug (règle universelle `* { border-color: hsl(var(--border)) }`).
+const SHADCN_TOKENS_FORCE_HSL = new Set(['Border', 'Input']);
+
+/**
  * Convertit les noms de tokens Figma en noms de variables CSS
  */
 function tokenToCSSVar(tokenName) {
@@ -226,7 +259,9 @@ function generateShadcnContextCSS(tokens, context) {
       const cssVar = '--' + baseName.replace(/([A-Z])/g, '-$1').toLowerCase().replace(/^-/, '');
 
       if (typeof value === 'string') {
-        css += `  ${cssVar}: ${value};\n`;
+        const mustBeHsl = SHADCN_TOKENS_FORCE_HSL.has(baseName) && /^#[0-9a-fA-F]{3,8}$/.test(value);
+        const emitted = mustBeHsl ? hexToHslTriplet(value) : value;
+        css += `  ${cssVar}: ${emitted};\n`;
       }
     }
   }
@@ -385,6 +420,94 @@ function generateButtonClassesCSS(tokens) {
   }
 
   return css;
+}
+
+/**
+ * Génère les règles CSS pour Button hasActiveElement (filtre actif)
+ * Fond = hover, texte et icône = blue-primary
+ */
+function generateButtonHasActiveElementCSS() {
+  return `
+/* Button hasActiveElement (filtre actif) : fond = hover, texte et icône = blue-primary */
+[data-bg="white"].btn-normal[data-has-active-element="true"]:not(:disabled) {
+  background: var(--button-w-normal-bg-hover);
+  color: var(--color-blue-primary);
+}
+[data-bg="white"].btn-secondary[data-has-active-element="true"]:not(:disabled) {
+  background: var(--button-w-secondary-bg-hover);
+  color: var(--color-blue-primary);
+}
+[data-bg="white"].btn-ghost[data-has-active-element="true"]:not(:disabled) {
+  background: var(--button-w-ghost-bg-hover);
+  color: var(--color-blue-primary);
+}
+[data-bg="white"].btn-outline[data-has-active-element="true"]:not(:disabled) {
+  background: var(--button-w-outline-bg-hover);
+  color: var(--color-blue-primary);
+}
+[data-bg="white"].btn-destructive[data-has-active-element="true"]:not(:disabled) {
+  background: var(--button-w-destructive-bg-hover);
+  color: var(--color-blue-primary);
+}
+[data-bg="white"].btn-link[data-has-active-element="true"]:not(:disabled) {
+  color: var(--color-blue-primary);
+}
+
+[data-bg="grey"].btn-normal[data-has-active-element="true"]:not(:disabled) {
+  background: var(--button-g-normal-bg-hover);
+  color: var(--color-blue-primary);
+}
+[data-bg="grey"].btn-secondary[data-has-active-element="true"]:not(:disabled) {
+  background: var(--button-g-secondary-bg-hover);
+  color: var(--color-blue-primary);
+}
+[data-bg="grey"].btn-ghost[data-has-active-element="true"]:not(:disabled) {
+  background: var(--button-g-ghost-bg-hover);
+  color: var(--color-blue-primary);
+}
+[data-bg="grey"].btn-outline[data-has-active-element="true"]:not(:disabled) {
+  background: var(--button-g-outline-bg-hover);
+  color: var(--color-blue-primary);
+}
+[data-bg="grey"].btn-destructive[data-has-active-element="true"]:not(:disabled) {
+  background: var(--button-g-destructive-bg-hover);
+  color: var(--color-blue-primary);
+}
+[data-bg="grey"].btn-link[data-has-active-element="true"]:not(:disabled) {
+  color: var(--color-blue-primary);
+}
+
+[data-bg="black"].btn-normal[data-has-active-element="true"]:not(:disabled) {
+  background: var(--color-blue-primary);
+  color: var(--color-black);
+}
+[data-bg="black"].btn-secondary[data-has-active-element="true"]:not(:disabled) {
+  background: var(--color-blue-primary);
+  color: var(--color-black);
+}
+[data-bg="black"].btn-ghost[data-has-active-element="true"]:not(:disabled) {
+  background: var(--color-blue-primary);
+  color: var(--color-black);
+}
+[data-bg="black"].btn-outline[data-has-active-element="true"]:not(:disabled) {
+  background: var(--color-blue-primary);
+  color: var(--color-black);
+}
+[data-bg="black"].btn-destructive[data-has-active-element="true"]:not(:disabled) {
+  background: var(--color-blue-primary);
+  color: var(--color-black);
+}
+[data-bg="black"].btn-link[data-has-active-element="true"]:not(:disabled) {
+  color: var(--color-black);
+}
+
+[data-has-active-element="true"]:not(:disabled) svg {
+  color: var(--color-blue-primary);
+}
+[data-bg="black"] [data-has-active-element="true"]:not(:disabled) svg {
+  color: var(--color-black);
+}
+`;
 }
 
 /**
@@ -580,6 +703,12 @@ function generateComponentStyles() {
   background-color: #292828; /* black */
 }
 
+/* Disabled ON on light bg: container grey-stronger → pill grey-lighter for contrast */
+[data-bg="white"].button-toggle-default[data-state="on"]:disabled .button-toggle-pill,
+[data-bg="grey"].button-toggle-default[data-state="on"]:disabled .button-toggle-pill {
+  background-color: #f3f3f3; /* grey-lighter */
+}
+
 .button-toggle-default:disabled .button-toggle-pill {
   background-color: #c1c1c1; /* grey-stronger */
 }
@@ -601,6 +730,12 @@ function generateComponentStyles() {
 
 [data-bg="black"].button-toggle-default[data-state="off"]:not(:disabled) .button-toggle-text {
   color: #ffffff; /* white */
+}
+
+/* Disabled ON on light bg: container grey-stronger → text grey-lighter for contrast */
+[data-bg="white"].button-toggle-default[data-state="on"]:disabled .button-toggle-text,
+[data-bg="grey"].button-toggle-default[data-state="on"]:disabled .button-toggle-text {
+  color: #f3f3f3; /* grey-lighter */
 }
 
 .button-toggle-default:disabled .button-toggle-text {
@@ -1343,6 +1478,9 @@ function generateCSS() {
   // Classes Button contextuelles
   css += `/* Classes Button contextuelles */\n`;
   css += generateButtonClassesCSS(tokens.light);
+
+  // Button hasActiveElement (filtre actif)
+  css += generateButtonHasActiveElementCSS();
 
   // Classes pour les thèmes
   css += `/* Classes de thème */\n`;

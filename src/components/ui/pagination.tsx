@@ -13,6 +13,8 @@ export interface PaginationProps {
   onPageChange?: (page: number) => void
   /** Maximum number of page buttons to show (excluding prev/next) */
   maxVisiblePages?: number
+  /** Size of the pagination buttons */
+  size?: "small" | "medium" | "large"
   /** Custom className */
   className?: string
   /** Debug mode */
@@ -69,6 +71,7 @@ const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
       totalPages,
       onPageChange,
       maxVisiblePages = 5,
+      size = "medium",
       className,
       debug,
     },
@@ -76,6 +79,40 @@ const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
   ) => {
     const bg = useBgContext()
     const pageNumbers = generatePageNumbers(currentPage, totalPages, maxVisiblePages)
+
+    // Calculate button dimensions and icon size based on size prop
+    const getButtonSizeClasses = () => {
+      switch (size) {
+        case "small":
+          return "!p-1 !w-4 !h-4 items-baseline"
+        case "large":
+          return "!p-1 !w-8 !h-8"
+        default: // medium
+          return "!p-1 !w-6 !h-6"
+      }
+    }
+
+    const getIconSize = () => {
+      switch (size) {
+        case "small":
+          return 10
+        case "large":
+          return 14
+        default: // medium
+          return 12
+      }
+    }
+
+    const getEllipsisSizeClasses = () => {
+      switch (size) {
+        case "small":
+          return "w-4 h-4 text-xs"
+        case "large":
+          return "w-8 h-8 text-lg"
+        default: // medium
+          return "w-6 h-6 text-base"
+      }
+    }
 
     const handlePageChange = React.useCallback(
       (page: number) => {
@@ -124,13 +161,13 @@ const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
           {/* Previous button */}
           <Button
             variant="secondary"
-            size="medium"
-            className="!p-1 !w-6 !h-6"
+            size={size}
+            className={getButtonSizeClasses()}
             onClick={handlePrevious}
             disabled={currentPage === 1}
             aria-label="Page précédente"
           >
-            <Icon name="ArrowLeft" size={14} />
+            <Icon name="ArrowLeft" size={getIconSize()} />
           </Button>
 
           {/* Page number buttons */}
@@ -140,7 +177,8 @@ const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
                 <span
                   key={`ellipsis-${index}`}
                   className={cn(
-                    "flex items-center justify-center w-6 h-6 text-base font-regular",
+                    "flex items-center justify-center font-regular",
+                    getEllipsisSizeClasses(),
                     textColorClass
                   )}
                   aria-hidden="true"
@@ -156,9 +194,9 @@ const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
               <Button
                 key={page}
                 variant={isActive ? "normal" : "ghost"}
-                size="medium"
+                size={size}
                 className={cn(
-                  "!p-1 !w-6 !h-6",
+                  getButtonSizeClasses(),
                   isActive && "pagination-active"
                 )}
                 onClick={() => handlePageChange(page)}
@@ -173,13 +211,13 @@ const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
           {/* Next button */}
           <Button
             variant="secondary"
-            size="medium"
-            className="!p-1 !w-6 !h-6"
+            size={size}
+            className={getButtonSizeClasses()}
             onClick={handleNext}
             disabled={currentPage === totalPages}
             aria-label="Page suivante"
           >
-            <Icon name="ArrowRight" size={14} />
+            <Icon name="ArrowRight" size={getIconSize()} />
           </Button>
         </div>
 

@@ -18,6 +18,7 @@ const meta = {
 - Automatic context-aware styling based on parent background
 - Icon support with Icon component
 - Indicator badge for notifications and alerts
+- Active indicator state (e.g. active filter: hover background + blue-primary text/icon)
 - Polymorphic component support via \`asChild\` prop
 - Event handlers (onClick, onFocus, onBlur)
 - Debug mode for development
@@ -77,6 +78,16 @@ import { Icon } from '@story-gs-react';
 </Button>
 \`\`\`
 
+## Active Indicator (filtre actif)
+
+Quand \`hasActiveElement={true}\`, le bouton affiche un état actif : fond = couleur hover, texte et icône = \`var(--color-blue-primary)\` (#CDEDFF). Utile pour les filtres ou onglets sélectionnés.
+
+\`\`\`tsx
+<Button variant="ghost" hasActiveElement>
+  Filtre actif
+</Button>
+\`\`\`
+
 ## With asChild (Polymorphic Component)
 
 The \`asChild\` prop allows you to apply Button styles to another element (like a link \`<a>\`) instead of creating a \`<button>\` element.
@@ -129,6 +140,10 @@ import { Link } from 'react-router-dom';
     indicator: {
       control: 'boolean',
       description: 'Displays a yellow indicator badge',
+    },
+    hasActiveElement: {
+      control: 'boolean',
+      description: 'When true, shows active state: hover background + blue-primary (#CDEDFF) text and icon. Useful for active filters or selected tabs.',
     },
     debug: {
       control: 'boolean',
@@ -426,6 +441,60 @@ export const WithIndicator: Story = {
       </HStack>
     </Layout>
   ),
+};
+
+export const HasActiveElement: Story = {
+  render: () => (
+    <VStack gap={6} padding={6}>
+      <div>
+        <h3 className="gs-typo-h3 mb-2">Active indicator (filtre actif)</h3>
+        <p className="text-sm text-grey-stronger mb-4">
+          Quand <code>hasActiveElement</code> est à <code>true</code>, le bouton affiche le fond hover et le texte/icône en bleu primary (#CDEDFF).
+        </p>
+      </div>
+
+      <VStack as={Layout} bg="white" padding={6} gap={4} className="border border-grey rounded">
+        <h4 className="text-sm font-medium">Background White</h4>
+        <HStack gap={3}>
+          <Button variant="normal" hasActiveElement>Normal actif</Button>
+          <Button variant="secondary" hasActiveElement>Secondary actif</Button>
+          <Button variant="ghost" hasActiveElement>Ghost actif</Button>
+          <Button variant="outline" hasActiveElement>Outline actif</Button>
+          <Button variant="ghost" hasActiveElement>
+            <Icon name="Filter" size={14} />
+            Filtre actif
+          </Button>
+        </HStack>
+      </VStack>
+
+      <VStack as={Layout} bg="grey" padding={6} gap={4} className="border border-grey rounded">
+        <h4 className="text-sm font-medium">Background Grey</h4>
+        <HStack gap={3}>
+          <Button variant="normal" hasActiveElement>Normal actif</Button>
+          <Button variant="ghost" hasActiveElement>Ghost actif</Button>
+          <Button variant="ghost" hasActiveElement>
+            <Icon name="Filter" size={14} />
+            Filtre actif
+          </Button>
+        </HStack>
+      </VStack>
+
+      <VStack as={Layout} bg="black" padding={6} gap={4} className="border border-grey rounded">
+        <h4 className="text-sm font-medium text-white">Background Black</h4>
+        <HStack gap={3}>
+          <Button variant="normal" hasActiveElement>Normal actif</Button>
+          <Button variant="ghost" hasActiveElement>Ghost actif</Button>
+          <Button variant="ghost" hasActiveElement>
+            <Icon name="Filter" size={14} />
+            Filtre actif
+          </Button>
+        </HStack>
+      </VStack>
+    </VStack>
+  ),
+  parameters: {
+    layout: 'fullscreen',
+  },
 };
 
 export const AsChild: Story = {

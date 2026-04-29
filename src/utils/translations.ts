@@ -1,6 +1,10 @@
 
 import { format as formatDate } from "date-fns";
-import { fr, enUS, es, it } from "date-fns/locale";
+import { enUS } from "date-fns/locale/en-US";
+import { fr } from "date-fns/locale/fr";
+import { es } from "date-fns/locale/es";
+import { it } from "date-fns/locale/it";
+import { de } from "date-fns/locale/de";
 import { componentTranslations } from './component-translations';
 
 // Type for translation entries
@@ -19,6 +23,8 @@ export const getDateLocale = (langCode: string) => {
       return es;
     case "IT":
       return it;
+    case "DE":
+      return de;
     case "EN":
     default:
       return enUS;

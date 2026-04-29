@@ -42,8 +42,7 @@
 
 @font-face {
   font-family: 'AvenirNextLTPro';
-  src: url('../fonts/AvenirNextLTPro-BoldIt.woff') format('woff'),
-       url('../fonts/AvenirNextLTPro-BoldIt.ttf') format('truetype');
+  src: url('../fonts/AvenirNextLTPro-BoldIt.woff') format('truetype');
   font-weight: 700;
   font-style: italic;
   font-display: swap;

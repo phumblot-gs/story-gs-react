@@ -73,6 +73,27 @@ const actions: ButtonMenuAction[] = [
 </ButtonMenu>
 \`\`\`
 
+## With Selected Actions
+
+You can mark actions as selected. Selected actions will have the same styling as hovered items (highlighted background and contrasting text color):
+
+\`\`\`tsx
+const actions: ButtonMenuAction[] = [
+  { label: "Éditer", onClick: () => console.log("Éditer") },
+  { label: "Dupliquer", onClick: () => console.log("Dupliquer"), selected: true },
+  { label: "Supprimer", onClick: () => console.log("Supprimer") },
+  { label: "Partager", onClick: () => console.log("Partager") },
+];
+
+<ButtonMenu variant="normal" actions={actions}>
+  Actions
+</ButtonMenu>
+\`\`\`
+
+**Styling for selected items:**
+- On white/grey backgrounds: white background with black text
+- On black background: black background with white text
+
 ## Limiting Menu Height and Enabling Scroll
 
 When you have many actions, you can limit the menu height and enable scrolling:
@@ -470,3 +491,60 @@ export const MenuPositioning: Story = {
   },
 }
 
+export const WithSelectedActions: Story = {
+  render: () => {
+    const actionsWithSelected: ButtonMenuAction[] = [
+      { label: "Éditer", onClick: () => console.log("Éditer") },
+      { label: "Dupliquer", onClick: () => console.log("Dupliquer"), selected: true },
+      { label: "Supprimer", onClick: () => console.log("Supprimer") },
+      { label: "Partager", onClick: () => console.log("Partager"), selected: true },
+    ]
+
+    return (
+      <VStack gap={6} padding={6}>
+        <VStack as={Layout} bg="white" padding={6} gap={4} className="border border-grey rounded">
+          <h3 className="gs-typo-h3">Background White - Action sélectionnée</h3>
+          <p className="text-sm text-grey-stronger">
+            L'action "Dupliquer" est sélectionnée et a les mêmes couleurs que le hover (fond blanc, texte noir)
+          </p>
+          <ButtonMenu variant="normal" actions={actionsWithSelected}>
+            Actions
+          </ButtonMenu>
+        </VStack>
+
+        <VStack as={Layout} bg="grey" padding={6} gap={4} className="border border-grey rounded">
+          <h3 className="gs-typo-h3">Background Grey - Action sélectionnée</h3>
+          <p className="text-sm text-grey-stronger">
+            L'action "Dupliquer" est sélectionnée et a les mêmes couleurs que le hover (fond blanc, texte noir)
+          </p>
+          <ButtonMenu variant="normal" actions={actionsWithSelected}>
+            Actions
+          </ButtonMenu>
+        </VStack>
+
+        <VStack as={Layout} bg="black" padding={6} gap={4} className="border border-grey rounded">
+          <h3 className="gs-typo-h3 text-white">Background Black - Action sélectionnée</h3>
+          <p className="text-sm text-white/80">
+            L'action "Dupliquer" est sélectionnée et a les mêmes couleurs que le hover (fond noir, texte blanc)
+          </p>
+          <ButtonMenu variant="normal" actions={actionsWithSelected}>
+            Actions
+          </ButtonMenu>
+        </VStack>
+
+        <VStack as={Layout} bg="white" padding={6} gap={4} className="border border-grey rounded">
+          <h3 className="gs-typo-h3">Plusieurs actions sélectionnées</h3>
+          <p className="text-sm text-grey-stronger">
+            Les actions "Dupliquer" et "Partager" sont sélectionnées
+          </p>
+          <ButtonMenu variant="normal" actions={actionsWithSelected}>
+            Actions
+          </ButtonMenu>
+        </VStack>
+      </VStack>
+    )
+  },
+  parameters: {
+    layout: "fullscreen",
+  },
+}

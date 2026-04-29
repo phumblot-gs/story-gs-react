@@ -8,6 +8,10 @@ import { Button } from "./components/ui/button";
 import { ButtonMenu } from "./components/ui/button-menu";
 import { ButtonMenuStatus } from "./components/ui/button-menu-status";
 import { ButtonMenuSmall } from "./components/ui/button-menu-small";
+import { ButtonThumbnailStars } from "./components/ui/button-thumbnail-stars";
+import { ButtonThumbnailTags } from "./components/ui/button-thumbnail-tags";
+import { ButtonThumbnailLabels } from "./components/ui/button-thumbnail-labels";
+import { ButtonThumbnailComments } from "./components/ui/button-thumbnail-comments";
 import { ButtonPlus } from "./components/ui/button-plus";
 import { LanguageSwitcher } from "./components/ui/language-switcher";
 import { FileBrowser } from "./components/ui/file-browser";
@@ -36,6 +40,14 @@ import {
   TabsTrigger,
   TabsContent,
 } from "./components/ui/tabs";
+import { TabsWithViews } from "./components/ui/tabs-with-views";
+import type {
+  TabsWithViewsProps,
+  TabsFixedTab,
+  View,
+  ViewVisibility,
+  CreateViewInput,
+} from "./components/ui/tabs-with-views";
 import { Modal } from "./components/layout/Modal";
 import { FullFrame } from "./components/layout/FullFrame";
 import { FolderBrowser } from "./components/ui/folder-browser";
@@ -85,6 +97,12 @@ import {
   BreadcrumbEllipsis,
 } from "./components/ui/breadcrumb";
 import { Calendar } from "./components/ui/calendar";
+import { ActivityHeatmap } from "./components/ui/activity-heatmap";
+import type {
+  ActivityHeatmapProps,
+  ActivityDataPoint,
+  ActivityColorScale,
+} from "./components/ui/activity-heatmap";
 import {
   Card,
   CardHeader,
@@ -301,6 +319,25 @@ import type {
 } from "./components/ui/button-menu-small";
 
 import type {
+  ButtonThumbnailStarsProps
+} from "./components/ui/button-thumbnail-stars";
+
+import type {
+  ButtonThumbnailTagsProps,
+  TagsData
+} from "./components/ui/button-thumbnail-tags";
+
+import type {
+  ButtonThumbnailLabelsProps,
+  LabelColor
+} from "./components/ui/button-thumbnail-labels";
+
+import type {
+  ButtonThumbnailCommentsProps,
+  CommentData
+} from "./components/ui/button-thumbnail-comments";
+
+import type {
   ButtonPlusProps
 } from "./components/ui/button-plus";
 
@@ -316,7 +353,6 @@ import type {
 import type {
   FileItem,
   FileBrowserProps,
-  FileBrowserAction,
   FileBrowserAction,
   DateFilter,
   SortConfig,
@@ -372,6 +408,10 @@ export { Link } from "./components/ui/link";
 export { ButtonMenu };
 export { ButtonMenuStatus };
 export { ButtonMenuSmall };
+export { ButtonThumbnailStars };
+export { ButtonThumbnailTags };
+export { ButtonThumbnailLabels };
+export { ButtonThumbnailComments };
 export { ButtonPlus };
 export { LanguageSwitcher };
 export { FileBrowser };
@@ -383,6 +423,8 @@ export { InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator };
 export { Search };
 export { SegmentedControl, SegmentedControlList, SegmentedControlTrigger, SegmentedControlContent };
 export { Tabs, TabsList, TabsTrigger, TabsContent };
+export { TabsWithViews };
+export type { TabsWithViewsProps, TabsFixedTab, View, ViewVisibility, CreateViewInput };
 export { FolderBrowser };
 export { Icon } from "./components/ui/icons";
 export { Animated } from "./components/ui/animated";
@@ -420,6 +462,8 @@ export {
   BreadcrumbEllipsis,
 };
 export { Calendar };
+export { ActivityHeatmap };
+export type { ActivityHeatmapProps, ActivityDataPoint, ActivityColorScale };
 export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent };
 export { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext };
 export { Checkbox };
@@ -592,6 +636,13 @@ export type {
   ButtonMenuStatusProps,
   ButtonMenuSmallProps,
   ButtonMenuSmallItem,
+  ButtonThumbnailStarsProps,
+  ButtonThumbnailTagsProps,
+  TagsData,
+  ButtonThumbnailLabelsProps,
+  LabelColor,
+  ButtonThumbnailCommentsProps,
+  CommentData,
   ButtonPlusProps,
   AvatarSize,
   IconName,
@@ -634,6 +685,29 @@ export type { ModalProps as ModalLayerProps };
 // Export status components
 export * from "./components/ButtonStatus";
 export * from "./components/StatusIndicator";
+export { default as MediaStatus } from "./components/MediaStatus";
+export type { MediaStatusProps } from "./components/MediaStatus";
+
+// Export Thumbnail component
+export {
+  Thumbnail,
+  AlertIndicator,
+  VedetteIndicator,
+  UrgentIndicator,
+  Three60Indicator,
+  ViewIndicator,
+} from "./components/Thumbnail";
+export type {
+  ThumbnailProps,
+  ThumbnailSize,
+  ThumbnailPresetSize,
+  ThumbnailAction,
+  AlertIndicatorProps,
+  VedetteIndicatorProps,
+  UrgentIndicatorProps,
+  Three60IndicatorProps,
+  ViewIndicatorProps,
+} from "./components/Thumbnail";
 
 // Export utilities
 export * from "./utils/mediaStatus";

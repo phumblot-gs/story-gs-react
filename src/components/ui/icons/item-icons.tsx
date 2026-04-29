@@ -1,9 +1,10 @@
 
 import React from "react"
+import { CustomIconProps } from "./types"
 
-export const CustomTagIcon = () => (
-  <svg width="12" height="12" viewBox="0 0 14 14" preserveAspectRatio="xMidYMid meet" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M12.9895 5.50125L12.6391 3.05084C12.519 2.18069 11.8283 1.50058 10.9575 1.37055L8.50501 1.0205C7.88439 0.930481 7.26377 1.14052 6.82333 1.58059L1.57808 6.84147C0.807307 7.6116 0.807307 8.86181 1.57808 9.63194L4.37087 12.4224C5.14164 13.1925 6.3929 13.1925 7.16367 12.4224L12.4189 7.17153C12.8594 6.73145 13.0696 6.11135 12.9795 5.49124L12.9895 5.50125Z" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
+export const CustomTagIcon: React.FC<CustomIconProps> = ({ size = 12, strokeWidth = 0.5 }) => (
+  <svg width={size} height={size} viewBox="0 0 14 14" preserveAspectRatio="xMidYMid meet" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M12.9895 5.50125L12.6391 3.05084C12.519 2.18069 11.8283 1.50058 10.9575 1.37055L8.50501 1.0205C7.88439 0.930481 7.26377 1.14052 6.82333 1.58059L1.57808 6.84147C0.807307 7.6116 0.807307 8.86181 1.57808 9.63194L4.37087 12.4224C5.14164 13.1925 6.3929 13.1925 7.16367 12.4224L12.4189 7.17153C12.8594 6.73145 13.0696 6.11135 12.9795 5.49124L12.9895 5.50125Z" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round"/>
     <mask id="path-2-inside-1_270_3576" fill="white">
       <path d="M9.35563 3.72086C9.59583 3.72086 9.83603 3.81086 10.0262 4.00086C10.3965 4.37086 10.3965 4.96086 10.0262 5.33086C9.84604 5.51086 9.59583 5.61086 9.35563 5.61086C9.11543 5.61086 8.87523 5.52086 8.68507 5.33086C8.31476 4.96086 8.31476 4.37086 8.68507 4.00086C8.86522 3.82086 9.11543 3.72086 9.35563 3.72086ZM9.35563 3.22086C8.96531 3.22086 8.605 3.37086 8.33478 3.64086C8.06455 3.91086 7.91443 4.27086 7.91443 4.66086C7.91443 5.05086 8.06455 5.41086 8.33478 5.68086C8.605 5.95086 8.96531 6.10086 9.35563 6.10086C9.74596 6.10086 10.1063 5.95086 10.3765 5.68086C10.6467 5.41086 10.7968 5.05086 10.7968 4.66086C10.7968 4.27086 10.6467 3.91086 10.3765 3.64086C10.1063 3.37086 9.74596 3.22086 9.35563 3.22086Z"/>
     </mask>
@@ -11,45 +12,45 @@ export const CustomTagIcon = () => (
   </svg>
 )
 
-export const CustomBellIcon = () => (
-  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M7.54287 10.1952C7.54287 11.0592 6.84763 11.76 5.99049 11.76C5.13335 11.76 4.43811 11.0592 4.43811 10.1952H7.54287Z" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
-    <path d="M2.24756 7.75681L1.23804 10.1952H5.99994H10.7618L9.75232 7.75681" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
-    <path d="M6 0.23999V1.57439" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
-    <path d="M9.75232 7.75679V5.39519C9.75232 3.29279 8.06661 1.56479 5.99994 1.56479C3.93327 1.56479 2.24756 3.28319 2.24756 5.39519V7.75679" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
+export const CustomBellIcon: React.FC<CustomIconProps> = ({ size = 12, strokeWidth = 0.5 }) => (
+  <svg width={size} height={size} viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M7.54287 10.1952C7.54287 11.0592 6.84763 11.76 5.99049 11.76C5.13335 11.76 4.43811 11.0592 4.43811 10.1952H7.54287Z" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M2.24756 7.75681L1.23804 10.1952H5.99994H10.7618L9.75232 7.75681" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M6 0.23999V1.57439" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M9.75232 7.75679V5.39519C9.75232 3.29279 8.06661 1.56479 5.99994 1.56479C3.93327 1.56479 2.24756 3.28319 2.24756 5.39519V7.75679" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
 )
 
-export const CustomStarIcon = () => (
-  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M6.42003 1.22L7.60039 3.75C7.66649 3.9 7.79869 4 7.95922 4.02L10.5938 4.43C10.9809 4.49 11.132 4.99 10.8582 5.28L8.95072 7.25C8.8374 7.36 8.79019 7.53 8.81852 7.69L9.27178 10.47C9.33788 10.88 8.93183 11.19 8.58245 11L6.22173 9.69001C6.08009 9.61001 5.91956 9.61001 5.77791 9.69001L3.4172 11C3.06781 11.19 2.66177 10.88 2.72787 10.47L3.18112 7.69C3.20945 7.53 3.1528 7.36 3.04892 7.25L1.14146 5.28C0.858178 4.99 1.01871 4.49 1.40586 4.43L4.04043 4.02C4.19151 4 4.32371 3.89 4.39925 3.75L5.57961 1.22C5.74958 0.850005 6.25006 0.850005 6.42947 1.22H6.42003Z" stroke="currentColor" strokeWidth="0.5"/>
+export const CustomStarIcon: React.FC<CustomIconProps> = ({ size = 12, strokeWidth = 0.5 }) => (
+  <svg width={size} height={size} viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M6.42003 1.22L7.60039 3.75C7.66649 3.9 7.79869 4 7.95922 4.02L10.5938 4.43C10.9809 4.49 11.132 4.99 10.8582 5.28L8.95072 7.25C8.8374 7.36 8.79019 7.53 8.81852 7.69L9.27178 10.47C9.33788 10.88 8.93183 11.19 8.58245 11L6.22173 9.69001C6.08009 9.61001 5.91956 9.61001 5.77791 9.69001L3.4172 11C3.06781 11.19 2.66177 10.88 2.72787 10.47L3.18112 7.69C3.20945 7.53 3.1528 7.36 3.04892 7.25L1.14146 5.28C0.858178 4.99 1.01871 4.49 1.40586 4.43L4.04043 4.02C4.19151 4 4.32371 3.89 4.39925 3.75L5.57961 1.22C5.74958 0.850005 6.25006 0.850005 6.42947 1.22H6.42003Z" stroke="currentColor" strokeWidth={strokeWidth}/>
   </svg>
 )
 
-export const CustomVedetteIcon = () => (
-  <svg width="12" height="12" viewBox="0 0 8 10" preserveAspectRatio="xMidYMid meet" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M7.00338 6.2464C7.00338 7.90825 5.66189 9.24974 4.00004 9.24974C2.33819 9.24974 0.996704 7.90825 0.996704 6.2464C0.996704 3.67354 4.00004 0.840393 4.00004 0.840393C4.00004 0.840393 7.00338 3.66353 7.00338 6.2464Z" stroke="currentColor" strokeWidth="0.5" strokeMiterlimit="10"/>
+export const CustomVedetteIcon: React.FC<CustomIconProps> = ({ size = 12, strokeWidth = 0.5 }) => (
+  <svg width={size} height={size} viewBox="0 0 8 10" preserveAspectRatio="xMidYMid meet" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M7.00338 6.2464C7.00338 7.90825 5.66189 9.24974 4.00004 9.24974C2.33819 9.24974 0.996704 7.90825 0.996704 6.2464C0.996704 3.67354 4.00004 0.840393 4.00004 0.840393C4.00004 0.840393 7.00338 3.66353 7.00338 6.2464Z" stroke="currentColor" strokeWidth={strokeWidth} strokeMiterlimit="10"/>
     <path d="M4.13014 4.59455L4.48053 5.31536C4.48053 5.31536 4.54059 5.38543 4.59065 5.39544L5.38153 5.50557C5.50166 5.52559 5.54171 5.66574 5.46162 5.74583L4.89098 6.30646C4.89098 6.30646 4.84093 6.38655 4.85094 6.4366L4.9911 7.22748C5.01112 7.34761 4.89098 7.4277 4.78086 7.37765L4.07007 7.00724C4.07007 7.00724 3.97997 6.98721 3.93993 7.00724L3.22914 7.37765C3.12903 7.4277 2.99888 7.34761 3.0189 7.22748L3.15906 6.4366C3.15906 6.4366 3.15906 6.3465 3.11901 6.30646L2.54838 5.74583C2.46829 5.66574 2.50834 5.52559 2.62847 5.50557L3.41935 5.39544C3.41935 5.39544 3.50945 5.3554 3.52947 5.31536L3.87986 4.59455C3.92992 4.48443 4.08008 4.48443 4.13014 4.59455Z" fill="currentColor"/>
   </svg>
 )
 
-export const CustomCommentIcon = () => (
-  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M0.772172 9.4833C0.852248 9.01428 0.840809 8.53383 0.669217 8.09913C-0.131546 6.04002 0.303154 3.61486 1.95044 1.95613C4.18113 -0.274562 7.81888 -0.274562 10.0496 1.95613C12.2803 4.18683 12.2803 7.82458 10.0496 10.0553C8.39086 11.714 5.96569 12.1373 3.90659 11.3365C3.47189 11.1649 2.97999 11.1535 2.52241 11.245L1.36702 11.4509C0.898006 11.531 0.486185 11.1306 0.577701 10.6616L0.783611 9.50618L0.772172 9.4833Z" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
+export const CustomCommentIcon: React.FC<CustomIconProps> = ({ size = 12, strokeWidth = 0.5 }) => (
+  <svg width={size} height={size} viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0.772172 9.4833C0.852248 9.01428 0.840809 8.53383 0.669217 8.09913C-0.131546 6.04002 0.303154 3.61486 1.95044 1.95613C4.18113 -0.274562 7.81888 -0.274562 10.0496 1.95613C12.2803 4.18683 12.2803 7.82458 10.0496 10.0553C8.39086 11.714 5.96569 12.1373 3.90659 11.3365C3.47189 11.1649 2.97999 11.1535 2.52241 11.245L1.36702 11.4509C0.898006 11.531 0.486185 11.1306 0.577701 10.6616L0.783611 9.50618L0.772172 9.4833Z" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
 )
 
-export const CustomFolderOpenedIcon = () => (
-  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M1.5 3.5V2.5C1.5 2.22386 1.72386 2 2 2H4.25L5.5 3.5H10C10.2761 3.5 10.5 3.72386 10.5 4V4.5" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
-    <path d="M1.5 4.5H10.5L10 9.5C9.94771 9.77614 9.72386 10 9.44721 10H2.55279C2.27614 10 2.05229 9.77614 2 9.5L1.5 4.5Z" fill="currentColor" fillOpacity="0.1" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
+export const CustomFolderOpenedIcon: React.FC<CustomIconProps> = ({ size = 12, strokeWidth = 0.5 }) => (
+  <svg width={size} height={size} viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M1.5 3.5V2.5C1.5 2.22386 1.72386 2 2 2H4.25L5.5 3.5H10C10.2761 3.5 10.5 3.72386 10.5 4V4.5" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M1.5 4.5H10.5L10 9.5C9.94771 9.77614 9.72386 10 9.44721 10H2.55279C2.27614 10 2.05229 9.77614 2 9.5L1.5 4.5Z" fill="currentColor" fillOpacity="0.1" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
 )
 
-export const CustomFolderMovedIcon = () => (
-  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M1.5 3.5V2.5C1.5 2.22386 1.72386 2 2 2H4.25L5.5 3.5H10C10.2761 3.5 10.5 3.72386 10.5 4V9C10.5 9.27614 10.2761 9.5 10 9.5H2C1.72386 9.5 1.5 9.27614 1.5 9V3.5Z" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
-    <path d="M7 5.5L8.5 7L7 8.5" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
-    <path d="M4 7H8.5" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round"/>
+export const CustomFolderMovedIcon: React.FC<CustomIconProps> = ({ size = 12, strokeWidth = 0.5 }) => (
+  <svg width={size} height={size} viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M1.5 3.5V2.5C1.5 2.22386 1.72386 2 2 2H4.25L5.5 3.5H10C10.2761 3.5 10.5 3.72386 10.5 4V9C10.5 9.27614 10.2761 9.5 10 9.5H2C1.72386 9.5 1.5 9.27614 1.5 9V3.5Z" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M7 5.5L8.5 7L7 8.5" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M4 7H8.5" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
 )

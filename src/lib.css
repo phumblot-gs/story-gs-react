@@ -15,7 +15,10 @@
 /* 3. Variables shadcn/ui (dépend de figma-tokens) */
 @import './styles/shadcn-theme.css';
 
-/* 4. Tailwind CSS */
+/* 4. style globaux des composants */
+@import './index.css';
+
+/* 5. Tailwind CSS */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

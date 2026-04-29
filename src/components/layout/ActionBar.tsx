@@ -179,8 +179,7 @@ export function ActionBar({
         bg="black"
         justify={showSelectionInfo ? "between" : "end"}
         align="center"
-        padding={4}
-        className={cn('h-[50px]', hStackProps?.className)}
+        className={cn('h-[50px] px-4', hStackProps?.className)}
         {...hStackProps}
       >
         {showSelectionInfo && (
