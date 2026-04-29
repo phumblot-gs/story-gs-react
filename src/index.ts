@@ -97,6 +97,12 @@ import {
   BreadcrumbEllipsis,
 } from "./components/ui/breadcrumb";
 import { Calendar } from "./components/ui/calendar";
+import { ActivityHeatmap } from "./components/ui/activity-heatmap";
+import type {
+  ActivityHeatmapProps,
+  ActivityDataPoint,
+  ActivityColorScale,
+} from "./components/ui/activity-heatmap";
 import {
   Card,
   CardHeader,
@@ -456,6 +462,8 @@ export {
   BreadcrumbEllipsis,
 };
 export { Calendar };
+export { ActivityHeatmap };
+export type { ActivityHeatmapProps, ActivityDataPoint, ActivityColorScale };
 export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent };
 export { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext };
 export { Checkbox };

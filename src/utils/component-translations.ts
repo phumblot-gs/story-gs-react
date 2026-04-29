@@ -826,4 +826,111 @@ export const componentTranslations: TranslationMap = {
     IT: "Inserisci un nome",
     DE: "Bitte geben Sie einen Namen ein"
   },
+
+  // ActivityHeatmap
+  "activityHeatmap.legend": {
+    EN: "Learn how we count files",
+    FR: "Comment nous comptons les fichiers",
+    ES: "Cómo contamos los archivos",
+    IT: "Come contiamo i file",
+    DE: "So zählen wir Dateien"
+  },
+  "activityHeatmap.less": {
+    EN: "Less",
+    FR: "Moins",
+    ES: "Menos",
+    IT: "Meno",
+    DE: "Weniger"
+  },
+  "activityHeatmap.more": {
+    EN: "More",
+    FR: "Plus",
+    ES: "Más",
+    IT: "Più",
+    DE: "Mehr"
+  },
+  "activityHeatmap.tooltip": {
+    EN: "{count} {unit} on {date}",
+    FR: "{count} {unit} le {date}",
+    ES: "{count} {unit} el {date}",
+    IT: "{count} {unit} il {date}",
+    DE: "{count} {unit} am {date}"
+  },
+  "activityHeatmap.tooltipEmpty": {
+    EN: "No {unit} on {date}",
+    FR: "Pas de {unit} le {date}",
+    ES: "Sin {unit} el {date}",
+    IT: "0 {unit} il {date}",
+    DE: "0 {unit} am {date}"
+  },
+  "activityHeatmap.unit.file": {
+    EN: "file",
+    FR: "fichier",
+    ES: "archivo",
+    IT: "file",
+    DE: "Datei"
+  },
+  "activityHeatmap.unit.file_plural": {
+    EN: "files",
+    FR: "fichiers",
+    ES: "archivos",
+    IT: "file",
+    DE: "Dateien"
+  },
+  "activityHeatmap.unit.post": {
+    EN: "post",
+    FR: "publication",
+    ES: "publicación",
+    IT: "pubblicazione",
+    DE: "Beitrag"
+  },
+  "activityHeatmap.unit.post_plural": {
+    EN: "posts",
+    FR: "publications",
+    ES: "publicaciones",
+    IT: "pubblicazioni",
+    DE: "Beiträge"
+  },
+  "activityHeatmap.unit.event": {
+    EN: "event",
+    FR: "événement",
+    ES: "evento",
+    IT: "evento",
+    DE: "Ereignis"
+  },
+  "activityHeatmap.unit.event_plural": {
+    EN: "events",
+    FR: "événements",
+    ES: "eventos",
+    IT: "eventi",
+    DE: "Ereignisse"
+  },
+  "activityHeatmap.unit.activity": {
+    EN: "activity",
+    FR: "activité",
+    ES: "actividad",
+    IT: "attività",
+    DE: "Aktivität"
+  },
+  "activityHeatmap.unit.activity_plural": {
+    EN: "activities",
+    FR: "activités",
+    ES: "actividades",
+    IT: "attività",
+    DE: "Aktivitäten"
+  },
+  "activityHeatmap.unit.upload": {
+    EN: "upload",
+    FR: "envoi",
+    ES: "subida",
+    IT: "caricamento",
+    DE: "Upload"
+  },
+  "activityHeatmap.unit.upload_plural": {
+    EN: "uploads",
+    FR: "envois",
+    ES: "subidas",
+    IT: "caricamenti",
+    DE: "Uploads"
+  },
 };

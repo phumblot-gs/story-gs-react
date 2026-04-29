@@ -5,6 +5,28 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.10.0] - 2026-04-29
+
+### ✨ Ajouté
+
+- **ActivityHeatmap** : nouveau composant graphique inspiré des
+  heatmaps de contributions. Affiche une fenêtre d'activité
+  quotidienne sur une grille 7 lignes × N semaines, avec libellés
+  des mois et des jours, légende et échelle Less / More.
+  - Couleurs configurables : prop `color` (couleur de base, 4 nuances
+    dérivées automatiquement) ou `colorScale` (5 couleurs explicites).
+  - Seuils d'intensité auto-calculés (quartiles) ou fournis via
+    `levels`.
+  - Unité paramétrable via `unit` (clé de traduction) avec gestion du
+    pluriel par convention `_plural`. Unités fournies : `file`
+    (défaut), `post`, `event`, `activity`, `upload` en EN/FR/ES/IT/DE.
+  - Légende et tooltip localisés ; libellés de jours / mois issus
+    des locales `date-fns`.
+  - Support du `TranslationProvider` ainsi que des props `language` /
+    `translations` (même convention que `FileBrowser` / `FolderBrowser`).
+  - Ajout de la locale `de` à `getDateLocale` pour un formatage de
+    date allemand cohérent.
+
 ## [1.9.2] - 2026-04-27
 
 ### 🐛 Corrigé
