@@ -5,6 +5,39 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.9.2] - 2026-04-27
+
+### 🐛 Corrigé
+
+- **FileBrowser i18n** : substitution du placeholder `{plural}` dans
+  `fileBrowser.filesLimitReached`, `fileBrowser.filesAndMore` et
+  `fileBrowser.showMoreItems` (FR/ES/IT). Le compteur affichait
+  `"1 000 fichier{plural} et plus..."` au lieu de
+  `"1 000 fichiers et plus..."`.
+- **FolderBrowser i18n** : ajout des clés `folderBrowser.columnName`,
+  `folderBrowser.emptyFolder` et `folderBrowser.select` qui étaient
+  consommées par le composant mais absentes de `componentTranslations`,
+  ce qui faisait apparaître les clés brutes (ex.
+  `"folderBrowser.emptyFolder"`) dans le DOM.
+- Renommage `folderBrowser.empty` → `folderBrowser.emptyFolder` pour
+  s'aligner sur l'usage du composant.
+- Suppression des clés mortes `folderBrowser.back`,
+  `folderBrowser.rootFolder` et `folderBrowser.uploadHint` (vérifié par
+  grep complet : plus aucune utilisation interne).
+
+### 🧪 Tests
+
+- Ajout de Vitest + happy-dom + Testing Library.
+- Suite `src/__tests__/file-browser-i18n.test.tsx` couvrant la non-fuite
+  de `{plural}` / `{count}` dans le DOM (FR/ES/IT) et la présence des
+  copies localisées du FolderBrowser vide (EN/FR/ES/IT/DE).
+
+### 📝 Notes
+
+- La convention `{plural}: "s"|""` ne couvre proprement que EN/FR/ES/IT.
+  À terme, migrer vers les pluriels i18next natifs (`_one`/`_other`)
+  pour DE et les langues à pluriels complexes.
+
 ## [1.0.0-beta.1] - 2025-01-16
 
 ### 🚨 BREAKING CHANGES

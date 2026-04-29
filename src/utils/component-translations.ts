@@ -250,33 +250,26 @@ export const componentTranslations: TranslationMap = {
   },
 
   // FolderBrowser
-  "folderBrowser.rootFolder": {
-    EN: "My files",
-    FR: "Mes fichiers",
-    ES: "Mis archivos",
-    IT: "I miei file",
-    DE: "Meine Dateien"
+  "folderBrowser.columnName": {
+    EN: "FOLDER NAME",
+    FR: "NOM DU DOSSIER",
+    ES: "NOMBRE DE LA CARPETA",
+    IT: "NOME DELLA CARTELLA",
+    DE: "ORDNERNAME"
   },
-  "folderBrowser.back": {
-    EN: "Back",
-    FR: "Retour",
-    ES: "Atrás",
-    IT: "Indietro",
-    DE: "Zurück"
-  },
-  "folderBrowser.empty": {
+  "folderBrowser.emptyFolder": {
     EN: "This folder is empty",
     FR: "Ce dossier est vide",
     ES: "Esta carpeta está vacía",
     IT: "Questa cartella è vuota",
     DE: "Dieser Ordner ist leer"
   },
-  "folderBrowser.uploadHint": {
-    EN: "Drop files here or click to upload",
-    FR: "Déposez des fichiers ici ou cliquez pour téléverser",
-    ES: "Suelta archivos aquí o haz clic para cargar",
-    IT: "Rilascia i file qui o clicca per caricare",
-    DE: "Dateien hier ablegen oder klicken zum Hochladen"
+  "folderBrowser.select": {
+    EN: "Select",
+    FR: "Sélectionner",
+    ES: "Seleccionar",
+    IT: "Seleziona",
+    DE: "Auswählen"
   },
 
   // Button

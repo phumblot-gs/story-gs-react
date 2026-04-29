@@ -191,11 +191,17 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
     }
 
     if (isLimitReached) {
-      return t('fileBrowser.filesLimitReached', { count: formatNumber(currentCount) });
+      return t('fileBrowser.filesLimitReached', {
+        count: formatNumber(currentCount),
+        plural: currentCount > 1 ? 's' : '',
+      });
     }
 
     if (hasMore && (totalFiles === null || totalFiles === undefined || totalFiles > currentCount)) {
-      return t('fileBrowser.filesAndMore', { count: formatNumber(currentCount) });
+      return t('fileBrowser.filesAndMore', {
+        count: formatNumber(currentCount),
+        plural: currentCount > 1 ? 's' : '',
+      });
     }
 
     if (totalFiles !== null && totalFiles !== undefined && totalFiles !== currentCount) {
@@ -1026,7 +1032,10 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
                 const remainingCount = totalFiles !== null && totalFiles !== undefined
                   ? totalFiles - sortedFiles.length  // Nombre exact restant si totalFiles est connu
                   : maxFilesLimit - sortedFiles.length;  // Nombre maximum restant sinon
-                return t('fileBrowser.showMoreItems', { count: formatNumber(remainingCount) });
+                return t('fileBrowser.showMoreItems', {
+                  count: formatNumber(remainingCount),
+                  plural: remainingCount > 1 ? 's' : '',
+                });
               })()
             )}
           </Button>
