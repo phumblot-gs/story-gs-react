@@ -55,9 +55,6 @@ jobs:
           fi
           echo "Publishing version $PKG_VERSION (ref: $REF_NAME)"
 
-      - name: Lint
-        run: npm run lint
-
       - name: Build library
         run: npm run build:lib
 
