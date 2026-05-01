@@ -8,6 +8,37 @@ import { useBgContext } from "@/components/layout/BgContext"
 // Contexte pour transmettre le className de Tabs à TabsList
 const TabsHeaderClassNameContext = React.createContext<string | undefined>(undefined)
 
+/**
+ * Computes the active-tab indicator (`left`, `width`) relative to the
+ * TabsList, suitable for the `--indicator-left` / `--indicator-width` CSS
+ * variables.
+ *
+ * Uses `getBoundingClientRect()` instead of `offsetLeft` / `offsetWidth`,
+ * because a trigger may be wrapped in a `position: relative` container
+ * (e.g. `.tabs-view-wrapper` around saved views in `TabsWithViews`).
+ * `offsetLeft` is relative to the closest `offsetParent`, so a wrapped
+ * trigger reports `offsetLeft = 0` even when it is rendered far from the
+ * start of the list — the indicator would then jump back to the leftmost
+ * position. `getBoundingClientRect()` ignores the offset chain and is
+ * always relative to the viewport, so subtracting the list's rect gives
+ * the correct position. `scrollLeft` compensates for horizontal scrolling
+ * (used by the `showNavButtons` mode).
+ *
+ * Exported so the calculation can be unit-tested in isolation — see
+ * `src/__tests__/tabs-indicator.test.tsx`.
+ */
+export function computeActiveTabIndicator(
+  list: HTMLElement,
+  activeTab: HTMLElement
+): { left: number; width: number } {
+  const listRect = list.getBoundingClientRect()
+  const tabRect = activeTab.getBoundingClientRect()
+  return {
+    left: tabRect.left - listRect.left + list.scrollLeft,
+    width: tabRect.width,
+  }
+}
+
 interface TabsProps extends React.ComponentPropsWithoutRef<typeof TabsPrimitive.Root> {
   debug?: boolean
 }
@@ -109,14 +140,7 @@ const TabsList = React.forwardRef<
       return
     }
 
-    const listRect = listRef.current.getBoundingClientRect()
-    const tabRect = activeTab.getBoundingClientRect()
-    
-    // Calculer la position relative à la liste (en tenant compte du scroll)
-    const left = activeTab.offsetLeft
-    const width = activeTab.offsetWidth
-
-    setIndicatorStyle({ left, width })
+    setIndicatorStyle(computeActiveTabIndicator(listRef.current, activeTab))
   }, [])
 
   // Observer les changements d'onglet actif pour mettre à jour la position de l'indicateur
@@ -259,6 +283,22 @@ const TabsList = React.forwardRef<
         ref={listRef}
         className={cn("tabs-list", className)}
         onScroll={handleScroll}
+        // Hover preview: while the mouse is over a trigger, the indicator
+        // tracks it; when the mouse leaves the list (without clicking) the
+        // indicator returns to the active trigger. Implemented via event
+        // delegation so it works for both fixed tabs and view triggers
+        // (which are wrapped in `.tabs-view-wrapper`).
+        onPointerOver={(e) => {
+          if (!listRef.current) return
+          const candidate = (e.target as HTMLElement | null)?.closest?.('[role="tab"]')
+          if (!candidate || !(candidate instanceof HTMLElement)) return
+          if (!listRef.current.contains(candidate)) return
+          setIndicatorStyle(computeActiveTabIndicator(listRef.current, candidate))
+        }}
+        onPointerLeave={() => {
+          // Mouse left the list: revert to the active trigger's position.
+          updateIndicatorPosition()
+        }}
         style={{
           '--indicator-left': indicatorStyle ? `${indicatorStyle.left}px` : '0px',
           '--indicator-width': indicatorStyle ? `${indicatorStyle.width}px` : '0px',
