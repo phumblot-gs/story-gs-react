@@ -933,4 +933,34 @@ export const componentTranslations: TranslationMap = {
     IT: "caricamenti",
     DE: "Uploads"
   },
+
+  // PageWelcome
+  "pageWelcome.defaultEyebrow": {
+    EN: "HOME",
+    FR: "ACCUEIL",
+    ES: "INICIO",
+    IT: "HOME",
+    DE: "STARTSEITE"
+  },
+  "pageWelcome.greeting.morning": {
+    EN: "Good morning",
+    FR: "Bonjour",
+    ES: "Buenos días",
+    IT: "Buongiorno",
+    DE: "Guten Morgen"
+  },
+  "pageWelcome.greeting.afternoon": {
+    EN: "Good afternoon",
+    FR: "Bonjour",
+    ES: "Buenas tardes",
+    IT: "Buon pomeriggio",
+    DE: "Guten Tag"
+  },
+  "pageWelcome.greeting.evening": {
+    EN: "Good evening",
+    FR: "Bonsoir",
+    ES: "Buenas noches",
+    IT: "Buonasera",
+    DE: "Guten Abend"
+  },
 };
