@@ -203,13 +203,13 @@ const SelectTemplate = (args: Story['args']) => (
   <Layout bg="white" padding={6}>
     <Select {...args}>
       <SelectTrigger debug={args?.debug} disabled={args?.disabled}>
-        <SelectValue placeholder={args?.placeholder || "Sélectionner une option"} />
+        <SelectValue placeholder={args?.placeholder || "Select an option"} />
       </SelectTrigger>
       <SelectContent debug={args?.debug}>
         <SelectItem value="option1" debug={args?.debug}>Option 1</SelectItem>
         <SelectItem value="option2" debug={args?.debug}>Option 2</SelectItem>
         <SelectItem value="option3" debug={args?.debug}>Option 3</SelectItem>
-        <SelectItem value="option4" debug={args?.debug}>Option très longue qui peut dépasser</SelectItem>
+        <SelectItem value="option4" debug={args?.debug}>Very long option that may overflow</SelectItem>
       </SelectContent>
     </Select>
   </Layout>
@@ -219,7 +219,7 @@ export const Default: Story = {
   args: {
     debug: false,
     disabled: false,
-    placeholder: "Choisir une option",
+    placeholder: "Choose an option",
     allowClear: false,
     size: "normal",
   },
@@ -235,7 +235,7 @@ export const Default: Story = {
             <SelectItem value="option1">Option 1</SelectItem>
             <SelectItem value="option2">Option 2</SelectItem>
             <SelectItem value="option3">Option 3</SelectItem>
-            <SelectItem value="option4">Option très longue qui peut dépasser</SelectItem>
+            <SelectItem value="option4">Very long option that may overflow</SelectItem>
           </SelectContent>
         </Select>
       </Layout>
@@ -244,7 +244,7 @@ export const Default: Story = {
   parameters: {
     docs: {
       description: {
-        story: `Story interactive — toutes les props (\`size\`, \`disabled\`, \`allowClear\`, etc.) sont pilotées via le panneau **Controls**. Les autres stories (\`BackgroundVariants\`, \`States\`, \`LongContent\`, \`WithAvatars\`) ont un \`render\` qui ne lit pas \`args\` : changer un control en étant sur ces stories n'aura aucun effet (c'est voulu, elles servent à montrer un cas figé). Pour comparer les tailles d'un coup d'œil, voir la story **Sizes**.`,
+        story: `Interactive story — all props (\`size\`, \`disabled\`, \`allowClear\`, etc.) are driven from the **Controls** panel. The other stories (\`BackgroundVariants\`, \`States\`, \`LongContent\`, \`WithAvatars\`) have a \`render\` that doesn't read \`args\`: changing a control while on those stories will have no effect (this is intentional — they show a fixed case). To compare the two sizes at a glance, see the **Sizes** story.`,
       },
     },
   },
@@ -258,7 +258,7 @@ export const Sizes: Story = {
           <p className="text-xs uppercase tracking-wider text-grey-strongest">size="normal" (30 px)</p>
           <Select size="normal" defaultValue="b">
             <SelectTrigger>
-              <SelectValue placeholder="Sélectionner une option" />
+              <SelectValue placeholder="Select an option" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="a">Option A</SelectItem>
@@ -271,7 +271,7 @@ export const Sizes: Story = {
           <p className="text-xs uppercase tracking-wider text-grey-strongest">size="small" (16 px)</p>
           <Select size="small" defaultValue="b">
             <SelectTrigger>
-              <SelectValue placeholder="Sélectionner une option" />
+              <SelectValue placeholder="Select an option" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="a">Option A</SelectItem>
@@ -287,7 +287,7 @@ export const Sizes: Story = {
     docs: {
       description: {
         story:
-          "Comparaison côte à côte des deux tailles : `size=\"normal\"` (`h-[30px]`, padding `pl-3 pr-[4px]`) et `size=\"small\"` (`h-4` = 16 px, padding `pl-2 pr-[2px]`).",
+          "Side-by-side comparison of the two sizes: `size=\"normal\"` (`h-[30px]`, padding `pl-3 pr-[4px]`) and `size=\"small\"` (`h-4` = 16 px, padding `pl-2 pr-[2px]`).",
       },
     },
   },
@@ -302,7 +302,7 @@ export const Discrete: Story = {
           <p className="text-xs text-grey-strongest">discrete=false (default)</p>
           <Select defaultValue="b">
             <SelectTrigger>
-              <SelectValue placeholder="Choisir..." />
+              <SelectValue placeholder="Choose..." />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="a">Option A</SelectItem>
@@ -312,10 +312,10 @@ export const Discrete: Story = {
           </Select>
         </VStack>
         <VStack gap={2}>
-          <p className="text-xs text-grey-strongest">discrete=true → le rond se confond avec le trigger au repos</p>
+          <p className="text-xs text-grey-strongest">discrete=true → the button blends with the trigger at idle</p>
           <Select defaultValue="b">
             <SelectTrigger discrete>
-              <SelectValue placeholder="Choisir..." />
+              <SelectValue placeholder="Choose..." />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="a">Option A</SelectItem>
@@ -332,7 +332,7 @@ export const Discrete: Story = {
           <p className="text-xs text-grey-strongest">discrete=false</p>
           <Select defaultValue="b">
             <SelectTrigger>
-              <SelectValue placeholder="Choisir..." />
+              <SelectValue placeholder="Choose..." />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="a">Option A</SelectItem>
@@ -345,7 +345,7 @@ export const Discrete: Story = {
           <p className="text-xs text-grey-strongest">discrete=true</p>
           <Select defaultValue="b">
             <SelectTrigger discrete>
-              <SelectValue placeholder="Choisir..." />
+              <SelectValue placeholder="Choose..." />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="a">Option A</SelectItem>
@@ -362,7 +362,7 @@ export const Discrete: Story = {
           <p className="text-xs text-grey-stronger">discrete=false</p>
           <Select defaultValue="b">
             <SelectTrigger>
-              <SelectValue placeholder="Choisir..." />
+              <SelectValue placeholder="Choose..." />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="a">Option A</SelectItem>
@@ -375,7 +375,7 @@ export const Discrete: Story = {
           <p className="text-xs text-grey-stronger">discrete=true</p>
           <Select defaultValue="b">
             <SelectTrigger discrete>
-              <SelectValue placeholder="Choisir..." />
+              <SelectValue placeholder="Choose..." />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="a">Option A</SelectItem>
@@ -390,9 +390,9 @@ export const Discrete: Story = {
   parameters: {
     docs: {
       description: {
-        story: `Prop \`discrete\` sur le \`SelectTrigger\` (défaut \`false\`). Quand \`true\`, le rond contenant la flèche prend la couleur de fond du trigger au repos — le bouton "disparaît" visuellement et seule l'icône est perceptible. Les états hover, pressed et open conservent le styling habituel (noir, bleu primaire à l'ouverture, etc.).
+        story: `\`discrete\` prop on \`SelectTrigger\` (default \`false\`). When \`true\`, the round button containing the arrow icon adopts the trigger background color at idle — the button visually "disappears" and only the icon remains perceptible. The hover, pressed and open states keep their usual styling (black on hover/pressed, blue primary when the dropdown is open).
 
-Survole, clique et déroule chaque trigger \`discrete=true\` pour vérifier que les états actifs sont bien identiques à ceux de \`discrete=false\`.`,
+Hover, click and open each \`discrete=true\` trigger to check that the active states are strictly identical to those of \`discrete=false\`.`,
       },
     },
   },
@@ -448,7 +448,7 @@ export const BackgroundVariants: Story = {
     layout: 'fullscreen',
     docs: {
       description: {
-        story: "Le Select hérite automatiquement du background du Layout parent via BgContext.",
+        story: "The Select automatically inherits the parent Layout background via BgContext.",
       },
     },
   },
@@ -459,39 +459,39 @@ export const States: Story = {
     <Layout bg="white" padding={6}>
       <VStack gap={6}>
         <VStack gap={3}>
-          <h3 className="text-sm font-medium">État Normal</h3>
+          <h3 className="text-sm font-medium">Normal state</h3>
           <Select>
             <SelectTrigger>
-              <SelectValue placeholder="Select normal" />
+              <SelectValue placeholder="Default select" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="normal1">Option normale</SelectItem>
-              <SelectItem value="normal2">Autre option</SelectItem>
+              <SelectItem value="normal1">Normal option</SelectItem>
+              <SelectItem value="normal2">Other option</SelectItem>
             </SelectContent>
           </Select>
         </VStack>
 
         <VStack gap={3}>
-          <h3 className="text-sm font-medium">État Désactivé</h3>
+          <h3 className="text-sm font-medium">Disabled state</h3>
           <Select disabled>
             <SelectTrigger disabled>
-              <SelectValue placeholder="Select désactivé" />
+              <SelectValue placeholder="Disabled select" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="disabled1">Option désactivée</SelectItem>
+              <SelectItem value="disabled1">Disabled option</SelectItem>
             </SelectContent>
           </Select>
         </VStack>
 
         <VStack gap={3}>
-          <h3 className="text-sm font-medium">Avec Valeur Sélectionnée</h3>
+          <h3 className="text-sm font-medium">With selected value</h3>
           <Select defaultValue="selected">
             <SelectTrigger>
-              <SelectValue placeholder="Aucune sélection" />
+              <SelectValue placeholder="No selection" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="selected">Option sélectionnée</SelectItem>
-              <SelectItem value="other">Autre option</SelectItem>
+              <SelectItem value="selected">Selected option</SelectItem>
+              <SelectItem value="other">Other option</SelectItem>
             </SelectContent>
           </Select>
         </VStack>
@@ -501,7 +501,7 @@ export const States: Story = {
   parameters: {
     docs: {
       description: {
-        story: "Différents états du composant Select : normal, désactivé, avec valeur sélectionnée.",
+        story: "The various states of the Select component: normal, disabled, and with a selected value.",
       },
     },
   },
@@ -512,15 +512,15 @@ export const LongContent: Story = {
     <Layout bg="white" padding={6}>
       <Select>
         <SelectTrigger>
-          <SelectValue placeholder="Select avec beaucoup d'options" />
+          <SelectValue placeholder="Select with many options" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="short">Court</SelectItem>
-          <SelectItem value="medium">Option moyenne</SelectItem>
-          <SelectItem value="long">Option avec un texte très long qui pourrait dépasser</SelectItem>
-          <SelectItem value="extra-long">Option avec un texte extrêmement long qui teste la gestion de l'overflow et du wrapping</SelectItem>
+          <SelectItem value="short">Short</SelectItem>
+          <SelectItem value="medium">Medium option</SelectItem>
+          <SelectItem value="long">Option with very long text that may overflow</SelectItem>
+          <SelectItem value="extra-long">Option with extremely long text to test overflow and wrapping behavior</SelectItem>
           <SelectItem value="numbers">123456789012345678901234567890</SelectItem>
-          <SelectItem value="special">Caractères spéciaux: àéèïôç!</SelectItem>
+          <SelectItem value="special">Special characters: àéèïôç!</SelectItem>
           <SelectItem value="option7">Option 7</SelectItem>
           <SelectItem value="option8">Option 8</SelectItem>
           <SelectItem value="option9">Option 9</SelectItem>
@@ -532,7 +532,7 @@ export const LongContent: Story = {
   parameters: {
     docs: {
       description: {
-        story: "Test avec beaucoup d'options et du contenu long pour vérifier le scroll et l'overflow.",
+        story: "Stress test with many options and long content to verify scrolling and overflow.",
       },
     },
   },
@@ -543,12 +543,12 @@ export const WithDebug: Story = {
   args: {
     debug: true,
     disabled: false,
-    placeholder: "Select avec debug activé",
+    placeholder: "Select with debug enabled",
   },
   parameters: {
     docs: {
       description: {
-        story: "Mode debug activé - voir la console pour les logs.",
+        story: "Debug mode enabled — check the browser console for prop logs.",
       },
     },
   },
@@ -559,10 +559,10 @@ export const WithAllowClear: Story = {
     <Layout bg="white" padding={6}>
       <VStack gap={4}>
         <VStack gap={2}>
-          <h3 className="text-sm font-medium">Allow Clear - Sans valeur par défaut</h3>
+          <h3 className="text-sm font-medium">Allow Clear — without default value</h3>
           <Select allowClear>
             <SelectTrigger>
-              <SelectValue placeholder="Sélectionner une option (effaçable)" />
+              <SelectValue placeholder="Select an option (clearable)" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="option1">Option 1</SelectItem>
@@ -573,10 +573,10 @@ export const WithAllowClear: Story = {
         </VStack>
 
         <VStack gap={2}>
-          <h3 className="text-sm font-medium">Allow Clear - Avec valeur par défaut</h3>
+          <h3 className="text-sm font-medium">Allow Clear — with default value</h3>
           <Select allowClear defaultValue="option2">
             <SelectTrigger>
-              <SelectValue placeholder="Sélectionner une option" />
+              <SelectValue placeholder="Select an option" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="option1">Option 1</SelectItem>
@@ -591,7 +591,7 @@ export const WithAllowClear: Story = {
   parameters: {
     docs: {
       description: {
-        story: "Select avec allowClear=true. L'icône X permet d'effacer la sélection quand une valeur est sélectionnée.",
+        story: "Select with `allowClear={true}`. The X icon lets the user clear the selection once a value is set.",
       },
     },
   },
@@ -601,13 +601,13 @@ export const WithAllowClear: Story = {
 // Avatar inside SelectItem
 // --------------------------------------------------------------------------
 //
-// Pas besoin d'un composant dédié : on utilise Select + Avatar + AvatarImage +
-// AvatarFallback directement à l'intérieur de chaque SelectItem.
+// No dedicated component needed: just compose Select + Avatar + AvatarImage +
+// AvatarFallback directly inside each SelectItem.
 //
-// Astuce Radix : SelectValue (dans le trigger) projette automatiquement le
-// contenu de SelectPrimitive.ItemText de l'item sélectionné. Comme notre
-// SelectItem wrappe ses children dans ItemText, l'avatar + nom rendus dans
-// l'item apparaissent tels quels dans le trigger.
+// Radix trick: SelectValue (in the trigger) automatically projects the
+// content of SelectPrimitive.ItemText from the selected item. Since our
+// SelectItem wraps its children in ItemText, the avatar + name rendered in
+// each item show up as-is in the trigger once that item is selected.
 
 interface AvatarOption {
   value: string;
@@ -647,8 +647,8 @@ const SUPPLIER_OPTIONS: AvatarOption[] = [
     value: "an",
     name: "Aurore Nguyen",
     initials: "AN",
-    // photoUrl renseigné pour démontrer le cas image (alors que d'autres
-    // utilisent uniquement le fallback initiales).
+    // photoUrl set on this entry to showcase the image case (while the
+    // others rely on the initials fallback only).
     photoUrl: "https://i.pravatar.cc/64?img=47",
     fallbackBg: "#9333ea",
     fallbackFg: "#ffffff",
@@ -685,7 +685,7 @@ export const WithAvatars: Story = {
         <div className="w-[280px]">
           <Select defaultValue="ls">
             <SelectTrigger className="pl-1">
-              <SelectValue placeholder="Sélectionner un fournisseur..." />
+              <SelectValue placeholder="Select a supplier..." />
             </SelectTrigger>
             <SelectContent>
               {SUPPLIER_OPTIONS.map((opt) => (
@@ -702,12 +702,12 @@ export const WithAvatars: Story = {
   parameters: {
     docs: {
       description: {
-        story: `Pattern pour afficher des avatars dans un Select sans composant dédié.
+        story: `Pattern for showing avatars inside a Select without a dedicated component.
 
 \`\`\`tsx
 <Select value={value} onValueChange={setValue}>
   <SelectTrigger className="pl-1">
-    <SelectValue placeholder="Sélectionner un fournisseur..." />
+    <SelectValue placeholder="Select a supplier..." />
   </SelectTrigger>
   <SelectContent>
     {users.map((u) => (
@@ -727,12 +727,12 @@ export const WithAvatars: Story = {
 </Select>
 \`\`\`
 
-**Pourquoi ça marche** : \`SelectItem\` wrappe ses enfants dans \`SelectPrimitive.ItemText\`, et \`SelectValue\` (dans le trigger) projette le contenu de cet \`ItemText\` une fois sélectionné. L'avatar + le nom apparaissent donc à la fois dans le dropdown et dans le trigger, sans duplication de markup.
+**Why it works**: \`SelectItem\` wraps its children in \`SelectPrimitive.ItemText\`, and \`SelectValue\` (in the trigger) projects the content of that \`ItemText\` once an item is selected. The avatar + name therefore appears both in the dropdown and in the trigger, with no markup duplication.
 
-**Tweaks visuels** :
-- L'avatar \`size="small"\` (16 px) tient parfaitement dans la hauteur 30 px du trigger standard, donc pas besoin de la modifier.
-- \`<SelectTrigger className="pl-1">\` et \`<SelectItem className="pl-1">\` — le \`padding-left\` est ramené de 12 px (\`pl-3\` par défaut) à 4 px (\`pl-1\`), à la fois sur le trigger et sur les items, pour caler l'avatar près du bord gauche et garder l'alignement entre le trigger et la liste déroulée.
-- L'\`AvatarFallback\` par défaut a \`bg-muted\` (token shadcn neutre) ; passe \`style\` ou \`className\` pour une couleur de marque.`,
+**Visual tweaks**:
+- The \`size="small"\` avatar (16 px) fits comfortably inside the 30 px standard trigger height, so no need to change it.
+- \`<SelectTrigger className="pl-1">\` and \`<SelectItem className="pl-1">\` — \`padding-left\` is reduced from 12 px (default \`pl-3\`) to 4 px (\`pl-1\`), on both the trigger and the items, so the avatar sits flush with the left edge and stays aligned between the trigger and the open list.
+- The default \`AvatarFallback\` uses \`bg-muted\` (a neutral shadcn token) — pass \`style\` or \`className\` for a brand color.`,
       },
     },
   },
