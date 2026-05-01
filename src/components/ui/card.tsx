@@ -3,25 +3,33 @@ import { cn } from "@/lib/utils"
 import { useBgContext, BgProvider } from "@/components/layout/BgContext"
 
 /**
- * Détermine le variant de Card selon le contexte parent
- * - white → grey (expose data-bg="grey")
- * - grey → white (expose data-bg="white")
- * - black → black (expose data-bg="black")
+ * Détermine le background à utiliser pour la Card selon le contexte parent
+ * et le variant choisi.
+ *
+ * Variant "filled" (défaut, comportement historique) :
+ *   - parent white → card grey
+ *   - parent grey  → card white
+ *   - parent black → card black
+ *
+ * Variant "outline" :
+ *   - card = même bg que le parent (le contraste vient de la bordure)
  */
-function getCardVariant(parentBg: 'white' | 'grey' | 'black' | undefined): {
-  variant: 'white' | 'grey' | 'black';
-  exposedBg: 'white' | 'grey' | 'black';
-} {
+function getCardBg(
+  parentBg: 'white' | 'grey' | 'black' | undefined,
+  variant: 'filled' | 'outline'
+): 'white' | 'grey' | 'black' {
+  if (variant === 'outline') {
+    return parentBg ?? 'white';
+  }
   switch (parentBg) {
     case 'white':
-      return { variant: 'grey', exposedBg: 'grey' };
+      return 'grey';
     case 'grey':
-      return { variant: 'white', exposedBg: 'white' };
+      return 'white';
     case 'black':
-      return { variant: 'black', exposedBg: 'black' };
+      return 'black';
     default:
-      // Par défaut, si pas de contexte, on utilise grey
-      return { variant: 'grey', exposedBg: 'grey' };
+      return 'grey';
   }
 }
 
@@ -30,12 +38,21 @@ export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   footer?: React.ReactNode;
   /** Active l'effet d'ombre avec transition au hover (shadow-md par défaut, shadow-lg au hover) */
   cardShadow?: boolean;
+  /**
+   * Apparence visuelle de la Card.
+   * - `"filled"` (défaut) : la Card utilise un fond contrastant (white ↔ grey) par rapport
+   *   au contexte parent. C'est le comportement historique — laisser ce défaut pour ne
+   *   rien casser.
+   * - `"outline"` : la Card conserve le fond du parent ; la séparation visuelle est
+   *   assurée par une bordure de 1px. Idéal pour les KPI cards posées sur fond uniforme.
+   */
+  variant?: 'filled' | 'outline';
 }
 
 const Card = React.forwardRef<HTMLDivElement, CardProps>(
-  ({ className, footer, cardShadow = false, children, ...props }, ref) => {
+  ({ className, footer, cardShadow = false, variant = 'filled', children, ...props }, ref) => {
     const parentBg = useBgContext();
-    const { variant, exposedBg } = getCardVariant(parentBg);
+    const cardBg = getCardBg(parentBg, variant);
 
     // Séparer les enfants pour détecter CardFooter
     const childrenArray = React.Children.toArray(children);
@@ -60,15 +77,18 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
       ? 'shadow-md hover:shadow-lg transition-shadow'
       : '';
 
+    const baseClass = variant === 'outline' ? 'card-outline' : 'card-base';
+
     const cardElement = (
       <div
         ref={ref}
         className={cn(
-          "card-base rounded-[4px] p-[30px] flex flex-col gap-[30px]",
+          baseClass,
+          "rounded-[4px] p-[30px] flex flex-col gap-[30px]",
           shadowClasses,
           className
         )}
-        data-bg={exposedBg}
+        data-bg={cardBg}
         {...props}
       >
         {cardContent}
@@ -81,7 +101,7 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
           "card-footer flex items-center justify-end pt-2 pb-6 px-6",
           "w-full"
         )}
-        data-bg={exposedBg}
+        data-bg={cardBg}
       >
         {React.isValidElement(cardFooter) && 
          typeof cardFooter.type !== 'string' &&
@@ -98,7 +118,7 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
 
     // Expose le nouveau contexte pour les enfants
     return (
-      <BgProvider value={exposedBg}>
+      <BgProvider value={cardBg}>
         <div className="flex flex-col">
           {cardElement}
           {footerElement}

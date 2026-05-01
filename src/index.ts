@@ -55,6 +55,8 @@ import ButtonNotifications from "./components/ButtonNotifications";
 import { ButtonNotificationsRef } from "./components/notifications/types";
 import PageHeader from "./components/PageHeader";
 import PageSearch from "./components/PageSearch";
+import PageWelcome from "./components/PageWelcome";
+import type { PageWelcomeProps } from "./components/PageWelcome";
 
 // Import additional UI components
 import { Toggle } from "./components/ui/toggle";
@@ -623,6 +625,7 @@ export { ButtonNotifications };
 export type { ButtonNotificationsRef };
 export { PageHeader };
 export { PageSearch };
+export { PageWelcome };
 
 // Export types
 export type {
@@ -659,6 +662,7 @@ export type {
   SearchProps,
   PageHeaderProps,
   PageSearchProps,
+  PageWelcomeProps,
   FolderItem,
   FolderBrowserProps,
   ToggleProps

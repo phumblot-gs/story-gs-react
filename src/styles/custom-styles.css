@@ -814,6 +814,47 @@
   color: var(--card-b-color-fg-default);
 }
 
+/* Card outline - même fond que le parent, séparation par bordure 1px */
+.card-outline {
+  background: transparent;
+  border-width: var(--border-width-base);
+  border-style: solid;
+}
+
+[data-bg="white"] .card-outline {
+  border-color: var(--color-grey-strong);
+  color: var(--card-w-color-fg-default);
+}
+
+[data-bg="grey"] .card-outline {
+  border-color: var(--color-grey-strong);
+  color: var(--card-g-color-fg-default);
+}
+
+[data-bg="black"] .card-outline {
+  border-color: var(--color-grey-strongest);
+  color: var(--card-b-color-fg-default);
+}
+
+/*
+ * Texte natif dans une Card : les sélecteurs `p`, `h1..h4` de typography.css
+ * forcent `color: var(--color-black)` ce qui casse l'héritage de la couleur
+ * d'avant-plan définie par la Card (notamment blanche sur variant black).
+ * On rétablit l'héritage explicitement à l'intérieur des Cards.
+ */
+.card-base p,
+.card-base h1,
+.card-base h2,
+.card-base h3,
+.card-base h4,
+.card-outline p,
+.card-outline h1,
+.card-outline h2,
+.card-outline h3,
+.card-outline h4 {
+  color: inherit;
+}
+
 /* CardHeader - pas de styles spécifiques nécessaires, utilise les styles du Card */
 .card-header {
   /* Styles hérités du Card */
