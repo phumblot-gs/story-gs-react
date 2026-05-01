@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import * as React from "react";
 import {
   Select,
   SelectTrigger,
@@ -6,6 +7,7 @@ import {
   SelectItem,
   SelectValue,
 } from "./select";
+import { Avatar, AvatarImage, AvatarFallback } from "./avatar";
 import { Layout, VStack } from "@/components/layout";
 
 const meta: Meta<typeof Select> = {
@@ -239,6 +241,161 @@ export const Default: Story = {
       </Layout>
     );
   },
+  parameters: {
+    docs: {
+      description: {
+        story: `Story interactive — toutes les props (\`size\`, \`disabled\`, \`allowClear\`, etc.) sont pilotées via le panneau **Controls**. Les autres stories (\`BackgroundVariants\`, \`States\`, \`LongContent\`, \`WithAvatars\`) ont un \`render\` qui ne lit pas \`args\` : changer un control en étant sur ces stories n'aura aucun effet (c'est voulu, elles servent à montrer un cas figé). Pour comparer les tailles d'un coup d'œil, voir la story **Sizes**.`,
+      },
+    },
+  },
+};
+
+export const Sizes: Story = {
+  render: () => (
+    <Layout bg="white" padding={6}>
+      <VStack gap={6}>
+        <VStack gap={2}>
+          <p className="text-xs uppercase tracking-wider text-grey-strongest">size="normal" (30 px)</p>
+          <Select size="normal" defaultValue="b">
+            <SelectTrigger>
+              <SelectValue placeholder="Sélectionner une option" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="a">Option A</SelectItem>
+              <SelectItem value="b">Option B</SelectItem>
+              <SelectItem value="c">Option C</SelectItem>
+            </SelectContent>
+          </Select>
+        </VStack>
+        <VStack gap={2}>
+          <p className="text-xs uppercase tracking-wider text-grey-strongest">size="small" (16 px)</p>
+          <Select size="small" defaultValue="b">
+            <SelectTrigger>
+              <SelectValue placeholder="Sélectionner une option" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="a">Option A</SelectItem>
+              <SelectItem value="b">Option B</SelectItem>
+              <SelectItem value="c">Option C</SelectItem>
+            </SelectContent>
+          </Select>
+        </VStack>
+      </VStack>
+    </Layout>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Comparaison côte à côte des deux tailles : `size=\"normal\"` (`h-[30px]`, padding `pl-3 pr-[4px]`) et `size=\"small\"` (`h-4` = 16 px, padding `pl-2 pr-[2px]`).",
+      },
+    },
+  },
+};
+
+export const Discrete: Story = {
+  render: () => (
+    <VStack gap={6} padding={6}>
+      <VStack as={Layout} bg="white" padding={6} gap={4} className="border border-grey rounded">
+        <h3 className="text-sm font-medium">Background White</h3>
+        <VStack gap={2}>
+          <p className="text-xs text-grey-strongest">discrete=false (default)</p>
+          <Select defaultValue="b">
+            <SelectTrigger>
+              <SelectValue placeholder="Choisir..." />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="a">Option A</SelectItem>
+              <SelectItem value="b">Option B</SelectItem>
+              <SelectItem value="c">Option C</SelectItem>
+            </SelectContent>
+          </Select>
+        </VStack>
+        <VStack gap={2}>
+          <p className="text-xs text-grey-strongest">discrete=true → le rond se confond avec le trigger au repos</p>
+          <Select defaultValue="b">
+            <SelectTrigger discrete>
+              <SelectValue placeholder="Choisir..." />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="a">Option A</SelectItem>
+              <SelectItem value="b">Option B</SelectItem>
+              <SelectItem value="c">Option C</SelectItem>
+            </SelectContent>
+          </Select>
+        </VStack>
+      </VStack>
+
+      <VStack as={Layout} bg="grey" padding={6} gap={4} className="border border-grey rounded">
+        <h3 className="text-sm font-medium">Background Grey</h3>
+        <VStack gap={2}>
+          <p className="text-xs text-grey-strongest">discrete=false</p>
+          <Select defaultValue="b">
+            <SelectTrigger>
+              <SelectValue placeholder="Choisir..." />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="a">Option A</SelectItem>
+              <SelectItem value="b">Option B</SelectItem>
+              <SelectItem value="c">Option C</SelectItem>
+            </SelectContent>
+          </Select>
+        </VStack>
+        <VStack gap={2}>
+          <p className="text-xs text-grey-strongest">discrete=true</p>
+          <Select defaultValue="b">
+            <SelectTrigger discrete>
+              <SelectValue placeholder="Choisir..." />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="a">Option A</SelectItem>
+              <SelectItem value="b">Option B</SelectItem>
+              <SelectItem value="c">Option C</SelectItem>
+            </SelectContent>
+          </Select>
+        </VStack>
+      </VStack>
+
+      <VStack as={Layout} bg="black" padding={6} gap={4} className="border border-grey rounded">
+        <h3 className="text-sm font-medium text-white">Background Black</h3>
+        <VStack gap={2}>
+          <p className="text-xs text-grey-stronger">discrete=false</p>
+          <Select defaultValue="b">
+            <SelectTrigger>
+              <SelectValue placeholder="Choisir..." />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="a">Option A</SelectItem>
+              <SelectItem value="b">Option B</SelectItem>
+              <SelectItem value="c">Option C</SelectItem>
+            </SelectContent>
+          </Select>
+        </VStack>
+        <VStack gap={2}>
+          <p className="text-xs text-grey-stronger">discrete=true</p>
+          <Select defaultValue="b">
+            <SelectTrigger discrete>
+              <SelectValue placeholder="Choisir..." />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="a">Option A</SelectItem>
+              <SelectItem value="b">Option B</SelectItem>
+              <SelectItem value="c">Option C</SelectItem>
+            </SelectContent>
+          </Select>
+        </VStack>
+      </VStack>
+    </VStack>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story: `Prop \`discrete\` sur le \`SelectTrigger\` (défaut \`false\`). Quand \`true\`, le rond contenant la flèche prend la couleur de fond du trigger au repos — le bouton "disparaît" visuellement et seule l'icône est perceptible. Les états hover, pressed et open conservent le styling habituel (noir, bleu primaire à l'ouverture, etc.).
+
+Survole, clique et déroule chaque trigger \`discrete=true\` pour vérifier que les états actifs sont bien identiques à ceux de \`discrete=false\`.`,
+      },
+    },
+  },
 };
 
 export const BackgroundVariants: Story = {
@@ -435,6 +592,147 @@ export const WithAllowClear: Story = {
     docs: {
       description: {
         story: "Select avec allowClear=true. L'icône X permet d'effacer la sélection quand une valeur est sélectionnée.",
+      },
+    },
+  },
+};
+
+// --------------------------------------------------------------------------
+// Avatar inside SelectItem
+// --------------------------------------------------------------------------
+//
+// Pas besoin d'un composant dédié : on utilise Select + Avatar + AvatarImage +
+// AvatarFallback directement à l'intérieur de chaque SelectItem.
+//
+// Astuce Radix : SelectValue (dans le trigger) projette automatiquement le
+// contenu de SelectPrimitive.ItemText de l'item sélectionné. Comme notre
+// SelectItem wrappe ses children dans ItemText, l'avatar + nom rendus dans
+// l'item apparaissent tels quels dans le trigger.
+
+interface AvatarOption {
+  value: string;
+  name: string;
+  initials: string;
+  /** URL absolue d'une image — laisser undefined pour forcer le fallback initiales. */
+  photoUrl?: string;
+  /** Couleur de fond du fallback (CSS color). */
+  fallbackBg: string;
+  /** Couleur du texte du fallback. Default: white. */
+  fallbackFg?: string;
+}
+
+const SUPPLIER_OPTIONS: AvatarOption[] = [
+  {
+    value: "ls",
+    name: "Laurent Salières",
+    initials: "LS",
+    fallbackBg: "#8b5e3c", // brun, comme le mock
+    fallbackFg: "#ffffff",
+  },
+  {
+    value: "mg",
+    name: "Marie Gauthier",
+    initials: "MG",
+    fallbackBg: "#2563eb",
+    fallbackFg: "#ffffff",
+  },
+  {
+    value: "pf",
+    name: "Pierre Fournier",
+    initials: "PF",
+    fallbackBg: "#16a34a",
+    fallbackFg: "#ffffff",
+  },
+  {
+    value: "an",
+    name: "Aurore Nguyen",
+    initials: "AN",
+    // photoUrl renseigné pour démontrer le cas image (alors que d'autres
+    // utilisent uniquement le fallback initiales).
+    photoUrl: "https://i.pravatar.cc/64?img=47",
+    fallbackBg: "#9333ea",
+    fallbackFg: "#ffffff",
+  },
+];
+
+const SupplierItem: React.FC<{ option: AvatarOption }> = ({ option }) => (
+  <span className="flex items-center gap-2 min-w-0">
+    <Avatar size="small" className="shrink-0">
+      {option.photoUrl ? <AvatarImage src={option.photoUrl} alt={option.name} /> : null}
+      <AvatarFallback
+        size="small"
+        style={{ backgroundColor: option.fallbackBg, color: option.fallbackFg ?? "#ffffff" }}
+      >
+        {option.initials}
+      </AvatarFallback>
+    </Avatar>
+    <span className="truncate">{option.name}</span>
+  </span>
+);
+
+export const WithAvatars: Story = {
+  render: () => (
+    <Layout bg="white" padding={6}>
+      <VStack gap={6}>
+        <div>
+          <h3 className="text-sm font-medium mb-2">Select with avatars</h3>
+          <p className="text-xs text-grey-strongest mb-4">
+            Each <code>SelectItem</code> embeds an <code>Avatar</code> + the user's name.
+            When an item is selected, Radix automatically projects the same content into
+            the trigger via <code>SelectValue</code> — no custom component required.
+          </p>
+        </div>
+        <div className="w-[280px]">
+          <Select defaultValue="ls">
+            <SelectTrigger className="pl-1">
+              <SelectValue placeholder="Sélectionner un fournisseur..." />
+            </SelectTrigger>
+            <SelectContent>
+              {SUPPLIER_OPTIONS.map((opt) => (
+                <SelectItem key={opt.value} value={opt.value} className="pl-1">
+                  <SupplierItem option={opt} />
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </VStack>
+    </Layout>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story: `Pattern pour afficher des avatars dans un Select sans composant dédié.
+
+\`\`\`tsx
+<Select value={value} onValueChange={setValue}>
+  <SelectTrigger className="pl-1">
+    <SelectValue placeholder="Sélectionner un fournisseur..." />
+  </SelectTrigger>
+  <SelectContent>
+    {users.map((u) => (
+      <SelectItem key={u.id} value={u.id} className="pl-1">
+        <span className="flex items-center gap-2">
+          <Avatar size="small">
+            <AvatarImage src={u.photoUrl} alt={u.name} />
+            <AvatarFallback style={{ backgroundColor: u.color }}>
+              {u.initials}
+            </AvatarFallback>
+          </Avatar>
+          {u.name}
+        </span>
+      </SelectItem>
+    ))}
+  </SelectContent>
+</Select>
+\`\`\`
+
+**Pourquoi ça marche** : \`SelectItem\` wrappe ses enfants dans \`SelectPrimitive.ItemText\`, et \`SelectValue\` (dans le trigger) projette le contenu de cet \`ItemText\` une fois sélectionné. L'avatar + le nom apparaissent donc à la fois dans le dropdown et dans le trigger, sans duplication de markup.
+
+**Tweaks visuels** :
+- L'avatar \`size="small"\` (16 px) tient parfaitement dans la hauteur 30 px du trigger standard, donc pas besoin de la modifier.
+- \`<SelectTrigger className="pl-1">\` et \`<SelectItem className="pl-1">\` — le \`padding-left\` est ramené de 12 px (\`pl-3\` par défaut) à 4 px (\`pl-1\`), à la fois sur le trigger et sur les items, pour caler l'avatar près du bord gauche et garder l'alignement entre le trigger et la liste déroulée.
+- L'\`AvatarFallback\` par défaut a \`bg-muted\` (token shadcn neutre) ; passe \`style\` ou \`className\` pour une couleur de marque.`,
       },
     },
   },

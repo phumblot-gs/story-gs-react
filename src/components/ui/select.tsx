@@ -25,6 +25,14 @@ export interface SelectTriggerProps extends React.ComponentPropsWithoutRef<typeo
   hasValue?: boolean;
   onClear?: () => void;
   size?: "normal" | "small";
+  /**
+   * Quand `true`, le rond contenant l'icône `ArrowDown` adopte la couleur
+   * de fond du trigger lorsqu'il est au repos — il devient donc visuellement
+   * "transparent" et seule l'icône reste perceptible. Les états hover, pressed
+   * et open conservent leur styling habituel.
+   * @default false
+   */
+  discrete?: boolean;
 }
 
 export interface SelectContentProps extends React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content> {
@@ -84,7 +92,7 @@ const Select = React.forwardRef<
 const SelectTrigger = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Trigger>,
   SelectTriggerProps
->(({ className, children, debug = false, disabled, allowClear = false, hasValue = false, onClear, size = "normal", ...props }, ref) => {
+>(({ className, children, debug = false, disabled, allowClear = false, hasValue = false, onClear, size = "normal", discrete = false, ...props }, ref) => {
   const bg = useBgContext();
   const [isHovered, setIsHovered] = React.useState(false);
   const [isPressed, setIsPressed] = React.useState(false);
@@ -115,24 +123,27 @@ const SelectTrigger = React.forwardRef<
 
   // Styles basés sur la maquette Figma
   // Hérite du contexte bg via useBgContext()
+  // Inclut une couleur de placeholder adaptée au contexte (sinon le gris foncé
+  // par défaut est illisible sur le trigger noir).
   const getBackgroundStyles = () => {
     if (disabled) {
       // État désactivé - toujours gris peu importe le fond
-      return "bg-grey-lighter text-grey-stronger border-grey-lighter";
+      return "bg-grey-lighter text-grey-stronger border-grey-lighter data-[placeholder]:text-grey-stronger";
     }
 
     switch (bg) {
       case "white":
         // Le composant s'affiche sur fond blanc - bordure invisible (même couleur que bg)
-        return "bg-grey-lighter text-black border-grey-lighter hover:border-black/50 focus:border-black/50 hover:border-[0.5px] focus:border-[0.5px]";
+        return "bg-grey-lighter text-black border-grey-lighter hover:border-black/50 focus:border-black/50 hover:border-[0.5px] focus:border-[0.5px] data-[placeholder]:text-grey-strongest";
       case "black":
         // Le composant s'affiche sur fond noir - bordure invisible (même couleur que bg)
-        return "bg-black-secondary text-white border-black-secondary hover:border-white/50 focus:border-white/50 hover:border-[0.5px] focus:border-[0.5px]";
+        // Placeholder en gris clair pour rester lisible sur le trigger sombre.
+        return "bg-black-secondary text-white border-black-secondary hover:border-white/50 focus:border-white/50 hover:border-[0.5px] focus:border-[0.5px] data-[placeholder]:text-grey-stronger";
       case "grey":
         // Le composant s'affiche sur fond gris - bordure invisible (même couleur que bg)
-        return "bg-white text-black border-white hover:border-black/50 focus:border-black/50 hover:border-[0.5px] focus:border-[0.5px]";
+        return "bg-white text-black border-white hover:border-black/50 focus:border-black/50 hover:border-[0.5px] focus:border-[0.5px] data-[placeholder]:text-grey-strongest";
       default:
-        return "bg-grey-lighter text-black border-grey-lighter hover:border-black/50 focus:border-black/50 hover:border-[0.5px] focus:border-[0.5px]";
+        return "bg-grey-lighter text-black border-grey-lighter hover:border-black/50 focus:border-black/50 hover:border-[0.5px] focus:border-[0.5px] data-[placeholder]:text-grey-strongest";
     }
   };
 
@@ -159,6 +170,20 @@ const SelectTrigger = React.forwardRef<
     // État hover - même pour tous les backgrounds
     if (isHovered) {
       return "bg-black text-white";
+    }
+
+    // Mode discret : au repos, le rond adopte le fond du trigger pour
+    // visuellement disparaître ; seule l'icône reste perceptible.
+    if (discrete) {
+      switch (bg) {
+        case "grey":
+          return "bg-white text-black";          // trigger sur grey = fond white
+        case "black":
+          return "bg-black-secondary text-white"; // trigger sur black = fond black-secondary
+        case "white":
+        default:
+          return "bg-grey-lighter text-black";   // trigger sur white = fond grey-lighter
+      }
     }
 
     // État par défaut selon le background
@@ -202,7 +227,7 @@ const SelectTrigger = React.forwardRef<
   const sizeStyles = getSizeStyles();
 
   if (debug) {
-    console.log("SelectTrigger: props", { bg, disabled, debug, allowClear, hasValue, isOpen, size, icon: getIcon() });
+    console.log("SelectTrigger: props", { bg, disabled, debug, allowClear, hasValue, isOpen, size, discrete, icon: getIcon() });
   }
 
   return (
@@ -222,7 +247,8 @@ const SelectTrigger = React.forwardRef<
         "text-sm font-light transition-colors duration-200",
         "focus:outline-none focus:ring-0",
         "disabled:cursor-not-allowed disabled:opacity-50",
-        "data-[placeholder]:text-grey-strongest",
+        // La couleur du placeholder est définie par getBackgroundStyles selon
+        // le contexte bg (sinon le gris foncé serait illisible sur fond noir).
         getBackgroundStyles(),
         className
       )}
