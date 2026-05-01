@@ -5,6 +5,37 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.11.2] - 2026-05-01
+
+### 🐛 Corrigé
+
+- **TabsWithViews — indicateur actif coincé sous le premier onglet quand une
+  saved view est sélectionnée** (rapporté par Sourcing). Le calcul de la
+  position de la barre noire active utilisait `offsetLeft` / `offsetWidth`,
+  relatifs au plus proche `offsetParent`. Or `ViewTabTrigger` wrappe chaque
+  vue dans un `<div className="tabs-view-wrapper">` qui porte
+  `position: relative` (pour le hover du bouton kebab). Ce wrapper
+  devenait l'`offsetParent` du trigger interne → `offsetLeft = 0`,
+  l'indicateur sautait au début de la liste.
+  - Le calcul est désormais basé sur `getBoundingClientRect()` relatif à la
+    `TabsList` (+ `scrollLeft` pour le mode `showNavButtons`), donc
+    indépendant de la chaîne d'`offsetParent`. Fonctionne pour les onglets
+    fixes comme pour les saved views.
+  - Helper pur `computeActiveTabIndicator(list, activeTab)` extrait pour
+    permettre un test unitaire dédié (`src/__tests__/tabs-indicator.test.tsx`),
+    couvrant le cas du trigger wrappé, du `TabsList` non aligné sur `x=0`,
+    et du scroll horizontal.
+
+### ✨ Ajouté
+
+- **Tabs / TabsWithViews — preview de l'indicateur au survol**. Quand le
+  curseur passe sur un onglet (fixe ou saved view), la barre noire active
+  glisse jusqu'à cet onglet en preview ; lorsqu'on quitte la liste sans
+  cliquer, elle revient à l'onglet actif. Implémenté en event delegation
+  (`onPointerOver` + `onPointerLeave` sur la `TabsList`) → aucun listener
+  par trigger, ne perturbe pas le bouton kebab des saved views (qui n'a
+  pas `role="tab"`). Aucun changement d'API publique.
+
 ## [1.11.1] - 2026-05-01
 
 ### 🐛 Corrigé
