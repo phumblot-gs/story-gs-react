@@ -963,4 +963,69 @@ export const componentTranslations: TranslationMap = {
     IT: "Buonasera",
     DE: "Guten Abend"
   },
+
+  // DataTable
+  "dataTable.selectPage": {
+    EN: "Select page",
+    FR: "Sélectionner la page",
+    ES: "Seleccionar página",
+    IT: "Seleziona pagina",
+    DE: "Seite auswählen"
+  },
+  "dataTable.selectAllPages": {
+    EN: "Select all pages",
+    FR: "Tout sélectionner",
+    ES: "Seleccionar todo",
+    IT: "Seleziona tutto",
+    DE: "Alle auswählen"
+  },
+  "dataTable.clearSelection": {
+    EN: "Clear selection",
+    FR: "Tout désélectionner",
+    ES: "Limpiar selección",
+    IT: "Deseleziona tutto",
+    DE: "Auswahl aufheben"
+  },
+  "dataTable.selectionMenu": {
+    EN: "Selection menu",
+    FR: "Menu de sélection",
+    ES: "Menú de selección",
+    IT: "Menu di selezione",
+    DE: "Auswahlmenü"
+  },
+  "dataTable.selectRow": {
+    EN: "Select row",
+    FR: "Sélectionner la ligne",
+    ES: "Seleccionar fila",
+    IT: "Seleziona riga",
+    DE: "Zeile auswählen"
+  },
+  "dataTable.rowsPerPage": {
+    EN: "Rows per page",
+    FR: "Lignes par page",
+    ES: "Filas por página",
+    IT: "Righe per pagina",
+    DE: "Zeilen pro Seite"
+  },
+  "dataTable.empty": {
+    EN: "No data to display.",
+    FR: "Aucune donnée à afficher.",
+    ES: "No hay datos para mostrar.",
+    IT: "Nessun dato da visualizzare.",
+    DE: "Keine Daten zum Anzeigen."
+  },
+  "dataTable.item": {
+    EN: "item",
+    FR: "élément",
+    ES: "elemento",
+    IT: "elemento",
+    DE: "Element"
+  },
+  "dataTable.item_plural": {
+    EN: "items",
+    FR: "éléments",
+    ES: "elementos",
+    IT: "elementi",
+    DE: "Elemente"
+  },
 };
