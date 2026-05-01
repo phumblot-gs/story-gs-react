@@ -5,6 +5,44 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.11.1] - 2026-05-01
+
+### 🐛 Corrigé
+
+- **Packaging CSS** : `package.json` référençait `dist/style.css` qui n'est pas
+  produit par le build (le fichier réel s'appelle `dist/lib.css`). Les
+  consumers qui suivaient le champ `style` ou importaient
+  `@gs/gs-components-library/style.css` recevaient un 404 silencieux et
+  étaient obligés d'ajouter le path de la lib à leur `content` Tailwind
+  pour que les classes utilitaires fonctionnent. Le champ `style` et
+  l'export `./style.css` pointent désormais sur `dist/lib.css` (qui contient
+  bien toutes les classes utilisées par les composants, y compris les
+  arbitrary values comme `w-[7px]` / `h-[15px]`).
+
+### ✨ Ajouté
+
+- **Tailwind preset** : nouveau fichier `tailwind-preset.cjs` exporté via
+  `"./tailwind-preset"` dans `package.json`. Les projets consumers qui
+  écrivent leurs propres composants avec les tokens GS (couleurs, spacing
+  5 px, polices, animations…) peuvent désormais étendre le preset au lieu
+  de dupliquer la config :
+
+  ```js
+  module.exports = {
+    presets: [require('@gs/gs-components-library/tailwind-preset')],
+    content: ['./src/**/*.{ts,tsx,js,jsx}'],
+  };
+  ```
+
+  Le `tailwind.config.ts` interne consomme également ce preset, ce qui
+  élimine tout risque de drift entre la config de la lib et celle des
+  consumers.
+- **Documentation** : `README.md` et la page Storybook `Introduction.mdx`
+  ont été réécrits pour expliquer correctement comment installer et
+  utiliser la lib (import du CSS via `@gs/gs-components-library/styles`,
+  usage du preset Tailwind, comportement intentionnel du `StatusIndicator`
+  dans un `<button disabled>`, conventions i18n, workflow de release).
+
 ## [1.11.0] - 2026-05-01
 
 ### ✨ Ajouté

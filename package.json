@@ -1,6 +1,6 @@
 {
   "name": "@gs/gs-components-library",
-  "version": "1.11.0",
+  "version": "1.11.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -117,7 +117,7 @@
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
-  "style": "dist/style.css",
+  "style": "dist/lib.css",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -226,11 +226,13 @@
     },
     "./styles": "./dist/lib.css",
     "./lib.css": "./dist/lib.css",
-    "./style.css": "./dist/style.css"
+    "./style.css": "./dist/lib.css",
+    "./tailwind-preset": "./tailwind-preset.cjs"
   },
   "files": [
     "dist",
-    "scripts"
+    "scripts",
+    "tailwind-preset.cjs"
   ],
   "sideEffects": [
     "*.css"

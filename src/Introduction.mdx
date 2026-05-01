@@ -1,117 +1,179 @@
-
 import { Meta } from '@storybook/addon-docs/blocks';
 
 <Meta title="Introduction" />
 
-# UI Component Library
+# GS Components Library
 
-This is a modern, responsive UI component library built with React, Tailwind CSS, and TypeScript, focusing on accessible and customizable UI components with consistent design language.
+A modern React UI component library built on top of [shadcn/ui](https://ui.shadcn.com), Tailwind CSS and TypeScript. Designed for Grand Shooting applications and consumer projects, with accessible primitives, a design-token theme that adapts to white / grey / black surfaces, and a Storybook-driven documentation site (you're looking at it).
+
+## What you get
+
+- **Accessibility first** — every interactive component is built on Radix primitives.
+- **Context-aware styling** — components read the closest `Layout`'s `data-bg` and adapt their fill, border, contrast and child styles.
+- **Design tokens** — colors, spacing (5 px increments), typography and animations are exposed as Tailwind utilities and CSS variables.
+- **i18n** — all user-facing labels are localized in EN / FR / ES / IT / DE; can be driven via a `TranslationProvider` or per-component `language` / `translations` props.
+- **Tree-shakeable ESM** — import only what you use.
+- **Pre-compiled CSS** — `dist/lib.css` already contains every utility class used by the components, including arbitrary values like `w-[7px]` / `h-[15px]`. You don't need to wire the lib's path into your Tailwind `content` array just to make components render.
+
+---
 
 ## Installation
 
 ```bash
-npm install gs-components-library
+npm install @gs/gs-components-library
 ```
 
-## Usage
+The package targets React 18 / 19 (declared as peer dependencies). Transitive `@radix-ui/*` packages and `lucide-react` are pulled in automatically.
 
-```jsx
-import { Button, ButtonSmall, ButtonCircle, ButtonStatus, StatusIndicator } from 'gs-components-library';
-import 'gs-components-library/dist/style.css';
+---
 
-function App() {
+## Quick start
+
+### 1. Import the compiled CSS — once, at the entry point
+
+```tsx
+// src/main.tsx (or your top-level layout)
+import "@gs/gs-components-library/styles";
+```
+
+That single import provides every Tailwind class, design token (CSS variables) and font face used by the library.
+
+> 💡 Equivalent paths: `@gs/gs-components-library/lib.css`, `@gs/gs-components-library/style.css`, or directly `@gs/gs-components-library/dist/lib.css`.
+
+### 2. Use components
+
+```tsx
+import { Button, Card, CardHeader, CardTitle, CardContent } from "@gs/gs-components-library";
+
+export function App() {
   return (
-    <div className="space-y-4">
-      <Button>Regular Button</Button>
-      <ButtonSmall>Small Button</ButtonSmall>
-      <ButtonCircle icon="Plus" />
-      <ButtonCircle>A</ButtonCircle>
-      <ButtonStatus status="FOR_APPROVAL" icon="Check" />
-      <StatusIndicator status="VALIDATED" size="medium" />
-    </div>
+    <Card>
+      <CardHeader>
+        <CardTitle>Welcome</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Button>Get started</Button>
+      </CardContent>
+    </Card>
   );
 }
 ```
 
-## Components
+### 3. Wrap with the providers (recommended)
 
-This library includes the following components:
+For full theming + i18n support:
 
-### Button Components
+```tsx
+import { GSComponentsRoot } from "@gs/gs-components-library";
 
-- **Button**: Standard button component for primary actions
-- **ButtonSmall**: Compact button for secondary or tertiary actions
-- **ButtonCircle**: Circular button with icon or letter
-- **ButtonStatus**: Status-specific button with appropriate colors for approval workflows
-
-### Status Components
-
-- **StatusIndicator**: Visual indicator for different status states
-
-## Features
-
-- **Fully typed components** with TypeScript support
-- **Accessible components** built on Radix UI primitives
-- **Responsive design** with mobile-first approach
-- **Consistent styling** using Tailwind CSS
-- **Flexible theming** with customizable properties
-- **Icon system** integrated with Lucide React
-
-## Component Properties
-
-### Button & ButtonSmall
-
-```jsx
-<Button 
-  background="white" // 'white' | 'black' | 'grey'
-  indicator={false} // boolean - shows indicator dot
-  disabled={false} // boolean
-  featured={false} // boolean - gives more prominence
+<GSComponentsRoot
+  themeConfig={{ /* defaultTheme, customTokens, … */ }}
+  translationConfig={{ defaultLanguage: "FR" }}
 >
-  Button Text
-</Button>
+  <App />
+</GSComponentsRoot>
 ```
 
-### ButtonCircle
+`GSComponentsRoot` sets up `ThemeProvider`, `TranslationProvider` and `StyleProvider`. If you only want to apply the global stylesheet without the providers, use `<GSGlobalStyles />` instead.
 
-```jsx
-<ButtonCircle
-  background="white" // 'white' | 'black' | 'grey'
-  disabled={false} // boolean
-  featured={false} // boolean - gives more prominence
-  icon="Plus" // Use any of the allowed pictograms
-  indicator={false} // boolean - shows indicator dot
-  size="large" // 'small' | 'large'
->
-  A {/* Single letter (optional, not needed when using icon) */}
-</ButtonCircle>
+---
+
+## Tailwind preset (optional)
+
+If your own components are written with Tailwind utility classes and you want them to share the GS design tokens (colors, spacing, fonts, animations…), extend the GS Tailwind preset in your `tailwind.config.{js,cjs}`:
+
+```js
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  presets: [require("@gs/gs-components-library/tailwind-preset")],
+  content: [
+    "./src/**/*.{ts,tsx,js,jsx}",
+    "./index.html",
+  ],
+  // your project-specific extensions
+};
 ```
 
-### ButtonStatus
+The preset exposes:
 
-```jsx
-<ButtonStatus
-  disabled={false} // boolean
-  icon="Check" // 'Check' | 'X'
-  isActive={false} // boolean
-  size="large" // 'small' | 'large'
-  status={MediaStatus.FOR_APPROVAL} // MediaStatus enum
-/>
+- the full GS color palette bound to CSS variables (`black`, `grey-light` → `grey-strongest`, `blue-primary`, `pastel-yellow`, status `token.state.*`, grades, flags…),
+- the 5 px spacing scale (`p-1` = 5 px, `p-2` = 10 px, `p-4` = 20 px…),
+- font families (`AvenirNextLTPro`), font sizes (`xs` → `xxl`), font weights, line heights,
+- border-radius scale, animations (`accordion-down/up`, `gradient-flow`),
+- the `tailwindcss-animate` plugin.
+
+> The preset requires `tailwindcss-animate` in your project: `npm install -D tailwindcss-animate`.
+
+If your project only consumes the lib's pre-built components and doesn't add custom Tailwind classes that need GS tokens, **you can skip the preset entirely** — the imported `dist/lib.css` already covers everything used by the components.
+
+---
+
+## Theming
+
+Every component reads its surface color from the closest `Layout` ancestor's `data-bg` attribute (`white` / `grey` / `black`). Components automatically swap fill, border and contrast accordingly — for example, `Card` flips white ↔ grey by default, `Select` adapts its trigger / dropdown / placeholder colors, and `DataTable` renders as a white card on a grey parent.
+
+For finer customization, wrap the app in `<ThemeProvider>` (or pass `themeConfig` to `GSComponentsRoot`) and override CSS variables:
+
+```css
+:root {
+  --status-error-color: #FF4444;
+  /* …any other --* token from tailwind-preset.cjs */
+}
 ```
 
-### StatusIndicator
+---
 
-```jsx
-<StatusIndicator
-  size="medium" // 'small' | 'medium' | 'large'
-  status={MediaStatus.VALIDATED} // MediaStatus enum
-/>
-```
+## Internationalization
 
-## Requirements
+Several components accept the standard pair of i18n props:
 
-- React 18+
-- Tailwind CSS 3+
+- `language?: string` — `"FR" | "EN" | "ES" | "IT" | "DE"` (case-insensitive)
+- `translations?: Partial<TranslationMap>` — overrides or adds keys
+
+When omitted, they fall back to the `TranslationProvider` context, then to English. Components that follow this convention: `Layout`, `FileBrowser`, `FolderBrowser`, `DataTable`, `ActivityHeatmap`, `PageWelcome`, `Select`, `TabsWithViews`, and a few others.
+
+Pluralization uses the `_plural` suffix convention. For example, `t("dataTable.item", { count })` automatically returns the singular or plural translation based on the count.
+
+---
+
+## Things to know
+
+### `StatusIndicator` inside a `<button>`
+
+The compiled `lib.css` includes contextual rules that override the indicator color when its ancestor `<button>` is in a specific state:
+
+| Parent state | Indicator color |
+|---|---|
+| default (no button, or button at rest) | the status color (e.g. red for `ERROR_DURING_BROADCAST`) |
+| `button:hover` | `currentColor` |
+| `button:active` | `--text-blue-primary` |
+| `button:disabled` | `--bg-grey-stronger` (greyed out) |
+
+This is **intentional** — a disabled button should look fully greyed out, indicator included. If you want the status color to persist regardless of the button state, render the `StatusIndicator` outside the `<button>` element, or apply your own override with higher specificity.
+
+### `FileBrowser` data shape
+
+`FileBrowser` expects `snake_case` field names: `file_name`, `file_size`, `is_directory`, `created_at`, `updated_at`. Use ISO-8601 strings for dates.
+
+### Debug mode
+
+Most interactive components accept `debug={true}` to log validated props in the console — useful when wiring a complex case for the first time.
+
+---
+
+## Component catalogue
+
+Browse the navigation tree on the left — components are grouped by category:
+
+- **Context** — `ThemeProvider`, `TranslationProvider`, `StyleProvider`, `GSComponentsRoot`
+- **Design System** — Colors, Tokens, Typography
+- **Layout** — `Layout`, `HStack`, `VStack`, `Modal`, `FullFrame`, `SidePanel`, `ActionBar`, `Card`
+- **Components** — higher-level domain components: `PageHeader`, `PageWelcome`, `FileBrowser`, `FolderBrowser`, `Thumbnail`, `MediaStatus`, `StatusIndicator`, `ButtonNotifications`, `ButtonStatus`, `ActivityPanel`
+- **UI** — base components: `Button`, `Select`, `SelectAutocomplete`, `Tabs`, `TabsWithViews`, `Input`, `Search`, `Checkbox`, `RadioGroup`, `Switch`, `Toggle`, `Slider`, `Calendar`, `Sheet`, `Drawer`, `Dialog`, `Popover`, `Tooltip`, `HoverCard`, `Accordion`, `Carousel`, `Alert`, `Badge`, `Avatar`, `Pagination`, `Progress`, `Skeleton`, `DataTable`, `ActivityHeatmap`, `TruncatedText`, …
+
+Each story has an autodoc page (▷ Docs in the sidebar) with the component description, props table and runnable examples.
+
+---
 
 ## License
 
