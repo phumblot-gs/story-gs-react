@@ -5,6 +5,21 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.12.0] - 2026-05-06
+
+### ✨ Ajouté
+
+- **Grade — prop `size`** (`"small" | "medium" | "large"`, défaut `"small"`).
+  - `"small"` : taille historique (~14×14 px, texte 8 px). Les usages
+    existants `<Grade value="A" />` rendent **strictement à l'identique**,
+    aucun changement visuel.
+  - `"medium"` : 20×20 px, parfaitement rond, texte 11 px en weight medium.
+  - `"large"` : 50×50 px, parfaitement rond, texte 26 px en bold.
+  - La story `WithCustomSize` (qui faisait du redimensionnement à la main
+    via `className="w-X h-Y"`) est remplacée par une story `Sizes` qui
+    démontre directement le prop sur les trois variantes × les cinq
+    valeurs de grade.
+
 ## [1.11.2] - 2026-05-01
 
 ### 🐛 Corrigé
