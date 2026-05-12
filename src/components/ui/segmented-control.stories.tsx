@@ -83,20 +83,19 @@ The component automatically adapts its appearance based on the nearest \`Layout\
       control: 'text',
       description: 'Additional Tailwind CSS classes',
     },
-    orientation: {
-      control: 'select',
-      options: ['horizontal', 'vertical'],
-      description: 'Orientation of the tabs',
-    },
-    dir: {
-      control: 'select',
-      options: ['ltr', 'rtl'],
-      description: 'Text direction',
-    },
     activationMode: {
       control: 'select',
       options: ['automatic', 'manual'],
       description: 'When automatic, tabs are activated when receiving focus. When manual, tabs are activated when clicked.',
+    },
+    // Note: `size` is a prop on `SegmentedControlList`, not on the root.
+    // Exposed here so the Default story can wire it through to the list.
+    size: {
+      control: { type: 'inline-radio' },
+      options: ['small', 'medium', 'large'],
+      description:
+        'Control size (passed to `<SegmentedControlList size="...">`). Default: `"large"` — preserves the historical look.',
+      table: { defaultValue: { summary: 'large' } },
     },
   },
 };
@@ -106,33 +105,170 @@ type Story = StoryObj<typeof SegmentedControl>;
 
 export const Default: Story = {
   args: {
-    defaultValue: 'tab1',
-    className: 'w-[400px]',
+    defaultValue: 'list',
+    className: 'w-fit',
+    // @ts-expect-error — `size` is not a prop of the SegmentedControl root,
+    // we forward it to <SegmentedControlList> below. Storybook still needs it
+    // in `args` so the Controls panel reflects the active value.
+    size: 'large',
   },
-  render: (args) => (
-    <Layout bg="grey" padding={6}>
-      <SegmentedControl {...args}>
-        <SegmentedControlList>
-          <SegmentedControlTrigger value="tab1">Tab 1</SegmentedControlTrigger>
-          <SegmentedControlTrigger value="tab2">Tab 2</SegmentedControlTrigger>
-          <SegmentedControlTrigger value="tab3">Tab 3</SegmentedControlTrigger>
-        </SegmentedControlList>
-        <SegmentedControlContent value="tab1">
-          <p className="text-sm">Content for Tab 1</p>
-        </SegmentedControlContent>
-        <SegmentedControlContent value="tab2">
-          <p className="text-sm">Content for Tab 2</p>
-        </SegmentedControlContent>
-        <SegmentedControlContent value="tab3">
-          <p className="text-sm">Content for Tab 3</p>
-        </SegmentedControlContent>
-      </SegmentedControl>
-    </Layout>
-  ),
+  render: (args) => {
+    const [value, setValue] = useState((args.defaultValue as string) ?? "list");
+    const size = (args as { size?: 'small' | 'medium' | 'large' }).size ?? 'large';
+    // Smaller sizes look better with smaller icons.
+    const iconSize = size === 'small' ? 12 : 14;
+    return (
+      <Layout bg="white" padding={6}>
+        <SegmentedControl value={value} onValueChange={setValue} className={args.className}>
+          <SegmentedControlList size={size}>
+            <SegmentedControlTrigger value="list">
+              <Icon name="Menu" size={iconSize} />
+              Tableau
+            </SegmentedControlTrigger>
+            <SegmentedControlTrigger value="grid">
+              <Icon name="Grip" size={iconSize} />
+              Vignettes
+            </SegmentedControlTrigger>
+          </SegmentedControlList>
+        </SegmentedControl>
+      </Layout>
+    );
+  },
   parameters: {
     docs: {
       description: {
-        story: "Basic usage of SegmentedControl with three tabs.",
+        story:
+          "Pill-shaped SegmentedControl on a white surface — matches the design mock with an icon + label per trigger. The active trigger turns into a black pill, the inactive one stays in the grey-lighter track.",
+      },
+    },
+  },
+};
+
+export const TextOnlyIconOnlyAndBoth: Story = {
+  render: () => {
+    const [textValue, setTextValue] = useState("list");
+    const [iconValue, setIconValue] = useState("list");
+    const [mixedValue, setMixedValue] = useState("list");
+    return (
+      <Layout bg="white" padding={6}>
+        <div className="flex flex-col gap-6 items-start">
+          <div className="flex flex-col gap-2">
+            <p className="text-xs uppercase tracking-wider text-grey-strongest">Text only</p>
+            <SegmentedControl value={textValue} onValueChange={setTextValue}>
+              <SegmentedControlList>
+                <SegmentedControlTrigger value="list">Tableau</SegmentedControlTrigger>
+                <SegmentedControlTrigger value="grid">Vignettes</SegmentedControlTrigger>
+              </SegmentedControlList>
+            </SegmentedControl>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <p className="text-xs uppercase tracking-wider text-grey-strongest">Icon only</p>
+            <SegmentedControl value={iconValue} onValueChange={setIconValue}>
+              <SegmentedControlList>
+                <SegmentedControlTrigger value="list" aria-label="Tableau">
+                  <Icon name="Menu" size={14} />
+                </SegmentedControlTrigger>
+                <SegmentedControlTrigger value="grid" aria-label="Vignettes">
+                  <Icon name="Grip" size={14} />
+                </SegmentedControlTrigger>
+              </SegmentedControlList>
+            </SegmentedControl>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <p className="text-xs uppercase tracking-wider text-grey-strongest">Icon + text</p>
+            <SegmentedControl value={mixedValue} onValueChange={setMixedValue}>
+              <SegmentedControlList>
+                <SegmentedControlTrigger value="list">
+                  <Icon name="Menu" size={14} />
+                  Tableau
+                </SegmentedControlTrigger>
+                <SegmentedControlTrigger value="grid">
+                  <Icon name="Grip" size={14} />
+                  Vignettes
+                </SegmentedControlTrigger>
+              </SegmentedControlList>
+            </SegmentedControl>
+          </div>
+        </div>
+      </Layout>
+    );
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Three valid trigger compositions: text-only, icon-only (don't forget `aria-label`), or both side-by-side. The component doesn't impose a dedicated `icon` prop — just put whatever you need inside `children`, with the built-in `gap-2` separating icons from text.",
+      },
+    },
+  },
+};
+
+export const Sizes: Story = {
+  render: () => {
+    const [sm, setSm] = useState("list");
+    const [md, setMd] = useState("list");
+    const [lg, setLg] = useState("list");
+    return (
+      <Layout bg="white" padding={6}>
+        <div className="flex flex-col gap-6 items-start">
+          <div className="flex flex-col gap-2">
+            <p className="text-xs uppercase tracking-wider text-grey-strongest">size="small" — 30 px tall</p>
+            <SegmentedControl value={sm} onValueChange={setSm}>
+              <SegmentedControlList size="small">
+                <SegmentedControlTrigger value="list">
+                  <Icon name="Menu" size={12} />
+                  Tableau
+                </SegmentedControlTrigger>
+                <SegmentedControlTrigger value="grid">
+                  <Icon name="Grip" size={12} />
+                  Vignettes
+                </SegmentedControlTrigger>
+              </SegmentedControlList>
+            </SegmentedControl>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <p className="text-xs uppercase tracking-wider text-grey-strongest">size="medium" — 40 px tall</p>
+            <SegmentedControl value={md} onValueChange={setMd}>
+              <SegmentedControlList size="medium">
+                <SegmentedControlTrigger value="list">
+                  <Icon name="Menu" size={14} />
+                  Tableau
+                </SegmentedControlTrigger>
+                <SegmentedControlTrigger value="grid">
+                  <Icon name="Grip" size={14} />
+                  Vignettes
+                </SegmentedControlTrigger>
+              </SegmentedControlList>
+            </SegmentedControl>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <p className="text-xs uppercase tracking-wider text-grey-strongest">size="large" — 50 px tall (default, historical look)</p>
+            <SegmentedControl value={lg} onValueChange={setLg}>
+              <SegmentedControlList size="large">
+                <SegmentedControlTrigger value="list">
+                  <Icon name="Menu" size={14} />
+                  Tableau
+                </SegmentedControlTrigger>
+                <SegmentedControlTrigger value="grid">
+                  <Icon name="Grip" size={14} />
+                  Vignettes
+                </SegmentedControlTrigger>
+              </SegmentedControlList>
+            </SegmentedControl>
+          </div>
+        </div>
+      </Layout>
+    );
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Three sizes inspired by the `Button` component: `small`, `medium`, `large`. The `size` prop is set once on `<SegmentedControlList>` and propagated internally to all triggers via React context — no need to repeat it on each `<SegmentedControlTrigger>`. Default is `large` so existing usages render unchanged.",
       },
     },
   },
