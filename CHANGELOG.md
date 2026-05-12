@@ -5,6 +5,39 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.12.1] - 2026-05-12
+
+### ✨ Ajouté
+
+- **SegmentedControl — restyle pill + prop `size` + indicateur animé**.
+  - Look pill complètement arrondi (`rounded-full`) au lieu du rectangle
+    historique. Sur fond white / grey, le trigger actif devient une pill
+    noire (texte blanc) ; sur fond black, la pill devient blanche (texte
+    noir). Bordures supprimées, fond de la list adapté au contexte parent.
+  - Les triggers acceptent texte seul, icône seule, ou icône + texte —
+    rien à faire de spécial, on met le contenu dans `children` et le `gap`
+    intégré gère l'espacement.
+  - Nouvelle prop `size?: "small" | "medium" | "large"` sur
+    `<SegmentedControlList>` (défaut `"large"` → comportement historique
+    inchangé). Hauteurs respectives 30 / 40 / 50 px. La taille est
+    propagée en interne aux triggers via un React Context — pas besoin
+    de la répéter sur chaque trigger.
+  - Indicateur (la pill noire active) **animé en slide** quand on change
+    de trigger — même mécanique que `Tabs`, réutilisant le helper
+    `computeActiveTabIndicator` déjà exporté. `transition-all duration-200
+    ease-out` sur `left`/`width`. Recalcul automatique via
+    `MutationObserver` (changements de `data-state`) et `ResizeObserver`
+    (changements de taille du conteneur).
+- **Stories** : nouvelle story `Default` reproduisant le mock (Tableau /
+  Vignettes), nouvelle story `TextOnlyIconOnlyAndBoth` démontrant les
+  trois compositions valides de triggers, nouvelle story `Sizes` pour
+  comparer les trois tailles côte à côte. Panneau Controls nettoyé
+  (retrait de `orientation` et `dir` qui n'avaient aucun effet visuel,
+  ajout de `size` en `inline-radio`).
+
+Aucun changement d'API publique — les usages existants
+`<SegmentedControl>...</SegmentedControl>` rendent à l'identique.
+
 ## [1.12.0] - 2026-05-06
 
 ### ✨ Ajouté
