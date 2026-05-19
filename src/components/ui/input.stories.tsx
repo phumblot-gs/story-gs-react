@@ -85,3 +85,30 @@ export const Types: Story = {
     </Layout>
   ),
 };
+
+export const NumberInput: Story = {
+  render: () => (
+    <VStack gap={4} className="w-[400px]">
+      <Layout bg="white" padding={4} className="w-full">
+        <VStack gap={2} className="w-full">
+          <p className="text-sm font-medium">Number sur fond blanc</p>
+          <Input type="number" defaultValue={5} className="w-[120px]" />
+        </VStack>
+      </Layout>
+
+      <Layout bg="grey" padding={4} className="w-full">
+        <VStack gap={2} className="w-full">
+          <p className="text-sm font-medium">Number sur fond gris</p>
+          <Input type="number" defaultValue={5} className="w-[120px]" />
+        </VStack>
+      </Layout>
+
+      <Layout bg="black" padding={4} className="w-full">
+        <VStack gap={2} className="w-full">
+          <p className="text-sm font-medium text-white">Number sur fond noir</p>
+          <Input type="number" defaultValue={5} className="w-[120px]" />
+        </VStack>
+      </Layout>
+    </VStack>
+  ),
+};

@@ -20,6 +20,32 @@ import MediaStatus from "@/components/MediaStatus";
 import { MediaStatus as MediaStatusEnum } from "@/utils/mediaStatus";
 import type { TagsData } from "@/components/ui/button-thumbnail-tags";
 import type { CommentData } from "@/components/ui/button-thumbnail-comments";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@/components/ui/popover";
+
+/** Configuration de rejet du bench */
+export interface BenchRejectionOptions {
+  active?: boolean;
+  main?: string[];
+  secondary?: string[];
+}
+
+/** Structure minimale du bench nécessaire pour le Thumbnail */
+export interface ThumbnailBench {
+  config?: {
+    validation?: {
+      rejection_options?: BenchRejectionOptions;
+    };
+  };
+}
+import { UrgentIndicator } from "./UrgentIndicator";
+import { AlertIndicator } from "./AlertIndicator";
+import { VedetteIndicator } from "./VedetteIndicator";
+import { Three60Indicator } from "./Three60Indicator";
+import { ViewIndicator } from "./ViewIndicator";
 
 /** Tailles prédéfinies du thumbnail */
 export type ThumbnailPresetSize = "small" | "large";
@@ -44,14 +70,24 @@ export interface ThumbnailAction {
 
 export interface ThumbnailProps {
   // Image data
+  /** ID de la photo */
+  picture_id?: number;
   /** URL de l'image thumbnail */
   src?: string;
   /** Texte alternatif de l'image */
   alt?: string;
   /** Nom du fichier à afficher */
   filename?: string;
-  /** Placeholder affiché si l'image n'est pas disponible */
-  placeholder?: string;
+  /** Indique si le fichier est urgent */
+  isUrgent?: boolean;
+  /** Indicateur d'alerte */
+  isAlert?: boolean;
+  /** Indicateur de vedette */
+  isVedette?: boolean;
+  /** Indicateur de 360 */
+  is360?: boolean;
+  /** Code de vue du fichier */
+  view?: string;
 
   // Overlay images (master/format)
   /** URL de l'image master à superposer */
@@ -75,6 +111,14 @@ export interface ThumbnailProps {
   /** Indique si le fichier a des annotations */
   hasAnnotations?: boolean;
 
+  // Image appearance
+  /**
+   * Couleur de fond de l'image.
+   * Utile pour les images avec transparence (PNG).
+   * Accepte toute valeur CSS valide (ex: "#ffffff", "rgb(255,255,255)", "white").
+   */
+  imageBgColor?: string;
+
   // Selection
   /** Indique si le thumbnail est sélectionné */
   selected?: boolean;
@@ -94,12 +138,6 @@ export interface ThumbnailProps {
   actions?: ThumbnailAction[];
   /** Nombre maximum d'actions affichées dans le dropdown */
   maxDropdownItems?: number;
-
-  // Indicators (slots)
-  /** Indicateurs à afficher en haut à gauche */
-  leftIndicators?: React.ReactNode;
-  /** Indicateurs à afficher en haut à droite */
-  rightIndicators?: React.ReactNode;
 
   // Loading states
   /** État de chargement de l'image */
@@ -128,8 +166,10 @@ export interface ThumbnailProps {
   onCommentAdd?: (comment: string) => Promise<void>;
   /** Callback de validation */
   onValidate?: () => void;
-  /** Callback de rejet */
-  onReject?: () => void;
+  /** Callback de rejet. Si rejection_options actif, reçoit le message de refus choisi. */
+  onReject?: (rejectionMessage?: string) => void;
+  /** Données du bench pour les options de rejet */
+  bench?: ThumbnailBench;
 
   // Drag and drop
   /** Indique si le drag and drop est activé */
@@ -164,21 +204,18 @@ export interface ThumbnailProps {
  *   selected={isSelected}
  *   onSelectionChange={(selected) => setIsSelected(selected)}
  *   onRatingChange={(rating) => updateRating(rating)}
- *   leftIndicators={
- *     <>
- *       {file.isUrgent && <UrgentIndicator />}
- *       {file.hasAlert && <AlertIndicator />}
- *     </>
- *   }
- *   rightIndicators={<ViewIndicator view="F" />}
  * />
  */
 export const Thumbnail: React.FC<ThumbnailProps> = ({
   // Image data
+  picture_id,
   src,
   alt = "",
   filename = "",
-  placeholder = "Image non disponible",
+  isUrgent = false,
+  isAlert = false,
+  isVedette = false,
+  is360 = false,
 
   // Overlay images
   masterSrc,
@@ -194,6 +231,9 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
   comments = [],
   hasAnnotations = false,
 
+  // Image appearance
+  imageBgColor,
+
   // Selection
   selected = false,
 
@@ -205,9 +245,7 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
   actions,
   maxDropdownItems = 10,
 
-  // Indicators
-  leftIndicators,
-  rightIndicators,
+  view,
 
   // Loading states
   isLoading = false,
@@ -225,6 +263,7 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
   onCommentAdd,
   onValidate,
   onReject,
+  bench,
 
   // Drag and drop
   draggable = false,
@@ -239,8 +278,19 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
   const clickEventRef = useRef<React.PointerEvent | null>(null);
 
   // État pour gérer les menus mutuellement exclusifs
-  type MenuId = "stars" | "labels" | "tags" | "comments" | "actions" | null;
+  type MenuId = "stars" | "labels" | "tags" | "comments" | "actions" | "reject" | null;
   const [openMenu, setOpenMenu] = useState<MenuId>(null);
+
+  // État pour la vue du menu de rejet (main ou secondary)
+  const [rejectMenuView, setRejectMenuView] = useState<"main" | "secondary">("main");
+
+  // Options de rejet du bench
+  const rejectionOptions = bench?.config?.validation?.rejection_options;
+  const hasRejectionMenu = !!(
+    rejectionOptions?.active &&
+    ((rejectionOptions.main && rejectionOptions.main.length > 0) ||
+      (rejectionOptions.secondary && rejectionOptions.secondary.length > 0))
+  );
 
   // Handler pour gérer l'ouverture/fermeture des menus
   const handleMenuOpenChange = useCallback((menuId: MenuId, open: boolean) => {
@@ -341,15 +391,17 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
   const wrapperClasses = cn(
     "flex flex-col items-center w-full mx-auto h-[fill-available]",
     isDragged && "opacity-40 cursor-grabbing scale-95 transition-all duration-200",
-    isDragOver && "border-2 border-dashed border-primary rounded-sm bg-primary/10 scale-105 transition-all duration-200",
+    "border-[1px] border-dashed rounded-sm bg-primary/10 transition-all duration-200",
+    isDragOver ? "border-grey-stronger" : "border-transparent",
     draggable && "cursor-grab hover:opacity-90 transition-all duration-200",
+    (!picture_id || picture_id === -1) && 'item-image-wrapper-empty-view',
     className
   );
 
   // Container classes (sans les dimensions qui seront en inline)
   const containerClasses = cn(
-    "relative flex items-center justify-center bg-white border-[0.25px] border-white",
-    selected && "border-primary"
+    "relative flex items-center justify-center border-[0.25px] border-white",
+    (!picture_id || picture_id === -1) && view ? ' bg-grey-middle' : 'bg-white'
   );
 
   return (
@@ -370,33 +422,31 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
         {/* Image container */}
         <div
           className={containerClasses}
-          style={{ minHeight: config.imageMinHeight
-            
-           }}
+          style={{ minHeight: (!picture_id || picture_id === -1) && view ? "100%" : config.imageMinHeight }}
         >
           {/* Master overlay */}
-          {masterSrc && (
+          {picture_id &&masterSrc && (
             <div className="absolute inset-0 z-10 opacity-50">
               <img src={masterSrc} alt="Master" className="w-full h-full object-contain" />
             </div>
           )}
 
           {/* Format overlay */}
-          {formatSrc && (
+          {picture_id && formatSrc && (
             <div className="absolute inset-0 z-10">
               <img src={formatSrc} alt="Format" className="w-full h-full object-contain" />
             </div>
           )}
 
           {/* Loading spinner */}
-          {isLoading && (
+          {picture_id && isLoading && !hasError && (
             <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
               <div className="w-8 h-8 border-4 border-grey-light border-t-grey-strongest rounded-full animate-spin" />
             </div>
           )}
 
           {/* Shadow layer with hover effects */}
-          {!isLoading && (
+          {!isLoading && picture_id && (
             <div
               className={cn(
                 "absolute inset-0 z-10 bg-black/0 transition-colors cursor-pointer",
@@ -410,7 +460,7 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
               {/* Checkbox */}
               {onSelectionChange && (
                 <div
-                  className="ml-2 mt-2 inline-flex"
+                  className={`${size === "small" ? "ml-1 mt-1" : "ml-2 mt-2"} inline-flex`}
                   onPointerDown={(e) => {
                     clickEventRef.current = e;
                   }}
@@ -436,168 +486,185 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
           )}
 
           {/* Main image */}
-          {!hasError && src ? (
+          {!hasError && src && (
             <img
               src={src}
               alt={alt}
               onError={onImageError}
               onLoad={onImageLoad}
               className="object-contain block mx-auto max-w-full border-[0.25px] border-grey-light"
-              style={{ maxHeight: config.imageMaxHeight }}
+              style={{
+                maxHeight: config.imageMaxHeight,
+                backgroundColor: imageBgColor,
+              }}
             />
-          ) : (
+          )}
+          {hasError && src && (
             <div
-              className="w-full flex items-center justify-center bg-grey-lighter"
+              className="w-full flex items-center justify-center bg-grey-middle"
               style={{ minHeight: config.imageMinHeight }}
             >
-              <span className="text-grey-strongest italic">{placeholder}</span>
+              <Icon name="BrokenFile" size={20} className="text-white" />
+            </div>
+          )}
+          {(!picture_id || picture_id === -1) && view && (
+            <div
+              className="flex items-center justify-center w-full"
+              style={{ minHeight: config.imageMinHeight }}
+            >
+              <Icon name="EmptyFile" size={30} className="text-white" />
             </div>
           )}
 
           {/* Left indicators */}
-          {leftIndicators && (
+          {(isUrgent || isAlert || isVedette || is360) && (
             <VStack
               className={cn(
-                "absolute top-2 left-2 transition-opacity",
+                `absolute ${size === "small" ? "top-1 left-1" : "top-2 left-2"} transition-opacity`,
                 (selected || isDragOver) && "opacity-0"
               )}
               gap={1}
             >
-              {leftIndicators}
+              {isUrgent && <UrgentIndicator />}
+              {isAlert && <AlertIndicator />}
+              {isVedette && <VedetteIndicator />}
+              {is360 && <Three60Indicator />}
             </VStack>
           )}
 
           {/* Right indicators */}
-          {rightIndicators && (
-            <VStack className="absolute top-2 right-2" gap={0}>
-              {rightIndicators}
-            </VStack>
-          )}
+          <VStack className={`absolute ${size === "small" ? "top-1 right-1" : "top-2 right-2"}`} gap={0}>
+            <ViewIndicator view={view} />
+          </VStack>
         </div>
 
         {/* Footer */}
-        <Layout
-          bg={selected ? "black" : "white"}
-          className="flex flex-col p-0 gap-0 w-full min-h-0 flex-shrink-0 transition-colors"
-        >
-          {/* Filename row */}
-          <div className="w-full text-center px-1 pt-1">
-            <TruncatedText
-              text={filename}
-              className={cn(
-                "text-sm cursor-pointer",
-                selected && "text-white"
+        {((picture_id && picture_id !== -1) || !view) && (
+          <Layout
+            bg={selected ? "black" : "white"}
+            className="flex flex-col p-0 gap-0 w-full min-h-0 flex-shrink-0 transition-colors"
+            >
+            {/* Filename row */}
+            <div className="w-full text-center px-1 pt-1">
+              <TruncatedText
+                text={filename}
+                className={cn(
+                  "text-sm cursor-pointer",
+                  selected && "text-white"
+                )}
+              />
+            </div>
+
+            {/* Actions row */}
+            <div className="flex items-center justify-end gap-1 px-1 pb-2 pt-1 w-full">
+              {picture_id && onRatingChange && (
+                <ButtonThumbnailStars
+                  value={rating}
+                  variant="secondary"
+                  onClick={onRatingChange}
+                  size="small"
+                  compact={size === "small"}
+                  className="p-0 w-4 h-4"
+                  menuSide="top"
+                  menuAlign={size === "small" ? "start" : "end"}
+                  menuBgContext="white"
+                  open={openMenu === "stars"}
+                  onOpenChange={(open) => handleMenuOpenChange("stars", open)}
+                />
               )}
-            />
-          </div>
 
-          {/* Actions row */}
-          <div className="flex items-center justify-end gap-1 px-1 pb-2 pt-1 w-full">
-            {onRatingChange && (
-              <ButtonThumbnailStars
-                value={rating}
-                variant="secondary"
-                onClick={onRatingChange}
-                size="small"
-                compact={size === "small"}
-                className="p-0 w-4 h-4"
-                menuSide="top"
-                menuAlign={size === "small" ? "start" : "end"}
-                menuBgContext="white"
-                open={openMenu === "stars"}
-                onOpenChange={(open) => handleMenuOpenChange("stars", open)}
-              />
-            )}
+              {picture_id && onLabelChange && (
+                <ButtonThumbnailLabels
+                  value={label}
+                  variant="secondary"
+                  onClick={onLabelChange}
+                  size="small"
+                  compact={size === "small"}
+                  className="p-0 w-4 h-4"
+                  menuSide="top"
+                  menuAlign={size === "small" ? "start" : "end"}
+                  menuBgContext="white"
+                  open={openMenu === "labels"}
+                  onOpenChange={(open) => handleMenuOpenChange("labels", open)}
+                />
+              )}
 
-            {onLabelChange && (
-              <ButtonThumbnailLabels
-                value={label}
-                variant="secondary"
-                onClick={onLabelChange}
-                size="small"
-                compact={size === "small"}
-                className="p-0 w-4 h-4"
-                menuSide="top"
-                menuAlign={size === "small" ? "start" : "end"}
-                menuBgContext="white"
-                open={openMenu === "labels"}
-                onOpenChange={(open) => handleMenuOpenChange("labels", open)}
-              />
-            )}
+              {picture_id && (onTagAdd || onTagRemove) && (
+                <ButtonThumbnailTags
+                  variant="secondary"
+                  value={tags}
+                  onAddTag={onTagAdd}
+                  onRemoveTag={onTagRemove}
+                  size="small"
+                  className="p-0 w-4 h-4"
+                  menuSide="top"
+                  menuAlign="end"
+                  menuBgContext="white"
+                  open={openMenu === "tags"}
+                  onOpenChange={(open) => handleMenuOpenChange("tags", open)}
+                />
+              )}
 
-            {(onTagAdd || onTagRemove) && (
-              <ButtonThumbnailTags
-                variant="secondary"
-                value={tags}
-                onAddTag={onTagAdd}
-                onRemoveTag={onTagRemove}
-                size="small"
-                className="p-0 w-4 h-4"
-                menuSide="top"
-                menuAlign="end"
-                open={openMenu === "tags"}
-                onOpenChange={(open) => handleMenuOpenChange("tags", open)}
-              />
-            )}
+              {picture_id && onCommentAdd && (
+                <ButtonThumbnailComments
+                  value={comments}
+                  hasAnnotations={hasAnnotations}
+                  variant="secondary"
+                  size="small"
+                  onAddComment={onCommentAdd}
+                  className="p-0 w-4 h-4"
+                  menuSide="top"
+                  menuAlign="end"
+                  menuBgContext="white"
+                  open={openMenu === "comments"}
+                  onOpenChange={(open) => handleMenuOpenChange("comments", open)}
+                />
+              )}
 
-            {onCommentAdd && (
-              <ButtonThumbnailComments
-                value={comments}
-                hasAnnotations={hasAnnotations}
-                variant="secondary"
-                size="small"
-                onAddComment={onCommentAdd}
-                className="p-0 w-4 h-4"
-                menuSide="top"
-                menuAlign="end"
-                open={openMenu === "comments"}
-                onOpenChange={(open) => handleMenuOpenChange("comments", open)}
-              />
-            )}
-
-            {actions && actions.length > 0 && (
-              <DropdownMenu
-                open={openMenu === "actions"}
-                onOpenChange={(open) => handleMenuOpenChange("actions", open)}
-              >
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    className="p-0 w-6 h-6"
-                    size="medium"
-                    variant="secondary"
-                  >
-                    <span className="text-lg leading-none">...</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  {actions.length === 0 ? (
-                    <DropdownMenuItem disabled>Aucune action</DropdownMenuItem>
-                  ) : (
-                    <>
-                      {actions.slice(0, maxDropdownItems).map((action) => (
-                        <DropdownMenuItem
-                          key={action.key}
-                          onClick={action.action}
-                          disabled={action.disabled}
-                        >
-                          {action.label}
-                        </DropdownMenuItem>
-                      ))}
-                      {actions.length > maxDropdownItems && (
-                        <DropdownMenuItem disabled>
-                          ... et {actions.length - maxDropdownItems} autres actions
-                        </DropdownMenuItem>
-                      )}
-                    </>
-                  )}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
-          </div>
-        </Layout>
+              {picture_id && actions && actions.length > 0 && (
+                <DropdownMenu
+                  open={openMenu === "actions"}
+                  onOpenChange={(open) => handleMenuOpenChange("actions", open)}
+                >
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      className="p-0 w-6 h-6"
+                      size="medium"
+                      variant="secondary"
+                    >
+                      <span className="text-lg leading-none">...</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    {actions.length === 0 ? (
+                      <DropdownMenuItem disabled>Aucune action</DropdownMenuItem>
+                    ) : (
+                      <>
+                        {actions.slice(0, maxDropdownItems).map((action) => (
+                          <DropdownMenuItem
+                            key={action.key}
+                            onClick={action.action}
+                            disabled={action.disabled}
+                          >
+                            {action.label}
+                          </DropdownMenuItem>
+                        ))}
+                        {actions.length > maxDropdownItems && (
+                          <DropdownMenuItem disabled>
+                            ... et {actions.length - maxDropdownItems} autres actions
+                          </DropdownMenuItem>
+                        )}
+                      </>
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
+            </div>
+          </Layout>
+        )}
 
         {/* Status bar */}
-        {status !== undefined && (
+        {picture_id && status !== undefined && (
           <MediaStatus
             status={status}
             className="flex-shrink-0"
@@ -613,23 +680,142 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
           className="flex justify-center items-center gap-2 min-h-[40px] py-2"
           style={{ width: config.containerWidth }}
         >
-          {onReject && (
+          {picture_id && onReject && !hasRejectionMenu && (
             <ButtonStatus
               icon="X"
+              isActive={status === 31 || status === 35}
               status={31}
               size="small"
-              disabled={status === 31}
-              onClick={onReject}
+              disabled={status === 31 || status === 35}
+              onClick={() => onReject()}
             />
           )}
-          {onValidate && (
+          {picture_id && onReject && hasRejectionMenu && (
+            <Popover
+              open={openMenu === "reject"}
+              onOpenChange={(open) => {
+                handleMenuOpenChange("reject", open);
+                if (!open) setRejectMenuView("main");
+              }}
+            >
+              <PopoverTrigger asChild>
+                <span>
+                  <ButtonStatus
+                    icon="X"
+                    isActive={status === 31 || status === 35}
+                    status={31}
+                    size="small"
+                    disabled={status === 31 || status === 35}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleMenuOpenChange("reject", openMenu !== "reject");
+                    }}
+                  />
+                </span>
+              </PopoverTrigger>
+              <PopoverContent
+                side="top"
+                align="start"
+                sideOffset={8}
+                className="w-auto min-w-[200px] max-w-[280px] rounded-sm border-0 bg-black p-0"
+              >
+                {rejectMenuView === "main" ? (
+                  <VStack gap={0} padding={0}>
+                    {/* Header */}
+                    <div className="flex items-center justify-between px-3 pt-3 pb-2">
+                      <span className="text-sm font-medium text-white">Choisissez une raison</span>
+                      <button
+                        type="button"
+                        className="text-white hover:text-grey-lighter transition-colors p-0.5"
+                        onClick={() => handleMenuOpenChange("reject", false)}
+                      >
+                        <Icon name="X" size={10} strokeWidth={1} />
+                      </button>
+                    </div>
+                    {/* Main options */}
+                    {rejectionOptions?.main?.map((reason, index) => (
+                      <button
+                        key={`main-${index}`}
+                        type="button"
+                        className="w-full px-3 py-1.5 text-left text-sm text-white hover:bg-white/10 transition-colors"
+                        onClick={() => {
+                          onReject(reason);
+                          handleMenuOpenChange("reject", false);
+                          setRejectMenuView("main");
+                        }}
+                      >
+                        {reason}
+                      </button>
+                    ))}
+                    {/* Link to secondary options */}
+                    {rejectionOptions?.secondary && rejectionOptions.secondary.length > 0 && (
+                      <>
+                        <div className="mx-3 border-t border-white/20" />
+                        <button
+                          type="button"
+                          className="w-full px-3 py-1.5 flex items-center justify-between text-sm text-grey-lighter hover:bg-white/10 transition-colors"
+                          onClick={() => setRejectMenuView("secondary")}
+                        >
+                          <span>Autre raison</span>
+                          <Icon name="ChevronRight" size={14} strokeWidth={2} />
+                        </button>
+                      </>
+                    )}
+                  </VStack>
+                ) : (
+                  <VStack gap={0} padding={0}>
+                    {/* Header with back button */}
+                    <div className="flex items-center justify-between px-3 pt-3 pb-2">
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          className="text-white hover:text-grey-lighter transition-colors p-0.5"
+                          onClick={() => setRejectMenuView("main")}
+                        >
+                          <Icon name="ChevronLeft" size={14} strokeWidth={2} />
+                        </button>
+                        <span className="text-sm font-medium text-white">Choisissez une raison</span>
+                      </div>
+                      <button
+                        type="button"
+                        className="text-white hover:text-grey-lighter transition-colors p-0.5"
+                        onClick={() => {
+                          handleMenuOpenChange("reject", false);
+                          setRejectMenuView("main");
+                        }}
+                      >
+                        <Icon name="X" size={10} strokeWidth={1} />
+                      </button>
+                    </div>
+                    {/* Secondary options */}
+                    {rejectionOptions?.secondary?.map((reason, index) => (
+                      <button
+                        key={`secondary-${index}`}
+                        type="button"
+                        className="w-full px-3 py-1.5 text-left text-sm text-white hover:bg-white/10 transition-colors"
+                        onClick={() => {
+                          onReject(reason);
+                          handleMenuOpenChange("reject", false);
+                          setRejectMenuView("main");
+                        }}
+                      >
+                        {reason}
+                      </button>
+                    ))}
+                  </VStack>
+                )}
+              </PopoverContent>
+            </Popover>
+          )}
+          {picture_id && onValidate && (
             <ButtonStatus
               icon="Check"
+              isActive={status === 50}
               status={50}
               size="small"
               disabled={status === 50}
               onClick={onValidate}
-            />
+            />  
           )}
         </div>
       )}

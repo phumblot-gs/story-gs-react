@@ -21,6 +21,7 @@ const meta: Meta<typeof SelectAutocomplete> = {
 - Automatic adaptation based on background context
 - **Returns an object { value, label } in onChange, giving access to both ID and display text**
 - Search on searchText if provided, otherwise on label
+- Hide "no results" message with \`noResultsText=""\`
 
 ## Basic Usage
 
@@ -129,6 +130,10 @@ const options = [
     debug: {
       control: 'boolean',
       description: 'Debug mode for logs',
+    },
+    noResultsText: {
+      control: 'text',
+      description: 'Message when no results found. Set to empty string "" to hide the message completely.',
     },
   },
 };
@@ -572,6 +577,41 @@ export const WithManyOptionsAndScroll: Story = {
     docs: {
       description: {
         story: "Example with many options (25) and height limited to 40vh to test vertical scrolling. The dropdown menu displays automatic scrolling when content exceeds the maximum height.",
+      },
+    },
+  },
+};
+
+export const NoResultsTextHidden: Story = {
+  args: {
+    options: basicOptions,
+    placeholder: "Search for an option...",
+    noResultsText: "",
+  },
+  render: (args) => {
+    const [value, setValue] = useState("");
+    return (
+      <Layout bg="white" padding={6}>
+        <VStack gap={4}>
+          <SelectAutocomplete
+            {...args}
+            value={value}
+            onChange={(selected) => setValue(selected.value)}
+          />
+          <p className="text-sm text-grey-stronger">
+            Selected value: {value || "None"}
+          </p>
+          <p className="text-xs text-grey-strongest">
+            Type something that doesn't match (e.g., "xyz"). The dropdown will close automatically.
+          </p>
+        </VStack>
+      </Layout>
+    );
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'With `noResultsText=""`, the dropdown closes automatically when there are no matching options instead of showing a "no results" message.',
       },
     },
   },

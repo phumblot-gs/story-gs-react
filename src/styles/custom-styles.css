@@ -470,7 +470,7 @@
   color: var(--color-black) !important;
 }
 
-/* ButtonThumbnailLabels uniquement : sur fond white/grey, hover/selected = fond blanc, texte noir */
+/* ButtonThumbnailLabels et ButtonMenuStatus : sur fond white/grey, hover/selected = fond blanc, texte noir */
 .popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-highlighted],
 .popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-highlighted="true"],
 .popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-labels:focus,
@@ -482,7 +482,19 @@
 [data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-highlighted],
 [data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-labels:focus,
 [data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-highlighted],
-[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-labels:focus {
+[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-labels:focus,
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-highlighted],
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-highlighted="true"],
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-status:focus,
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-status:focus-visible,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-highlighted],
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-highlighted="true"],
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-status:focus,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-status:focus-visible,
+[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-highlighted],
+[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-status:focus,
+[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-highlighted],
+[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-status:focus {
   background: var(--color-white) !important;
   color: var(--color-black) !important;
 }
@@ -999,18 +1011,26 @@
   color: var(--color-black) !important;
 }
 
-/* ButtonThumbnailLabels uniquement : sur fond white/grey, item sélectionné = fond blanc, texte noir */
+/* ButtonThumbnailLabels et ButtonMenuStatus : sur fond white/grey, item sélectionné = fond blanc, texte noir */
 .popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"],
 .popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"],
 [data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"],
-[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"] {
+[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"],
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-selected="true"],
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-selected="true"],
+[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-selected="true"],
+[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-selected="true"] {
   background: var(--color-white) !important;
   color: var(--color-black) !important;
 }
 .popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"] .label-menu-text,
 .popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"] .label-menu-text,
 [data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"] .label-menu-text,
-[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"] .label-menu-text {
+[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"] .label-menu-text,
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-selected="true"] .label-menu-text,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-selected="true"] .label-menu-text,
+[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-selected="true"] .label-menu-text,
+[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-selected="true"] .label-menu-text {
   color: var(--color-black) !important;
 }
 
@@ -1068,7 +1088,7 @@
   color: var(--color-black) !important;
 }
 
-/* ButtonThumbnailLabels uniquement : sur fond white/grey, texte noir lors du hover/selected */
+/* ButtonThumbnailLabels et ButtonMenuStatus : sur fond white/grey, texte noir lors du hover/selected */
 .popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-highlighted] .label-menu-text,
 .popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-labels:focus .label-menu-text,
 .popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-highlighted] .label-menu-text,
@@ -1076,7 +1096,15 @@
 [data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-highlighted] .label-menu-text,
 [data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"] .label-menu-text,
 [data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-highlighted] .label-menu-text,
-[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"] .label-menu-text {
+[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"] .label-menu-text,
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-highlighted] .label-menu-text,
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-status:focus .label-menu-text,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-highlighted] .label-menu-text,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-status:focus .label-menu-text,
+[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-highlighted] .label-menu-text,
+[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-selected="true"] .label-menu-text,
+[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-highlighted] .label-menu-text,
+[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-selected="true"] .label-menu-text {
   color: var(--color-black) !important;
 }
 
@@ -1186,7 +1214,7 @@
   background: var(--color-black) !important;
 }
 
-/* ButtonThumbnailLabels avec menuBgContext black : hover/selected = fond noir, texte blanc (explicite) */
+/* ButtonThumbnailLabels et ButtonMenuStatus avec menuBgContext black : hover/selected = fond noir, texte blanc (explicite) */
 .popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-highlighted],
 .popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-highlighted="true"],
 .popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-labels:focus,
@@ -1194,7 +1222,15 @@
 .popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"],
 [data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-highlighted],
 [data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-labels:focus,
-[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"] {
+[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"],
+.popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-highlighted],
+.popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-highlighted="true"],
+.popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-status:focus,
+.popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-status:focus-visible,
+.popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-selected="true"],
+[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-highlighted],
+[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-status:focus,
+[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-selected="true"] {
   background: var(--color-black) !important;
   color: var(--color-white) !important;
 }
@@ -1202,7 +1238,12 @@
 .popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-labels:focus .label-menu-text,
 .popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"] .label-menu-text,
 [data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-highlighted] .label-menu-text,
-[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"] .label-menu-text {
+[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"] .label-menu-text,
+.popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-highlighted] .label-menu-text,
+.popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-status:focus .label-menu-text,
+.popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-selected="true"] .label-menu-text,
+[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-highlighted] .label-menu-text,
+[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-selected="true"] .label-menu-text {
   color: var(--color-white) !important;
 }
 
@@ -1229,4 +1270,98 @@
 [data-bg="black"] button:hover:not(:disabled) .border-adaptive,
 [data-bg="black"] button[data-open="true"]:not(:disabled) .border-adaptive {
   border-color: rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Styles pour AlertIndicator - animation de pulsation */
+.alert-indicator {
+  animation: alertPulse 8s ease-in-out infinite;
+}
+
+@keyframes alertPulse {
+  0% {
+    background-color: var(--color-orange);
+  }
+  50% {
+    background-color: var(--color-red-strong);
+  }
+  100% {
+    background-color: var(--color-orange);
+  }
+}
+
+/* Styles pour Thumbnail vide (sans picture_id) */
+.item-image-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.item-image-card {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  flex: 1;
+  border-radius: 0.125rem;
+  background: var(--color-white);
+}
+
+.item-image-small {
+  width: 100px;
+  min-width: 100px;
+}
+
+.item-image-large {
+  width: 340px;
+  min-width: 340px;
+}
+
+.item-image-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100px;
+  background: var(--color-grey-lighter);
+  border: 0.25px solid var(--color-grey-light);
+}
+
+.item-image-large .item-image-container {
+  min-height: 340px;
+}
+
+.item-image-right-indicators {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.item-image-large .item-image-right-indicators {
+  top: 0.5rem;
+  right: 0.5rem;
+}
+
+.item-image-footer {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  gap: 0;
+  width: 100%;
+  min-height: 0;
+  flex-shrink: 0;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.item-image-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 40px;
+  padding: 0.5rem 0;
 }

@@ -5,7 +5,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { useBgContext } from "@/components/layout/BgContext"
+import { useBgContext, BgProvider } from "@/components/layout/BgContext"
 import { useIsInActionBar } from "@/components/layout/ActionBar"
 import { VStack } from "@/components/layout"
 import { cn } from "@/lib/utils"
@@ -90,6 +90,12 @@ export interface ButtonThumbnailCommentsProps extends Omit<ToggleProps, "onClick
    */
   menuAlign?: "start" | "center" | "end"
   /**
+   * Contexte de fond forcé pour le menu uniquement.
+   * Si défini, le menu utilise ces couleurs comme s'il était sur ce fond (ex. toujours fond clair).
+   * Le bouton continue d'utiliser le bgContext du parent.
+   */
+  menuBgContext?: "white" | "grey" | "black"
+  /**
    * Indique s'il y a des annotations.
    * Si `true`, le bouton affichera l'indicateur visuel même s'il n'y a pas de commentaires.
    * 
@@ -115,6 +121,7 @@ export const ButtonThumbnailComments = React.forwardRef<HTMLButtonElement, Butto
       menuMaxHeight = "max-h-[calc(100vh-2rem)]",
       menuSide = "bottom",
       menuAlign = "start",
+      menuBgContext,
       hasAnnotations = false,
       ...buttonProps
     },
@@ -142,15 +149,17 @@ export const ButtonThumbnailComments = React.forwardRef<HTMLButtonElement, Butto
       [isControlled, onOpenChange]
     )
 
-    // Couleur de fond du menu selon data-bg
+    // Contexte du bouton : suit le parent (pas de data-bg sur le bouton, il hérite)
+    // Contexte du menu : menuBgContext si fourni, sinon même logique qu'avant
     const effectiveBg = isInActionBar ? "white" : bg
-    const getMenuBackgroundClass = () => {
-      switch (effectiveBg) {
+    const menuEffectiveBg = menuBgContext ?? effectiveBg
+    const getMenuBackgroundClass = (menuBg: typeof menuEffectiveBg) => {
+      switch (menuBg) {
         case "white":
         case "grey":
           return "bg-black"
         case "black":
-          return "bg-black-secondary"
+          return "bg-white"
         default:
           return "bg-black"
       }
@@ -240,21 +249,22 @@ export const ButtonThumbnailComments = React.forwardRef<HTMLButtonElement, Butto
         </DropdownMenuTrigger>
         <DropdownMenuContent
           className={cn(
-            "rounded-sm border-0 popup-action overflow-y-auto w-[320px]",
+            "rounded-sm border-0 overflow-y-auto w-[320px]",
             menuMaxHeight,
-            getMenuBackgroundClass()
+            getMenuBackgroundClass(menuEffectiveBg)
           )}
           align={menuAlign}
           side={effectiveMenuSide}
           sideOffset={getSideOffset()}
           collisionPadding={8}
-          data-bg={effectiveBg || undefined}
         >
+          <BgProvider value={menuEffectiveBg}>
+          <div className="popup-action w-full h-full" data-bg={menuEffectiveBg || undefined}>
           <VStack gap={2} padding={2}>
             {/* Titre optionnel */}
             {title && (
               <div className="px-2 py-1">
-                <span className="text-sm text-white font-medium">{title}</span>
+                <span className={cn("text-sm font-medium", menuEffectiveBg === "black" ? "text-black" : "text-white")}>{title}</span>
               </div>
             )}
 
@@ -287,6 +297,8 @@ export const ButtonThumbnailComments = React.forwardRef<HTMLButtonElement, Butto
               </form>
             )}
           </VStack>
+          </div>
+          </BgProvider>
         </DropdownMenuContent>
       </DropdownMenu>
     )

@@ -6,7 +6,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { useBgContext } from "@/components/layout/BgContext"
+import { useBgContext, BgProvider } from "@/components/layout/BgContext"
 import { useIsInActionBar } from "@/components/layout/ActionBar"
 import { VStack } from "@/components/layout"
 import { cn } from "@/lib/utils"
@@ -149,6 +149,9 @@ export const ButtonThumbnailLabels = React.forwardRef<HTMLButtonElement, ButtonT
     const isControlled = openProp !== undefined
     const isOpen = isControlled ? openProp : internalOpen
 
+    // Normaliser la valeur en minuscules pour les comparaisons (case-insensitive)
+    const normalizedValue = value?.toLowerCase() as LabelColor
+
     const handleOpenChange = React.useCallback(
       (open: boolean) => {
         if (!isControlled) {
@@ -259,7 +262,7 @@ export const ButtonThumbnailLabels = React.forwardRef<HTMLButtonElement, ButtonT
 
     // Contenu du bouton (menu fermé) - affiche la couleur actuelle
     const buttonContent = React.useMemo(() => {
-      const currentColor = LABEL_COLORS.find((c) => c.value === value)
+      const currentColor = LABEL_COLORS.find((c) => c.value === normalizedValue)
       if (!currentColor || currentColor.value === "transparent") {
         // Si pas de couleur définie, afficher transparent avec bordure pointillée
         // La bordure s'adapte automatiquement au hover et à l'état ouvert via CSS
@@ -287,7 +290,7 @@ export const ButtonThumbnailLabels = React.forwardRef<HTMLButtonElement, ButtonT
           }}
         />
       )
-    }, [value, colorSize, bg])
+    }, [normalizedValue, colorSize, bg])
 
     React.useEffect(() => {
       if (debug) {
@@ -329,13 +332,14 @@ export const ButtonThumbnailLabels = React.forwardRef<HTMLButtonElement, ButtonT
           sideOffset={getSideOffset()}
           collisionPadding={8}
         >
+          <BgProvider value={menuEffectiveBg}>
           <div className="popup-action w-full h-full" data-bg={menuEffectiveBg || undefined}>
             <VStack gap={2} padding={2}>
             {compact ? (
               /* Menu compact : Grille 3x3 des couleurs sans labels */
               <div className="grid grid-cols-3 gap-2 justify-items-center">
                 {LABEL_COLORS.map((colorOption) => {
-                  const isSelected = value === colorOption.value
+                  const isSelected = normalizedValue === colorOption.value
                   return (
                     <DropdownMenuItem
                       key={colorOption.value ?? "transparent"}
@@ -364,7 +368,7 @@ export const ButtonThumbnailLabels = React.forwardRef<HTMLButtonElement, ButtonT
               /* Menu normal : Liste verticale avec labels */
               <VStack gap={2} padding={0}>
                 {LABEL_COLORS.map((colorOption) => {
-                  const isSelected = value === colorOption.value
+                  const isSelected = normalizedValue === colorOption.value
                   const labelText = t(colorOption.translationKey)
                   return (
                     <DropdownMenuItem
@@ -397,6 +401,7 @@ export const ButtonThumbnailLabels = React.forwardRef<HTMLButtonElement, ButtonT
             )}
           </VStack>
           </div>
+          </BgProvider>
         </DropdownMenuContent>
       </DropdownMenu>
     )

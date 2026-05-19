@@ -233,6 +233,7 @@ function generateThemeCSS(theme, tokens, selector) {
   css += `  --status-not-selected-color: var(--color-grey);\n`;
   css += `  --status-selected-color: var(--color-green);\n`;
   css += `  --status-refused-color: var(--color-red-strong);\n`;
+  css += `  --status-refused-button-color: var(--color-grey-strongest);\n`;
   css += `  --status-for-approval-color: var(--color-yellow);\n`;
   css += `  --status-validated-color: var(--color-green-primary);\n`;
   css += `  --status-to-publish-color: var(--color-pastel-blue);\n`;

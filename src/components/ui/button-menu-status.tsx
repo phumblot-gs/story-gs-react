@@ -6,7 +6,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { useBgContext } from "@/components/layout/BgContext"
+import { useBgContext, BgProvider } from "@/components/layout/BgContext"
 import { useIsInActionBar } from "@/components/layout/ActionBar"
 import { VStack } from "@/components/layout"
 import { Icon } from "@/components/ui/icons"
@@ -125,6 +125,12 @@ export interface ButtonMenuStatusProps extends Omit<ToggleProps, "onClick" | "is
    * <ButtonMenuStatus menuAlign="center" ... />
    */
   menuAlign?: "start" | "center" | "end"
+  /**
+   * Contexte de fond forcé pour le menu uniquement.
+   * Si défini, le menu utilise ces couleurs comme s'il était sur ce fond (ex. toujours fond clair).
+   * Le bouton continue d'utiliser le bgContext du parent.
+   */
+  menuBgContext?: "white" | "grey" | "black"
 }
 
 export const ButtonMenuStatus = React.forwardRef<HTMLButtonElement, ButtonMenuStatusProps>(
@@ -145,6 +151,7 @@ export const ButtonMenuStatus = React.forwardRef<HTMLButtonElement, ButtonMenuSt
       menuMaxHeight = "max-h-[calc(100vh-2rem)]",
       menuSide = "bottom",
       menuAlign = "start",
+      menuBgContext,
       size = "medium",
       ...buttonProps
     },
@@ -196,11 +203,12 @@ export const ButtonMenuStatus = React.forwardRef<HTMLButtonElement, ButtonMenuSt
       }
     }
 
-    // Couleur de fond du menu selon data-bg
-    // Si dans ActionBar, traiter comme bg="white" pour les styles de menu
+    // Contexte du bouton : suit le parent (pas de data-bg sur le bouton, il hérite)
+    // Contexte du menu : menuBgContext si fourni, sinon même logique qu'avant
     const effectiveBg = isInActionBar ? "white" : bg
-    const getMenuBackgroundClass = () => {
-      switch (effectiveBg) {
+    const menuEffectiveBg = menuBgContext ?? effectiveBg
+    const getMenuBackgroundClass = (menuBg: typeof menuEffectiveBg) => {
+      switch (menuBg) {
         case "white":
         case "grey":
           return "bg-black"
@@ -258,23 +266,24 @@ export const ButtonMenuStatus = React.forwardRef<HTMLButtonElement, ButtonMenuSt
         </DropdownMenuTrigger>
         <DropdownMenuContent
           className={cn(
-            "rounded-sm border-0 popup-action overflow-y-auto",
+            "rounded-sm border-0 overflow-y-auto",
             menuMaxHeight,
-            getMenuBackgroundClass()
+            getMenuBackgroundClass(menuEffectiveBg)
           )}
           align={menuAlign}
           side={effectiveMenuSide}
           sideOffset={getSideOffset()}
           collisionPadding={8}
-          data-bg={effectiveBg || undefined}
         >
+          <BgProvider value={menuEffectiveBg}>
+          <div className="popup-action w-full h-full" data-bg={menuEffectiveBg || undefined}>
           <VStack gap={2} padding={2}>
             {statusOptions.map((option, index) => (
               <DropdownMenuItem
                 key={index}
                 disabled={option.disabled || disabled}
                 className={cn(
-                  "w-full px-4 h-6 text-left text-sm whitespace-nowrap rounded-sm cursor-pointer popup-action-item popup-action-item-menu",
+                  "w-full px-4 h-6 text-left text-sm whitespace-nowrap rounded-sm cursor-pointer popup-action-item popup-action-item-menu popup-action-item-status",
                   "flex items-center gap-2",
                   "data-[disabled]:opacity-50 data-[disabled]:cursor-not-allowed"
                 )}
@@ -288,10 +297,12 @@ export const ButtonMenuStatus = React.forwardRef<HTMLButtonElement, ButtonMenuSt
                 }}
               >
                 <MediaStatus status={option.status} width={12} height={3} />
-                <span className="whitespace-nowrap overflow-hidden text-ellipsis flex-1 min-w-0">{option.label}</span>
+                <span className="whitespace-nowrap overflow-hidden text-ellipsis flex-1 min-w-0 label-menu-text">{option.label}</span>
               </DropdownMenuItem>
             ))}
           </VStack>
+          </div>
+          </BgProvider>
         </DropdownMenuContent>
       </DropdownMenu>
     )

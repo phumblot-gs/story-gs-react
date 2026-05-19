@@ -497,6 +497,13 @@ const SelectAutocomplete = React.forwardRef<HTMLInputElement, SelectAutocomplete
       }
     }, [options, searchMode, searchText, filterLocalOptions]);
 
+    // Détermine si le popover a du contenu à afficher
+    // Si noResultsText est vide, on ne montre pas le loader ni le message "aucun résultat"
+    // La popup ne s'ouvre que quand il y a des résultats
+    const hasPopoverContent = !!noResultsText
+      ? (isSearching || filteredOptions.length > 0 || true)
+      : filteredOptions.length > 0;
+
     // Réinitialiser le texte de recherche quand la value change (depuis l'extérieur)
     React.useEffect(() => {
       if (!isOpen) {
@@ -627,7 +634,7 @@ const SelectAutocomplete = React.forwardRef<HTMLInputElement, SelectAutocomplete
     }, []);
 
     return (
-      <PopoverPrimitive.Root open={isOpen} onOpenChange={handleOpenChange}>
+      <PopoverPrimitive.Root open={isOpen && hasPopoverContent} onOpenChange={handleOpenChange}>
         <PopoverPrimitive.Anchor asChild>
           <div ref={containerRef} className={cn("relative w-full", className)}>
           <Input
@@ -698,7 +705,7 @@ const SelectAutocomplete = React.forwardRef<HTMLInputElement, SelectAutocomplete
           <PopoverPrimitive.Portal>
             <PopoverPrimitive.Content
               className={cn(
-                "z-50 min-h-16 overflow-hidden rounded-none shadow-lg p-0 popup-action",
+                "z-50 min-h-4 overflow-hidden rounded-none shadow-lg p-0 popup-action",
                 "data-[state=open]:animate-in data-[state=closed]:animate-out",
                 "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
                 "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
@@ -736,11 +743,11 @@ const SelectAutocomplete = React.forwardRef<HTMLInputElement, SelectAutocomplete
                   <div className="px-3 py-2 text-sm text-center text-grey-stronger">
                     {loadingText}
                   </div>
-                ) : filteredOptions.length === 0 ? (
+                ) : filteredOptions.length === 0 && noResultsText ? (
                   <div className="px-3 py-2 text-sm text-center text-grey-stronger">
                     {noResultsText}
                   </div>
-                ) : (
+                ) : filteredOptions.length > 0 ? (
                   <VStack gap={0} padding={0}>
                     {filteredOptions.map((option, index) => (
                       <button
@@ -770,7 +777,7 @@ const SelectAutocomplete = React.forwardRef<HTMLInputElement, SelectAutocomplete
                       </button>
                     ))}
                   </VStack>
-                )}
+                ) : null}
               </div>
             </PopoverPrimitive.Content>
           </PopoverPrimitive.Portal>

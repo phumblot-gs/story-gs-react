@@ -6,7 +6,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { useBgContext } from "@/components/layout/BgContext"
+import { useBgContext, BgProvider } from "@/components/layout/BgContext"
 import { useIsInActionBar } from "@/components/layout/ActionBar"
 import { VStack } from "@/components/layout"
 import { cn } from "@/lib/utils"
@@ -196,7 +196,7 @@ export const ButtonThumbnailStars = React.forwardRef<HTMLButtonElement, ButtonTh
                 key={index}
                 name="StarFilled"
                 size={iconSize}
-                className={isFilled ? "text-yellow" : "text-black"}
+                className={isFilled ? "text-yellow" : "text-black group-hover/star:text-grey-lighter group-data-[selected=true]/star:text-grey-lighter"}
               />
             )
           })}
@@ -262,6 +262,7 @@ export const ButtonThumbnailStars = React.forwardRef<HTMLButtonElement, ButtonTh
           sideOffset={getSideOffset()}
           collisionPadding={8}
         >
+          <BgProvider value={menuEffectiveBg}>
           <div className="popup-action w-full h-full" data-bg={menuEffectiveBg || undefined}>
             <VStack gap={2} padding={2}>
             {compact ? (
@@ -310,7 +311,7 @@ export const ButtonThumbnailStars = React.forwardRef<HTMLButtonElement, ButtonTh
                       disabled={disabled}
                       data-selected={isSelected ? "true" : "false"}
                       className={cn(
-                        "w-full px-4 h-6 text-left text-sm whitespace-nowrap rounded-sm cursor-pointer popup-action-item popup-action-item-menu popup-action-item-stars",
+                        "group/star w-full px-4 h-6 text-left text-sm whitespace-nowrap rounded-sm cursor-pointer popup-action-item popup-action-item-menu popup-action-item-stars",
                         "flex items-center gap-2",
                         "data-[disabled]:opacity-50 data-[disabled]:cursor-not-allowed"
                       )}
@@ -335,6 +336,7 @@ export const ButtonThumbnailStars = React.forwardRef<HTMLButtonElement, ButtonTh
             )}
           </VStack>
           </div>
+          </BgProvider>
         </DropdownMenuContent>
       </DropdownMenu>
     )

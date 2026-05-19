@@ -23,7 +23,7 @@ export const AlertIndicator: React.FC<AlertIndicatorProps> = ({
     <Badge
       variant="destructive"
       className={cn(
-        "text-white justify-center items-center p-1 w-4 h-4 border-none",
+        "alert-indicator text-white justify-center items-center p-1 w-4 h-4 border-none",
         className
       )}
     >

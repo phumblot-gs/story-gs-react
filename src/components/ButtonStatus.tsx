@@ -85,6 +85,7 @@ export const ButtonStatus: React.FC<ButtonStatusProps> = ({
           "relative rounded-full flex items-center justify-center font-light transition-colors duration-200 p-0",
           sizeClasses,
           iconSizeClasses,
+          "opacity-100 disabled:opacity-100",
           "relative transition-colors",
           // Default state
           `[&_svg]:${statusColorClass}`,
@@ -107,7 +108,7 @@ export const ButtonStatus: React.FC<ButtonStatusProps> = ({
         aria-label={`${icon === "Check" ? "Approve" : "Reject"} - ${statusName}`}
         style={{
           // Set CSS variables for dynamic colors
-          "--status-bg-color": `var(--${statusColorClass}-color)`,
+          "--status-bg-color": `var(--${statusColorClass == "status-refused" ? "status-refused-button" : statusColorClass}-color)`,
         } as React.CSSProperties}
       >
         <IconProvider icon={icon as IconName} size={iconSize} />

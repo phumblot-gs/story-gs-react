@@ -191,6 +191,84 @@ export const LargeSize: Story = {
   },
 };
 
+// Show currentStatus matching behavior
+export const CurrentStatusMatching: Story = {
+  render: () => (
+    <div className="p-4 bg-white">
+      <h3 className="text-lg font-bold mb-4">currentStatus Matching</h3>
+      <p className="text-sm text-gray-600 mb-4">
+        For refused and validated statuses, when currentStatus matches the button's status, the button shows its hover colors.
+      </p>
+
+      <div className="space-y-6">
+        <div>
+          <h4 className="font-medium mb-2">Validated Status (currentStatus = VALIDATED)</h4>
+          <div className="flex gap-4 items-center">
+            <div className="text-sm">Check button (matches):</div>
+            <ButtonStatus
+              status={MediaStatus.VALIDATED}
+              currentStatus={MediaStatus.VALIDATED}
+              icon="Check"
+            />
+            <div className="text-sm ml-4">X button (different status):</div>
+            <ButtonStatus
+              status={MediaStatus.REFUSED_1}
+              currentStatus={MediaStatus.VALIDATED}
+              icon="X"
+            />
+          </div>
+        </div>
+
+        <div>
+          <h4 className="font-medium mb-2">Refused Status (currentStatus = REFUSED_1)</h4>
+          <div className="flex gap-4 items-center">
+            <div className="text-sm">X button (matches):</div>
+            <ButtonStatus
+              status={MediaStatus.REFUSED_1}
+              currentStatus={MediaStatus.REFUSED_1}
+              icon="X"
+            />
+            <div className="text-sm ml-4">Check button (different status):</div>
+            <ButtonStatus
+              status={MediaStatus.VALIDATED}
+              currentStatus={MediaStatus.REFUSED_1}
+              icon="Check"
+            />
+          </div>
+        </div>
+
+        <div>
+          <h4 className="font-medium mb-2">No currentStatus (normal behavior)</h4>
+          <div className="flex gap-4 items-center">
+            <div className="text-sm">Check:</div>
+            <ButtonStatus
+              status={MediaStatus.VALIDATED}
+              icon="Check"
+            />
+            <div className="text-sm ml-4">X:</div>
+            <ButtonStatus
+              status={MediaStatus.REFUSED_1}
+              icon="X"
+            />
+          </div>
+        </div>
+
+        <div>
+          <h4 className="font-medium mb-2">Other statuses (currentStatus has no effect)</h4>
+          <div className="flex gap-4 items-center">
+            <div className="text-sm">Selected (matches but not refused/validated):</div>
+            <ButtonStatus
+              status={MediaStatus.SELECTED}
+              currentStatus={MediaStatus.SELECTED}
+              icon="Check"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  ),
+};
+
 // Show all status variations
 export const StatusButtonMatrix: Story = {
   render: () => (
