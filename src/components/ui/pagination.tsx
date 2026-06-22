@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Icon } from "@/components/ui/icons/Icon"
 import { useBgContext } from "@/components/layout/BgContext"
+import { useTranslationSafe, type TranslationMap } from "@/contexts/TranslationContext"
 
 export interface PaginationProps {
   /** Current page number (1-indexed) */
@@ -19,6 +20,10 @@ export interface PaginationProps {
   className?: string
   /** Debug mode */
   debug?: boolean
+  /** Code de langue (ex: "fr", "en", "es", "it", "de") */
+  language?: string
+  /** Traductions personnalisées pour surcharger les valeurs par défaut */
+  translations?: Partial<TranslationMap>
 }
 
 /**
@@ -74,10 +79,13 @@ const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
       size = "medium",
       className,
       debug,
+      language,
+      translations,
     },
     ref
   ) => {
     const bg = useBgContext()
+    const { t } = useTranslationSafe(translations, language)
     const pageNumbers = generatePageNumbers(currentPage, totalPages, maxVisiblePages)
 
     // Calculate button dimensions and icon size based on size prop
@@ -165,7 +173,7 @@ const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
             className={getButtonSizeClasses()}
             onClick={handlePrevious}
             disabled={currentPage === 1}
-            aria-label="Page précédente"
+            aria-label={t("pagination.previousPage")}
           >
             <Icon name="ArrowLeft" size={getIconSize()} />
           </Button>
@@ -215,7 +223,7 @@ const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
             className={getButtonSizeClasses()}
             onClick={handleNext}
             disabled={currentPage === totalPages}
-            aria-label="Page suivante"
+            aria-label={t("pagination.nextPage")}
           >
             <Icon name="ArrowRight" size={getIconSize()} />
           </Button>

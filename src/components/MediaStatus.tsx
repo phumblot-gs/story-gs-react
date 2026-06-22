@@ -1,6 +1,7 @@
 
 import React from "react";
 import { MediaStatus as MediaStatusEnum, getMediaStatusColorClass } from "@/utils/mediaStatus";
+import { useTranslationSafe } from "@/contexts/TranslationContext";
 
 export interface MediaStatusProps {
   status: MediaStatusEnum;
@@ -26,6 +27,7 @@ const MediaStatus: React.FC<MediaStatusProps> = ({
   width = 12,
   height = 3
 }) => {
+  const { t } = useTranslationSafe();
   const statusClass = getMediaStatusColorClass(status);
   const widthStyle = width === "full" ? "100%" : `${width}px`;
 
@@ -36,9 +38,9 @@ const MediaStatus: React.FC<MediaStatusProps> = ({
         width: widthStyle,
         height: `${height}px`,
       }}
-      title={`Status: ${status}`}
+      title={t("mediaStatus.tooltip", { status })}
       role="status"
-      aria-label={`Media status: ${status}`}
+      aria-label={t("mediaStatus.label", { status })}
     />
   );
 };

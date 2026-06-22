@@ -1028,4 +1028,196 @@ export const componentTranslations: TranslationMap = {
     IT: "elementi",
     DE: "Elemente"
   },
+
+  // SidePanel
+  "sidePanel.accessibilityTitle": {
+    EN: "Panel",
+    FR: "Panneau",
+    ES: "Panel",
+    IT: "Pannello",
+    DE: "Panel"
+  },
+
+  // Thumbnail
+  "thumbnail.noActions": {
+    EN: "No action",
+    FR: "Aucune action",
+    ES: "Ninguna acción",
+    IT: "Nessuna azione",
+    DE: "Keine Aktion"
+  },
+  "thumbnail.moreActions": {
+    EN: "... and {count} more actions",
+    FR: "... et {count} autres actions",
+    ES: "... y {count} acciones más",
+    IT: "... e altre {count} azioni",
+    DE: "... und {count} weitere Aktionen"
+  },
+  "thumbnail.chooseReason": {
+    EN: "Choose a reason",
+    FR: "Choisissez une raison",
+    ES: "Elige un motivo",
+    IT: "Scegli un motivo",
+    DE: "Wählen Sie einen Grund"
+  },
+  "thumbnail.otherReason": {
+    EN: "Other reason",
+    FR: "Autre raison",
+    ES: "Otro motivo",
+    IT: "Altro motivo",
+    DE: "Anderer Grund"
+  },
+  "thumbnail.addComment": {
+    EN: "Add a comment",
+    FR: "Ajouter un commentaire",
+    ES: "Añadir un comentario",
+    IT: "Aggiungi un commento",
+    DE: "Kommentar hinzufügen"
+  },
+  "thumbnail.validate": {
+    EN: "Submit",
+    FR: "Valider",
+    ES: "Validar",
+    IT: "Conferma",
+    DE: "Bestätigen"
+  },
+  "thumbnail.addTag": {
+    EN: "Add a tag",
+    FR: "Ajouter un tag",
+    ES: "Añadir una etiqueta",
+    IT: "Aggiungi un tag",
+    DE: "Tag hinzufügen"
+  },
+  "thumbnail.add": {
+    EN: "Add",
+    FR: "Ajouter",
+    ES: "Añadir",
+    IT: "Aggiungi",
+    DE: "Hinzufügen"
+  },
+
+  // Tag
+  "tag.remove": {
+    EN: "Remove tag",
+    FR: "Supprimer le tag",
+    ES: "Eliminar etiqueta",
+    IT: "Rimuovi tag",
+    DE: "Tag entfernen"
+  },
+
+  // ButtonStatus
+  "buttonStatus.approve": {
+    EN: "Approve",
+    FR: "Approuver",
+    ES: "Aprobar",
+    IT: "Approva",
+    DE: "Genehmigen"
+  },
+  "buttonStatus.reject": {
+    EN: "Reject",
+    FR: "Rejeter",
+    ES: "Rechazar",
+    IT: "Rifiuta",
+    DE: "Ablehnen"
+  },
+
+  // MediaStatus
+  "mediaStatus.tooltip": {
+    EN: "Status: {status}",
+    FR: "Statut : {status}",
+    ES: "Estado: {status}",
+    IT: "Stato: {status}",
+    DE: "Status: {status}"
+  },
+  "mediaStatus.label": {
+    EN: "Media status: {status}",
+    FR: "Statut du média : {status}",
+    ES: "Estado del medio: {status}",
+    IT: "Stato del media: {status}",
+    DE: "Medienstatus: {status}"
+  },
+
+  // StatusIndicator
+  "statusIndicator.label": {
+    EN: "Status: {status}",
+    FR: "Statut : {status}",
+    ES: "Estado: {status}",
+    IT: "Stato: {status}",
+    DE: "Status: {status}"
+  },
+
+  // Select autocomplete
+  "select.noResults": {
+    EN: "No results",
+    FR: "Aucun résultat",
+    ES: "Sin resultados",
+    IT: "Nessun risultato",
+    DE: "Keine Ergebnisse"
+  },
+  "select.searching": {
+    EN: "Searching...",
+    FR: "Recherche en cours...",
+    ES: "Buscando...",
+    IT: "Ricerca in corso...",
+    DE: "Wird gesucht..."
+  },
+
+  // Pagination (accessibilité)
+  "pagination.previousPage": {
+    EN: "Previous page",
+    FR: "Page précédente",
+    ES: "Página anterior",
+    IT: "Pagina precedente",
+    DE: "Vorherige Seite"
+  },
+  "pagination.nextPage": {
+    EN: "Next page",
+    FR: "Page suivante",
+    ES: "Página siguiente",
+    IT: "Pagina successiva",
+    DE: "Nächste Seite"
+  },
+
+  // FolderBrowser
+  "folderBrowser.rootFolder": {
+    EN: "My files",
+    FR: "Mes fichiers",
+    ES: "Mis archivos",
+    IT: "I miei file",
+    DE: "Meine Dateien"
+  },
+
+  // BrandLogo
+  "brandLogo.alt": {
+    EN: "Brand logo",
+    FR: "Logo de la marque",
+    ES: "Logotipo de la marca",
+    IT: "Logo del marchio",
+    DE: "Markenlogo"
+  },
+
+  // ThemeSwitcher
+  "themeSwitcher.title": {
+    EN: "Theme customization",
+    FR: "Personnalisation du thème",
+    ES: "Personalización del tema",
+    IT: "Personalizzazione del tema",
+    DE: "Theme-Anpassung"
+  },
+  "themeSwitcher.reset": {
+    EN: "Reset theme",
+    FR: "Réinitialiser le thème",
+    ES: "Restablecer el tema",
+    IT: "Reimposta il tema",
+    DE: "Theme zurücksetzen"
+  },
+
+  // ActivityPanel
+  "notifications.panelTitle": {
+    EN: "Notifications panel",
+    FR: "Panneau de notifications",
+    ES: "Panel de notificaciones",
+    IT: "Pannello delle notifiche",
+    DE: "Benachrichtigungsfeld"
+  },
 };

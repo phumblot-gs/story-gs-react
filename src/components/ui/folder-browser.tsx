@@ -46,7 +46,7 @@ interface PathSegment {
 export const FolderBrowser: React.FC<FolderBrowserProps> = ({
   folders = [],
   currentPath = "/",
-  labelRootFolder = "Mes fichiers",
+  labelRootFolder,
   debug = false,
   className,
   onNavigate,
@@ -55,6 +55,7 @@ export const FolderBrowser: React.FC<FolderBrowserProps> = ({
   translations,
 }) => {
   const { t } = useTranslationSafe(translations, language);
+  const rootLabel = labelRootFolder ?? t("folderBrowser.rootFolder");
   const [hoveredRow, setHoveredRow] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
 
@@ -88,12 +89,12 @@ export const FolderBrowser: React.FC<FolderBrowserProps> = ({
   // Parse le chemin actuel pour créer les segments de navigation (même logique que FileBrowser)
   const getPathSegments = useCallback((): PathSegment[] => {
     if (currentPath === "/" || currentPath === "") {
-      return [{ name: labelRootFolder, path: currentPath || "" }];
+      return [{ name: rootLabel, path: currentPath || "" }];
     }
 
     const startsWithSlash = currentPath.startsWith("/");
     const parts = currentPath.split("/").filter(Boolean);
-    const segments: PathSegment[] = [{ name: labelRootFolder, path: startsWithSlash ? "/" : "" }];
+    const segments: PathSegment[] = [{ name: rootLabel, path: startsWithSlash ? "/" : "" }];
 
     let buildPath = "";
     parts.forEach((part, index) => {
@@ -106,7 +107,7 @@ export const FolderBrowser: React.FC<FolderBrowserProps> = ({
     });
 
     return segments;
-  }, [currentPath, labelRootFolder]);
+  }, [currentPath, rootLabel]);
 
   const pathSegments = getPathSegments();
 

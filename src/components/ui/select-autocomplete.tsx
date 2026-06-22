@@ -7,6 +7,7 @@ import { useBgContext } from "@/components/layout/BgContext";
 import { Input } from "./input";
 import { Icon } from "./icons";
 import { VStack } from "@/components/layout";
+import { useTranslationSafe, type TranslationMap } from "@/contexts/TranslationContext";
 
 export interface SelectAutocompleteOption {
   value: string;
@@ -154,6 +155,16 @@ export interface SelectAutocompleteProps
    * Mode debug pour les logs
    */
   debug?: boolean;
+
+  /**
+   * Code de langue (ex: "fr", "en", "es", "it", "de")
+   */
+  language?: string;
+
+  /**
+   * Traductions personnalisées pour surcharger les valeurs par défaut
+   */
+  translations?: Partial<TranslationMap>;
 }
 
 const SelectAutocomplete = React.forwardRef<HTMLInputElement, SelectAutocompleteProps>(
@@ -169,8 +180,8 @@ const SelectAutocomplete = React.forwardRef<HTMLInputElement, SelectAutocomplete
       openOnFocus = true,
       closeOnSelect = true,
       allowCustomValue = false,
-      noResultsText = "Aucun résultat",
-      loadingText = "Recherche en cours...",
+      noResultsText: noResultsTextProp,
+      loadingText: loadingTextProp,
       searchPlaceholder,
       placeholder,
       popoverClassName,
@@ -183,11 +194,16 @@ const SelectAutocomplete = React.forwardRef<HTMLInputElement, SelectAutocomplete
       defaultValue,
       disabled,
       className,
+      language,
+      translations,
       ...props
     },
     ref
   ) => {
     const bg = useBgContext();
+    const { t } = useTranslationSafe(translations, language);
+    const noResultsText = noResultsTextProp ?? t("select.noResults");
+    const loadingText = loadingTextProp ?? t("select.searching");
     const [internalValue, setInternalValue] = React.useState<SelectedOption | string>(
       defaultValue ?? ""
     );
@@ -690,7 +706,7 @@ const SelectAutocomplete = React.forwardRef<HTMLInputElement, SelectAutocomplete
                   // Empêcher le blur de l'input
                   e.preventDefault();
                 }}
-                aria-label="Effacer"
+                aria-label={t("select.clear")}
               >
                 <Icon name="X" size={size === "small" ? 8 : 10} />
               </button>

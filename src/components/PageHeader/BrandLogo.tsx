@@ -1,6 +1,7 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
+import { useTranslationSafe } from "@/contexts/TranslationContext";
 
 interface BrandLogoProps {
   logo?: string;
@@ -38,6 +39,8 @@ const BrandLogo: React.FC<BrandLogoProps> = ({
   height = 14,
   className
 }) => {
+  const { t } = useTranslationSafe();
+
   // Default SVG logo
   const DEFAULT_SVG_LOGO = `<svg width="25" height="14" viewBox="0 0 25 14" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M8.32271 0.519775C4.47411 0.519775 0.784544 3.41519 0.106003 6.96598C-0.233268 8.7267 0.212025 10.37 1.33586 11.6123C2.43849 12.8253 4.07123 13.4904 5.93722 13.4904C7.50634 13.4904 9.07547 13.0209 10.475 12.1405C10.581 12.0819 10.6446 11.9743 10.6658 11.8667L11.4186 7.93437L10.4219 8.7267L9.87063 11.6123C8.66198 12.3362 7.3155 12.7177 5.99023 12.7177C4.36809 12.7177 2.94739 12.1405 1.9932 11.0939C1.01779 10.0179 0.636113 8.57997 0.932975 7.04423C1.5479 3.87493 4.83459 1.29254 8.2697 1.29254C9.62678 1.29254 10.8354 1.69359 11.7578 2.43701L12.1077 2.72068L12.2773 1.80119L12.1607 1.71315C11.1217 0.940392 9.78582 0.519775 8.32271 0.519775Z" fill="#292828"/>
@@ -71,7 +74,7 @@ const BrandLogo: React.FC<BrandLogoProps> = ({
     return (
       <img 
         src={logo} 
-        alt="Brand Logo" 
+        alt={t("brandLogo.alt")}
         className={cn("object-contain", className)}
         style={{ width, height }}
       />

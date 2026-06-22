@@ -74,7 +74,7 @@ export interface ActionBarProps {
  */
 export function ActionBar({
   selectedCount,
-  translationKey,
+  translationKey = 'actionBar.itemsSelected',
   deselectAllTranslationKey = 'actionBar.deselectAll',
   onDeselectAll,
   showSelectionInfo = true,
@@ -146,7 +146,7 @@ export function ActionBar({
           {showSelectionInfo && (
             <HStack gap={4} align="center">
               <span className="text-white text-sm">
-                {translationKey ? t(translationKey, { count: selectedCount, plural }) : `${selectedCount} sélectionné${plural}`}
+                {t(translationKey, { count: selectedCount, plural })}
               </span>
               {onDeselectAll && (
                 <Link
@@ -185,7 +185,7 @@ export function ActionBar({
         {showSelectionInfo && (
           <HStack gap={4} align="center">
             <span className="text-white text-sm">
-              {translationKey ? t(translationKey, { count: selectedCount, plural }) : `${selectedCount} sélectionné${plural}`}
+              {t(translationKey, { count: selectedCount, plural })}
             </span>
             {onDeselectAll && (
               <Link

@@ -1,6 +1,7 @@
 
 import React from "react";
 import { MediaStatus, getStatusDotClass } from "@/utils/mediaStatus";
+import { useTranslationSafe } from "@/contexts/TranslationContext";
 
 export type StatusIndicatorSize = "small" | "medium" | "large";
 
@@ -15,6 +16,8 @@ export const StatusIndicator: React.FC<StatusIndicatorProps> = ({
   size = "medium",
   className = "",
 }) => {
+  const { t } = useTranslationSafe();
+
   // Size mapping - matching Button component sizes
   const sizeClasses: Record<StatusIndicatorSize, string> = {
     small: "w-[7px] h-[7px]",    // 7px x 7px
@@ -25,7 +28,7 @@ export const StatusIndicator: React.FC<StatusIndicatorProps> = ({
   return (
     <div 
       className={`rounded-full ${sizeClasses[size]} ${getStatusDotClass(status)} ${className}`}
-      aria-label={`Status: ${MediaStatus[status]}`}
+      aria-label={t("statusIndicator.label", { status: MediaStatus[status] })}
     />
   );
 };

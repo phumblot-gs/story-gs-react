@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils"
 import { Icon } from "@/components/ui/icons"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
+import { useTranslationSafe } from "@/contexts/TranslationContext"
 
 export interface CommentData {
   type: string
@@ -129,6 +130,7 @@ export const ButtonThumbnailComments = React.forwardRef<HTMLButtonElement, Butto
   ) => {
     const bg = useBgContext()
     const isInActionBar = useIsInActionBar()
+    const { t } = useTranslationSafe()
     const [internalOpen, setInternalOpen] = React.useState(defaultOpen)
     const [newComment, setNewComment] = React.useState("")
     
@@ -279,7 +281,7 @@ export const ButtonThumbnailComments = React.forwardRef<HTMLButtonElement, Butto
                   <Textarea
                     value={newComment}
                     onChange={(e) => setNewComment(e.target.value)}
-                    placeholder="Ajouter un commentaire"
+                    placeholder={t("thumbnail.addComment")}
                     disabled={disabled}
                     className="flex-1"
                     onClick={(e) => e.stopPropagation()}
@@ -291,7 +293,7 @@ export const ButtonThumbnailComments = React.forwardRef<HTMLButtonElement, Butto
                     disabled={disabled || !newComment.trim()}
                     onClick={(e) => e.stopPropagation()}
                   >
-                    Valider
+                    {t("thumbnail.validate")}
                   </Button>
                 </VStack>
               </form>

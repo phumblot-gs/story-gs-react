@@ -25,6 +25,7 @@ import {
   PopoverTrigger,
   PopoverContent,
 } from "@/components/ui/popover";
+import { useTranslationSafe, type TranslationMap } from "@/contexts/TranslationContext";
 
 /** Configuration de rejet du bench */
 export interface BenchRejectionOptions {
@@ -186,6 +187,12 @@ export interface ThumbnailProps {
   isDragged?: boolean;
   /** Indique si ce thumbnail est survolé pendant un drag */
   isDragOver?: boolean;
+
+  // Translation props (optional - works without TranslationProvider)
+  /** Code de langue (ex: "fr", "en", "es", "it", "de") */
+  language?: string;
+  /** Traductions personnalisées pour surcharger les valeurs par défaut */
+  translations?: Partial<TranslationMap>;
 }
 
 /**
@@ -273,7 +280,11 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
   onDragLeave,
   isDragged = false,
   isDragOver = false,
+  language,
+  translations,
 }) => {
+  const { t } = useTranslationSafe(translations, language);
+
   // Ref pour capturer l'événement de clic (pour shiftKey, etc.)
   const clickEventRef = useRef<React.PointerEvent | null>(null);
 
@@ -637,7 +648,7 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
                     {actions.length === 0 ? (
-                      <DropdownMenuItem disabled>Aucune action</DropdownMenuItem>
+                      <DropdownMenuItem disabled>{t("thumbnail.noActions")}</DropdownMenuItem>
                     ) : (
                       <>
                         {actions.slice(0, maxDropdownItems).map((action) => (
@@ -651,7 +662,7 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
                         ))}
                         {actions.length > maxDropdownItems && (
                           <DropdownMenuItem disabled>
-                            ... et {actions.length - maxDropdownItems} autres actions
+                            {t("thumbnail.moreActions", { count: actions.length - maxDropdownItems })}
                           </DropdownMenuItem>
                         )}
                       </>
@@ -723,7 +734,7 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
                   <VStack gap={0} padding={0}>
                     {/* Header */}
                     <div className="flex items-center justify-between px-3 pt-3 pb-2">
-                      <span className="text-sm font-medium text-white">Choisissez une raison</span>
+                      <span className="text-sm font-medium text-white">{t("thumbnail.chooseReason")}</span>
                       <button
                         type="button"
                         className="text-white hover:text-grey-lighter transition-colors p-0.5"
@@ -756,7 +767,7 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
                           className="w-full px-3 py-1.5 flex items-center justify-between text-sm text-grey-lighter hover:bg-white/10 transition-colors"
                           onClick={() => setRejectMenuView("secondary")}
                         >
-                          <span>Autre raison</span>
+                          <span>{t("thumbnail.otherReason")}</span>
                           <Icon name="ChevronRight" size={14} strokeWidth={2} />
                         </button>
                       </>
@@ -774,7 +785,7 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
                         >
                           <Icon name="ChevronLeft" size={14} strokeWidth={2} />
                         </button>
-                        <span className="text-sm font-medium text-white">Choisissez une raison</span>
+                        <span className="text-sm font-medium text-white">{t("thumbnail.chooseReason")}</span>
                       </div>
                       <button
                         type="button"

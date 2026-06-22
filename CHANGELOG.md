@@ -5,6 +5,37 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.12.3] - 2026-06-22
+
+### 🌐 Internationalisation
+
+- **Externalisation des textes en dur** : tous les textes utilisateur (libellés,
+  placeholders, `aria-label`, `title`, `alt`) qui étaient codés en dur dans les
+  composants passent désormais par la fonction de traduction `t()`
+  (`useTranslationSafe`), avec traductions EN / FR / ES / IT / DE.
+  - Composants concernés : `ActionBar`, `FullFrame`, `SidePanel`, `ActivityPanel`,
+    `Thumbnail`, `ButtonThumbnailComments`, `ButtonThumbnailTags`, `TagCross`,
+    `ButtonStatus`, `MediaStatus`, `StatusIndicator`, `SelectAutocomplete`,
+    `Pagination`, `FolderBrowser`, `BrandLogo`, `ThemeSwitcher`.
+  - Nouvelles clés de traduction ajoutées dans `component-translations.ts`
+    (`thumbnail.*`, `tag.remove`, `buttonStatus.*`, `mediaStatus.*`,
+    `statusIndicator.label`, `select.noResults`, `select.searching`,
+    `pagination.previousPage`, `pagination.nextPage`, `folderBrowser.rootFolder`,
+    `brandLogo.alt`, `themeSwitcher.*`, `sidePanel.accessibilityTitle`,
+    `notifications.panelTitle`).
+  - Nouvelles props optionnelles `language` / `translations` sur `Thumbnail`,
+    `SelectAutocomplete` et `Pagination` (alignées sur `FolderBrowser` /
+    `DataTable`), pour fonctionner avec ou sans `TranslationProvider`.
+
+Aucun changement cassant : les valeurs par défaut textuelles restent
+surchargeables et le rendu est identique en langue par défaut.
+
+## [1.12.2] - 2026-05-12
+
+### 🔧 Modifié
+
+- Mise à jour de la configuration Tailwind.
+
 ## [1.12.1] - 2026-05-12
 
 ### ✨ Ajouté

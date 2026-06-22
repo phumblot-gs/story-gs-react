@@ -98,7 +98,7 @@ const ActivityPanel: React.FC<ActivityPanelProps> = ({
 
   return <Sheet open={isOpen} onOpenChange={open => !open && onClose()}>
       <SheetContent side="right" className="w-[400px] bg-black border-none p-0 top-[50px] h-[calc(100%-50px)]" topOffset="50px">
-        <SheetTitle className="sr-only">Notifications Panel</SheetTitle>
+        <SheetTitle className="sr-only">{t('notifications.panelTitle')}</SheetTitle>
         <SheetDescription className="sr-only">{t('notifications.panelDescription')}</SheetDescription>
         
         <div className="flex flex-col h-full">
@@ -107,7 +107,7 @@ const ActivityPanel: React.FC<ActivityPanelProps> = ({
             <SheetClose asChild>
               <Button
                 className="p-0 w-6 h-6"
-                aria-label="Close"
+                aria-label={t('button.close')}
               >
                 <IconProvider icon="X" />
               </Button>

@@ -13,6 +13,7 @@ import { Icon } from "@/components/ui/icons"
 import { TagText } from "@/components/ui/tag-text"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { useTranslationSafe } from "@/contexts/TranslationContext"
 
 export interface TagsData {
   [key: string]: boolean
@@ -114,6 +115,7 @@ export const ButtonThumbnailTags = React.forwardRef<HTMLButtonElement, ButtonThu
   ) => {
     const bg = useBgContext()
     const isInActionBar = useIsInActionBar()
+    const { t } = useTranslationSafe()
     const [internalOpen, setInternalOpen] = React.useState(defaultOpen)
     const [newTagName, setNewTagName] = React.useState("")
     
@@ -292,7 +294,7 @@ export const ButtonThumbnailTags = React.forwardRef<HTMLButtonElement, ButtonThu
                     type="text"
                     value={newTagName}
                     onChange={(e) => setNewTagName(e.target.value)}
-                    placeholder="Ajouter un tag"
+                    placeholder={t("thumbnail.addTag")}
                     disabled={disabled}
                     className="flex-1"
                     onClick={(e) => e.stopPropagation()}
@@ -304,7 +306,7 @@ export const ButtonThumbnailTags = React.forwardRef<HTMLButtonElement, ButtonThu
                     disabled={disabled || !newTagName.trim()}
                     onClick={(e) => e.stopPropagation()}
                   >
-                    Ajouter
+                    {t("thumbnail.add")}
                   </Button>
                 </VStack>
               </form>

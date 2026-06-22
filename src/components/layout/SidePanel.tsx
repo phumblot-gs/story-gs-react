@@ -7,6 +7,7 @@ import { Icon } from "@/components/ui/icons";
 import { cn } from "@/lib/utils";
 import { cva } from "class-variance-authority";
 import { BgProvider } from "./BgContext";
+import { useTranslationSafe } from "@/contexts/TranslationContext";
 
 type BgContext = 'white' | 'grey' | 'black';
 
@@ -124,8 +125,11 @@ export function SidePanel({
   className,
   bodyClassName,
   debug = false,
-  title: accessibilityTitle = "Panneau",
+  title,
 }: SidePanelProps) {
+  const { t } = useTranslationSafe();
+  const accessibilityTitle = title ?? t("sidePanel.accessibilityTitle");
+
   // Normaliser la largeur
   const normalizedWidth = typeof width === "number" ? `${width}px` : width;
   
@@ -183,7 +187,7 @@ export function SidePanel({
                             variant="ghost"
                             size="medium"
                             onClick={onClose}
-                            aria-label="Fermer"
+                            aria-label={t("button.close")}
                             className="p-0 w-6 h-6"
                             debug={debug}
                           >
@@ -199,7 +203,7 @@ export function SidePanel({
                           variant="ghost"
                           size="medium"
                           onClick={onClose}
-                          aria-label="Fermer"
+                          aria-label={t("button.close")}
                           className="p-0 w-6 h-6"
                           debug={debug}
                         >
