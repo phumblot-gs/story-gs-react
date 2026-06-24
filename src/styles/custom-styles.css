@@ -1365,3 +1365,83 @@
   min-height: 40px;
   padding: 0.5rem 0;
 }
+
+/* ==========================================================================
+ * Scrollbars adaptées au contexte de fond (data-bg)
+ * --------------------------------------------------------------------------
+ * Le thumb de la scrollbar native s'adapte à la couleur du conteneur qui
+ * scrolle (Layout / VStack / HStack posent data-bg sur l'élément scrollable).
+ * - Fond blanc  : scrollbar par défaut du navigateur (non stylée).
+ * - Fond gris   : thumb gris foncé sur les fonds clairs.
+ * - Fond noir   : thumb gris clair sur le fond sombre.
+ * Couleurs issues des variables du design system uniquement.
+ * ========================================================================== */
+
+/* --- Fond blanc --- */
+/* Thumb plus clair que sur fond gris pour rester discret sur le blanc.
+   Définir scrollbar-color ici stoppe aussi l'héritage (Firefox) d'un parent
+   grey/black vers un conteneur white imbriqué. */
+[data-bg="white"] {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-grey-strong) transparent;
+}
+[data-bg="white"]::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+[data-bg="white"]::-webkit-scrollbar-track {
+  background: transparent;
+}
+[data-bg="white"]::-webkit-scrollbar-thumb {
+  background-color: var(--color-grey-strong);
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+[data-bg="white"]::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-grey-stronger);
+}
+
+/* --- Fond gris --- */
+[data-bg="grey"] {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-grey-stronger) transparent;
+}
+[data-bg="grey"]::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+[data-bg="grey"]::-webkit-scrollbar-track {
+  background: transparent;
+}
+[data-bg="grey"]::-webkit-scrollbar-thumb {
+  background-color: var(--color-grey-stronger);
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+[data-bg="grey"]::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-grey-strongest);
+}
+
+/* --- Fond noir --- */
+[data-bg="black"] {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-grey-strongest) transparent;
+}
+[data-bg="black"]::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+[data-bg="black"]::-webkit-scrollbar-track {
+  background: transparent;
+}
+[data-bg="black"]::-webkit-scrollbar-thumb {
+  background-color: var(--color-grey-strongest);
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+[data-bg="black"]::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-grey-stronger);
+}

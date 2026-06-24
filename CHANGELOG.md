@@ -5,6 +5,23 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.12.4] - 2026-06-24
+
+### 🎨 Modifié
+
+- **Scrollbars adaptées au contexte de fond (`data-bg`)**. La scrollbar native
+  s'adapte désormais à la couleur du conteneur scrollable, avec un thumb dédié
+  par contexte (couleurs issues des variables du design system) :
+  - `data-bg="white"` → thumb `--color-grey-strong` (discret), hover `--color-grey-stronger`.
+  - `data-bg="grey"` → thumb `--color-grey-stronger`, hover `--color-grey-strongest`.
+  - `data-bg="black"` → thumb `--color-grey-strongest`, hover `--color-grey-stronger`.
+  - Support WebKit (`::-webkit-scrollbar-*`) et Firefox (`scrollbar-color` /
+    `scrollbar-width: thin`). Thumb fin arrondi avec marge
+    (`border` transparent + `background-clip: padding-box`).
+  - `SidePanel` et `ActivityPanel` posent désormais `data-bg` sur leur conteneur
+    scrollable interne pour bénéficier du style sur tous les navigateurs.
+  - Nouvelle story `Layout/Layout › ScrollbarByBackground`.
+
 ## [1.12.3] - 2026-06-22
 
 ### 🌐 Internationalisation

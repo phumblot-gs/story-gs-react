@@ -219,6 +219,7 @@ export function SidePanel({
             {/* Body */}
             <BgProvider value={bg}>
               <div
+                data-bg={bg}
                 className={cn(
                   "flex-1 overflow-auto",
                   bodyClassName

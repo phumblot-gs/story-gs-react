@@ -133,7 +133,7 @@ const ActivityPanel: React.FC<ActivityPanelProps> = ({
           </div>
           
           {/* Notification list with flexbox layout */}
-          <div className="flex-1 overflow-auto pl-[50px] pr-[20px] pt-[20px] pb-[50px]">
+          <div data-bg="black" className="flex-1 overflow-auto pl-[50px] pr-[20px] pt-[20px] pb-[50px]">
             {Object.entries(notificationsByDate).map(([dateStr, dateNotifications]) => <div key={dateStr} className="mb-4">
                 <div className="py-2 text-grey-stronger text-[length:var(--font-size-sm)] opacity-75">
                   {dateStr}

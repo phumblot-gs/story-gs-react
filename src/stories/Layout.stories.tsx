@@ -253,6 +253,10 @@ export const BackgroundContexts: Story = {
 };
 
 export const WithScroll: Story = {
+  args: {
+    bg: "black"
+  },
+
   render: () => (
     <HStack gap={4} padding={4}>
       {/* Vertical scroll */}
@@ -308,7 +312,7 @@ export const WithScroll: Story = {
         ))}
       </Layout>
     </HStack>
-  ),
+  )
 };
 
 export const NestedLayouts: Story = {
@@ -406,5 +410,45 @@ export const FlexboxExamples: Story = {
         ))}
       </Layout>
     </VStack>
+  ),
+};
+
+export const ScrollbarByBackground: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "La scrollbar native s'adapte à la couleur du contexte `data-bg` du conteneur scrollable. " +
+          "Chaque fond a un thumb dédié, issu des variables du design system : " +
+          "**blanc** → `--color-grey-strong` (discret), **gris** → `--color-grey-stronger`, " +
+          "**noir** → `--color-grey-strongest`. " +
+          "Survolez le thumb pour voir l'état hover. (Le rendu visuel dépend du navigateur : Chrome/Safari/Firefox.)",
+      },
+    },
+  },
+  render: () => (
+    <HStack gap={4} padding={4}>
+      {(['white', 'grey', 'black'] as const).map((bg) => (
+        <Layout
+          key={bg}
+          bg={bg}
+          scroll="vertical"
+          padding={4}
+          className="h-72 w-64 border border-grey-strong rounded-lg"
+        >
+          <h3 className={`gs-typo-h3 mb-1 ${bg === 'black' ? 'text-white' : ''}`}>
+            data-bg=&quot;{bg}&quot;
+          </h3>
+          <p className={`text-xs mb-4 ${bg === 'black' ? 'text-grey-light' : 'text-grey-stronger'}`}>
+            Scrollbar adaptée au fond
+          </p>
+          {Array.from({ length: 30 }).map((_, i) => (
+            <p key={i} className={`text-sm mb-2 ${bg === 'black' ? 'text-white' : ''}`}>
+              Ligne de contenu {i + 1}
+            </p>
+          ))}
+        </Layout>
+      ))}
+    </HStack>
   ),
 };
