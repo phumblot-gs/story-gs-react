@@ -1369,79 +1369,66 @@
 /* ==========================================================================
  * Scrollbars adaptées au contexte de fond (data-bg)
  * --------------------------------------------------------------------------
- * Le thumb de la scrollbar native s'adapte à la couleur du conteneur qui
- * scrolle (Layout / VStack / HStack posent data-bg sur l'élément scrollable).
- * - Fond blanc  : scrollbar par défaut du navigateur (non stylée).
- * - Fond gris   : thumb gris foncé sur les fonds clairs.
- * - Fond noir   : thumb gris clair sur le fond sombre.
+ * Les couleurs de scrollbar sont exposées via des custom properties
+ * HÉRITABLES posées sur chaque conteneur data-bg (--sb-thumb / --sb-thumb-hover).
+ * Comme les custom properties suivent l'héritage DOM, n'importe quel élément
+ * scrollable résout automatiquement la valeur du data-bg ANCÊTRE LE PLUS PROCHE
+ * — y compris les scrollers qui n'ont pas eux-mêmes de data-bg (ex. un
+ * overflow:auto applicatif placé dans un <Layout bg="black">). L'imbrication
+ * (grey > black > scroller) est gérée nativement par l'héritage des variables,
+ * sans conflit de spécificité ni dépendance à l'ordre des règles.
+ *
+ * - Fond blanc : thumb --color-grey-strong (discret), hover --color-grey-stronger
+ * - Fond gris  : thumb --color-grey-stronger,          hover --color-grey-strongest
+ * - Fond noir  : thumb --color-grey-strongest,         hover --color-grey-stronger
  * Couleurs issues des variables du design system uniquement.
  * ========================================================================== */
 
-/* --- Fond blanc --- */
-/* Thumb plus clair que sur fond gris pour rester discret sur le blanc.
-   Définir scrollbar-color ici stoppe aussi l'héritage (Firefox) d'un parent
-   grey/black vers un conteneur white imbriqué. */
+/* 1) Exposition des couleurs de scrollbar par contexte (variables héritables) */
 [data-bg="white"] {
-  scrollbar-width: thin;
-  scrollbar-color: var(--color-grey-strong) transparent;
+  --sb-thumb: var(--color-grey-strong);
+  --sb-thumb-hover: var(--color-grey-stronger);
 }
-[data-bg="white"]::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
-[data-bg="white"]::-webkit-scrollbar-track {
-  background: transparent;
-}
-[data-bg="white"]::-webkit-scrollbar-thumb {
-  background-color: var(--color-grey-strong);
-  border-radius: 9999px;
-  border: 2px solid transparent;
-  background-clip: padding-box;
-}
-[data-bg="white"]::-webkit-scrollbar-thumb:hover {
-  background-color: var(--color-grey-stronger);
-}
-
-/* --- Fond gris --- */
 [data-bg="grey"] {
-  scrollbar-width: thin;
-  scrollbar-color: var(--color-grey-stronger) transparent;
+  --sb-thumb: var(--color-grey-stronger);
+  --sb-thumb-hover: var(--color-grey-strongest);
 }
-[data-bg="grey"]::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
-[data-bg="grey"]::-webkit-scrollbar-track {
-  background: transparent;
-}
-[data-bg="grey"]::-webkit-scrollbar-thumb {
-  background-color: var(--color-grey-stronger);
-  border-radius: 9999px;
-  border: 2px solid transparent;
-  background-clip: padding-box;
-}
-[data-bg="grey"]::-webkit-scrollbar-thumb:hover {
-  background-color: var(--color-grey-strongest);
+[data-bg="black"] {
+  --sb-thumb: var(--color-grey-strongest);
+  --sb-thumb-hover: var(--color-grey-stronger);
 }
 
-/* --- Fond noir --- */
+/* 2) Firefox : scrollbar-color est héritable → le conteneur data-bg ET tous ses
+ * descendants (scrollers applicatifs compris) prennent la couleur du contexte
+ * le plus proche automatiquement. */
+[data-bg="white"],
+[data-bg="grey"],
 [data-bg="black"] {
   scrollbar-width: thin;
-  scrollbar-color: var(--color-grey-strongest) transparent;
+  scrollbar-color: var(--sb-thumb) transparent;
 }
-[data-bg="black"]::-webkit-scrollbar {
+
+/* 3) WebKit (Chrome/Safari) : les pseudo-éléments ::-webkit-scrollbar ne sont
+ * pas héritables. On cible donc l'élément data-bg LUI-MÊME *et* tous ses
+ * descendants, et on lit --sb-thumb via var() : la valeur résolue correspond
+ * au data-bg ancêtre le plus proche du scroller. */
+[data-bg]::-webkit-scrollbar,
+[data-bg] *::-webkit-scrollbar {
   width: 10px;
   height: 10px;
 }
-[data-bg="black"]::-webkit-scrollbar-track {
+[data-bg]::-webkit-scrollbar-track,
+[data-bg] *::-webkit-scrollbar-track {
   background: transparent;
 }
-[data-bg="black"]::-webkit-scrollbar-thumb {
-  background-color: var(--color-grey-strongest);
+[data-bg]::-webkit-scrollbar-thumb,
+[data-bg] *::-webkit-scrollbar-thumb {
+  background-color: var(--sb-thumb, var(--color-grey-stronger));
   border-radius: 9999px;
   border: 2px solid transparent;
   background-clip: padding-box;
 }
-[data-bg="black"]::-webkit-scrollbar-thumb:hover {
-  background-color: var(--color-grey-stronger);
+[data-bg]::-webkit-scrollbar-thumb:hover,
+[data-bg] *::-webkit-scrollbar-thumb:hover {
+  background-color: var(--sb-thumb-hover, var(--color-grey-strongest));
 }

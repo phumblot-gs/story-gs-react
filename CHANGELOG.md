@@ -5,6 +5,22 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.12.5] - 2026-06-24
+
+### 🎨 Modifié
+
+- **Scrollbars : héritage du contexte `data-bg` le plus proche**. Les couleurs
+  de scrollbar sont désormais exposées via des custom properties héritables
+  (`--sb-thumb` / `--sb-thumb-hover`) posées sur chaque conteneur `data-bg`.
+  - Un conteneur scrollable **sans `data-bg` propre** (ex. un `overflow:auto`
+    applicatif non géré par la librairie) hérite automatiquement de la couleur
+    de scrollbar du contexte `data-bg` **ancêtre le plus proche**.
+  - L'imbrication (`grey > black > scroller`) est résolue par l'héritage des
+    variables, sans conflit de spécificité ni dépendance à l'ordre des règles.
+  - WebKit : ciblage de `[data-bg]` et `[data-bg] *` via `var(--sb-thumb)`.
+    Firefox : héritage natif de `scrollbar-color`.
+  - Nouvelle story `Layout/Layout › ScrollbarInheritedByNestedScroller`.
+
 ## [1.12.4] - 2026-06-24
 
 ### 🎨 Modifié

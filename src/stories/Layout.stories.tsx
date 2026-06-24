@@ -452,3 +452,44 @@ export const ScrollbarByBackground: Story = {
     </HStack>
   ),
 };
+
+export const ScrollbarInheritedByNestedScroller: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Cas d'un conteneur scrollable **non géré par la librairie** (un simple `<div style={{ overflow: 'auto' }}>` " +
+          "sans `data-bg`) placé à l'intérieur d'un `Layout`. Grâce aux variables CSS héritables (`--sb-thumb`), " +
+          "il récupère automatiquement la couleur de scrollbar du contexte `data-bg` **ancêtre le plus proche** — " +
+          "sur tous les navigateurs (WebKit via `[data-bg] *`, Firefox via l'héritage de `scrollbar-color`).",
+      },
+    },
+  },
+  render: () => (
+    <HStack gap={4} padding={4}>
+      {(['white', 'grey', 'black'] as const).map((bg) => (
+        <Layout
+          key={bg}
+          bg={bg}
+          padding={4}
+          className="w-64 border border-grey-strong rounded-lg"
+        >
+          <h3 className={`gs-typo-h3 mb-1 ${bg === 'black' ? 'text-white' : ''}`}>
+            Layout bg=&quot;{bg}&quot;
+          </h3>
+          <p className={`text-xs mb-3 ${bg === 'black' ? 'text-grey-light' : 'text-grey-stronger'}`}>
+            div overflow brut (sans data-bg)
+          </p>
+          {/* Scroller applicatif natif, hors librairie : aucun data-bg propre */}
+          <div style={{ height: 180, overflow: 'auto' }}>
+            {Array.from({ length: 30 }).map((_, i) => (
+              <p key={i} className={`text-sm mb-2 ${bg === 'black' ? 'text-white' : ''}`}>
+                Ligne héritée {i + 1}
+              </p>
+            ))}
+          </div>
+        </Layout>
+      ))}
+    </HStack>
+  ),
+};

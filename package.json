@@ -1,6 +1,6 @@
 {
   "name": "@gs/gs-components-library",
-  "version": "1.12.4",
+  "version": "1.12.5",
   "type": "module",
   "scripts": {
     "dev": "vite",
