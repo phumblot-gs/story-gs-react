@@ -64,7 +64,11 @@ const meta: Meta<typeof Thumbnail> = {
     },
     imageBgColor: {
       control: "color",
-      description: "Couleur de fond de l'image (utile pour les PNG transparents)",
+      description: "Couleur de fond de l'image elle-même (content-box de l'<img>, utile pour les PNG transparents)",
+    },
+    viewportBgColor: {
+      control: "color",
+      description: "Couleur de fond du viewport (conteneur autour de l'image, y compris l'espace de letterboxing). Distinct de imageBgColor.",
     },
   },
   args: {
@@ -695,6 +699,92 @@ export const WithImageBackground: Story = {
               onReject={undefined}
             />
             <span className="text-xs">Small + fond rose</span>
+          </VStack>
+        </HStack>
+      </VStack>
+    </Layout>
+  ),
+};
+
+/**
+ * Thumbnail avec couleur de fond du viewport (viewportBgColor)
+ *
+ * `viewportBgColor` colore tout le conteneur d'affichage (letterboxing compris),
+ * contrairement à `imageBgColor` qui ne colore que la box de l'image.
+ * Reproduit la palette du raccourci `D` de l'app zoom.
+ */
+export const WithViewportBackground: Story = {
+  render: () => (
+    <Layout bg="grey" padding={4}>
+      <VStack gap={4}>
+        <div className="text-sm font-medium mb-2">
+          Viewport Background Color (palette du raccourci D) :
+        </div>
+        <HStack gap={4} className="flex-wrap items-start">
+          {[
+            { color: "#FFFFFF", label: "#FFFFFF" },
+            { color: "#D0D0D0", label: "#D0D0D0" },
+            { color: "#777777", label: "#777777" },
+            { color: "#333333", label: "#333333" },
+          ].map(({ color, label }, i) => (
+            <VStack key={color} gap={1} align="center">
+              <Thumbnail
+                picture_id={501 + i}
+                src={sampleImageUrl}
+                filename={`viewport_${label}.jpg`}
+                viewportBgColor={color}
+                status={MediaStatus.VALIDATED}
+                onSelectionChange={fn()}
+                onValidate={undefined}
+                onReject={undefined}
+              />
+              <span className="text-xs">{label}</span>
+            </VStack>
+          ))}
+        </HStack>
+        <div className="text-sm font-medium mb-2 mt-4">
+          Distinction imageBgColor (fond de l'image) vs viewportBgColor (fond du conteneur) :
+        </div>
+        <HStack gap={4} className="flex-wrap items-start">
+          <VStack gap={1} align="center">
+            <Thumbnail
+              picture_id={510}
+              src={sampleImageUrl}
+              filename="image_bg_only.jpg"
+              imageBgColor="#e3f2fd"
+              status={MediaStatus.VALIDATED}
+              onSelectionChange={fn()}
+              onValidate={undefined}
+              onReject={undefined}
+            />
+            <span className="text-xs">imageBgColor seul</span>
+          </VStack>
+          <VStack gap={1} align="center">
+            <Thumbnail
+              picture_id={511}
+              src={sampleImageUrl}
+              filename="viewport_bg_only.jpg"
+              viewportBgColor="#777777"
+              status={MediaStatus.VALIDATED}
+              onSelectionChange={fn()}
+              onValidate={undefined}
+              onReject={undefined}
+            />
+            <span className="text-xs">viewportBgColor seul</span>
+          </VStack>
+          <VStack gap={1} align="center">
+            <Thumbnail
+              picture_id={512}
+              src={sampleImageUrl}
+              filename="both.png"
+              imageBgColor="#e3f2fd"
+              viewportBgColor="#333333"
+              status={MediaStatus.VALIDATED}
+              onSelectionChange={fn()}
+              onValidate={undefined}
+              onReject={undefined}
+            />
+            <span className="text-xs">Les deux</span>
           </VStack>
         </HStack>
       </VStack>

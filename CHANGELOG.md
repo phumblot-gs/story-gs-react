@@ -5,6 +5,21 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.12.6] - 2026-07-02
+
+### ✨ Ajouté
+
+- **`Thumbnail` : prop `viewportBgColor`**. Nouvelle prop pour colorer le fond du
+  **viewport** (le conteneur qui entoure l'image, letterboxing compris), distincte
+  de `imageBgColor` qui ne colore que la content-box de l'`<img>` (pixels
+  transparents / letterboxing interne).
+  - Accepte toute valeur CSS (ex. palette du raccourci `D` : `#FFFFFF`, `#D0D0D0`,
+    `#777777`, `#333333`).
+  - Par défaut le viewport reste blanc ; le cas « vue vide » garde `bg-grey-middle`.
+  - Non-breaking : `imageBgColor` conserve son comportement, les deux surfaces
+    restent réglables indépendamment.
+  - Nouvelle story `Components/Thumbnail › WithViewportBackground`.
+
 ## [1.12.5] - 2026-06-24
 
 ### 🎨 Modifié

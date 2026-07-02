@@ -114,11 +114,20 @@ export interface ThumbnailProps {
 
   // Image appearance
   /**
-   * Couleur de fond de l'image.
-   * Utile pour les images avec transparence (PNG).
+   * Couleur de fond de l'image elle-même (content-box de l'`<img>`).
+   * Utile pour les images avec transparence (PNG) : colore les pixels transparents
+   * et le letterboxing interne à la box de l'image.
    * Accepte toute valeur CSS valide (ex: "#ffffff", "rgb(255,255,255)", "white").
    */
   imageBgColor?: string;
+  /**
+   * Couleur de fond du viewport (le conteneur qui entoure l'image, y compris
+   * l'espace autour d'une image `object-contain`). À distinguer de `imageBgColor`
+   * qui ne colore que la box de l'image.
+   * Par défaut le viewport reste blanc. Accepte toute valeur CSS valide
+   * (ex: "#FFFFFF", "#D0D0D0", "#777777", "#333333").
+   */
+  viewportBgColor?: string;
 
   // Selection
   /** Indique si le thumbnail est sélectionné */
@@ -240,6 +249,7 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
 
   // Image appearance
   imageBgColor,
+  viewportBgColor,
 
   // Selection
   selected = false,
@@ -410,9 +420,12 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
   );
 
   // Container classes (sans les dimensions qui seront en inline)
+  // Le fond du viewport reste blanc par défaut ; s'il est fourni via viewportBgColor,
+  // on laisse le style inline gérer la couleur (sauf cas "vue vide" qui garde bg-grey-middle).
+  const isEmptyView = (!picture_id || picture_id === -1) && view;
   const containerClasses = cn(
     "relative flex items-center justify-center border-[0.25px] border-white",
-    (!picture_id || picture_id === -1) && view ? ' bg-grey-middle' : 'bg-white'
+    isEmptyView ? ' bg-grey-middle' : !viewportBgColor && 'bg-white'
   );
 
   return (
@@ -433,7 +446,10 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
         {/* Image container */}
         <div
           className={containerClasses}
-          style={{ minHeight: (!picture_id || picture_id === -1) && view ? "100%" : config.imageMinHeight }}
+          style={{
+            minHeight: isEmptyView ? "100%" : config.imageMinHeight,
+            ...(viewportBgColor && !isEmptyView ? { backgroundColor: viewportBgColor } : {}),
+          }}
         >
           {/* Master overlay */}
           {picture_id &&masterSrc && (
