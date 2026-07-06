@@ -49,11 +49,12 @@ import { Three60Indicator } from "./Three60Indicator";
 import { ViewIndicator } from "./ViewIndicator";
 
 /** Tailles prédéfinies du thumbnail */
-export type ThumbnailPresetSize = "small" | "large";
+export type ThumbnailPresetSize = "small" | "large" | "auto";
 
 /**
  * Taille du thumbnail:
  * - "small" (100px) ou "large" (340px) pour les tailles prédéfinies
+ * - "auto" : le composant prend toute la largeur disponible de son conteneur
  * - Une valeur CSS personnalisée comme "400px", "200px", "15rem", etc.
  */
 export type ThumbnailSize = ThumbnailPresetSize | (string & {});
@@ -137,6 +138,7 @@ export interface ThumbnailProps {
   /**
    * Taille du thumbnail:
    * - "small" (100px) ou "large" (340px) pour les tailles prédéfinies
+   * - "auto" : le composant prend toute la largeur disponible de son conteneur
    * - Une valeur CSS personnalisée comme "400px", "200px", "15rem", etc.
    */
   size?: ThumbnailSize;
@@ -324,20 +326,36 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
     if (size === "large") {
       return {
         containerWidth: "340px",
-        imageMinHeight: "340px",
-        imageMaxHeight: "340px",
+        imageMinHeight: "340px" as string | undefined,
+        imageMaxHeight: "340px" as string | undefined,
         iconSize: 40,
         isSmall: false,
+        isAuto: false,
       };
     }
 
     if (size === "small") {
       return {
         containerWidth: "100px",
-        imageMinHeight: "100px",
-        imageMaxHeight: "100px",
+        imageMinHeight: "100px" as string | undefined,
+        imageMaxHeight: "100px" as string | undefined,
         iconSize: 20,
         isSmall: true,
+        isAuto: false,
+      };
+    }
+
+    // Taille "auto" : le composant occupe toute la largeur disponible.
+    // L'image conserve son ratio (object-contain) et pilote sa propre hauteur ;
+    // aucune hauteur fixe n'est imposée à la box de l'image.
+    if (size === "auto") {
+      return {
+        containerWidth: "100%",
+        imageMinHeight: undefined as string | undefined,
+        imageMaxHeight: undefined as string | undefined,
+        iconSize: 40,
+        isSmall: false,
+        isAuto: true,
       };
     }
 
@@ -348,12 +366,17 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
 
     return {
       containerWidth: size,
-      imageMinHeight: size,
-      imageMaxHeight: size,
+      imageMinHeight: size as string | undefined,
+      imageMaxHeight: size as string | undefined,
       iconSize: isSmallSize ? 20 : 40,
       isSmall: isSmallSize,
+      isAuto: false,
     };
   }, [size]);
+
+  // Hauteur de repli pour les placeholders (chargement / erreur / vue vide)
+  // lorsqu'aucune hauteur d'image n'est imposée (cas "auto").
+  const placeholderMinHeight = config.imageMinHeight ?? "200px";
 
   // Handler pour le drag
   const handleDragStart = useCallback(
@@ -447,7 +470,12 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
         <div
           className={containerClasses}
           style={{
-            minHeight: isEmptyView ? "100%" : config.imageMinHeight,
+            minHeight: isEmptyView
+              ? "100%"
+              : isLoading
+              ? placeholderMinHeight
+              : config.imageMinHeight,
+            ...(config.isAuto ? { height: "stretch" } : {}),
             ...(viewportBgColor && !isEmptyView ? { backgroundColor: viewportBgColor } : {}),
           }}
         >
@@ -519,7 +547,10 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
               alt={alt}
               onError={onImageError}
               onLoad={onImageLoad}
-              className="object-contain block mx-auto max-w-full border-[0.25px] border-grey-light"
+              className={cn(
+                "object-contain block mx-auto max-w-full border-[0.25px] border-grey-light",
+                config.isAuto && "w-full"
+              )}
               style={{
                 maxHeight: config.imageMaxHeight,
                 backgroundColor: imageBgColor,
@@ -529,7 +560,7 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
           {hasError && src && (
             <div
               className="w-full flex items-center justify-center bg-grey-middle"
-              style={{ minHeight: config.imageMinHeight }}
+              style={{ minHeight: placeholderMinHeight }}
             >
               <Icon name="BrokenFile" size={20} className="text-white" />
             </div>
@@ -537,7 +568,7 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
           {(!picture_id || picture_id === -1) && view && (
             <div
               className="flex items-center justify-center w-full"
-              style={{ minHeight: config.imageMinHeight }}
+              style={{ minHeight: placeholderMinHeight }}
             >
               <Icon name="EmptyFile" size={30} className="text-white" />
             </div>

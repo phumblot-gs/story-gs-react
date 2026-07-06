@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { useState } from "react";
 import { Slider } from "./slider";
 import { Layout } from "@/components/layout";
 
@@ -81,6 +82,16 @@ Disabled state uses grey-stronger color for all backgrounds.
     step: {
       control: "number",
       description: "Step increment",
+    },
+    steps: {
+      control: "object",
+      description:
+        "Liste de valeurs autorisées (paliers discrets), ex: [2, 3, 6, 10]. Ignore min/max/step.",
+    },
+    labelCurrent: {
+      control: "text",
+      description:
+        "Label affiché au-dessus du point de la valeur sélectionnée (masqué au min/max si labelMin/labelMax est défini).",
     },
     disabled: {
       control: "boolean",
@@ -249,6 +260,85 @@ export const CustomRange: Story = {
       </Layout>
     ),
   ],
+};
+
+/**
+ * Paliers discrets : le slider n'accepte que les valeurs du tableau `steps`.
+ * Les paliers sont répartis régulièrement à l'écran (2 et 3 aussi espacés que 6 et 10),
+ * mais `onValueChange` renvoie bien la valeur réelle du tableau.
+ */
+export const DiscreteSteps: Story = {
+  render: () => {
+    const STEPS = [2, 3, 6, 10];
+    const [value, setValue] = useState<number[]>([3]);
+    return (
+      <Layout bg="white" padding={6}>
+        <div className="w-full max-w-md space-y-4">
+          <Slider
+            steps={STEPS}
+            value={value}
+            onValueChange={setValue}
+            labelMin={String(STEPS[0])}
+            labelMax={String(STEPS[STEPS.length - 1])}
+          />
+          <p className="text-sm text-black">
+            Valeurs autorisées : {STEPS.join(", ")} — sélectionnée :{" "}
+            <strong>{value[0]}</strong>
+          </p>
+        </div>
+      </Layout>
+    );
+  },
+};
+
+/**
+ * labelCurrent : un label suit le thumb et affiche la valeur courante.
+ * Il disparaît lorsqu'il atteint le min (labelMin défini) ou le max (labelMax défini).
+ */
+export const CurrentLabel: Story = {
+  render: () => {
+    const [value, setValue] = useState<number[]>([4]);
+    return (
+      <Layout bg="white" padding={6}>
+        <div className="w-full max-w-md pt-4">
+          <Slider
+            min={1}
+            max={7}
+            step={1}
+            value={value}
+            onValueChange={setValue}
+            labelMin="1"
+            labelMax="7"
+            labelCurrent={String(value[0])}
+          />
+        </div>
+      </Layout>
+    );
+  },
+};
+
+/**
+ * labelCurrent combiné aux paliers discrets.
+ */
+export const CurrentLabelDiscrete: Story = {
+  render: () => {
+    const STEPS = [2, 3, 6, 10];
+    const [value, setValue] = useState<number[]>([6]);
+    return (
+      <Layout bg="white" padding={6}>
+        <div className="w-full max-w-md pt-4">
+          <Slider
+            steps={STEPS}
+            value={value}
+            onValueChange={setValue}
+            labelMin={String(STEPS[0])}
+            labelMax={String(STEPS[STEPS.length - 1])}
+            labelCurrent={String(value[0])}
+          />
+        </div>
+      </Layout>
+    );
+  },
 };
 
 export const WithoutLabels: Story = {

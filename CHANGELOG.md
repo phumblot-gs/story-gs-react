@@ -5,6 +5,44 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.12.7] - 2026-07-06
+
+### ✨ Ajouté
+
+- **`Thumbnail` : taille `size="auto"`**. Le composant occupe désormais toute la
+  largeur disponible de son conteneur (`containerWidth: 100%`).
+  - L'image conserve son ratio (`object-contain`, `w-full`) et pilote sa hauteur ;
+    aucune hauteur fixe n'est imposée à la box de l'image.
+  - Le conteneur de l'image reçoit `height: stretch` pour remplir la hauteur
+    disponible du `Layout` parent.
+  - Repli de hauteur (`200px`) pour les états placeholder (chargement / erreur /
+    vue vide) afin d'éviter l'effondrement de la box.
+  - Non-breaking : `small` / `large` et les tailles personnalisées (`"400px"`, …)
+    conservent leur comportement. Nouvelles stories `Components/Thumbnail ›
+    AutoSize` et `AutoSizeGrid`.
+
+- **`Slider` : prop `steps`** (paliers discrets). Liste de valeurs autorisées
+  (ex. `[2, 3, 6, 10]`) : le slider n'accepte que ces valeurs.
+  - En interne le slider est piloté sur des index (0…n-1) ; `value` /
+    `defaultValue` et `onValueChange` s'expriment en valeurs réelles.
+  - Les paliers sont répartis régulièrement à l'écran quelle que soit leur valeur ;
+    `min` / `max` / `step` sont ignorés dans ce mode.
+  - Nouvelles stories `UI/Slider › DiscreteSteps` et `CurrentLabelDiscrete`.
+
+- **`Slider` : prop `labelCurrent`**. Label positionné au-dessus du point de la
+  valeur sélectionnée (suit le thumb).
+  - Masqué au min si `labelMin` est défini, et au max si `labelMax` est défini,
+    pour éviter le chevauchement.
+  - Nouvelle story `UI/Slider › CurrentLabel`.
+
+### 🐛 Corrigé
+
+- **`Slider` : centrage des labels sur leur point**. `labelMin`, `labelMax` et
+  `labelCurrent` sont désormais centrés précisément sur le centre réel du thumb
+  (prise en compte de l'« in-bounds offset » de Radix : `offset = 5·(1 − P/50)`).
+  - Le thumb est recentré horizontalement (`-translate-x-1/2`) : il ne déborde
+    plus de la piste aux extrémités et son positionnement devient symétrique.
+
 ## [1.12.6] - 2026-07-02
 
 ### ✨ Ajouté

@@ -9,15 +9,92 @@ export interface SliderProps
   labelMin?: string
   /** Label for the maximum value */
   labelMax?: string
+  /**
+   * Label positionné au-dessus du point de la valeur sélectionnée (suit le thumb).
+   * Non affiché lorsque la valeur atteint le min si `labelMin` est défini,
+   * ni au max si `labelMax` est défini (pour éviter le chevauchement).
+   */
+  labelCurrent?: string
   /** Debug mode - adds visual indicators and console logs */
   debug?: boolean
+  /**
+   * Liste des valeurs autorisées (paliers discrets), ex: [2, 3, 6, 10].
+   * Quand elle est fournie, le slider n'accepte que ces valeurs (les paliers
+   * sont répartis de façon régulière visuellement, quelle que soit leur valeur).
+   * `value` / `defaultValue` et `onValueChange` s'expriment alors dans ces
+   * valeurs réelles ; ignore `min` / `max` / `step`.
+   */
+  steps?: number[]
 }
 
 const Slider = React.forwardRef<
   React.ElementRef<typeof SliderPrimitive.Root>,
   SliderProps
->(({ className, labelMin, labelMax, debug, disabled, onValueChange, ...props }, ref) => {
+>(({ className, labelMin, labelMax, labelCurrent, debug, disabled, onValueChange, steps, value, defaultValue, min, max, step, ...props }, ref) => {
   const bg = useBgContext()
+
+  // Mode "paliers discrets" : on pilote Radix sur des index (0..n-1) et on
+  // mappe vers/depuis les valeurs réelles du tableau `steps`.
+  const useSteps = Array.isArray(steps) && steps.length > 0
+
+  // Valeur réelle -> index du palier le plus proche
+  const toIndices = React.useCallback(
+    (vals?: number[]) =>
+      vals?.map((v) => {
+        let bestIndex = 0
+        let bestDist = Infinity
+        steps!.forEach((s, i) => {
+          const dist = Math.abs(s - v)
+          if (dist < bestDist) {
+            bestDist = dist
+            bestIndex = i
+          }
+        })
+        return bestIndex
+      }),
+    [steps]
+  )
+
+  const rootMin = useSteps ? 0 : min
+  const rootMax = useSteps ? steps!.length - 1 : max
+  const rootStep = useSteps ? 1 : step
+  const rootValue = useSteps ? toIndices(value) : value
+  const rootDefaultValue = useSteps ? toIndices(defaultValue) : defaultValue
+
+  // Suivi de la ou les valeur(s) courante(s) (en valeurs réelles) pour
+  // positionner `labelCurrent`. Contrôlé -> on suit `value` ; non contrôlé -> état interne.
+  const [internalValues, setInternalValues] = React.useState<number[]>(
+    () => value ?? defaultValue ?? []
+  )
+  React.useEffect(() => {
+    if (value !== undefined) setInternalValues(value)
+  }, [value])
+  const currentValues = value ?? internalValues
+
+  // Position (en %) d'une valeur réelle le long de la piste.
+  const getPercent = React.useCallback(
+    (v: number) => {
+      if (useSteps) {
+        const idx = toIndices([v])![0]
+        return steps!.length > 1 ? (idx / (steps!.length - 1)) * 100 : 0
+      }
+      const lo = min ?? 0
+      const hi = max ?? 100
+      return hi > lo ? ((v - lo) / (hi - lo)) * 100 : 0
+    },
+    [useSteps, steps, toIndices, min, max]
+  )
+
+  // Alignement des labels sur le centre réel du thumb.
+  // Radix rentre les thumbs dans la piste ("in-bounds offset") : la position
+  // effective est `calc(P% + offset)` avec offset = (thumbWidth/2)*(1 - P/50).
+  // Le thumb fait 10px (cf. classe ci-dessous) => demi-largeur = 5px.
+  const HALF_THUMB = 5
+  const alignedLeft = React.useCallback((percent: number) => {
+    const offset = HALF_THUMB * (1 - percent / 50)
+    const sign = offset >= 0 ? "+" : "-"
+    return `calc(${percent}% ${sign} ${Math.abs(offset)}px)`
+  }, [])
 
   // Determine colors based on data-bg context
   const getSliderStyles = () => {
@@ -53,24 +130,30 @@ const Slider = React.forwardRef<
 
   const styles = getSliderStyles()
 
-  // Debug mode: wrapper for onValueChange with log
+  // Debug mode: wrapper for onValueChange with log.
+  // En mode `steps`, Radix renvoie des index qu'on retraduit en valeurs réelles.
   const handleValueChange = React.useCallback(
-    (value: number[]) => {
+    (raw: number[]) => {
+      const mapped = useSteps ? raw.map((i) => steps![i]) : raw
+      // Non contrôlé : on mémorise pour positionner labelCurrent.
+      if (value === undefined) setInternalValues(mapped)
       if (debug) {
         console.log("[Slider ValueChange]", {
-          value,
+          value: mapped,
+          rawIndices: useSteps ? raw : undefined,
           bg,
           disabled,
           labelMin,
           labelMax,
-          min: props.min,
-          max: props.max,
-          step: props.step,
+          min: rootMin,
+          max: rootMax,
+          step: rootStep,
+          steps,
         })
       }
-      onValueChange?.(value)
+      onValueChange?.(mapped)
     },
-    [debug, bg, disabled, labelMin, labelMax, props.min, props.max, props.step, onValueChange]
+    [debug, bg, disabled, labelMin, labelMax, rootMin, rootMax, rootStep, useSteps, steps, value, onValueChange]
   )
 
   return (
@@ -82,15 +165,18 @@ const Slider = React.forwardRef<
       )}
       data-bg={bg || undefined}
     >
-      {/* Labels */}
-      {(labelMin !== undefined || labelMax !== undefined) && (
-        <div className="flex items-center justify-between w-full">
+      {/* Labels : chacun est centré sur l'extrémité correspondante de la piste
+          (labelMin sur le point de gauche, labelMax sur le point de droite).
+          labelCurrent est centré au-dessus du point de la valeur sélectionnée. */}
+      {(labelMin !== undefined || labelMax !== undefined || labelCurrent !== undefined) && (
+        <div className="relative w-full min-h-[1.5em]">
           {labelMin !== undefined && (
             <p
               className={cn(
-                "font-regular text-center whitespace-pre",
+                "absolute -translate-x-1/2 font-regular text-center whitespace-pre",
                 styles.labelColor
               )}
+              style={{ left: alignedLeft(0) }}
             >
               {labelMin}
             </p>
@@ -98,13 +184,33 @@ const Slider = React.forwardRef<
           {labelMax !== undefined && (
             <p
               className={cn(
-                "font-regular text-center whitespace-pre",
+                "absolute -translate-x-1/2 font-regular text-center whitespace-pre",
                 styles.labelColor
               )}
+              style={{ left: alignedLeft(100) }}
             >
               {labelMax}
             </p>
           )}
+          {labelCurrent !== undefined &&
+            currentValues.map((v, i) => {
+              const percent = getPercent(v)
+              // Masqué s'il tombe sur une extrémité déjà étiquetée.
+              if (percent <= 0 && labelMin !== undefined) return null
+              if (percent >= 100 && labelMax !== undefined) return null
+              return (
+                <p
+                  key={i}
+                  className={cn(
+                    "absolute -translate-x-1/2 font-regular text-center whitespace-pre",
+                    styles.labelColor
+                  )}
+                  style={{ left: alignedLeft(percent) }}
+                >
+                  {labelCurrent}
+                </p>
+              )
+            })}
         </div>
       )}
 
@@ -113,6 +219,11 @@ const Slider = React.forwardRef<
         ref={ref}
         className={cn("relative flex w-full touch-none select-none items-baseline", debug && "ring-1 ring-pink")}
         disabled={disabled}
+        min={rootMin}
+        max={rootMax}
+        step={rootStep}
+        value={rootValue}
+        defaultValue={rootDefaultValue}
         onValueChange={handleValueChange}
         {...props}
       >
@@ -129,7 +240,7 @@ const Slider = React.forwardRef<
         <SliderPrimitive.Thumb
           className={cn(
             "block h-[10px] w-[10px] rounded-full border-0 transition-colors",
-            "absolute top-1/2 -translate-y-1/2",
+            "absolute top-1/2 -translate-x-1/2 -translate-y-1/2",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
             "disabled:pointer-events-none disabled:opacity-50",
             styles.thumb

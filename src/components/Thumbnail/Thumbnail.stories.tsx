@@ -18,8 +18,9 @@ const meta: Meta<typeof Thumbnail> = {
     },
     size: {
       control: "select",
-      options: ["small", "large", "150px", "200px", "250px", "300px", "400px"],
-      description: 'Taille prédéfinie ("small", "large") ou personnalisée ("200px", "15rem", etc.)',
+      options: ["small", "large", "auto", "150px", "200px", "250px", "300px", "400px"],
+      description:
+        'Taille prédéfinie ("small", "large"), "auto" (prend toute la largeur disponible) ou personnalisée ("200px", "15rem", etc.)',
     },
     status: {
       control: "select",
@@ -378,6 +379,88 @@ export const CustomSize: Story = {
           </VStack>
         </HStack>
       </VStack>
+    </Layout>
+  ),
+};
+
+/**
+ * Auto size thumbnail
+ * Le composant prend toute la largeur disponible de son conteneur.
+ * L'image conserve son ratio (object-contain) et pilote sa propre hauteur.
+ */
+export const AutoSize: Story = {
+  render: () => (
+    <Layout bg="grey" padding={4}>
+      <VStack gap={4}>
+        <div className="text-sm font-medium mb-2">
+          Auto size (largeur = espace disponible) :
+        </div>
+        {/* Conteneur de largeur variable pour illustrer le remplissage */}
+        <div style={{ width: 500, maxWidth: "100%" }}>
+          <Thumbnail
+            picture_id={601}
+            src={sampleImageUrl}
+            filename="auto_500px_container.jpg"
+            size="auto"
+            rating={3}
+            status={MediaStatus.SUBMITTED_FOR_APPROVAL}
+            view="F"
+            onSelectionChange={fn()}
+            onRatingChange={fn()}
+            onLabelChange={fn()}
+          />
+        </div>
+        <div style={{ width: 260 }}>
+          <Thumbnail
+            picture_id={602}
+            src={sampleImageUrl2}
+            filename="auto_260px_container.jpg"
+            size="auto"
+            rating={4}
+            status={MediaStatus.VALIDATED}
+            view="B"
+            onSelectionChange={fn()}
+            onRatingChange={fn()}
+            onLabelChange={fn()}
+          />
+        </div>
+      </VStack>
+    </Layout>
+  ),
+};
+
+/**
+ * Auto size dans une grille responsive
+ * Chaque thumbnail remplit sa cellule de grille.
+ */
+export const AutoSizeGrid: Story = {
+  render: () => (
+    <Layout bg="grey" padding={4}>
+      <div
+        style={{
+          width: 640,
+          maxWidth: "100%",
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
+          gap: 16,
+        }}
+      >
+        {[1, 2, 3, 4, 5, 6].map((i) => (
+          <Thumbnail
+            key={i}
+            picture_id={700 + i}
+            src={`https://picsum.photos/300/300?random=${i}`}
+            filename={`auto_${i.toString().padStart(3, "0")}.jpg`}
+            size="auto"
+            rating={i % 6}
+            status={MediaStatus.SUBMITTED_FOR_APPROVAL}
+            view={["F", "B", "L", "R", "T", "D"][i - 1]}
+            onSelectionChange={fn()}
+            onRatingChange={fn()}
+            onLabelChange={fn()}
+          />
+        ))}
+      </div>
     </Layout>
   ),
 };
