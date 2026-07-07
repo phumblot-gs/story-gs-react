@@ -215,9 +215,17 @@ const Slider = React.forwardRef<
       )}
 
       {/* Slider */}
+      {/* Zone de hit élargie (sans impact visuel) : le pseudo-élément ::before
+          du Root étend la surface cliquable de ±10px verticalement sur toute la
+          longueur de la barre. Radix écoute le pointerdown sur le Root et
+          repositionne sur le point le plus proche, y compris sur cette zone. */}
       <SliderPrimitive.Root
         ref={ref}
-        className={cn("relative flex w-full touch-none select-none items-baseline", debug && "ring-1 ring-pink")}
+        className={cn(
+          "relative flex w-full touch-none select-none items-baseline",
+          "before:content-[''] before:absolute before:inset-x-0 before:-inset-y-[10px]",
+          debug && "ring-1 ring-pink before:bg-pink/10"
+        )}
         disabled={disabled}
         min={rootMin}
         max={rootMax}
@@ -241,9 +249,14 @@ const Slider = React.forwardRef<
           className={cn(
             "block h-[10px] w-[10px] rounded-full border-0 transition-colors",
             "absolute top-1/2 -translate-x-1/2 -translate-y-1/2",
+            // Zone de préhension élargie (sans impact visuel) pour faciliter le
+            // drag : le pseudo-élément ::before étend la surface cliquable du
+            // thumb de 10px tout autour.
+            "before:content-[''] before:absolute before:-inset-[10px]",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
             "disabled:pointer-events-none disabled:opacity-50",
-            styles.thumb
+            styles.thumb,
+            debug && "before:bg-pink/20"
           )}
         />
       </SliderPrimitive.Root>

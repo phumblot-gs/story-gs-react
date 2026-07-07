@@ -5,6 +5,23 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.12.8] - 2026-07-07
+
+### 🎯 Amélioré
+
+- **`Slider` : zones cliquables élargies (sans changement d'apparence)**. La
+  surface de prise en compte des clics est agrandie via des pseudo-éléments
+  transparents ; l'apparence (piste 2px, thumb 10px) reste identique.
+  - La piste est cliquable sur **±10px** (10px au-dessus et 10px en dessous de
+    la barre) grâce au `::before` du Root Radix.
+  - **Toute la longueur** de la barre est cliquable : Radix repositionne sur le
+    point le plus proche du clic (comportement natif, désormais accessible sur
+    toute la zone élargie).
+  - Zone de **préhension du thumb** élargie de 10px tout autour pour faciliter le
+    drag.
+  - En mode `debug`, les zones de hit sont légèrement teintées (rose) pour les
+    visualiser.
+
 ## [1.12.7] - 2026-07-06
 
 ### ✨ Ajouté
