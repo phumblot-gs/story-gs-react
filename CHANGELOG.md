@@ -5,6 +5,21 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.12.9] - 2026-07-07
+
+### 🔒 Sécurité
+
+- **Reclassement d'outils de build en `devDependencies`** : `vite-plugin-dts`,
+  `@storybook/addon-mcp` et `@tmcp/session-manager` étaient déclarés dans
+  `dependencies` alors qu'ils ne servent qu'au build / à Storybook (jamais
+  exécutés par les consommateurs, les `.d.ts` étant déjà générés dans `dist/`).
+  - Leur sous-arbre transitif n'est plus imposé aux projets consommateurs :
+    les vulnérabilités `npm audit` associées (chaîne `vite-plugin-dts →
+    @microsoft/api-extractor → lodash/minimatch`, etc.) disparaissent de
+    l'arbre des consommateurs.
+  - Aucun impact sur le paquet publié : `build:lib` génère toujours les types,
+    et les `dependencies` restantes sont exclusivement des dépendances runtime.
+
 ## [1.12.8] - 2026-07-07
 
 ### 🎯 Amélioré
