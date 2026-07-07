@@ -5,6 +5,25 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.12.10] - 2026-07-07
+
+### ✨ Ajouté
+
+- **`Pagination` : navigation au clavier** via la prop `keyboardNavigation`
+  (désactivée par défaut, non-breaking).
+  - `Shift + ←` = page précédente, `Shift + →` = page suivante (appelle
+    `onPageChange` avec la page bornée à `1..totalPages`).
+  - Gardes : sans effet si le focus est dans un champ éditable
+    (`input`/`textarea`/`select`/`contenteditable`) ou si un modal est ouvert.
+  - Sûr avec plusieurs `Pagination` sur une même page (haut/bas d'une liste) :
+    l'évènement clavier n'est traité qu'une seule fois (pas de double saut).
+  - Accessibilité : ajout de `aria-keyshortcuts` sur les boutons `<`/`>`.
+  - Nouvelles stories `Components/Pagination › KeyboardNavigation` et
+    `KeyboardNavigationDualInstances`.
+- **`Pagination` : tooltips de raccourci** sur les boutons `<`/`>` (affichés
+  uniquement quand `keyboardNavigation` est actif). Le tooltip montre les touches
+  du raccourci (badges `⇧` et `←`/`→`), via le `Tooltip` de la librairie.
+
 ## [1.12.9] - 2026-07-07
 
 ### 🔒 Sécurité
