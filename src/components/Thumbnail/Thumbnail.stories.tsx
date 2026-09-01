@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { fn } from "@storybook/test";
 import { Thumbnail } from "./Thumbnail";
@@ -70,6 +71,16 @@ const meta: Meta<typeof Thumbnail> = {
     viewportBgColor: {
       control: "color",
       description: "Couleur de fond du viewport (conteneur autour de l'image, y compris l'espace de letterboxing). Distinct de imageBgColor.",
+    },
+    validateDisabled: {
+      control: "boolean",
+      description:
+        "Désactive le bouton de validation (✓) depuis l'extérieur, sans le masquer. Se combine avec la désactivation interne liée au status.",
+    },
+    rejectDisabled: {
+      control: "boolean",
+      description:
+        "Désactive le bouton de refus (✗) depuis l'extérieur, sans le masquer (et empêche l'ouverture du menu de motifs). Se combine avec la désactivation interne liée au status.",
     },
   },
   args: {
@@ -929,4 +940,157 @@ export const WithRejectionOptions: Story = {
       </HStack>
     </Layout>
   ),
+};
+
+/**
+ * Désactivation externe des actions de validation / refus
+ *
+ * `validateDisabled` et `rejectDisabled` désactivent les boutons ✓ / ✗ sans les
+ * masquer : le bloc d'actions garde sa place (pas de saut de layout, contrairement
+ * au fait de passer `onValidate` / `onReject` à `undefined`).
+ *
+ * Usage typique : verrouiller les deux actions pendant une écriture en cours
+ * (changement de statut en lot) pour interdire une écriture concurrente.
+ */
+export const DisabledValidationActions: Story = {
+  render: () => (
+    <Layout bg="white" padding={4}>
+      <VStack gap={4}>
+        <HStack gap={4} className="flex-wrap">
+          <VStack gap={2} className="items-center">
+            <Thumbnail
+              picture_id={1}
+              src={sampleImageUrl}
+              filename="actions_actives.jpg"
+              status={MediaStatus.SUBMITTED_FOR_APPROVAL}
+              rating={3}
+              size="large"
+              onValidate={fn()}
+              onReject={fn()}
+            />
+            <span className="text-xs">Défaut (aucune prop)</span>
+          </VStack>
+          <VStack gap={2} className="items-center">
+            <Thumbnail
+              picture_id={2}
+              src={sampleImageUrl2}
+              filename="validation_desactivee.jpg"
+              status={MediaStatus.SUBMITTED_FOR_APPROVAL}
+              rating={3}
+              size="large"
+              validateDisabled
+              onValidate={fn()}
+              onReject={fn()}
+            />
+            <span className="text-xs">validateDisabled</span>
+          </VStack>
+          <VStack gap={2} className="items-center">
+            <Thumbnail
+              picture_id={3}
+              src={sampleImageUrl3}
+              filename="refus_desactive.jpg"
+              status={MediaStatus.SUBMITTED_FOR_APPROVAL}
+              rating={3}
+              size="large"
+              rejectDisabled
+              onValidate={fn()}
+              onReject={fn()}
+            />
+            <span className="text-xs">rejectDisabled</span>
+          </VStack>
+          <VStack gap={2} className="items-center">
+            <Thumbnail
+              picture_id={4}
+              src={sampleImageUrl}
+              filename="bloc_verrouille.jpg"
+              status={MediaStatus.SUBMITTED_FOR_APPROVAL}
+              rating={3}
+              size="large"
+              validateDisabled
+              rejectDisabled
+              onValidate={fn()}
+              onReject={fn()}
+            />
+            <span className="text-xs">Les deux (écriture en cours)</span>
+          </VStack>
+        </HStack>
+        <HStack gap={4} className="flex-wrap">
+          <VStack gap={2} className="items-center">
+            <Thumbnail
+              picture_id={5}
+              src={sampleImageUrl2}
+              filename="menu_motifs_verrouille.jpg"
+              status={MediaStatus.SUBMITTED_FOR_APPROVAL}
+              rating={2}
+              size="large"
+              bench={benchWithRejectionOptions}
+              rejectDisabled
+              onValidate={fn()}
+              onReject={(msg) => console.log("Reject:", msg)}
+            />
+            <span className="text-xs">rejectDisabled + menu de motifs (menu non ouvrable)</span>
+          </VStack>
+          <VStack gap={2} className="items-center">
+            <Thumbnail
+              picture_id={6}
+              src={sampleImageUrl3}
+              filename="deja_valide.jpg"
+              status={MediaStatus.VALIDATED}
+              rating={4}
+              size="large"
+              rejectDisabled
+              onValidate={fn()}
+              onReject={fn()}
+            />
+            <span className="text-xs">
+              Combinaison : ✓ déjà désactivé par le status, ✗ par rejectDisabled
+            </span>
+          </VStack>
+        </HStack>
+      </VStack>
+    </Layout>
+  ),
+};
+
+/**
+ * Verrouillage pendant une écriture (simulation)
+ *
+ * Reproduit le cas d'usage de la page validation : le clic déclenche une écriture
+ * de quelques secondes pendant laquelle les deux actions sont verrouillées.
+ */
+export const DisabledDuringWrite: Story = {
+  render: () => {
+    const WriteLockDemo = () => {
+      const [isWriting, setIsWriting] = useState(false);
+
+      const simulateWrite = () => {
+        setIsWriting(true);
+        setTimeout(() => setIsWriting(false), 3000);
+      };
+
+      return (
+        <Layout bg="white" padding={4}>
+          <VStack gap={4} className="items-center">
+            <Thumbnail
+              picture_id={1}
+              src={sampleImageUrl}
+              filename="ecriture_en_cours.jpg"
+              status={MediaStatus.SUBMITTED_FOR_APPROVAL}
+              rating={3}
+              size="large"
+              validateDisabled={isWriting}
+              rejectDisabled={isWriting}
+              onValidate={simulateWrite}
+              onReject={simulateWrite}
+            />
+            <span className="text-xs">
+              {isWriting ? "Écriture en cours… actions verrouillées" : "Cliquez sur ✓ ou ✗"}
+            </span>
+          </VStack>
+        </Layout>
+      );
+    };
+
+    return <WriteLockDemo />;
+  },
 };

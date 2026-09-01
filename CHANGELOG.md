@@ -5,6 +5,38 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.12.11] - 2026-09-01
+
+### ✨ Ajouté
+
+- **`Thumbnail` : désactivation externe des actions de validation / refus** via les
+  props `validateDisabled` et `rejectDisabled` (optionnelles, `false` par défaut,
+  non-breaking).
+  - Permet à l'application hôte de verrouiller les boutons ✓ / ✗ pendant une
+    écriture en cours (changement de statut en lot, par exemple) au lieu de laisser
+    des boutons d'apparence active dont le clic est rejeté en aval.
+  - Les boutons restent **affichés** : plus besoin de passer `onValidate` /
+    `onReject` à `undefined`, qui faisait disparaître le bloc d'actions et
+    provoquait un saut de layout.
+  - **Granularité par action** : `validateDisabled` ne désactive que ✓,
+    `rejectDisabled` que ✗. Pour verrouiller tout le bloc, passer les deux.
+  - **Combinaison** avec les désactivations internes existantes liées au `status`
+    (OU logique, jamais un remplacement) : ✓ reste désactivé si le média est déjà
+    validé (statut 50), ✗ s'il est déjà refusé / à refaire (statuts 31 / 35).
+  - Accessibilité : attribut `disabled` natif réel (clic et focus bloqués par le
+    navigateur), pas seulement une classe ; opacité réduite et
+    `cursor: not-allowed` uniquement dans le cas de la désactivation externe, pour
+    ne rien changer à l'apparence de la désactivation liée au statut.
+  - Avec un menu de motifs de refus configuré
+    (`bench.config.validation.rejection_options`), `rejectDisabled` empêche
+    l'ouverture du menu et le referme s'il était ouvert, sans le réouvrir à la
+    levée de la désactivation : aucun motif n'est cliquable pendant le verrouillage.
+  - Nouvelles stories `Components/Thumbnail › DisabledValidationActions` et
+    `DisabledDuringWrite`, et tests
+    `src/__tests__/thumbnail-validation-disabled.test.tsx`.
+  - Non-breaking : en l'absence des deux props, le comportement est strictement
+    identique à 1.12.10.
+
 ## [1.12.10] - 2026-07-07
 
 ### ✨ Ajouté

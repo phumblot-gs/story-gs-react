@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useMemo, useState } from "react";
+import React, { useRef, useCallback, useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import { Layout, VStack } from "@/components/layout";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -182,6 +182,32 @@ export interface ThumbnailProps {
   onReject?: (rejectionMessage?: string) => void;
   /** Données du bench pour les options de rejet */
   bench?: ThumbnailBench;
+  /**
+   * Désactive le bouton de validation (✓) depuis l'extérieur, sans le masquer.
+   *
+   * Se **combine** avec la désactivation interne liée au `status` (le bouton reste
+   * désactivé si le média est déjà validé) : elle ne la remplace pas.
+   * Optionnelle et `false` par défaut — à `undefined`/`false` le comportement est
+   * strictement identique aux versions antérieures.
+   *
+   * Cas d'usage : verrouiller l'action pendant une écriture en cours (changement de
+   * statut en lot, par exemple) pour interdire une écriture concurrente, au lieu de
+   * laisser un bouton actif dont le clic serait rejeté en aval.
+   */
+  validateDisabled?: boolean;
+  /**
+   * Désactive le bouton de refus (✗) depuis l'extérieur, sans le masquer.
+   *
+   * Se **combine** avec la désactivation interne liée au `status` (le bouton reste
+   * désactivé si le média est déjà refusé / à refaire) : elle ne la remplace pas.
+   * Optionnelle et `false` par défaut — à `undefined`/`false` le comportement est
+   * strictement identique aux versions antérieures.
+   *
+   * Si un menu de motifs de refus est configuré
+   * (`bench.config.validation.rejection_options`), le menu ne peut plus être ouvert
+   * et se referme s'il l'était : aucun motif n'est cliquable pendant la désactivation.
+   */
+  rejectDisabled?: boolean;
 
   // Drag and drop
   /** Indique si le drag and drop est activé */
@@ -283,6 +309,8 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
   onValidate,
   onReject,
   bench,
+  validateDisabled = false,
+  rejectDisabled = false,
 
   // Drag and drop
   draggable = false,
@@ -315,10 +343,31 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
       (rejectionOptions.secondary && rejectionOptions.secondary.length > 0))
   );
 
+  // Désactivation des boutons de validation / refus.
+  // La désactivation interne liée au statut du média est conservée telle quelle et
+  // se combine (OU logique) avec la désactivation externe optionnelle.
+  const isValidatedStatus = status === 50;
+  const isRejectedStatus = status === 31 || status === 35;
+  const validateButtonDisabled = isValidatedStatus || validateDisabled;
+  const rejectButtonDisabled = isRejectedStatus || rejectDisabled;
+  // Rendu de l'état désactivé externe : le `disabled` natif suffit à bloquer le clic
+  // et le focus ; on ajoute le retour visuel (opacité + curseur) que `ButtonStatus`
+  // neutralise volontairement pour la désactivation liée au statut.
+  const externallyDisabledButtonClass = "disabled:opacity-50";
+
   // Handler pour gérer l'ouverture/fermeture des menus
   const handleMenuOpenChange = useCallback((menuId: MenuId, open: boolean) => {
     setOpenMenu(open ? menuId : null);
   }, []);
+
+  // Si le refus est désactivé alors que le menu de motifs est ouvert, on ferme le
+  // menu et on oublie son état : il ne doit pas se réouvrir tout seul à la levée
+  // de la désactivation.
+  useEffect(() => {
+    if (!rejectButtonDisabled) return;
+    setOpenMenu((current) => (current === "reject" ? null : current));
+    setRejectMenuView("main");
+  }, [rejectButtonDisabled]);
 
   // Calcul de la configuration de taille (prédéfinie ou personnalisée)
   const config = useMemo(() => {
@@ -739,31 +788,36 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
           style={{ width: config.containerWidth }}
         >
           {picture_id && onReject && !hasRejectionMenu && (
-            <ButtonStatus
-              icon="X"
-              isActive={status === 31 || status === 35}
-              status={31}
-              size="small"
-              disabled={status === 31 || status === 35}
-              onClick={() => onReject()}
-            />
+            <span className={cn("inline-flex", rejectDisabled && "cursor-not-allowed")}>
+              <ButtonStatus
+                icon="X"
+                isActive={isRejectedStatus}
+                status={31}
+                size="small"
+                disabled={rejectButtonDisabled}
+                className={cn(rejectDisabled && externallyDisabledButtonClass)}
+                onClick={() => onReject()}
+              />
+            </span>
           )}
           {picture_id && onReject && hasRejectionMenu && (
             <Popover
-              open={openMenu === "reject"}
+              open={openMenu === "reject" && !rejectButtonDisabled}
               onOpenChange={(open) => {
+                if (open && rejectButtonDisabled) return;
                 handleMenuOpenChange("reject", open);
                 if (!open) setRejectMenuView("main");
               }}
             >
               <PopoverTrigger asChild>
-                <span>
+                <span className={cn("inline-flex", rejectDisabled && "cursor-not-allowed")}>
                   <ButtonStatus
                     icon="X"
-                    isActive={status === 31 || status === 35}
+                    isActive={isRejectedStatus}
                     status={31}
                     size="small"
-                    disabled={status === 31 || status === 35}
+                    disabled={rejectButtonDisabled}
+                    className={cn(rejectDisabled && externallyDisabledButtonClass)}
                     onClick={(e) => {
                       e.preventDefault();
                       handleMenuOpenChange("reject", openMenu !== "reject");
@@ -866,14 +920,17 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
             </Popover>
           )}
           {picture_id && onValidate && (
-            <ButtonStatus
-              icon="Check"
-              isActive={status === 50}
-              status={50}
-              size="small"
-              disabled={status === 50}
-              onClick={onValidate}
-            />  
+            <span className={cn("inline-flex", validateDisabled && "cursor-not-allowed")}>
+              <ButtonStatus
+                icon="Check"
+                isActive={isValidatedStatus}
+                status={50}
+                size="small"
+                disabled={validateButtonDisabled}
+                className={cn(validateDisabled && externallyDisabledButtonClass)}
+                onClick={onValidate}
+              />
+            </span>
           )}
         </div>
       )}
