@@ -23,3 +23,10 @@ storybook-static
 *.njsproj
 *.sln
 *.sw?
+
+# Registre privé Nexus — NE JAMAIS COMMITER (contient _authToken)
+.npmrc
+
+# yalc (lien local vers les consommateurs de la librairie)
+.yalc/
+yalc.lock
