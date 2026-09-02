@@ -29,6 +29,36 @@
   --badge-fs-label: 0.625rem; /* 10px */
 }
 
+/* ==========================================================================
+ * .gs-text-trim — rognage typographique (leading-trim)
+ *
+ * Rogne la boîte de texte sur la hauteur de capitale (bord haut) et sur la
+ * ligne de base (bord bas). Supprime le décalage vertical optique du texte au
+ * lieu de le compenser : le bloc capitale→ligne de base est alors exactement
+ * centré par le `align-items: center` du parent. Mesuré sur AvenirNextLTPro :
+ * décalage résiduel ~0 (contre 1,578px à 10px sans rognage).
+ *
+ * CLASSE GÉNÉRIQUE ET RÉUTILISABLE. Le biais qu'elle corrige est celui de la
+ * police, donc il est présent partout dans la librairie — `Button size="small"`
+ * et `TagText` ont exactement le même. Elle n'est volontairement appliquée QUE
+ * sur le Badge pour l'instant : la généraliser demande de revoir chaque
+ * composant un par un (hauteurs de boîte, `min-h-*`), c'est un chantier DS à
+ * part entière. Réutiliser cette classe plutôt que d'en créer une autre.
+ *
+ * À POSER SUR L'ÉLÉMENT QUI PORTE LE TEXTE, jamais sur un conteneur flex :
+ * `text-box-trim` n'est pas héritée et ne s'applique qu'aux « block containers »
+ * et « inline boxes ». Sur un `inline-flex`, le texte vit dans un élément flex
+ * anonyme qui reprend la valeur initiale, et la règle est inopérante.
+ *
+ * Amélioration progressive : `text-box` est Baseline depuis août 2026 (Chrome
+ * 133+, Safari 18.2+, Firefox 154+). Un moteur plus ancien ignore la
+ * déclaration — la classe ne pose rien d'autre, donc le rendu retombe
+ * exactement sur le précédent. Pas de `@supports`, pas de saut de layout.
+ * ========================================================================== */
+.gs-text-trim {
+  text-box: trim-both cap alphabetic;
+}
+
 /* Styles pour Stepper */
 /* Force l'état actif pour les étapes du Stepper (utilise pressed) */
 [data-bg="white"] .stepper-step.stepper-active,

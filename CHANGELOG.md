@@ -7,6 +7,18 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ## [1.12.12] - 2026-09-02
 
+### ✨ Ajouté
+
+- **`PageHeader` : logo de marque cliquable via une nouvelle prop optionnelle
+  `onLogoClick`.** Quand elle est fournie, la zone de marque — le `logo`
+  personnalisé ou le `BrandLogo` du thème — est enveloppée dans un vrai
+  `<button type="button">` portant `aria-label="home"`, au lieu de recevoir un
+  `onClick` sur un `<div>` : l'activation au clavier et la sémantique pour les
+  lecteurs d'écran viennent gratuitement. Le bouton ne porte aucun style propre
+  (`p-0 border-0 bg-transparent`), la mise en page de l'en-tête est donc
+  inchangée. **Non-breaking** : sans la prop, le balisage est exactement celui
+  d'avant, sans élément supplémentaire.
+
 ### ♻️ Modifié
 
 - **`Badge` rend désormais un `<span>` et non plus un `<div>`.** Un Badge est
@@ -33,6 +45,48 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
     d'une surface d'API publique supplémentaire.
 
 ### 🐛 Corrigé
+
+- **`Badge` : le décalage vertical du texte est supprimé, plus seulement
+  atténué.** Le texte est désormais enveloppé dans un
+  `<span class="gs-text-trim">` qui applique
+  `text-box: trim-both cap alphabetic` : la boîte de texte est rognée sur la
+  hauteur de capitale et la ligne de base, si bien que le bloc
+  capitale→ligne-de-base est exactement centré par le `align-items: center` du
+  Badge. **Mesuré sur le CSS buildé : le décalage résiduel passe de 0,790px à
+  0,009px.**
+  - **Pourquoi un `<span>` et pas la règle sur le Badge** : `text-box-trim`
+    n'est pas héritée et ne s'applique qu'aux « block containers » et « inline
+    boxes ». Le Badge étant `inline-flex`, son texte vit dans un élément flex
+    **anonyme** qui reprend la valeur initiale `none`. Vérifié dans Chrome : la
+    règle posée sur le Badge est bien calculée sur l'élément et pourtant
+    totalement inopérante (hauteur identique au pixel près), alors que la même
+    règle sur un `<span>` enfant fonctionne.
+  - **Seuls les enfants `string` et `number` sont enveloppés.** Le texte niché
+    dans un élément enfant n'est pas rogné et garde le rendu actuel — c'est le
+    cas des trois usages de `gs_w`, qui passent leurs propres `<span>` / `Text`
+    et sont donc **strictement inchangés**. Un consommateur qui veut le rognage
+    sur son propre texte peut poser la classe `gs-text-trim` lui-même.
+  - Les suites d'enfants textuels adjacents sont regroupées dans **un seul**
+    span : `<Badge>Vue {code}</Badge>` produit deux enfants string, et un span
+    par enfant aurait créé deux éléments flex donc un `gap-1` parasite au milieu
+    du texte (mesuré : +2,7px de largeur).
+  - `gap-1` entre une icône et le texte est **préservé** (5px mesurés, identique
+    à avant), le span étant posé en frère de l'icône et non autour.
+  - **`min-h-4` devient structurel** : c'est lui qui tient la hauteur une fois
+    la boîte rognée. Vérifié — en le retirant, le Badge s'effondre de 20px à
+    13,078px. Ne pas le supprimer.
+  - **Amélioration progressive, sans `@supports`** : `text-box` est Baseline
+    depuis août 2026 (Chrome 133+, Safari 18.2+, Firefox 154+). Un moteur plus
+    ancien ignore la déclaration et la classe ne pose rien d'autre, donc le
+    rendu retombe exactement sur le précédent. Vérifié : **hauteur 20px et
+    largeur identiques avec et sans rognage** — aucun saut de layout, seul le
+    décalage de 0,8px subsiste.
+  - Nouvelle classe **`gs-text-trim`**, générique et réutilisable
+    (`src/styles/custom-styles.css`). Le biais corrigé est celui de la police,
+    donc `Button size="small"` et `TagText` ont exactement le même :
+    l'application y est volontairement **différée** (chaque composant demande de
+    revoir sa hauteur de boîte), mais c'est cette classe qu'il faudra réutiliser
+    plutôt que d'en créer une autre.
 
 - **`Badge` : le texte passe de 9px à 10px.** 9px (`text-xs`) était jugé trop
   petit. Nouveau token `--badge-fs-label` (0,625rem = 10px), déclaré dans
@@ -135,7 +189,10 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
   Badge / Button` : Badge et `Button size="small"` dans des conteneurs flex plus
   hauts qu'eux, avec repère de centre, plus les cas `items-stretch`, `flex-col`,
   `items-end`, `flex-wrap` et surcharge `py-1`. Elle remet et étend la story
-  `AlignmentTest` de `6c3af9d`, disparue avec `08d4809`.
+  `AlignmentTest` de `6c3af9d`, disparue avec `08d4809`. Le repère de centre de
+  cette story utilise le token `bg-red-strong` : `bg-red` n'est pas une classe
+  que le preset GS génère (seul `red-strong` existe dans la palette) et le
+  trait était donc invisible.
 - `badge.stories.tsx` : correction d'une affirmation fausse qui prétendait que
   « Icons align perfectly with text using `items-center` ». `items-center`
   centre les boîtes des enfants sur la hauteur du Badge, pas le bloc de glyphes
