@@ -4,7 +4,11 @@
       "Bash(cp:*)",
       "Bash(mkdir:*)",
       "Bash(ls:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(npx tsc:*)",
+      "mcp__ide__getDiagnostics",
+      "mcp__claude_ai_GS_Components__get-story-urls",
+      "WebFetch(domain:localhost)"
     ],
     "deny": []
   }
