@@ -6,6 +6,29 @@
  * pour pouvoir utiliser les variables CSS définies dans figma-tokens.css
  */
 
+/* ==========================================================================
+ * Tokens de police non issus de Figma
+ *
+ * Déclarés ici, et NON dans src/styles/figma-tokens.css, parce que ce dernier
+ * est régénéré intégralement par scripts/generate-css-tokens.cjs : toute
+ * valeur écrite à la main y serait effacée au prochain `generate:tokens`.
+ *
+ * --badge-fs-label : 10px, taille du texte des Badge.
+ *
+ * ÉCART DÉLIBÉRÉ À LA MAQUETTE, à re-discuter en design : 10px n'existe pas
+ * dans les primitives Figma, dont l'échelle est 9 / 11 / 13 / 16 / 18 / 20px,
+ * et `fontTagFtText` prescrit 13px pour le texte d'un tag (9px étant réservé
+ * au « grade », cf. figma-primitives.json). 10px est un compromis mesuré :
+ * c'est la plus grande taille qui n'aggrave pas le décalage vertical du texte
+ * (mesuré dans Chrome : 1,625px à 9px, 1,578px à 10px, mais 3,531px à 11px —
+ * le décalage double à partir de 11px). Le nom est volontairement porté par le
+ * composant, comme --header-fs-title et --button-fs-header, pour que cet écart
+ * reste visible et ne soit pas pris pour un nouvel échelon global.
+ * ========================================================================== */
+:root {
+  --badge-fs-label: 0.625rem; /* 10px */
+}
+
 /* Styles pour Stepper */
 /* Force l'état actif pour les étapes du Stepper (utilise pressed) */
 [data-bg="white"] .stepper-step.stepper-active,

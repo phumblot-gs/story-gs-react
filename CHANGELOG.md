@@ -34,6 +34,53 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ### 🐛 Corrigé
 
+- **`Badge` : le texte passe de 9px à 10px.** 9px (`text-xs`) était jugé trop
+  petit. Nouveau token `--badge-fs-label` (0,625rem = 10px), déclaré dans
+  `src/styles/custom-styles.css` — **pas** dans `figma-tokens.css`, qui est
+  régénéré — et exposé en utilitaire `text-badge-label` par une entrée
+  **additive** dans `tailwind-preset.cjs`.
+  - **Pourquoi 10px et pas 11px** : 10px est la plus grande taille qui
+    n'aggrave pas le décalage vertical du texte. Mesuré dans Chrome sur
+    AvenirNextLTPro, par deux méthodes indépendantes concordantes, l'asymétrie
+    (espace sous la ligne de base moins espace au-dessus de la capitale) vaut
+    **1,625px à 9px, 1,578px à 10px, puis 3,531px à 11px** — elle double à
+    partir de 11px. 10px offre donc +11 % de lisibilité **à coût nul** sur le
+    centrage.
+  - À rectifier par rapport à l'analyse préalable : le modèle prédisait 1,372 →
+    1,080px, soit un gain de 0,29px. **La mesure donne un gain réel de
+    0,047px**, c'est-à-dire invisible. Le modèle supposait un arrondi entier de
+    l'ascent/descent ; Chrome cale en fait la ligne de base sur le pixel
+    entier. Le bon argument pour 10px est donc « plus grand sans dégrader », et
+    non « plus grand et mieux centré ».
+  - **Hauteur du Badge inchangée : 20px** (vérifié sur le CSS buildé). Le
+    contenu passe de 17,25px à 18,5px, toujours sous les 20px de `min-h-4`.
+  - **⚠️ Écart délibéré à la maquette Figma, à re-discuter en design** : 10px
+    n'existe pas dans les primitives, dont l'échelle est 9 / 11 / 13 / 16 / 18 /
+    20px, et `fontTagFtText` (`src/styles/figma-primitives.json`) prescrit
+    **13px** pour le texte d'un tag, 9px étant réservé au « grade ». Le token
+    est volontairement nommé d'après le composant, comme `--header-fs-title` et
+    `--button-fs-header`, pour que cet écart reste visible et ne soit pas pris
+    pour un nouvel échelon global de l'échelle.
+  - Impact consommateurs : le texte s'élargit d'environ 11 %. Les 3 usages de
+    `gs_w` sont **inchangés** car tous les trois surchargent déjà la taille
+    (`popup-tag-text` a `font-size: var(--font-size-sm)` et `line-height: 1` ;
+    les deux badges de `HeaderContainer` ont des `<span>` en `text-sm` à hauteur
+    explicite). Parmi les 5 indicateurs de `Thumbnail`, seul `ViewIndicator`
+    n'avait pas de surcharge : sa hauteur reste à 15px (son `min-h-3`), seule sa
+    largeur croît. Côté `gs_guidelines`, les rangées de chips en `flex-wrap`
+    s'élargissent d'environ 11 %, donc légèrement plus de retours à la ligne.
+
+- **`cn()` : les tailles de police personnalisées n'étaient plus fusionnées
+  correctement.** `tailwind-merge` ne reconnaît comme `font-size` que les clés en
+  « taille de t-shirt » (`xs`, `sm`, `2xl`…). Les clés personnalisées du preset
+  retombaient donc dans le groupe *text-color* : `cn("text-badge-label",
+  "text-black")` supprimait la **taille** au profit de la couleur — cas réel,
+  `Thumbnail/ViewIndicator` passe `text-black` à un `Badge`. `src/lib/utils.ts`
+  déclare désormais `badge-label`, `header-title` et `button-header` dans le
+  groupe `font-size` via `extendTailwindMerge`. Corrige au passage le même bug
+  latent sur `text-header-title` et `text-button-header`. Une taille passée par
+  le consommateur (`text-sm`) continue de remplacer celle de la librairie.
+
 - **`Badge` : centrage vertical du texte.** Deux causes cumulées, toutes deux
   dans la librairie :
   - Les classes de base portaient `self-start`, qui annulait le
