@@ -764,7 +764,7 @@ const AlignmentBox = ({
     <div className={`relative border border-grey-strong rounded ${className}`}>
       {/* Repère du centre vertical du conteneur */}
       <div
-        className="absolute left-0 right-0 top-1/2 h-px bg-red pointer-events-none"
+        className="absolute left-0 right-0 top-1/2 h-px bg-red-strong pointer-events-none"
         aria-hidden="true"
       />
       {children}
