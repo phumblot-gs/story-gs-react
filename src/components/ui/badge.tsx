@@ -40,8 +40,32 @@ const badgeVariants = cva(
   }
 )
 
+/**
+ * Le Badge rend un `<span>` et non un `<div>`.
+ *
+ * Raison : un Badge est régulièrement posé à l'intérieur d'un élément
+ * interactif (en-tête de section rendu cliquable par un vrai `<button>`, par
+ * exemple), et le modèle de contenu de `<button>` n'accepte que du *phrasing
+ * content*. Un `<div>` y était du HTML invalide : React ne s'en plaint pas,
+ * mais le parseur du navigateur peut réarranger l'arbre et les validateurs
+ * d'accessibilité le signalent.
+ *
+ * Aucun effet visuel : les classes de base portent déjà `inline-flex`, qui
+ * écrase le `display` par défaut des deux balises.
+ *
+ * Conséquence de typage : les props dérivent de `HTMLSpanElement` et non plus
+ * de `HTMLDivElement`. Ce n'est **pas** un breaking change — vérifié :
+ * `HTMLAttributes<T>` n'utilise `T` que dans ses handlers d'événements, et les
+ * types de handlers de React (`EventHandler`) sont bivariants par construction
+ * (« bivariance hack »). Un consommateur qui avait annoté son handler
+ * `(e: React.MouseEvent<HTMLDivElement>) => …` compile toujours, et les deux
+ * formes de props restent mutuellement assignables.
+ *
+ * `Badge` n'est pas un `forwardRef` : la prop `ref` n'était pas acceptée avant
+ * ce changement et ne l'est toujours pas.
+ */
 export interface BadgeProps
-  extends React.HTMLAttributes<HTMLDivElement>,
+  extends React.HTMLAttributes<HTMLSpanElement>,
     VariantProps<typeof badgeVariants> {
   debug?: boolean;
 }
@@ -50,7 +74,7 @@ function Badge({ className, variant, debug, onClick, onFocus, onBlur, ...props }
   const bg = useBgContext();
 
   // Debug mode : wrapper pour onClick avec log
-  const handleClick = React.useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+  const handleClick = React.useCallback((e: React.MouseEvent<HTMLSpanElement>) => {
     if (debug) {
       console.log('[Badge Click]', {
         variant,
@@ -62,7 +86,7 @@ function Badge({ className, variant, debug, onClick, onFocus, onBlur, ...props }
   }, [debug, variant, bg, onClick]);
 
   // Debug mode : wrapper pour onFocus avec log
-  const handleFocus = React.useCallback((e: React.FocusEvent<HTMLDivElement>) => {
+  const handleFocus = React.useCallback((e: React.FocusEvent<HTMLSpanElement>) => {
     if (debug) {
       console.log('[Badge Focus]', {
         variant,
@@ -74,7 +98,7 @@ function Badge({ className, variant, debug, onClick, onFocus, onBlur, ...props }
   }, [debug, variant, bg, onFocus]);
 
   // Debug mode : wrapper pour onBlur avec log
-  const handleBlur = React.useCallback((e: React.FocusEvent<HTMLDivElement>) => {
+  const handleBlur = React.useCallback((e: React.FocusEvent<HTMLSpanElement>) => {
     if (debug) {
       console.log('[Badge Blur]', {
         variant,
@@ -86,7 +110,7 @@ function Badge({ className, variant, debug, onClick, onFocus, onBlur, ...props }
   }, [debug, variant, bg, onBlur]);
 
   return (
-    <div 
+    <span
       data-bg={bg || undefined}
       className={cn(
         badgeVariants({ variant }), 
@@ -104,7 +128,7 @@ function Badge({ className, variant, debug, onClick, onFocus, onBlur, ...props }
           {variant || 'default'}
         </span>
       )}
-    </div>
+    </span>
   );
 }
 

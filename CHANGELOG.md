@@ -5,10 +5,32 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
-## [Non publié]
+## [1.12.12] - 2026-09-02
 
-> Section à fusionner dans `1.12.11` (non encore publiée) ou à renommer en
-> `1.12.12` selon la décision de release.
+### ♻️ Modifié
+
+- **`Badge` rend désormais un `<span>` et non plus un `<div>`.** Un Badge est
+  régulièrement posé à l'intérieur d'un élément interactif — un en-tête de
+  section rendu cliquable par un vrai `<button>`, par exemple — et le modèle de
+  contenu de `<button>` n'accepte que du *phrasing content* : un `<div>` y était
+  du HTML invalide. React ne s'en plaint pas, mais le parseur du navigateur peut
+  réarranger l'arbre et les validateurs d'accessibilité le signalent.
+  - **Aucun effet visuel** : les classes de base portent `inline-flex`, qui
+    écrase le `display` par défaut des deux balises.
+  - **Aucun breaking change TypeScript** — vérifié : les props publiques passent
+    de `React.HTMLAttributes<HTMLDivElement>` à
+    `React.HTMLAttributes<HTMLSpanElement>`, mais `HTMLAttributes<T>` n'utilise
+    `T` que dans ses handlers d'événements, et les types de handlers de React
+    (`EventHandler`) sont **bivariants** par construction (« bivariance hack »).
+    Un consommateur qui avait annoté son handler
+    `(e: React.MouseEvent<HTMLDivElement>) => …` continue donc de compiler, de
+    même qu'un consommateur qui étend `BadgeProps` ; les deux formes de props
+    restent mutuellement assignables.
+  - Rappel non lié à ce changement : `Badge` n'est pas un `forwardRef`, la prop
+    `ref` n'était pas acceptée avant et ne l'est toujours pas.
+  - Pas de prop `as` ajoutée : elle permettrait de remettre un `<div>`, donc de
+    reproduire le HTML invalide qu'on corrige, au prix d'un typage polymorphe et
+    d'une surface d'API publique supplémentaire.
 
 ### 🐛 Corrigé
 
@@ -43,13 +65,22 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
   `border: transparent`, qui remettait `border-style` à `none` et retirait donc
   les 2px de bordure haut/bas du Badge.
 
-  ⚠️ **Impact visuel côté consommateurs** : les variantes reprennent un fond.
-  Les sélecteurs `[data-bg="…"].badge-*` ont une spécificité (0,2,0) supérieure
-  à celle d'un utilitaire Tailwind comme `.bg-white` (0,1,0) ; un consommateur
-  qui surchargeait le fond d'un Badge par un utilitaire devra passer par `!` ou
-  par une règle plus spécifique. Cas connu : `gs_w`,
-  `src/pages/validation/components/HeaderContainer/HeaderContainerPresentation.js`
-  (`className='… bg-white'`).
+  ⚠️ **Impact visuel côté consommateurs** : les variantes reprennent un fond
+  là où elles n'en avaient plus aucun.
+
+  Ces règles sont écrites `:where([data-bg="…"]).badge-*` et non
+  `[data-bg="…"].badge-*` : `:where()` ayant une spécificité nulle, elles pèsent
+  (0,1,0) — le poids d'une simple classe — au lieu de (0,2,0). Sans ça elles
+  auraient battu les utilitaires Tailwind du consommateur et `<Badge
+  className="bg-white">` aurait été silencieusement écrasé (cas réel : `gs_w`,
+  `src/pages/validation/components/HeaderContainer/HeaderContainerPresentation.js`).
+  À égalité de spécificité avec `.bg-white`, c'est l'ordre source qui tranche, et
+  `custom-styles.css` est importé **avant** `@tailwind utilities` : l'utilitaire
+  du consommateur gagne. Les variantes s'appliquent normalement dès que rien ne
+  les surcharge.
+
+  Incohérence assumée : les classes `btn-*` restent en (0,2,0). Les harmoniser
+  est un chantier séparé.
 
 ### 📚 Documentation
 
