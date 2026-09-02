@@ -5,6 +5,64 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [Non publié]
+
+> Section à fusionner dans `1.12.11` (non encore publiée) ou à renommer en
+> `1.12.12` selon la décision de release.
+
+### 🐛 Corrigé
+
+- **`Badge` : centrage vertical du texte.** Deux causes cumulées, toutes deux
+  dans la librairie :
+  - Les classes de base portaient `self-start`, qui annulait le
+    `align-items: center` du conteneur parent : un Badge placé dans un en-tête
+    flex plus haut que lui se collait en haut (mesuré ~5px de décalage dans un
+    en-tête de 52px). Remplacé par `w-fit h-fit`, qui protège toujours le Badge
+    de l'étirement (`align-items: stretch`, la valeur par défaut) **sans**
+    confisquer l'alignement décidé par le parent — une cross-size non-`auto`
+    fait dégrader `stretch` en `flex-start`. Un Badge dans un conteneur
+    `items-center` est donc désormais réellement centré, et dans un `flex-col`
+    il reste collé à gauche et à sa largeur de contenu.
+  - Le Badge n'avait aucune classe `leading-*`. Le `font-size` venait du preset
+    GS (`--font-size-xs` = 9px) mais la `line-height` restait celle de la règle
+    Tailwind stock `.text-xs` (16px), qui survit à même spécificité : texte de
+    9px dans une line-box de 16px, décalé vers le haut d'environ 1px du fait de
+    l'asymétrie d'AvenirNextLTPro. Ajout de `leading-tight`, comme le fait déjà
+    `Button size="small"`.
+  - Ajout de `min-h-4` (20px) pour aligner la hauteur minimale du Badge sur
+    celle de `Button size="small"`. `min-height` et non `height` : un
+    consommateur qui surcharge le padding (`py-1`) peut toujours dépasser.
+- **`Badge` : les 4 variantes n'avaient plus aucun style.** Les classes
+  `badge-normal`, `badge-secondary`, `badge-destructive` et `badge-outline`
+  appliquées par `badgeVariants` n'existaient nulle part : le bloc CSS avait été
+  écrit dans `src/styles/figma-tokens.css` (commit `6c3af9d`) puis effacé une
+  heure plus tard par une régénération de ce fichier (`08d4809`). Les quatre
+  variantes étaient donc visuellement identiques et sans fond. Le bloc est
+  restauré dans `src/styles/custom-styles.css`, qui n'est pas généré, et corrigé
+  au passage : `border-color: transparent` au lieu du raccourci
+  `border: transparent`, qui remettait `border-style` à `none` et retirait donc
+  les 2px de bordure haut/bas du Badge.
+
+  ⚠️ **Impact visuel côté consommateurs** : les variantes reprennent un fond.
+  Les sélecteurs `[data-bg="…"].badge-*` ont une spécificité (0,2,0) supérieure
+  à celle d'un utilitaire Tailwind comme `.bg-white` (0,1,0) ; un consommateur
+  qui surchargeait le fond d'un Badge par un utilitaire devra passer par `!` ou
+  par une règle plus spécifique. Cas connu : `gs_w`,
+  `src/pages/validation/components/HeaderContainer/HeaderContainerPresentation.js`
+  (`className='… bg-white'`).
+
+### 📚 Documentation
+
+- Story de non-régression `Design System/Typography › Alignement vertical
+  Badge / Button` : Badge et `Button size="small"` dans des conteneurs flex plus
+  hauts qu'eux, avec repère de centre, plus les cas `items-stretch`, `flex-col`,
+  `items-end`, `flex-wrap` et surcharge `py-1`. Elle remet et étend la story
+  `AlignmentTest` de `6c3af9d`, disparue avec `08d4809`.
+- `badge.stories.tsx` : correction d'une affirmation fausse qui prétendait que
+  « Icons align perfectly with text using `items-center` ». `items-center`
+  centre les boîtes des enfants sur la hauteur du Badge, pas le bloc de glyphes
+  dans sa line-box — c'était précisément l'hypothèse à l'origine du bug.
+
 ## [1.12.11] - 2026-09-01
 
 ### ✨ Ajouté

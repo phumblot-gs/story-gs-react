@@ -2,6 +2,8 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import React from 'react';
 import { Text } from '@/components/ui/text';
 import { Layout } from '@/components/layout';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 
 const Typography = () => {
   return (
@@ -725,6 +727,178 @@ export const HTMLTags: Story = {
         <Text as="strong" className="text-base font-bold">Strong text</Text>
         <Text as="em" className="text-base italic">Emphasized text</Text>
         <Text as="small" className="text-sm font-regular">Small text</Text>
+      </div>
+    </Layout>
+  ),
+};
+
+/**
+ * Story de non-régression sur l'alignement vertical du Badge.
+ *
+ * Elle existait sous ce nom dans le commit 6c3af9d puis a disparu avec 08d4809.
+ * Elle est ici remise ET étendue : la version d'origine ne testait que le texte
+ * inline, alors que le vrai bug se manifeste dans un conteneur flex PLUS HAUT
+ * que le Badge (le `self-start` des classes de base annulait le `items-center`
+ * du parent, et l'absence de `leading-*` laissait survivre la line-height de la
+ * règle Tailwind stock `.text-xs`).
+ *
+ * Ce qu'il faut regarder :
+ *  - le texte du Badge doit être visuellement centré sur le trait rouge ;
+ *  - le Badge et le Button small doivent être centrés de la même façon ;
+ *  - dans un conteneur `items-stretch` (défaut), le Badge ne doit PAS s'étirer ;
+ *  - dans un conteneur `flex-col`, le Badge ne doit PAS prendre toute la largeur.
+ */
+
+/** Conteneur de test : plus haut que son contenu, avec un repère de centre. */
+const AlignmentBox = ({
+  title,
+  className,
+  children,
+}: {
+  title: string;
+  className: string;
+  children: React.ReactNode;
+}) => (
+  <div>
+    <p className="text-xs font-medium mb-1 text-grey-strongest">{title}</p>
+    <div className={`relative border border-grey-strong rounded ${className}`}>
+      {/* Repère du centre vertical du conteneur */}
+      <div
+        className="absolute left-0 right-0 top-1/2 h-px bg-red pointer-events-none"
+        aria-hidden="true"
+      />
+      {children}
+    </div>
+  </div>
+);
+
+export const AlignmentTest: Story = {
+  name: "Alignement vertical Badge / Button",
+  render: () => (
+    <Layout bg="white" padding={6}>
+      <div className="space-y-6">
+        <div>
+          <Text as="h3" className="text-lg font-semibold mb-1">
+            Alignement vertical du Badge
+          </Text>
+          <Text as="p" className="text-sm text-grey-strongest">
+            Le texte du Badge doit être centré sur le trait rouge, et aligné
+            avec celui du Button small placé à côté.
+          </Text>
+        </div>
+
+        {/* Cas nominal : le bug d'origine, un en-tête de 52px */}
+        <AlignmentBox
+          title="flex items-center, conteneur 52px (cas gs_guidelines)"
+          className="flex items-center gap-2 px-3 h-[52px]"
+        >
+          <Text as="span" className="text-base">
+            Titre de la vue
+          </Text>
+          <Badge>Badge</Badge>
+          <Badge variant="secondary">Secondary</Badge>
+          <Badge variant="destructive">Destructive</Badge>
+          <Badge variant="outline">Outline</Badge>
+          <Button size="small">Button small</Button>
+        </AlignmentBox>
+
+        {/* Le parent centre : le Badge doit obéir, pas imposer self-start */}
+        <AlignmentBox
+          title="flex items-center, conteneur 80px — le Badge doit suivre le parent"
+          className="flex items-center gap-2 px-3 h-[80px]"
+        >
+          <Badge>Badge</Badge>
+          <Button size="small">Button small</Button>
+        </AlignmentBox>
+
+        {/* Non-régression : pas d'étirement quand le parent est en stretch */}
+        <AlignmentBox
+          title="flex (items-stretch par défaut), conteneur 80px — le Badge ne doit PAS s'étirer"
+          className="flex gap-2 px-3 h-[80px]"
+        >
+          <Badge>Badge</Badge>
+          <Button size="small">Button small</Button>
+        </AlignmentBox>
+
+        {/* Non-régression : pas de pleine largeur dans une colonne */}
+        <AlignmentBox
+          title="flex-col (items-stretch par défaut) — le Badge ne doit PAS prendre toute la largeur"
+          className="flex flex-col gap-2 p-3"
+        >
+          <Badge>Badge</Badge>
+          <Badge variant="outline">Badge outline</Badge>
+        </AlignmentBox>
+
+        {/* Le parent aligne à droite : le Badge doit suivre */}
+        <AlignmentBox
+          title="flex-col items-end — le Badge doit se coller à droite"
+          className="flex flex-col items-end gap-2 p-3"
+        >
+          <Badge>Badge</Badge>
+        </AlignmentBox>
+
+        {/* flex-wrap de chips (cas gs_guidelines : mots-clés / codes de vue) */}
+        <AlignmentBox
+          title="flex-wrap de chips — hauteurs et lignes de base homogènes"
+          className="flex flex-wrap items-center gap-1 p-3"
+        >
+          {["portrait", "packshot", "détail", "ambiance", "silhouette"].map(
+            (kw) => (
+              <Badge key={kw} variant="outline">
+                {kw}
+              </Badge>
+            )
+          )}
+          <Text as="span" className="text-sm self-center">
+            +12
+          </Text>
+        </AlignmentBox>
+
+        {/* Cas d'origine de la story 6c3af9d : Badge dans du texte inline */}
+        <div className="space-y-2">
+          <p className="text-xs font-medium text-grey-strongest">
+            Badge et Button dans du texte inline
+          </p>
+          {(["text-xs", "text-sm", "text-base", "text-lg"] as const).map(
+            (size) => (
+              <p key={size} className={`${size} border border-grey-light rounded p-2`}>
+                {size} — texte normal <Badge>Badge</Badge> suite du texte{" "}
+                <Button size="small">Button</Button> fin du texte.
+              </p>
+            )
+          )}
+        </div>
+
+        {/* Surcharge de padding : min-h-4 ne doit pas écraser le contenu */}
+        <AlignmentBox
+          title="Surcharge py-1 par le consommateur (cas gs_w PopupRemoveTag) — pas de débordement"
+          className="flex items-center gap-2 px-3 h-[52px]"
+        >
+          <Badge variant="secondary" className="py-1">
+            Badge py-1
+          </Badge>
+          <Badge>Badge par défaut</Badge>
+        </AlignmentBox>
+
+        <div className="p-3 bg-blue-primary rounded">
+          <p className="text-xs font-medium mb-2 text-black">
+            Guide d&apos;évaluation
+          </p>
+          <ul className="text-xs space-y-1 list-disc list-inside text-black">
+            <li>
+              Le bloc de glyphes du Badge doit être centré sur le trait rouge —
+              c&apos;est l&apos;encre qui compte, pas la line-box.
+            </li>
+            <li>
+              Badge et Button small doivent avoir le même centre optique sur une
+              même ligne.
+            </li>
+            <li>
+              Aucun Badge ne doit s&apos;étirer, ni en hauteur (conteneur ligne)
+              ni en largeur (conteneur colonne).
+            </li>
+          </ul>
+        </div>
       </div>
     </Layout>
   ),

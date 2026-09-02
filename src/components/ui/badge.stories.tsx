@@ -475,7 +475,16 @@ export const WithIcon: Story = {
           <li>Use <code>&lt;Icon name="..." size={12} /&gt;</code> for consistent icon sizing</li>
           <li>Icons are automatically spaced from text using <code>gap-1</code></li>
           <li>Badge text is now <code>font-normal</code> (not bold)</li>
-          <li>Icons align perfectly with text using <code>items-center</code></li>
+          <li>
+            <code>items-center</code> centre les <em>boîtes</em> des enfants sur la
+            hauteur du Badge — il ne centre pas le bloc de glyphes dans sa
+            line-box. Le centrage optique du texte vient de{' '}
+            <code>leading-tight</code> sur le Badge : sans classe{' '}
+            <code>leading-*</code>, la line-box retombait sur la règle Tailwind
+            stock <code>.text-xs</code> (16px) alors que le font-size vient du
+            preset GS (9px), et le texte remontait d&apos;environ 1px. Voir la
+            story <code>Typography &gt; Alignement vertical Badge / Button</code>.
+          </li>
         </ul>
       </div>
     </VStack>

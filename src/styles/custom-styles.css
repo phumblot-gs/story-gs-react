@@ -1432,3 +1432,95 @@
 [data-bg] *::-webkit-scrollbar-thumb:hover {
   background-color: var(--sb-thumb-hover, var(--color-grey-strongest));
 }
+
+/* ==========================================================================
+ * Badge — variantes contextuelles
+ *
+ * Ces classes sont appliquées par src/components/ui/badge.tsx (badgeVariants).
+ * Elles utilisent exactement les mêmes tokens que les boutons, mais sans les
+ * états hover / active / disabled : un Badge n'est pas interactif.
+ *
+ * HISTORIQUE — ne pas déplacer ce bloc dans src/styles/figma-tokens.css :
+ * ce fichier-là est régénéré intégralement par scripts/generate-css-tokens.cjs
+ * et le bloc y avait déjà été effacé une fois (commit 6c3af9d écrasé par
+ * 08d4809), laissant les 4 variantes de Badge sans aucun style.
+ *
+ * NOTE : on écrit `border-color: transparent` et non `border: transparent`.
+ * Le raccourci remettrait `border-style` à `none`, annulant le `border`
+ * (1px) posé par les classes de base du Badge et modifiant sa hauteur.
+ * ========================================================================== */
+
+/* Badge variants pour background white */
+[data-bg="white"].badge-normal {
+  background: var(--button-w-normal-bg-default);
+  color: var(--button-w-normal-fg-default);
+  border-color: transparent;
+}
+
+[data-bg="white"].badge-secondary {
+  background: var(--button-w-secondary-bg-default);
+  color: var(--button-w-secondary-fg-default);
+  border-color: transparent;
+}
+
+[data-bg="white"].badge-destructive {
+  background: var(--button-w-destructive-bg-default);
+  color: var(--button-w-destructive-fg-default);
+  border-color: transparent;
+}
+
+[data-bg="white"].badge-outline {
+  background: var(--button-w-outline-bg-default);
+  color: var(--button-w-outline-fg-default);
+  border: 1px solid var(--button-w-outline-fg-default);
+}
+
+/* Badge variants pour background grey */
+[data-bg="grey"].badge-normal {
+  background: var(--button-g-normal-bg-default);
+  color: var(--button-g-normal-fg-default);
+  border-color: transparent;
+}
+
+[data-bg="grey"].badge-secondary {
+  background: var(--button-g-secondary-bg-default);
+  color: var(--button-g-secondary-fg-default);
+  border-color: transparent;
+}
+
+[data-bg="grey"].badge-destructive {
+  background: var(--button-g-destructive-bg-default);
+  color: var(--button-g-destructive-fg-default);
+  border-color: transparent;
+}
+
+[data-bg="grey"].badge-outline {
+  background: var(--button-g-outline-bg-default);
+  color: var(--button-g-outline-fg-default);
+  border: 1px solid var(--button-g-outline-fg-default);
+}
+
+/* Badge variants pour background black */
+[data-bg="black"].badge-normal {
+  background: var(--button-b-normal-bg-default);
+  color: var(--button-b-normal-fg-default);
+  border-color: transparent;
+}
+
+[data-bg="black"].badge-secondary {
+  background: var(--button-b-secondary-bg-default);
+  color: var(--button-b-secondary-fg-default);
+  border-color: transparent;
+}
+
+[data-bg="black"].badge-destructive {
+  background: var(--button-b-destructive-bg-default);
+  color: var(--button-b-destructive-fg-default);
+  border-color: transparent;
+}
+
+[data-bg="black"].badge-outline {
+  background: var(--button-b-outline-bg-default);
+  color: var(--button-b-outline-fg-default);
+  border: 1px solid var(--button-b-outline-fg-default);
+}
