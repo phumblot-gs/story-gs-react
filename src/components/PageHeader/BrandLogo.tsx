@@ -50,7 +50,7 @@ const BrandLogo: React.FC<BrandLogoProps> = ({
   if (!logo) {
     // Render default SVG
     return (
-      <div 
+      <span
         className={cn("flex items-center justify-center", className)}
         style={{ width, height }}
         dangerouslySetInnerHTML={{ __html: DEFAULT_SVG_LOGO }}
@@ -61,7 +61,7 @@ const BrandLogo: React.FC<BrandLogoProps> = ({
   if (isSvgString(logo)) {
     // Render provided SVG string
     return (
-      <div 
+      <span
         className={cn("flex items-center justify-center", className)}
         style={{ width, height }}
         dangerouslySetInnerHTML={{ __html: logo }}
@@ -83,7 +83,7 @@ const BrandLogo: React.FC<BrandLogoProps> = ({
   
   // Fallback to default SVG if format is unknown
   return (
-    <div 
+    <span
       className={cn("flex items-center justify-center", className)}
       style={{ width, height }}
       dangerouslySetInnerHTML={{ __html: DEFAULT_SVG_LOGO }}

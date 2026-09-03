@@ -1187,6 +1187,15 @@ export const componentTranslations: TranslationMap = {
     DE: "Meine Dateien"
   },
 
+  // PageHeader
+  "pageHeader.home": {
+    EN: "Home",
+    FR: "Accueil",
+    ES: "Inicio",
+    IT: "Home",
+    DE: "Startseite"
+  },
+
   // BrandLogo
   "brandLogo.alt": {
     EN: "Brand logo",

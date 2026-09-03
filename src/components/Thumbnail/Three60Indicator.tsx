@@ -21,7 +21,11 @@ export const Three60Indicator: React.FC<Three60IndicatorProps> = ({
   return (
     <Badge
       className={cn(
-        "border-none bg-white justify-center items-center p-1 w-4 h-4 text-[10px] font-medium",
+        // Pas de `text-[10px]` ici : la taille vient de `text-badge-label` (10px) dans
+        // les classes de base du Badge. Une taille arbitraire est reconnue comme
+        // font-size par tailwind-merge, donc elle supprimait le `leading-tight` de la
+        // base — ce Badge etait le seul de la librairie a perdre cette correction.
+        "border-none bg-white justify-center items-center p-1 w-4 h-4 font-medium",
         className
       )}
     >

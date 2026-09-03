@@ -5,6 +5,82 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.12.13] - 2026-09-03
+
+Corrections issues d'une review indépendante du diff `v1.12.11..v1.12.12`.
+
+### 🐛 Corrigé
+
+- **`Thumbnail/Three60Indicator` : le seul Badge de la librairie qui perdait la
+  correction d'interlignage de la 1.12.12.** Son `className` portait
+  `text-[10px]`. Une taille **arbitraire** est reconnue comme `font-size` par
+  `tailwind-merge`, donc elle supprimait le `leading-tight` des classes de base
+  du Badge (vérifié : `leading-tight kept: FALSE`, contre `true` pour les quatre
+  autres indicateurs). Ce `text-[10px]` était par ailleurs devenu **exactement
+  redondant** avec `text-badge-label` (`--badge-fs-label` = 10px). Il est
+  supprimé : l'interlignage est rendu à ce Badge, la valeur en dur disparaît et
+  la redondance avec le token aussi.
+  - À noter : l'effet visuel était **masqué** par le rognage `.gs-text-trim`
+    introduit dans la même version, qui rend la boîte de texte indépendante de
+    la `line-height`. Le défaut ne se voyait donc que sur le chemin de repli
+    (moteur sans `text-box`). Dimensions inchangées, mesurées : 20×20px.
+
+- **`cn()` : la clé `fontSize` `xxl` était restée hors de la déclaration.**
+  `isTshirtSize` de `tailwind-merge` reconnaît `2xl` mais **pas** `xxl`, si bien
+  que `cn("text-xxl", "text-black")` supprimait la taille. Même classe de bug
+  que celle corrigée en 1.12.12, sur la seule clé du preset restée dehors.
+  Dormante (aucun `text-xxl` dans les quatre dépôts) mais armée.
+  - **Audit complet des clés `fontSize` de `tailwind-preset.cjs`** :
+    `xs`, `sm`, `base`, `lg`, `xl` sont reconnues d'origine ; `xxl`,
+    `badge-label`, `header-title`, `button-header` ne le sont pas et sont
+    désormais **toutes les quatre** déclarées dans `src/lib/utils.ts`.
+  - Un test (`src/__tests__/cn-font-size.test.ts`) relit le preset et échoue si
+    une clé `fontSize` y est ajoutée sans être déclarée dans `cn()`.
+
+- **`PageHeader` : `aria-label` du bouton de logo en dur et en anglais.**
+  `aria-label="home"` est remplacé par `aria-label={t("pageHeader.home")}` via
+  `useTranslationSafe`, le mécanisme déjà utilisé par `StatusIndicator`,
+  `MediaStatus`, `ButtonStatus` et `DataTable` pour leurs libellés accessibles.
+  Nouvelle clé `pageHeader.home` dans `src/utils/component-translations.ts`,
+  renseignée dans les **cinq** langues (EN/FR/ES/IT/DE).
+
+- **`PageHeader` / `BrandLogo` : un `<div>` se retrouvait dans le `<button>`.**
+  Le modèle de contenu de `<button>` n'accepte que du *phrasing content*,
+  exactement le défaut que le passage du Badge en `<span>` corrigeait dans la
+  même version. Corrigé sur les **deux** chemins :
+  - la zone de marque du `logo` personnalisé passe de
+    `<div className="w-5 flex-shrink-0">` à
+    `<span className="block w-5 flex-shrink-0">` ;
+  - **`BrandLogo` était aussi concerné** — non signalé par la review, mais c'est
+    le chemin **par défaut** (sans prop `logo`) : ses trois branches SVG
+    rendaient un `<div>`, désormais un `<span>`. La validité HTML dépend de
+    l'élément, pas de son `display`, donc `flex` / `block` sur un `<span>` reste
+    du phrasing content.
+  - Rendu strictement identique (`<span class="block">` ≡ `<div>`), apparence et
+    comportement de la prop inchangés.
+  - **Limite** : si le consommateur passe lui-même un `<div>` dans `logo`, il
+    reste dans le `<button>` — hors de notre contrôle.
+
+### ✅ Tests
+
+- `src/__tests__/badge-trim-children.test.tsx` (17 tests) — verrouille le
+  découpage des enfants du Badge : `0` non traité comme falsy, chaîne vide sans
+  span, `false`/`null`/`undefined`, aucun enfant, deux chaînes adjacentes
+  regroupées en **un seul** span (sinon le `gap-1` s'insère au milieu du texte),
+  `number` + `string` mélangés, texte/élément/texte en deux runs, icône laissée
+  hors du span, tableaux imbriqués, limites documentées (texte niché et
+  fragment non rognés), `textContent` préservé, absence d'avertissement de clé
+  React, et classes de base sur la racine et non sur le span.
+- `src/__tests__/cn-font-size.test.ts` (14 tests) — les neuf clés `fontSize`
+  survivent à une classe de couleur, un `text-sm` du consommateur remplace bien
+  la taille de base, l'ordre `font-size` puis `leading-*` conserve
+  l'interlignage, le piège de la taille arbitraire est documenté, aucun autre
+  groupe de classes n'est altéré, et le garde-fou de relecture du preset.
+- `src/__tests__/page-header-logo-button.test.tsx` (5 tests) — `<button
+  type="button">` rendu et appelé, absent sans la prop, libellé accessible issu
+  de l'i18n, et **aucun `<div>` dans le bouton** sur les deux chemins (logo par
+  défaut et logo personnalisé).
+
 ## [1.12.12] - 2026-09-02
 
 ### ✨ Ajouté
