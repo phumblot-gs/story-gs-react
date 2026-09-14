@@ -82,6 +82,16 @@ const meta: Meta<typeof Thumbnail> = {
       description:
         "Désactive le bouton de refus (✗) depuis l'extérieur, sans le masquer (et empêche l'ouverture du menu de motifs). Se combine avec la désactivation interne liée au status.",
     },
+    ratingDisabled: {
+      control: "boolean",
+      description:
+        "Désactive le bouton de notation (étoiles) depuis l'extérieur, sans le masquer (et empêche l'ouverture du menu). Aucune désactivation interne liée au status à combiner.",
+    },
+    labelDisabled: {
+      control: "boolean",
+      description:
+        "Désactive le bouton de label (couleurs) depuis l'extérieur, sans le masquer (et empêche l'ouverture du menu). Aucune désactivation interne liée au status à combiner.",
+    },
   },
   args: {
     onImageClick: fn(),
@@ -1048,6 +1058,89 @@ export const DisabledValidationActions: Story = {
           </VStack>
         </HStack>
       </VStack>
+    </Layout>
+  ),
+};
+
+/**
+ * Désactivation externe de la notation / du label
+ *
+ * `ratingDisabled` et `labelDisabled` désactivent les boutons étoiles / couleurs
+ * sans les masquer : le bloc d'actions garde sa place. Le menu correspondant ne
+ * peut plus être ouvert, et se referme s'il l'était.
+ *
+ * Contrairement à `validateDisabled` / `rejectDisabled`, il n'y a aucune
+ * désactivation interne liée au `status` à combiner : la désactivation vient
+ * uniquement de l'appelant.
+ *
+ * Usage typique : verrouiller les vignettes pendant une écriture en lot déclenchée
+ * depuis une barre d'action (notation ou pose de label sur une sélection).
+ */
+export const DisabledRatingAndLabelActions: Story = {
+  render: () => (
+    <Layout bg="white" padding={4}>
+      <HStack gap={4} className="flex-wrap">
+        <VStack gap={2} className="items-center">
+          <Thumbnail
+            picture_id={1}
+            src={sampleImageUrl}
+            filename="actions_actives.jpg"
+            status={MediaStatus.SUBMITTED_FOR_APPROVAL}
+            rating={3}
+            label="red"
+            size="large"
+            onRatingChange={fn()}
+            onLabelChange={fn()}
+          />
+          <span className="text-xs">Défaut (aucune prop)</span>
+        </VStack>
+        <VStack gap={2} className="items-center">
+          <Thumbnail
+            picture_id={2}
+            src={sampleImageUrl2}
+            filename="notation_desactivee.jpg"
+            status={MediaStatus.SUBMITTED_FOR_APPROVAL}
+            rating={3}
+            label="red"
+            size="large"
+            ratingDisabled
+            onRatingChange={fn()}
+            onLabelChange={fn()}
+          />
+          <span className="text-xs">ratingDisabled</span>
+        </VStack>
+        <VStack gap={2} className="items-center">
+          <Thumbnail
+            picture_id={3}
+            src={sampleImageUrl3}
+            filename="label_desactive.jpg"
+            status={MediaStatus.SUBMITTED_FOR_APPROVAL}
+            rating={3}
+            label="red"
+            size="large"
+            labelDisabled
+            onRatingChange={fn()}
+            onLabelChange={fn()}
+          />
+          <span className="text-xs">labelDisabled</span>
+        </VStack>
+        <VStack gap={2} className="items-center">
+          <Thumbnail
+            picture_id={4}
+            src={sampleImageUrl}
+            filename="bloc_verrouille.jpg"
+            status={MediaStatus.SUBMITTED_FOR_APPROVAL}
+            rating={3}
+            label="red"
+            size="large"
+            ratingDisabled
+            labelDisabled
+            onRatingChange={fn()}
+            onLabelChange={fn()}
+          />
+          <span className="text-xs">Les deux (écriture en cours)</span>
+        </VStack>
+      </HStack>
     </Layout>
   ),
 };

@@ -208,6 +208,44 @@ export interface ThumbnailProps {
    * et se referme s'il l'était : aucun motif n'est cliquable pendant la désactivation.
    */
   rejectDisabled?: boolean;
+  /**
+   * Désactive le bouton de notation (étoiles) depuis l'extérieur, sans le masquer.
+   *
+   * Contrairement à `validateDisabled` / `rejectDisabled`, il n'y a **aucune**
+   * désactivation interne liée au `status` à combiner : la note reste modifiable
+   * quel que soit le statut du média. La désactivation vient donc uniquement de
+   * l'appelant.
+   * Optionnelle et `false` par défaut — à `undefined`/`false` le comportement est
+   * strictement identique aux versions antérieures.
+   *
+   * Le menu d'étoiles ne peut plus être ouvert et aucune note n'est cliquable
+   * pendant la désactivation.
+   *
+   * Cas d'usage : verrouiller l'action pendant une écriture en cours (notation en
+   * lot depuis une barre d'action, par exemple) pour interdire une écriture
+   * concurrente, au lieu de laisser un bouton actif dont le clic serait rejeté en
+   * aval.
+   */
+  ratingDisabled?: boolean;
+  /**
+   * Désactive le bouton de label (couleurs) depuis l'extérieur, sans le masquer.
+   *
+   * Contrairement à `validateDisabled` / `rejectDisabled`, il n'y a **aucune**
+   * désactivation interne liée au `status` à combiner : le label reste modifiable
+   * quel que soit le statut du média. La désactivation vient donc uniquement de
+   * l'appelant.
+   * Optionnelle et `false` par défaut — à `undefined`/`false` le comportement est
+   * strictement identique aux versions antérieures.
+   *
+   * Le menu de couleurs ne peut plus être ouvert et aucune couleur n'est cliquable
+   * pendant la désactivation.
+   *
+   * Cas d'usage : verrouiller l'action pendant une écriture en cours (pose de label
+   * en lot depuis une barre d'action, par exemple) pour interdire une écriture
+   * concurrente, au lieu de laisser un bouton actif dont le clic serait rejeté en
+   * aval.
+   */
+  labelDisabled?: boolean;
 
   // Drag and drop
   /** Indique si le drag and drop est activé */
@@ -311,6 +349,8 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
   bench,
   validateDisabled = false,
   rejectDisabled = false,
+  ratingDisabled = false,
+  labelDisabled = false,
 
   // Drag and drop
   draggable = false,
@@ -352,7 +392,9 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
   const rejectButtonDisabled = isRejectedStatus || rejectDisabled;
   // Rendu de l'état désactivé externe : le `disabled` natif suffit à bloquer le clic
   // et le focus ; on ajoute le retour visuel (opacité + curseur) que `ButtonStatus`
-  // neutralise volontairement pour la désactivation liée au statut.
+  // neutralise volontairement pour la désactivation liée au statut, et que le
+  // `Button` de base ne fournit pas non plus (il ne pose que
+  // `disabled:pointer-events-none`) pour les boutons étoiles / couleurs.
   const externallyDisabledButtonClass = "disabled:opacity-50";
 
   // Handler pour gérer l'ouverture/fermeture des menus
@@ -368,6 +410,17 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
     setOpenMenu((current) => (current === "reject" ? null : current));
     setRejectMenuView("main");
   }, [rejectButtonDisabled]);
+
+  // Même règle pour la notation et les labels : un menu ne doit pas rester ouvert
+  // quand son bouton vient d'être désactivé de l'extérieur, et on oublie son état
+  // pour qu'il ne se rouvre pas tout seul à la levée de la désactivation.
+  useEffect(() => {
+    setOpenMenu((current) => {
+      if (current === "stars" && ratingDisabled) return null;
+      if (current === "labels" && labelDisabled) return null;
+      return current;
+    });
+  }, [ratingDisabled, labelDisabled]);
 
   // Calcul de la configuration de taille (prédéfinie ou personnalisée)
   const config = useMemo(() => {
@@ -665,35 +718,41 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
             {/* Actions row */}
             <div className="flex items-center justify-end gap-1 px-1 pb-2 pt-1 w-full">
               {picture_id && onRatingChange && (
-                <ButtonThumbnailStars
-                  value={rating}
-                  variant="secondary"
-                  onClick={onRatingChange}
-                  size="small"
-                  compact={size === "small"}
-                  className="p-0 w-4 h-4"
-                  menuSide="top"
-                  menuAlign={size === "small" ? "start" : "end"}
-                  menuBgContext="white"
-                  open={openMenu === "stars"}
-                  onOpenChange={(open) => handleMenuOpenChange("stars", open)}
-                />
+                <span className={cn("inline-flex", ratingDisabled && "cursor-not-allowed")}>
+                  <ButtonThumbnailStars
+                    value={rating}
+                    variant="secondary"
+                    onClick={onRatingChange}
+                    size="small"
+                    compact={size === "small"}
+                    className={cn("p-0 w-4 h-4", ratingDisabled && externallyDisabledButtonClass)}
+                    menuSide="top"
+                    menuAlign={size === "small" ? "start" : "end"}
+                    menuBgContext="white"
+                    disabled={ratingDisabled}
+                    open={openMenu === "stars" && !ratingDisabled}
+                    onOpenChange={(open) => handleMenuOpenChange("stars", open)}
+                  />
+                </span>
               )}
 
               {picture_id && onLabelChange && (
-                <ButtonThumbnailLabels
-                  value={label}
-                  variant="secondary"
-                  onClick={onLabelChange}
-                  size="small"
-                  compact={size === "small"}
-                  className="p-0 w-4 h-4"
-                  menuSide="top"
-                  menuAlign={size === "small" ? "start" : "end"}
-                  menuBgContext="white"
-                  open={openMenu === "labels"}
-                  onOpenChange={(open) => handleMenuOpenChange("labels", open)}
-                />
+                <span className={cn("inline-flex", labelDisabled && "cursor-not-allowed")}>
+                  <ButtonThumbnailLabels
+                    value={label}
+                    variant="secondary"
+                    onClick={onLabelChange}
+                    size="small"
+                    compact={size === "small"}
+                    className={cn("p-0 w-4 h-4", labelDisabled && externallyDisabledButtonClass)}
+                    menuSide="top"
+                    menuAlign={size === "small" ? "start" : "end"}
+                    menuBgContext="white"
+                    disabled={labelDisabled}
+                    open={openMenu === "labels" && !labelDisabled}
+                    onOpenChange={(open) => handleMenuOpenChange("labels", open)}
+                  />
+                </span>
               )}
 
               {picture_id && (onTagAdd || onTagRemove) && (

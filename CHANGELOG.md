@@ -5,6 +5,38 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.12.14] - 2026-09-14
+
+### ✨ Ajouté
+
+- **`Thumbnail` : désactivation externe de la notation et du label** via les props
+  `ratingDisabled` et `labelDisabled` (optionnelles, `false` par défaut,
+  non-breaking). Symétrique de `validateDisabled` / `rejectDisabled` livré en
+  1.12.11, pour les boutons étoiles et couleurs.
+  - Permet à l'application hôte de verrouiller les vignettes pendant une écriture
+    en lot déclenchée depuis une barre d'action (notation ou pose de label sur une
+    sélection), au lieu de laisser des boutons d'apparence active dont le clic est
+    rejeté en aval.
+  - Les boutons restent **affichés** : pas de saut de layout, contrairement au fait
+    de passer `onRatingChange` / `onLabelChange` à `undefined`.
+  - **Granularité par action** : `ratingDisabled` ne désactive que les étoiles,
+    `labelDisabled` que les couleurs.
+  - **Pas de combinaison avec le `status`**, contrairement à ✓ / ✗ : la note et le
+    label restent modifiables quel que soit le statut du média, la désactivation
+    vient donc uniquement de l'appelant.
+  - Le menu correspondant ne peut plus être ouvert, se referme s'il l'était, et ne
+    se rouvre pas tout seul à la levée de la désactivation (même règle que le menu
+    de motifs de refus).
+  - Accessibilité : attribut `disabled` natif réel sur le déclencheur (`Toggle` →
+    `Button`), propagé par `ButtonThumbnailStars` / `ButtonThumbnailLabels` à leurs
+    entrées de menu. Retour visuel `disabled:opacity-50` + `cursor: not-allowed`
+    via le même `<span>` enveloppant que ✓ / ✗ : le `Button` de base ne pose que
+    `disabled:pointer-events-none` et ne grisait donc rien.
+  - Story `DisabledRatingAndLabelActions` et test
+    `src/__tests__/thumbnail-rating-label-disabled.test.tsx` (13 cas, dont les
+    contre-épreuves : une prop n'entraîne pas l'autre, absence de prop = rien de
+    désactivé).
+
 ## [1.12.13] - 2026-09-03
 
 Corrections issues d'une review indépendante du diff `v1.12.11..v1.12.12`.
