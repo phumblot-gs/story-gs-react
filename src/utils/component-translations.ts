@@ -965,6 +965,18 @@ export const componentTranslations: TranslationMap = {
   },
 
   // DataTable
+  "dataTable.rowDetails": {
+    EN: "Row details", FR: "Détails de la ligne", ES: "Detalles de la fila",
+    IT: "Dettagli della riga", DE: "Zeilendetails"
+  },
+  "dataTable.expandRow": {
+    EN: "Show row details", FR: "Afficher les détails de la ligne", ES: "Mostrar detalles de la fila",
+    IT: "Mostra dettagli della riga", DE: "Zeilendetails anzeigen"
+  },
+  "dataTable.collapseRow": {
+    EN: "Hide row details", FR: "Masquer les détails de la ligne", ES: "Ocultar detalles de la fila",
+    IT: "Nascondi dettagli della riga", DE: "Zeilendetails ausblenden"
+  },
   "dataTable.selectPage": {
     EN: "Select page",
     FR: "Sélectionner la page",

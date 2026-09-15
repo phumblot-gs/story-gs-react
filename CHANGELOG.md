@@ -5,6 +5,35 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.14.0] - 2026-09-16
+
+### Ajouté
+
+- `DataTable` : détails génériques dépliables via `renderExpandedRow`,
+  `getRowCanExpand`, `expandedIds`, `defaultExpandedIds`, `onExpandedChange`
+  et `onRowExpand`. Chevron accessible intégré, clic sur ligne optionnel
+  (`expandOnRowClick`) et bouton personnalisé via le contexte de `cell`.
+  Les détails ont leurs propres colonnes si souhaité ; tri, pagination et
+  sélection continuent à porter sur les lignes principales.
+- Stories DataTable : clic sur ligne, bouton personnalisé, état contrôlé avec
+  tri/sélection/pagination, accordéon, tableau imbriqué et chargement asynchrone.
+  Documentation en anglais regroupée sous `UI / DataTable / Expansion`.
+  La case de sélection précède le chevron d’expansion.
+
+- `ButtonMenu` et `ButtonMenuSmall` : sous-menus facultatifs via `children`
+  sur les actions, pouvant coexister avec les entrées ordinaires.
+  Ouverture au survol, au clic et au clavier, placement automatique à droite
+  ou à gauche selon l'espace disponible, chevrons via `IconProvider` suivant
+  le côté effectif à l'ouverture. Les sous-menus conservent le style du menu
+  et sont affichés hors de son conteneur pour éviter le rognage au défilement.
+- `ButtonMenu` : sélection multiple conservée sur l'ensemble des actions
+  feuilles, y compris celles des sous-menus fermés.
+- Stories des deux composants : sous-menus, position au bord droit et fond noir.
+
+### Corrigé
+
+- `ButtonMenuSmall` : une action sans callback ne provoque plus d'erreur.
+
 ## [1.13.0] - 2026-09-15
 
 ### Ajouté

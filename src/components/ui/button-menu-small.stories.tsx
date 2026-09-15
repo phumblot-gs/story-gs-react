@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import { ButtonMenuSmall, ButtonMenuSmallItem } from "@/components/ui/button-menu-small"
 import { Layout, VStack, HStack } from "@/components/layout"
+import { useState } from "react"
 import { Icon } from "@/components/ui/icons"
 
 const meta = {
@@ -11,6 +12,28 @@ const meta = {
     docs: {
       description: {
         component: `ButtonMenuSmall component that extends ButtonMenu with compact dropdown menu styling. The dropdown menu has no gap and no padding between items (\`gap-0\` and \`p-0\`), creating a more compact appearance.
+
+## Submenus
+
+Add optional \`children\` to an action to create a submenu. Ordinary actions can
+appear alongside submenu entries. An absent or empty \`children\` array leaves
+an ordinary action. Non-empty parents only open their submenu; their
+\`onClick\` is not invoked. A disabled parent cannot open its submenu.
+
+Submenus open on hover, click or keyboard navigation. They prefer the right
+side and automatically flip to the left to stay within the viewport.
+The trailing chevron uses \`IconProvider\` and follows the actual placement
+when the submenu opens (or moves after resizing).
+
+\`\`\`tsx
+const actions = [
+  { label: "Éditer", onClick: edit },
+  { label: "Exporter", children: [
+    { label: "JPEG", onClick: exportJpeg },
+    { label: "PNG", onClick: exportPng },
+  ] },
+];
+\`\`\`
 
 ## Features
 - Built on Toggle component (inherits all Toggle/Button features)
@@ -383,3 +406,57 @@ export const MenuPositioning: Story = {
   },
 }
 
+
+
+function SubmenuExample({ edge = "left", bg = "white" }: {
+  edge?: "left" | "right"
+  bg?: "white" | "grey" | "black"
+}) {
+  const [lastAction, setLastAction] = useState("Aucune action")
+  return (
+    <Layout bg={bg} padding={4} className="min-h-[340px] w-full">
+      <div className="flex w-full" style={{ justifyContent: edge === "right" ? "flex-end" : "flex-start" }}>
+        <ButtonMenuSmall menuAlign={edge === "right" ? "end" : "start"} actions={[
+          { label: "Éditer", onClick: () => setLastAction("Éditer") },
+          { label: "Exporter", children: [
+            { label: "JPEG", onClick: () => setLastAction("Exporter JPEG") },
+            { label: "PNG", onClick: () => setLastAction("Exporter PNG") },
+            { label: "Formats avancés", children: [
+              { label: "TIFF", onClick: () => setLastAction("Exporter TIFF") },
+              { label: "PSD", disabled: true },
+            ] },
+          ] },
+          { separator: true },
+          { label: "Partager", children: [
+            { label: "Copier le lien", onClick: () => setLastAction("Copier le lien") },
+            { label: "Inviter", onClick: () => setLastAction("Inviter") },
+          ] },
+          { label: "Administration", disabled: true, children: [{ label: "Accès restreint" }] },
+          { label: "Supprimer", onClick: () => setLastAction("Supprimer") },
+        ]}>Actions</ButtonMenuSmall>
+      </div>
+      <p className="mt-4 text-sm" role="status">Dernière action : {lastAction}</p>
+    </Layout>
+  )
+}
+
+export const WithSubmenus: Story = {
+  args: { actions: [] },
+  name: "Sous-menus",
+  parameters: { layout: "fullscreen" },
+  render: () => <SubmenuExample />,
+}
+
+export const SubmenusNearRightEdge: Story = {
+  args: { actions: [] },
+  name: "Sous-menus — bord droit",
+  parameters: { layout: "fullscreen" },
+  render: () => <SubmenuExample edge="right" />,
+}
+
+export const SubmenusOnBlack: Story = {
+  args: { actions: [] },
+  name: "Sous-menus — fond noir",
+  parameters: { layout: "fullscreen" },
+  render: () => <SubmenuExample bg="black" />,
+}
