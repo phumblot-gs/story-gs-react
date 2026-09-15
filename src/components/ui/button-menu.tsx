@@ -3,12 +3,12 @@ import { Toggle, ToggleProps } from "@/components/ui/toggle"
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useBgContext } from "@/components/layout/BgContext"
 import { useIsInActionBar } from "@/components/layout/ActionBar"
-import { VStack } from "@/components/layout"
+import { ButtonMenuItems } from "./button-menu-items"
+import { getSelectedMenuValues } from "@/lib/menu-selection"
 import { cn } from "@/lib/utils"
 
 export interface ButtonMenuAction {
@@ -20,6 +20,11 @@ export interface ButtonMenuAction {
   icon?: React.ReactNode
   /** Whether this action is selected. The corresponding menu item will have hover-like styling. */
   selected?: boolean
+  /** Optional submenu. Non-empty children make this entry a submenu trigger:
+   * onClick/value/selected apply only to leaf actions. Values must be unique
+   * across the entire tree when multiSelect is enabled.
+   */
+  children?: ButtonMenuAction[]
 }
 
 export interface ButtonMenuProps extends Omit<ToggleProps, "onClick" | "isActive"> {
@@ -273,53 +278,24 @@ export const ButtonMenu = React.forwardRef<HTMLButtonElement, ButtonMenuProps>(
           collisionPadding={8}
           data-bg={effectiveBg || undefined}
         >
-          <VStack gap={2} padding={2}>
-            {actions.map((action, index) => (
-              <DropdownMenuItem
-                key={action.value ?? index}
-                disabled={action.disabled || disabled}
-                data-selected={action.selected ? "true" : "false"}
-                className={cn(
-                  "w-full px-4 h-6 text-left text-sm whitespace-nowrap rounded-sm cursor-pointer popup-action-item popup-action-item-menu",
-                  "flex items-center gap-2",
-                  "data-[disabled]:opacity-50 data-[disabled]:cursor-not-allowed"
-                )}
-                onSelect={(e) => {
-                  // IMPORTANT: preventDefault DOIT être appelé en premier pour empêcher la fermeture
-                  if (multiSelect) {
-                    e.preventDefault()
-                  }
-
-                  if (debug) {
-                    console.log("[ButtonMenu] Action selected:", action.label, { multiSelect, value: action.value })
-                  }
-
-                  if (multiSelect && action.value !== undefined) {
-                    // Toggle la sélection
-                    const currentSelected = actions
-                      .filter((a) => a.selected && a.value !== undefined)
-                      .map((a) => a.value as string)
-
-                    const newSelected = action.selected
-                      ? currentSelected.filter((v) => v !== action.value)
-                      : [...currentSelected, action.value]
-
-                    onSelectionChange?.(newSelected)
-                  } else if (!multiSelect) {
-                    // Mode simple : appeler onClick
-                    action.onClick?.()
-                  }
-                }}
-              >
-                {action.icon && (
-                  <span className="flex-shrink-0 flex items-center justify-center">
-                    {action.icon}
-                  </span>
-                )}
-                <span className="whitespace-nowrap overflow-hidden text-ellipsis flex-1 min-w-0">{action.label}</span>
-              </DropdownMenuItem>
-            ))}
-          </VStack>
+          <ButtonMenuItems
+            actions={actions}
+            disabled={disabled}
+            bg={effectiveBg}
+            menuClassName={cn("rounded-sm border-0 popup-action overflow-y-auto", menuMaxHeight, getMenuBackgroundClass())}
+            onAction={(action, event) => {
+              if (multiSelect) event.preventDefault()
+              if (debug) console.log("[ButtonMenu] Action selected:", action.label, { multiSelect, value: action.value })
+              if (multiSelect && action.value !== undefined) {
+                const currentSelected = getSelectedMenuValues(actions)
+                onSelectionChange?.(action.selected
+                  ? currentSelected.filter(value => value !== action.value)
+                  : [...currentSelected, action.value])
+              } else if (!multiSelect) {
+                action.onClick?.()
+              }
+            }}
+          />
         </DropdownMenuContent>
       </DropdownMenu>
     )

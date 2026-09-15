@@ -176,7 +176,7 @@ return (
 
 ## Selection
 
-Set \`selectable\` to add a leftmost checkbox column. The header checkbox is **tri-state** based on the **current page**: \`true\` (whole page selected), \`false\` (none), \`indeterminate\` (some). A small chevron next to it opens a menu with three "super-power" actions: select page, select all pages (across pagination), or clear the entire selection.
+Set \`selectable\` to add a checkbox column on the left. The header checkbox is **tri-state** based on the **current page**: \`true\` (whole page selected), \`false\` (none), \`indeterminate\` (some). A small chevron next to it opens a menu with three "super-power" actions: select page, select all pages (across pagination), or clear the entire selection.
 
 Selection persists across page and sort changes. When \`data\` shrinks (e.g. the consumer applies a stricter filter), ids that are no longer in \`data\` are simply ignored for display and bulk actions — they remain in the \`selectedIds\` Set in case the filter is loosened. The DataTable does **not** mutate the Set when the data changes.
 
@@ -224,6 +224,14 @@ When a cell renders an interactive widget (\`Select\`, \`Button\`, \`DropdownMen
   interactive: true,
 }
 \`\`\`
+
+## Row expansion
+
+Rows can reveal full-width detail content, including a nested table with different columns.
+See **UI / DataTable / Expansion** for the API reference and implementation examples:
+row clicks, custom cell buttons, controlled state, accordion mode, nested tables and async loading.
+
+[Open the expansion documentation](?path=/docs/ui-datatable-expansion--docs).
 
 ## What's intentionally NOT included
 

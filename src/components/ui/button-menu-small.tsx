@@ -3,13 +3,11 @@ import { Toggle, ToggleProps } from "@/components/ui/toggle"
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useBgContext } from "@/components/layout/BgContext"
 import { useIsInActionBar } from "@/components/layout/ActionBar"
-import { VStack } from "@/components/layout"
+import { ButtonMenuItems } from "./button-menu-items"
 import { cn } from "@/lib/utils"
 import { ButtonMenuAction } from "./button-menu"
 
@@ -246,43 +244,17 @@ export const ButtonMenuSmall = React.forwardRef<HTMLButtonElement, ButtonMenuSma
           collisionPadding={8}
           data-bg={effectiveBg || undefined}
         >
-          <VStack gap={0} padding={0}>
-            {actions.map((item, index) => {
-              // Render separator if item is a separator
-              if ('separator' in item && item.separator === true) {
-                return <DropdownMenuSeparator key={`separator-${index}`} className="bg-black-secondary m-0" />
-              }
-
-              // Render regular action item
-              const action = item as ButtonMenuAction
-              return (
-                <DropdownMenuItem
-                  key={index}
-                  disabled={action.disabled || disabled}
-                  className={cn(
-                    "w-full px-4 h-6 text-left text-sm whitespace-nowrap rounded-sm cursor-pointer popup-action-item popup-action-item-small",
-                    "flex items-center gap-2",
-                    "data-[disabled]:opacity-50 data-[disabled]:cursor-not-allowed"
-                  )}
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    if (debug) {
-                      console.log("[ButtonMenuSmall] Action clicked:", action.label)
-                    }
-                    action.onClick()
-                    handleOpenChange(false)
-                  }}
-                >
-                  {action.icon && (
-                    <span className="flex-shrink-0 flex items-center justify-center">
-                      {action.icon}
-                    </span>
-                  )}
-                  <span className="whitespace-nowrap overflow-hidden text-ellipsis flex-1 min-w-0">{action.label}</span>
-                </DropdownMenuItem>
-              )
-            })}
-          </VStack>
+          <ButtonMenuItems
+            actions={actions}
+            small
+            disabled={disabled}
+            bg={effectiveBg}
+            menuClassName={cn("rounded-sm border-0 popup-action overflow-y-auto p-0", menuMaxHeight, getMenuBackgroundClass())}
+            onAction={(action) => {
+              if (debug) console.log("[ButtonMenuSmall] Action selected:", action.label)
+              action.onClick?.()
+            }}
+          />
         </DropdownMenuContent>
       </DropdownMenu>
     )

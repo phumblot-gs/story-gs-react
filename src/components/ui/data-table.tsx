@@ -42,13 +42,21 @@ export interface DataTableSortState {
   direction: DataTableSortDirection;
 }
 
+export interface DataTableRowContext {
+  isExpanded: boolean;
+  canExpand: boolean;
+  toggleExpanded: () => void;
+  /** Use with aria-controls on a custom expansion button. */
+  expandedContentId: string;
+}
+
 export interface TableColumn<T> {
   /** Stable identifier — used for sort state, not displayed. */
   id: string;
   /** Header text or custom React content. */
   header: React.ReactNode;
   /** Cell renderer — receives the row, must return a ReactNode. */
-  cell: (row: T) => React.ReactNode;
+  cell: (row: T, context: DataTableRowContext) => React.ReactNode;
   /** Enables click-to-sort on the header. Default: false. */
   sortable?: boolean;
   /**
@@ -83,7 +91,7 @@ export interface DataTableProps<T> {
   columns: TableColumn<T>[];
   /** Stable row id used for selection state and React keys. */
   getRowId: (row: T) => string;
-  /** Click on a row (anywhere except cells flagged `interactive=true`). */
+  /** Click on a row, except interactive cells. Not called when expandOnRowClick is true. */
   onRowClick?: (row: T) => void;
   /** Empty-state content when data.length === 0. Defaults to a localized string. */
   emptyState?: React.ReactNode;
@@ -93,6 +101,31 @@ export interface DataTableProps<T> {
   className?: string;
   /** Show debug logs in the console. */
   debug?: boolean;
+
+  // === Row expansion ===
+  /** Optional full-width detail content, independent of the parent columns.
+   * Mounted only while expanded. Keep detail state externally to preserve it
+   * across collapse, filtering and pagination.
+   */
+  renderExpandedRow?: (row: T) => React.ReactNode;
+  /** Defaults to true when renderExpandedRow is provided. */
+  getRowCanExpand?: (row: T) => boolean;
+  /** Controlled expansion, keyed by getRowId. Never mutated by the table. */
+  expandedIds?: Set<string>;
+  /** Initially expanded rows in uncontrolled mode. Read only on mount. */
+  defaultExpandedIds?: Set<string>;
+  /** Requested next expansion state. Controlled parents must apply it. */
+  onExpandedChange?: (expandedIds: Set<string>) => void;
+  /** Per-row expansion request, emitted alongside onExpandedChange. */
+  onRowExpand?: (row: T, expanded: boolean) => void;
+  /** Row clicks toggle expansion instead of calling onRowClick. Default false.
+   * Interactive cells, selection controls and embedded buttons are excluded.
+   */
+  expandOnRowClick?: boolean;
+  /** Show the built-in accessible chevron button. Default true.
+   * Set false when supplying your own button through the cell context.
+   */
+  showExpandButton?: boolean;
 
   // === Selection ===
   /** When true, renders a checkbox column on the left and emits onSelectionChange. */
@@ -209,6 +242,14 @@ function DataTableInner<T>(props: DataTableProps<T>): React.ReactElement {
     columns,
     getRowId,
     onRowClick,
+    renderExpandedRow,
+    getRowCanExpand,
+    expandedIds: controlledExpandedIds,
+    defaultExpandedIds,
+    onExpandedChange,
+    onRowExpand,
+    expandOnRowClick = false,
+    showExpandButton = true,
     emptyState,
     rowClassName,
     className,
@@ -231,6 +272,35 @@ function DataTableInner<T>(props: DataTableProps<T>): React.ReactElement {
 
   const { t } = useTranslationSafe(translations, language);
   const bg = useBgContext();
+
+  // Expansion is independent of sorting, pagination and selection. Keep IDs
+  // across pages/filtering, as for selection; only current rows are rendered.
+  const expansionId = React.useId();
+  const [internalExpandedIds, setInternalExpandedIds] = React.useState<Set<string>>(
+    () => new Set(defaultExpandedIds),
+  );
+  const expandedIds = controlledExpandedIds ?? internalExpandedIds;
+  const hasExpansion = renderExpandedRow !== undefined;
+  const hasExpansionColumn = hasExpansion && showExpandButton;
+  const getExpansionContext = (row: T): DataTableRowContext => {
+    const id = getRowId(row);
+    const canExpand = hasExpansion && (getRowCanExpand?.(row) ?? true);
+    const isExpanded = canExpand && expandedIds.has(id);
+    return {
+      canExpand,
+      isExpanded,
+      expandedContentId: `${expansionId}-detail-${encodeURIComponent(id)}`,
+      toggleExpanded: () => {
+        if (!canExpand) return;
+        const next = new Set(expandedIds);
+        if (isExpanded) next.delete(id);
+        else next.add(id);
+        if (controlledExpandedIds === undefined) setInternalExpandedIds(next);
+        onExpandedChange?.(next);
+        onRowExpand?.(row, !isExpanded);
+      },
+    };
+  };
 
   // ---- Sort state (controlled / uncontrolled)
   const [internalSort, setInternalSort] = React.useState<DataTableSortState | null>(
@@ -483,6 +553,9 @@ function DataTableInner<T>(props: DataTableProps<T>): React.ReactElement {
   const headRow = (
     <TableRow>
       {selectionHeader}
+      {hasExpansionColumn && <TableHead scope="col" className="w-10 px-2">
+        <span className="sr-only">{t("dataTable.rowDetails")}</span>
+      </TableHead>}
       {columns.map((col) => {
         const align = col.align ?? "left";
         const isSorted = sort?.columnId === col.id;
@@ -530,8 +603,7 @@ function DataTableInner<T>(props: DataTableProps<T>): React.ReactElement {
   );
 
   // ---- Body rows
-  const totalCols = columns.length + (selectable ? 1 : 0);
-  const isClickable = Boolean(onRowClick);
+  const totalCols = columns.length + (selectable ? 1 : 0) + (hasExpansionColumn ? 1 : 0);
 
   const renderEmptyRow = () => (
     <TableRow>
@@ -544,58 +616,93 @@ function DataTableInner<T>(props: DataTableProps<T>): React.ReactElement {
   const renderRow = (row: T) => {
     const id = getRowId(row);
     const isSelected = selectedIds.has(id);
+    const expansion = getExpansionContext(row);
+    const isClickable = expandOnRowClick ? expansion.canExpand : Boolean(onRowClick);
     const extraRowClass = rowClassName?.(row, { isSelected }) ?? "";
     return (
-      <TableRow
-        key={id}
-        data-selected={isSelected || undefined}
-        className={cn(
-          // Stronger hover than the primitive's default `hover:bg-muted/50`.
-          // Always applied, regardless of `onRowClick`.
-          "hover:bg-grey-light transition-colors",
-          isClickable && "cursor-pointer",
-          extraRowClass,
-        )}
-        onClick={isClickable ? () => onRowClick?.(row) : undefined}
-      >
-        {selectable && (
-          <TableCell
-            className="w-[56px] px-2 py-2.5"
-            onClick={(e) => e.stopPropagation()}
-            // mousedown fires before click → onCheckedChange, so we capture the
-            // shift modifier here and read it from the ref in the handler. We
-            // intentionally only wire shift-click for mouse interactions; the
-            // Space-key path keeps regular toggle semantics.
-            onMouseDown={(e) => {
-              shiftKeyRef.current = e.shiftKey;
-            }}
-          >
-            <Checkbox
-              checked={isSelected}
-              onCheckedChange={() => handleRowCheckboxClick(id)}
-              aria-label={t("dataTable.selectRow")}
-            />
-          </TableCell>
-        )}
-        {columns.map((col) => {
-          const align = col.align ?? "left";
-          const stopProp = col.interactive
-            ? (e: React.MouseEvent) => e.stopPropagation()
-            : undefined;
-          return (
+      <React.Fragment key={id}>
+        <TableRow
+          data-expanded={expansion.isExpanded || undefined}
+          data-selected={isSelected || undefined}
+          className={cn(
+            // Stronger hover than the primitive's default `hover:bg-muted/50`.
+            // Always applied, regardless of `onRowClick`.
+            "hover:bg-grey-light transition-colors",
+            isClickable && "cursor-pointer",
+            extraRowClass,
+          )}
+          onClick={isClickable ? (event) => {
+            if (expandOnRowClick) {
+              const target = event.target as HTMLElement;
+              if (target.closest('button, a, input, select, textarea, [role="button"], [role="checkbox"], [contenteditable="true"]')) return;
+              expansion.toggleExpanded();
+            } else {
+              onRowClick?.(row);
+            }
+          } : undefined}
+        >
+          {selectable && (
             <TableCell
-              key={col.id}
-              // Body cell padding: 10px vertical (the user's request) +
-              // 16px horizontal (kept matching the primitive's `px-4` so columns
-              // align with the header).
-              className={cn("py-2.5 px-4", alignToClass[align], col.className)}
-              onClick={stopProp}
+              className="w-[56px] px-2 py-2.5"
+              onClick={(e) => e.stopPropagation()}
+              // mousedown fires before click → onCheckedChange, so we capture the
+              // shift modifier here and read it from the ref in the handler. We
+              // intentionally only wire shift-click for mouse interactions; the
+              // Space-key path keeps regular toggle semantics.
+              onMouseDown={(e) => {
+                shiftKeyRef.current = e.shiftKey;
+              }}
             >
-              {col.cell(row)}
+              <Checkbox
+                checked={isSelected}
+                onCheckedChange={() => handleRowCheckboxClick(id)}
+                aria-label={t("dataTable.selectRow")}
+              />
             </TableCell>
-          );
-        })}
-      </TableRow>
+          )}
+          {hasExpansionColumn && (
+            <TableCell className="w-10 px-2 py-2.5" onClick={event => event.stopPropagation()}>
+              {expansion.canExpand && <button
+                type="button"
+                className="inline-flex h-6 w-6 items-center justify-center rounded-sm hover:bg-grey-light focus-visible:outline focus-visible:outline-2"
+                aria-label={t(expansion.isExpanded ? "dataTable.collapseRow" : "dataTable.expandRow")}
+                aria-expanded={expansion.isExpanded}
+                aria-controls={expansion.isExpanded ? expansion.expandedContentId : undefined}
+                onClick={expansion.toggleExpanded}
+              >
+                <span aria-hidden="true"><Icon name={expansion.isExpanded ? "ChevronDown" : "ChevronRight"} size={12} /></span>
+              </button>}
+            </TableCell>
+          )}
+          {columns.map((col) => {
+            const align = col.align ?? "left";
+            const stopProp = col.interactive
+              ? (e: React.MouseEvent) => e.stopPropagation()
+              : undefined;
+            return (
+              <TableCell
+                key={col.id}
+                // Body cell padding: 10px vertical (the user's request) +
+                // 16px horizontal (kept matching the primitive's `px-4` so columns
+                // align with the header).
+                className={cn("py-2.5 px-4", alignToClass[align], col.className)}
+                onClick={stopProp}
+              >
+                {col.cell(row, expansion)}
+              </TableCell>
+            );
+          })}
+        </TableRow>
+        {expansion.isExpanded && (
+          <TableRow className="hover:bg-transparent">
+            <TableCell colSpan={totalCols} className="p-0">
+              <div id={expansion.expandedContentId} className="p-4">
+                {renderExpandedRow?.(row)}
+              </div>
+            </TableCell>
+          </TableRow>
+        )}
+      </React.Fragment>
     );
   };
 

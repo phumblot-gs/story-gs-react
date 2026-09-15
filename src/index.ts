@@ -108,6 +108,7 @@ import type {
 import { DataTable } from "./components/ui/data-table";
 import type {
   DataTableProps,
+  DataTableRowContext,
   TableColumn,
   DataTableSortState,
   DataTableSortDirection,
@@ -475,7 +476,7 @@ export { Calendar };
 export { ActivityHeatmap };
 export type { ActivityHeatmapProps, ActivityDataPoint, ActivityColorScale };
 export { DataTable };
-export type { DataTableProps, TableColumn, DataTableSortState, DataTableSortDirection, DataTableAlign };
+export type { DataTableProps, DataTableRowContext, TableColumn, DataTableSortState, DataTableSortDirection, DataTableAlign };
 export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent };
 export { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext };
 export { Checkbox };
