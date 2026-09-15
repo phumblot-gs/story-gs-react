@@ -98,7 +98,7 @@ const ActivityPanel: React.FC<ActivityPanelProps> = ({
 
   return <Sheet open={isOpen} onOpenChange={open => !open && onClose()}>
       <SheetContent side="right" className="w-[400px] bg-black border-none p-0 top-[50px] h-[calc(100%-50px)]" topOffset="50px">
-        <SheetTitle className="sr-only">Notifications Panel</SheetTitle>
+        <SheetTitle className="sr-only">{t('notifications.panelTitle')}</SheetTitle>
         <SheetDescription className="sr-only">{t('notifications.panelDescription')}</SheetDescription>
         
         <div className="flex flex-col h-full">
@@ -107,7 +107,7 @@ const ActivityPanel: React.FC<ActivityPanelProps> = ({
             <SheetClose asChild>
               <Button
                 className="p-0 w-6 h-6"
-                aria-label="Close"
+                aria-label={t('button.close')}
               >
                 <IconProvider icon="X" />
               </Button>
@@ -133,7 +133,7 @@ const ActivityPanel: React.FC<ActivityPanelProps> = ({
           </div>
           
           {/* Notification list with flexbox layout */}
-          <div className="flex-1 overflow-auto pl-[50px] pr-[20px] pt-[20px] pb-[50px]">
+          <div data-bg="black" className="flex-1 overflow-auto pl-[50px] pr-[20px] pt-[20px] pb-[50px]">
             {Object.entries(notificationsByDate).map(([dateStr, dateNotifications]) => <div key={dateStr} className="mb-4">
                 <div className="py-2 text-grey-stronger text-[length:var(--font-size-sm)] opacity-75">
                   {dateStr}

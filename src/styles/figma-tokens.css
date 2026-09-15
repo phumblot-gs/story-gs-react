@@ -151,6 +151,7 @@
   --status-not-selected-color: var(--color-grey);
   --status-selected-color: var(--color-green);
   --status-refused-color: var(--color-red-strong);
+  --status-refused-button-color: var(--color-grey-strongest);
   --status-for-approval-color: var(--color-yellow);
   --status-validated-color: var(--color-green-primary);
   --status-to-publish-color: var(--color-pastel-blue);
@@ -305,6 +306,7 @@
   --status-not-selected-color: var(--color-grey);
   --status-selected-color: var(--color-green);
   --status-refused-color: var(--color-red-strong);
+  --status-refused-button-color: var(--color-grey-strongest);
   --status-for-approval-color: var(--color-yellow);
   --status-validated-color: var(--color-green-primary);
   --status-to-publish-color: var(--color-pastel-blue);

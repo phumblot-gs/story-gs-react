@@ -6,9 +6,12 @@ import { IconName } from "@/components/ui/icons/types";
 import { useThemeValues } from "@/hooks/useThemeValues";
 import BrandLogo from "./BrandLogo";
 import { Layout, HStack } from "@/components/layout";
+import { useTranslationSafe } from "@/contexts/TranslationContext";
 
 export interface PageHeaderProps {
   logo?: React.ReactNode;
+  /** When provided, the brand logo becomes a button (e.g. navigate home). */
+  onLogoClick?: () => void;
   title: string;
   showBackButton?: boolean;
   onBackButtonClick?: () => void;
@@ -23,6 +26,7 @@ export interface PageHeaderProps {
 
 const PageHeader: React.FC<PageHeaderProps> = ({
   logo,
+  onLogoClick,
   title,
   showBackButton = false,
   onBackButtonClick,
@@ -35,6 +39,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
   isIdle = false,
 }) => {
   const { logo: themeLogo } = useThemeValues();
+  const { t } = useTranslationSafe();
 
   return (
     <Layout
@@ -52,11 +57,28 @@ const PageHeader: React.FC<PageHeaderProps> = ({
       >
         {/* Left Side - with flex-shrink to allow truncation */}
         <HStack gap={4} align="center" className="flex-shrink overflow-hidden">
-          {logo ? (
-            <div className="w-5 flex-shrink-0">{logo}</div>
-          ) : (
-            <BrandLogo logo={themeLogo} width={25} height={14} className="flex-shrink-0" />
-          )}
+          {(() => {
+            // <span class="block"> et non <div> : le modele de contenu de <button>
+            // n'accepte que du phrasing content, et cette zone est enveloppee dans
+            // un vrai <button> des que onLogoClick est fourni. Rendu identique.
+            const brand = logo ? (
+              <span className="block w-5 flex-shrink-0">{logo}</span>
+            ) : (
+              <BrandLogo logo={themeLogo} width={25} height={14} className="flex-shrink-0" />
+            );
+            return onLogoClick ? (
+              <button
+                type="button"
+                onClick={onLogoClick}
+                className="flex-shrink-0 p-0 border-0 bg-transparent cursor-pointer"
+                aria-label={t("pageHeader.home")}
+              >
+                {brand}
+              </button>
+            ) : (
+              brand
+            );
+          })()}
           <PageTitle
             title={title}
             showButton={showTitleButton}

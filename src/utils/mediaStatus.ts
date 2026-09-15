@@ -74,6 +74,7 @@ export const shouldUseWhiteIcon = (status: MediaStatus): boolean => {
     MediaStatus.REFUSED_1,       // Grey strongest
     MediaStatus.REFUSED_2,       // Grey strongest
     MediaStatus.BROADCAST,       // Braun
+    MediaStatus.VALIDATED,       // Green
     MediaStatus.ARCHIVED,        // Braun
     MediaStatus.ERROR_DURING_BROADCAST // Error (red)
   ];

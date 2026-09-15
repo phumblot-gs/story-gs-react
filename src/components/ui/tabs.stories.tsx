@@ -52,6 +52,13 @@ import { Tabs, TabsList, TabsTrigger, TabsContent, Layout } from '@story-gs-reac
 </Layout>
 \`\`\`
 
+## Alignment
+
+Set \`align="left" | "center" | "right"\` on \`TabsList\` (default: \`left\`).
+The bottom line spans the available list width; tab order is unchanged.
+When tabs overflow, alignment yields to scrolling so all tabs remain reachable.
+With \`rightSlot\`, alignment applies to the list space remaining before the slot.
+
 ## Controlled vs Uncontrolled
 
 Tabs supports both controlled and uncontrolled modes, similar to SegmentedControl:
@@ -695,3 +702,36 @@ export const CustomStyling: Story = {
     },
   },
 };
+
+
+/** Alignment belongs to TabsList, so this story exposes its own control. */
+export const Alignment: StoryObj<React.ComponentProps<typeof TabsList>> = {
+  name: 'Alignement',
+  argTypes: {
+    align: {
+      control: 'inline-radio',
+      options: ['left', 'center', 'right'],
+      description: 'Alignement horizontal des onglets. Par défaut : left.',
+      table: { defaultValue: { summary: 'left' } },
+    },
+  },
+  args: { align: 'left' },
+  render: ({ align }) => (
+    <div style={{ width: 'min(640px, 80vw)' }}>
+      <Tabs defaultValue="plans">
+        <TabsList align={align}>
+          <TabsTrigger value="plans">Plans</TabsTrigger>
+          <TabsTrigger value="features">Fonctionnalités</TabsTrigger>
+          <TabsTrigger value="pricing">Tarifs</TabsTrigger>
+        </TabsList>
+        <TabsContent value="plans"><div className="p-8">Contenu Plans</div></TabsContent>
+        <TabsContent value="features"><div className="p-8">Contenu Fonctionnalités</div></TabsContent>
+        <TabsContent value="pricing"><div className="p-8">Contenu Tarifs</div></TabsContent>
+      </Tabs>
+    </div>
+  ),
+};
+
+export const LeftAligned = { ...Alignment, name: 'À gauche', args: { align: 'left' as const } };
+export const CenterAligned = { ...Alignment, name: 'Centré', args: { align: 'center' as const } };
+export const RightAligned = { ...Alignment, name: 'À droite', args: { align: 'right' as const } };

@@ -2,6 +2,7 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 import { useBgContext } from "@/components/layout/BgContext";
 import { Icon } from "@/components/ui/icons";
+import { useTranslationSafe } from "@/contexts/TranslationContext";
 
 // Composant TagCross partagé (utilisé par TagText et TagStar)
 export interface TagCrossProps {
@@ -12,7 +13,8 @@ export interface TagCrossProps {
 
 export const TagCross: React.FC<TagCrossProps> = ({ className, onClick, disabled }) => {
   const bg = useBgContext();
-  
+  const { t } = useTranslationSafe();
+
   return (
     <button
       type="button"
@@ -31,7 +33,7 @@ export const TagCross: React.FC<TagCrossProps> = ({ className, onClick, disabled
         className
       )}
       data-bg={bg || undefined}
-      aria-label="Remove tag"
+      aria-label={t("tag.remove")}
     >
       <Icon name="X" size={8} />
     </button>

@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { IconProvider } from "@/components/ui/icon-provider";
 import { IconName } from "@/components/ui/icons/types";
 import { cva } from "class-variance-authority";
+import { useTranslationSafe } from "@/contexts/TranslationContext";
 
 // Size variants for circular buttons
 const sizeVariants = cva('', {
@@ -44,6 +45,8 @@ export const ButtonStatus: React.FC<ButtonStatusProps> = ({
   size = "medium",
   debug = false,
 }) => {
+  const { t } = useTranslationSafe();
+
   // Get the status color class from the utility function
   const statusColorClass = getMediaStatusColorClass(status);
   const statusName = mediaStatusNames[status];
@@ -85,6 +88,7 @@ export const ButtonStatus: React.FC<ButtonStatusProps> = ({
           "relative rounded-full flex items-center justify-center font-light transition-colors duration-200 p-0",
           sizeClasses,
           iconSizeClasses,
+          "opacity-100 disabled:opacity-100",
           "relative transition-colors",
           // Default state
           `[&_svg]:${statusColorClass}`,
@@ -104,10 +108,10 @@ export const ButtonStatus: React.FC<ButtonStatusProps> = ({
         onClick={handleClick}
         onFocus={handleFocus}
         onBlur={handleBlur}
-        aria-label={`${icon === "Check" ? "Approve" : "Reject"} - ${statusName}`}
+        aria-label={`${icon === "Check" ? t("buttonStatus.approve") : t("buttonStatus.reject")} - ${statusName}`}
         style={{
           // Set CSS variables for dynamic colors
-          "--status-bg-color": `var(--${statusColorClass}-color)`,
+          "--status-bg-color": `var(--${statusColorClass == "status-refused" ? "status-refused-button" : statusColorClass}-color)`,
         } as React.CSSProperties}
       >
         <IconProvider icon={icon as IconName} size={iconSize} />

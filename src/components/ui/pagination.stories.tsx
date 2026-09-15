@@ -360,3 +360,72 @@ export const DebugMode: Story = {
     debug: true,
   },
 }
+
+/**
+ * Navigation au clavier (`keyboardNavigation`).
+ * Cliquez dans la zone puis utilisez `Shift + ←` / `Shift + →` pour changer de page.
+ * Les boutons `<`/`>` affichent le raccourci au survol.
+ * Le champ ci-dessous démontre que la frappe n'est pas volée quand le focus est
+ * dans un input.
+ */
+export const KeyboardNavigation: Story = {
+  render: () => {
+    const [page, setPage] = useState(1)
+    const totalPages = 8
+    return (
+      <Layout bg="white" padding={6}>
+        <div className="w-full max-w-xl space-y-4">
+          <p className="text-sm text-black">
+            Page <strong>{page}</strong> / {totalPages} — essayez{" "}
+            <kbd className="rounded-[2px] border px-1 text-xs">⇧←</kbd> /{" "}
+            <kbd className="rounded-[2px] border px-1 text-xs">⇧→</kbd>
+          </p>
+          <input
+            type="text"
+            placeholder="Focus ici : Shift+flèches ne doit PAS changer la page"
+            className="w-full rounded border border-grey-light px-2 py-1 text-sm"
+          />
+          <Pagination
+            currentPage={page}
+            totalPages={totalPages}
+            keyboardNavigation
+            onPageChange={setPage}
+          />
+        </div>
+      </Layout>
+    )
+  },
+}
+
+/**
+ * Deux Pagination synchronisées (haut + bas d'une liste) partageant le même état.
+ * `keyboardNavigation` est activé sur les deux : un `Shift + ←/→` ne doit changer
+ * la page que d'**une** unité (l'évènement n'est traité qu'une seule fois).
+ */
+export const KeyboardNavigationDualInstances: Story = {
+  render: () => {
+    const [page, setPage] = useState(1)
+    const totalPages = 8
+    return (
+      <Layout bg="white" padding={6}>
+        <div className="w-full max-w-xl space-y-3">
+          <Pagination
+            currentPage={page}
+            totalPages={totalPages}
+            keyboardNavigation
+            onPageChange={setPage}
+          />
+          <div className="flex h-40 items-center justify-center rounded border border-dashed border-grey-light text-sm text-grey-strong">
+            Contenu de la liste — page {page} / {totalPages}
+          </div>
+          <Pagination
+            currentPage={page}
+            totalPages={totalPages}
+            keyboardNavigation
+            onPageChange={setPage}
+          />
+        </div>
+      </Layout>
+    )
+  },
+}

@@ -5,6 +5,517 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.13.0] - 2026-09-15
+
+### Ajouté
+
+- `TabsList` : attribut `align="left" | "center" | "right"`, avec `left` par défaut.
+  La ligne inférieure conserve toute la largeur disponible. L'ordre des onglets
+  et le défilement en cas de débordement sont conservés. Avec `rightSlot`,
+  l'alignement porte sur l'espace de la liste, hors zone d'actions.
+- Story Tabs : contrôle d'alignement et exemples gauche, centré et droite.
+
+## [1.12.14] - 2026-09-14
+
+### ✨ Ajouté
+
+- **`Thumbnail` : désactivation externe de la notation et du label** via les props
+  `ratingDisabled` et `labelDisabled` (optionnelles, `false` par défaut,
+  non-breaking). Symétrique de `validateDisabled` / `rejectDisabled` livré en
+  1.12.11, pour les boutons étoiles et couleurs.
+  - Permet à l'application hôte de verrouiller les vignettes pendant une écriture
+    en lot déclenchée depuis une barre d'action (notation ou pose de label sur une
+    sélection), au lieu de laisser des boutons d'apparence active dont le clic est
+    rejeté en aval.
+  - Les boutons restent **affichés** : pas de saut de layout, contrairement au fait
+    de passer `onRatingChange` / `onLabelChange` à `undefined`.
+  - **Granularité par action** : `ratingDisabled` ne désactive que les étoiles,
+    `labelDisabled` que les couleurs.
+  - **Pas de combinaison avec le `status`**, contrairement à ✓ / ✗ : la note et le
+    label restent modifiables quel que soit le statut du média, la désactivation
+    vient donc uniquement de l'appelant.
+  - Le menu correspondant ne peut plus être ouvert, se referme s'il l'était, et ne
+    se rouvre pas tout seul à la levée de la désactivation (même règle que le menu
+    de motifs de refus).
+  - Accessibilité : attribut `disabled` natif réel sur le déclencheur (`Toggle` →
+    `Button`), propagé par `ButtonThumbnailStars` / `ButtonThumbnailLabels` à leurs
+    entrées de menu. Retour visuel `disabled:opacity-50` + `cursor: not-allowed`
+    via le même `<span>` enveloppant que ✓ / ✗ : le `Button` de base ne pose que
+    `disabled:pointer-events-none` et ne grisait donc rien.
+  - Story `DisabledRatingAndLabelActions` et test
+    `src/__tests__/thumbnail-rating-label-disabled.test.tsx` (13 cas, dont les
+    contre-épreuves : une prop n'entraîne pas l'autre, absence de prop = rien de
+    désactivé).
+
+## [1.12.13] - 2026-09-03
+
+Corrections issues d'une review indépendante du diff `v1.12.11..v1.12.12`.
+
+### 🐛 Corrigé
+
+- **`Thumbnail/Three60Indicator` : le seul Badge de la librairie qui perdait la
+  correction d'interlignage de la 1.12.12.** Son `className` portait
+  `text-[10px]`. Une taille **arbitraire** est reconnue comme `font-size` par
+  `tailwind-merge`, donc elle supprimait le `leading-tight` des classes de base
+  du Badge (vérifié : `leading-tight kept: FALSE`, contre `true` pour les quatre
+  autres indicateurs). Ce `text-[10px]` était par ailleurs devenu **exactement
+  redondant** avec `text-badge-label` (`--badge-fs-label` = 10px). Il est
+  supprimé : l'interlignage est rendu à ce Badge, la valeur en dur disparaît et
+  la redondance avec le token aussi.
+  - À noter : l'effet visuel était **masqué** par le rognage `.gs-text-trim`
+    introduit dans la même version, qui rend la boîte de texte indépendante de
+    la `line-height`. Le défaut ne se voyait donc que sur le chemin de repli
+    (moteur sans `text-box`). Dimensions inchangées, mesurées : 20×20px.
+
+- **`cn()` : la clé `fontSize` `xxl` était restée hors de la déclaration.**
+  `isTshirtSize` de `tailwind-merge` reconnaît `2xl` mais **pas** `xxl`, si bien
+  que `cn("text-xxl", "text-black")` supprimait la taille. Même classe de bug
+  que celle corrigée en 1.12.12, sur la seule clé du preset restée dehors.
+  Dormante (aucun `text-xxl` dans les quatre dépôts) mais armée.
+  - **Audit complet des clés `fontSize` de `tailwind-preset.cjs`** :
+    `xs`, `sm`, `base`, `lg`, `xl` sont reconnues d'origine ; `xxl`,
+    `badge-label`, `header-title`, `button-header` ne le sont pas et sont
+    désormais **toutes les quatre** déclarées dans `src/lib/utils.ts`.
+  - Un test (`src/__tests__/cn-font-size.test.ts`) relit le preset et échoue si
+    une clé `fontSize` y est ajoutée sans être déclarée dans `cn()`.
+
+- **`PageHeader` : `aria-label` du bouton de logo en dur et en anglais.**
+  `aria-label="home"` est remplacé par `aria-label={t("pageHeader.home")}` via
+  `useTranslationSafe`, le mécanisme déjà utilisé par `StatusIndicator`,
+  `MediaStatus`, `ButtonStatus` et `DataTable` pour leurs libellés accessibles.
+  Nouvelle clé `pageHeader.home` dans `src/utils/component-translations.ts`,
+  renseignée dans les **cinq** langues (EN/FR/ES/IT/DE).
+
+- **`PageHeader` / `BrandLogo` : un `<div>` se retrouvait dans le `<button>`.**
+  Le modèle de contenu de `<button>` n'accepte que du *phrasing content*,
+  exactement le défaut que le passage du Badge en `<span>` corrigeait dans la
+  même version. Corrigé sur les **deux** chemins :
+  - la zone de marque du `logo` personnalisé passe de
+    `<div className="w-5 flex-shrink-0">` à
+    `<span className="block w-5 flex-shrink-0">` ;
+  - **`BrandLogo` était aussi concerné** — non signalé par la review, mais c'est
+    le chemin **par défaut** (sans prop `logo`) : ses trois branches SVG
+    rendaient un `<div>`, désormais un `<span>`. La validité HTML dépend de
+    l'élément, pas de son `display`, donc `flex` / `block` sur un `<span>` reste
+    du phrasing content.
+  - Rendu strictement identique (`<span class="block">` ≡ `<div>`), apparence et
+    comportement de la prop inchangés.
+  - **Limite** : si le consommateur passe lui-même un `<div>` dans `logo`, il
+    reste dans le `<button>` — hors de notre contrôle.
+
+### ✅ Tests
+
+- `src/__tests__/badge-trim-children.test.tsx` (17 tests) — verrouille le
+  découpage des enfants du Badge : `0` non traité comme falsy, chaîne vide sans
+  span, `false`/`null`/`undefined`, aucun enfant, deux chaînes adjacentes
+  regroupées en **un seul** span (sinon le `gap-1` s'insère au milieu du texte),
+  `number` + `string` mélangés, texte/élément/texte en deux runs, icône laissée
+  hors du span, tableaux imbriqués, limites documentées (texte niché et
+  fragment non rognés), `textContent` préservé, absence d'avertissement de clé
+  React, et classes de base sur la racine et non sur le span.
+- `src/__tests__/cn-font-size.test.ts` (14 tests) — les neuf clés `fontSize`
+  survivent à une classe de couleur, un `text-sm` du consommateur remplace bien
+  la taille de base, l'ordre `font-size` puis `leading-*` conserve
+  l'interlignage, le piège de la taille arbitraire est documenté, aucun autre
+  groupe de classes n'est altéré, et le garde-fou de relecture du preset.
+- `src/__tests__/page-header-logo-button.test.tsx` (5 tests) — `<button
+  type="button">` rendu et appelé, absent sans la prop, libellé accessible issu
+  de l'i18n, et **aucun `<div>` dans le bouton** sur les deux chemins (logo par
+  défaut et logo personnalisé).
+
+## [1.12.12] - 2026-09-02
+
+### ✨ Ajouté
+
+- **`PageHeader` : logo de marque cliquable via une nouvelle prop optionnelle
+  `onLogoClick`.** Quand elle est fournie, la zone de marque — le `logo`
+  personnalisé ou le `BrandLogo` du thème — est enveloppée dans un vrai
+  `<button type="button">` portant `aria-label="home"`, au lieu de recevoir un
+  `onClick` sur un `<div>` : l'activation au clavier et la sémantique pour les
+  lecteurs d'écran viennent gratuitement. Le bouton ne porte aucun style propre
+  (`p-0 border-0 bg-transparent`), la mise en page de l'en-tête est donc
+  inchangée. **Non-breaking** : sans la prop, le balisage est exactement celui
+  d'avant, sans élément supplémentaire.
+
+### ♻️ Modifié
+
+- **`Badge` rend désormais un `<span>` et non plus un `<div>`.** Un Badge est
+  régulièrement posé à l'intérieur d'un élément interactif — un en-tête de
+  section rendu cliquable par un vrai `<button>`, par exemple — et le modèle de
+  contenu de `<button>` n'accepte que du *phrasing content* : un `<div>` y était
+  du HTML invalide. React ne s'en plaint pas, mais le parseur du navigateur peut
+  réarranger l'arbre et les validateurs d'accessibilité le signalent.
+  - **Aucun effet visuel** : les classes de base portent `inline-flex`, qui
+    écrase le `display` par défaut des deux balises.
+  - **Aucun breaking change TypeScript** — vérifié : les props publiques passent
+    de `React.HTMLAttributes<HTMLDivElement>` à
+    `React.HTMLAttributes<HTMLSpanElement>`, mais `HTMLAttributes<T>` n'utilise
+    `T` que dans ses handlers d'événements, et les types de handlers de React
+    (`EventHandler`) sont **bivariants** par construction (« bivariance hack »).
+    Un consommateur qui avait annoté son handler
+    `(e: React.MouseEvent<HTMLDivElement>) => …` continue donc de compiler, de
+    même qu'un consommateur qui étend `BadgeProps` ; les deux formes de props
+    restent mutuellement assignables.
+  - Rappel non lié à ce changement : `Badge` n'est pas un `forwardRef`, la prop
+    `ref` n'était pas acceptée avant et ne l'est toujours pas.
+  - Pas de prop `as` ajoutée : elle permettrait de remettre un `<div>`, donc de
+    reproduire le HTML invalide qu'on corrige, au prix d'un typage polymorphe et
+    d'une surface d'API publique supplémentaire.
+
+### 🐛 Corrigé
+
+- **`Badge` : le décalage vertical du texte est supprimé, plus seulement
+  atténué.** Le texte est désormais enveloppé dans un
+  `<span class="gs-text-trim">` qui applique
+  `text-box: trim-both cap alphabetic` : la boîte de texte est rognée sur la
+  hauteur de capitale et la ligne de base, si bien que le bloc
+  capitale→ligne-de-base est exactement centré par le `align-items: center` du
+  Badge. **Mesuré sur le CSS buildé : le décalage résiduel passe de 0,790px à
+  0,009px.**
+  - **Pourquoi un `<span>` et pas la règle sur le Badge** : `text-box-trim`
+    n'est pas héritée et ne s'applique qu'aux « block containers » et « inline
+    boxes ». Le Badge étant `inline-flex`, son texte vit dans un élément flex
+    **anonyme** qui reprend la valeur initiale `none`. Vérifié dans Chrome : la
+    règle posée sur le Badge est bien calculée sur l'élément et pourtant
+    totalement inopérante (hauteur identique au pixel près), alors que la même
+    règle sur un `<span>` enfant fonctionne.
+  - **Seuls les enfants `string` et `number` sont enveloppés.** Le texte niché
+    dans un élément enfant n'est pas rogné et garde le rendu actuel — c'est le
+    cas des trois usages de `gs_w`, qui passent leurs propres `<span>` / `Text`
+    et sont donc **strictement inchangés**. Un consommateur qui veut le rognage
+    sur son propre texte peut poser la classe `gs-text-trim` lui-même.
+  - Les suites d'enfants textuels adjacents sont regroupées dans **un seul**
+    span : `<Badge>Vue {code}</Badge>` produit deux enfants string, et un span
+    par enfant aurait créé deux éléments flex donc un `gap-1` parasite au milieu
+    du texte (mesuré : +2,7px de largeur).
+  - `gap-1` entre une icône et le texte est **préservé** (5px mesurés, identique
+    à avant), le span étant posé en frère de l'icône et non autour.
+  - **`min-h-4` devient structurel** : c'est lui qui tient la hauteur une fois
+    la boîte rognée. Vérifié — en le retirant, le Badge s'effondre de 20px à
+    13,078px. Ne pas le supprimer.
+  - **Amélioration progressive, sans `@supports`** : `text-box` est Baseline
+    depuis août 2026 (Chrome 133+, Safari 18.2+, Firefox 154+). Un moteur plus
+    ancien ignore la déclaration et la classe ne pose rien d'autre, donc le
+    rendu retombe exactement sur le précédent. Vérifié : **hauteur 20px et
+    largeur identiques avec et sans rognage** — aucun saut de layout, seul le
+    décalage de 0,8px subsiste.
+  - Nouvelle classe **`gs-text-trim`**, générique et réutilisable
+    (`src/styles/custom-styles.css`). Le biais corrigé est celui de la police,
+    donc `Button size="small"` et `TagText` ont exactement le même :
+    l'application y est volontairement **différée** (chaque composant demande de
+    revoir sa hauteur de boîte), mais c'est cette classe qu'il faudra réutiliser
+    plutôt que d'en créer une autre.
+
+- **`Badge` : le texte passe de 9px à 10px.** 9px (`text-xs`) était jugé trop
+  petit. Nouveau token `--badge-fs-label` (0,625rem = 10px), déclaré dans
+  `src/styles/custom-styles.css` — **pas** dans `figma-tokens.css`, qui est
+  régénéré — et exposé en utilitaire `text-badge-label` par une entrée
+  **additive** dans `tailwind-preset.cjs`.
+  - **Pourquoi 10px et pas 11px** : 10px est la plus grande taille qui
+    n'aggrave pas le décalage vertical du texte. Mesuré dans Chrome sur
+    AvenirNextLTPro, par deux méthodes indépendantes concordantes, l'asymétrie
+    (espace sous la ligne de base moins espace au-dessus de la capitale) vaut
+    **1,625px à 9px, 1,578px à 10px, puis 3,531px à 11px** — elle double à
+    partir de 11px. 10px offre donc +11 % de lisibilité **à coût nul** sur le
+    centrage.
+  - À rectifier par rapport à l'analyse préalable : le modèle prédisait 1,372 →
+    1,080px, soit un gain de 0,29px. **La mesure donne un gain réel de
+    0,047px**, c'est-à-dire invisible. Le modèle supposait un arrondi entier de
+    l'ascent/descent ; Chrome cale en fait la ligne de base sur le pixel
+    entier. Le bon argument pour 10px est donc « plus grand sans dégrader », et
+    non « plus grand et mieux centré ».
+  - **Hauteur du Badge inchangée : 20px** (vérifié sur le CSS buildé). Le
+    contenu passe de 17,25px à 18,5px, toujours sous les 20px de `min-h-4`.
+  - **⚠️ Écart délibéré à la maquette Figma, à re-discuter en design** : 10px
+    n'existe pas dans les primitives, dont l'échelle est 9 / 11 / 13 / 16 / 18 /
+    20px, et `fontTagFtText` (`src/styles/figma-primitives.json`) prescrit
+    **13px** pour le texte d'un tag, 9px étant réservé au « grade ». Le token
+    est volontairement nommé d'après le composant, comme `--header-fs-title` et
+    `--button-fs-header`, pour que cet écart reste visible et ne soit pas pris
+    pour un nouvel échelon global de l'échelle.
+  - Impact consommateurs : le texte s'élargit d'environ 11 %. Les 3 usages de
+    `gs_w` sont **inchangés** car tous les trois surchargent déjà la taille
+    (`popup-tag-text` a `font-size: var(--font-size-sm)` et `line-height: 1` ;
+    les deux badges de `HeaderContainer` ont des `<span>` en `text-sm` à hauteur
+    explicite). Parmi les 5 indicateurs de `Thumbnail`, seul `ViewIndicator`
+    n'avait pas de surcharge : sa hauteur reste à 15px (son `min-h-3`), seule sa
+    largeur croît. Côté `gs_guidelines`, les rangées de chips en `flex-wrap`
+    s'élargissent d'environ 11 %, donc légèrement plus de retours à la ligne.
+
+- **`cn()` : les tailles de police personnalisées n'étaient plus fusionnées
+  correctement.** `tailwind-merge` ne reconnaît comme `font-size` que les clés en
+  « taille de t-shirt » (`xs`, `sm`, `2xl`…). Les clés personnalisées du preset
+  retombaient donc dans le groupe *text-color* : `cn("text-badge-label",
+  "text-black")` supprimait la **taille** au profit de la couleur — cas réel,
+  `Thumbnail/ViewIndicator` passe `text-black` à un `Badge`. `src/lib/utils.ts`
+  déclare désormais `badge-label`, `header-title` et `button-header` dans le
+  groupe `font-size` via `extendTailwindMerge`. Corrige au passage le même bug
+  latent sur `text-header-title` et `text-button-header`. Une taille passée par
+  le consommateur (`text-sm`) continue de remplacer celle de la librairie.
+
+- **`Badge` : centrage vertical du texte.** Deux causes cumulées, toutes deux
+  dans la librairie :
+  - Les classes de base portaient `self-start`, qui annulait le
+    `align-items: center` du conteneur parent : un Badge placé dans un en-tête
+    flex plus haut que lui se collait en haut (mesuré ~5px de décalage dans un
+    en-tête de 52px). Remplacé par `w-fit h-fit`, qui protège toujours le Badge
+    de l'étirement (`align-items: stretch`, la valeur par défaut) **sans**
+    confisquer l'alignement décidé par le parent — une cross-size non-`auto`
+    fait dégrader `stretch` en `flex-start`. Un Badge dans un conteneur
+    `items-center` est donc désormais réellement centré, et dans un `flex-col`
+    il reste collé à gauche et à sa largeur de contenu.
+  - Le Badge n'avait aucune classe `leading-*`. Le `font-size` venait du preset
+    GS (`--font-size-xs` = 9px) mais la `line-height` restait celle de la règle
+    Tailwind stock `.text-xs` (16px), qui survit à même spécificité : texte de
+    9px dans une line-box de 16px, décalé vers le haut d'environ 1px du fait de
+    l'asymétrie d'AvenirNextLTPro. Ajout de `leading-tight`, comme le fait déjà
+    `Button size="small"`.
+  - Ajout de `min-h-4` (20px) pour aligner la hauteur minimale du Badge sur
+    celle de `Button size="small"`. `min-height` et non `height` : un
+    consommateur qui surcharge le padding (`py-1`) peut toujours dépasser.
+- **`Badge` : les 4 variantes n'avaient plus aucun style.** Les classes
+  `badge-normal`, `badge-secondary`, `badge-destructive` et `badge-outline`
+  appliquées par `badgeVariants` n'existaient nulle part : le bloc CSS avait été
+  écrit dans `src/styles/figma-tokens.css` (commit `6c3af9d`) puis effacé une
+  heure plus tard par une régénération de ce fichier (`08d4809`). Les quatre
+  variantes étaient donc visuellement identiques et sans fond. Le bloc est
+  restauré dans `src/styles/custom-styles.css`, qui n'est pas généré, et corrigé
+  au passage : `border-color: transparent` au lieu du raccourci
+  `border: transparent`, qui remettait `border-style` à `none` et retirait donc
+  les 2px de bordure haut/bas du Badge.
+
+  ⚠️ **Impact visuel côté consommateurs** : les variantes reprennent un fond
+  là où elles n'en avaient plus aucun.
+
+  Ces règles sont écrites `:where([data-bg="…"]).badge-*` et non
+  `[data-bg="…"].badge-*` : `:where()` ayant une spécificité nulle, elles pèsent
+  (0,1,0) — le poids d'une simple classe — au lieu de (0,2,0). Sans ça elles
+  auraient battu les utilitaires Tailwind du consommateur et `<Badge
+  className="bg-white">` aurait été silencieusement écrasé (cas réel : `gs_w`,
+  `src/pages/validation/components/HeaderContainer/HeaderContainerPresentation.js`).
+  À égalité de spécificité avec `.bg-white`, c'est l'ordre source qui tranche, et
+  `custom-styles.css` est importé **avant** `@tailwind utilities` : l'utilitaire
+  du consommateur gagne. Les variantes s'appliquent normalement dès que rien ne
+  les surcharge.
+
+  Incohérence assumée : les classes `btn-*` restent en (0,2,0). Les harmoniser
+  est un chantier séparé.
+
+### 📚 Documentation
+
+- Story de non-régression `Design System/Typography › Alignement vertical
+  Badge / Button` : Badge et `Button size="small"` dans des conteneurs flex plus
+  hauts qu'eux, avec repère de centre, plus les cas `items-stretch`, `flex-col`,
+  `items-end`, `flex-wrap` et surcharge `py-1`. Elle remet et étend la story
+  `AlignmentTest` de `6c3af9d`, disparue avec `08d4809`. Le repère de centre de
+  cette story utilise le token `bg-red-strong` : `bg-red` n'est pas une classe
+  que le preset GS génère (seul `red-strong` existe dans la palette) et le
+  trait était donc invisible.
+- `badge.stories.tsx` : correction d'une affirmation fausse qui prétendait que
+  « Icons align perfectly with text using `items-center` ». `items-center`
+  centre les boîtes des enfants sur la hauteur du Badge, pas le bloc de glyphes
+  dans sa line-box — c'était précisément l'hypothèse à l'origine du bug.
+
+## [1.12.11] - 2026-09-01
+
+### ✨ Ajouté
+
+- **`Thumbnail` : désactivation externe des actions de validation / refus** via les
+  props `validateDisabled` et `rejectDisabled` (optionnelles, `false` par défaut,
+  non-breaking).
+  - Permet à l'application hôte de verrouiller les boutons ✓ / ✗ pendant une
+    écriture en cours (changement de statut en lot, par exemple) au lieu de laisser
+    des boutons d'apparence active dont le clic est rejeté en aval.
+  - Les boutons restent **affichés** : plus besoin de passer `onValidate` /
+    `onReject` à `undefined`, qui faisait disparaître le bloc d'actions et
+    provoquait un saut de layout.
+  - **Granularité par action** : `validateDisabled` ne désactive que ✓,
+    `rejectDisabled` que ✗. Pour verrouiller tout le bloc, passer les deux.
+  - **Combinaison** avec les désactivations internes existantes liées au `status`
+    (OU logique, jamais un remplacement) : ✓ reste désactivé si le média est déjà
+    validé (statut 50), ✗ s'il est déjà refusé / à refaire (statuts 31 / 35).
+  - Accessibilité : attribut `disabled` natif réel (clic et focus bloqués par le
+    navigateur), pas seulement une classe ; opacité réduite et
+    `cursor: not-allowed` uniquement dans le cas de la désactivation externe, pour
+    ne rien changer à l'apparence de la désactivation liée au statut.
+  - Avec un menu de motifs de refus configuré
+    (`bench.config.validation.rejection_options`), `rejectDisabled` empêche
+    l'ouverture du menu et le referme s'il était ouvert, sans le réouvrir à la
+    levée de la désactivation : aucun motif n'est cliquable pendant le verrouillage.
+  - Nouvelles stories `Components/Thumbnail › DisabledValidationActions` et
+    `DisabledDuringWrite`, et tests
+    `src/__tests__/thumbnail-validation-disabled.test.tsx`.
+  - Non-breaking : en l'absence des deux props, le comportement est strictement
+    identique à 1.12.10.
+
+## [1.12.10] - 2026-07-07
+
+### ✨ Ajouté
+
+- **`Pagination` : navigation au clavier** via la prop `keyboardNavigation`
+  (désactivée par défaut, non-breaking).
+  - `Shift + ←` = page précédente, `Shift + →` = page suivante (appelle
+    `onPageChange` avec la page bornée à `1..totalPages`).
+  - Gardes : sans effet si le focus est dans un champ éditable
+    (`input`/`textarea`/`select`/`contenteditable`) ou si un modal est ouvert.
+  - Sûr avec plusieurs `Pagination` sur une même page (haut/bas d'une liste) :
+    l'évènement clavier n'est traité qu'une seule fois (pas de double saut).
+  - Accessibilité : ajout de `aria-keyshortcuts` sur les boutons `<`/`>`.
+  - Nouvelles stories `Components/Pagination › KeyboardNavigation` et
+    `KeyboardNavigationDualInstances`.
+- **`Pagination` : tooltips de raccourci** sur les boutons `<`/`>` (affichés
+  uniquement quand `keyboardNavigation` est actif). Le tooltip montre les touches
+  du raccourci (badges `⇧` et `←`/`→`), via le `Tooltip` de la librairie.
+
+## [1.12.9] - 2026-07-07
+
+### 🔒 Sécurité
+
+- **Reclassement d'outils de build en `devDependencies`** : `vite-plugin-dts`,
+  `@storybook/addon-mcp` et `@tmcp/session-manager` étaient déclarés dans
+  `dependencies` alors qu'ils ne servent qu'au build / à Storybook (jamais
+  exécutés par les consommateurs, les `.d.ts` étant déjà générés dans `dist/`).
+  - Leur sous-arbre transitif n'est plus imposé aux projets consommateurs :
+    les vulnérabilités `npm audit` associées (chaîne `vite-plugin-dts →
+    @microsoft/api-extractor → lodash/minimatch`, etc.) disparaissent de
+    l'arbre des consommateurs.
+  - Aucun impact sur le paquet publié : `build:lib` génère toujours les types,
+    et les `dependencies` restantes sont exclusivement des dépendances runtime.
+
+## [1.12.8] - 2026-07-07
+
+### 🎯 Amélioré
+
+- **`Slider` : zones cliquables élargies (sans changement d'apparence)**. La
+  surface de prise en compte des clics est agrandie via des pseudo-éléments
+  transparents ; l'apparence (piste 2px, thumb 10px) reste identique.
+  - La piste est cliquable sur **±10px** (10px au-dessus et 10px en dessous de
+    la barre) grâce au `::before` du Root Radix.
+  - **Toute la longueur** de la barre est cliquable : Radix repositionne sur le
+    point le plus proche du clic (comportement natif, désormais accessible sur
+    toute la zone élargie).
+  - Zone de **préhension du thumb** élargie de 10px tout autour pour faciliter le
+    drag.
+  - En mode `debug`, les zones de hit sont légèrement teintées (rose) pour les
+    visualiser.
+
+## [1.12.7] - 2026-07-06
+
+### ✨ Ajouté
+
+- **`Thumbnail` : taille `size="auto"`**. Le composant occupe désormais toute la
+  largeur disponible de son conteneur (`containerWidth: 100%`).
+  - L'image conserve son ratio (`object-contain`, `w-full`) et pilote sa hauteur ;
+    aucune hauteur fixe n'est imposée à la box de l'image.
+  - Le conteneur de l'image reçoit `height: stretch` pour remplir la hauteur
+    disponible du `Layout` parent.
+  - Repli de hauteur (`200px`) pour les états placeholder (chargement / erreur /
+    vue vide) afin d'éviter l'effondrement de la box.
+  - Non-breaking : `small` / `large` et les tailles personnalisées (`"400px"`, …)
+    conservent leur comportement. Nouvelles stories `Components/Thumbnail ›
+    AutoSize` et `AutoSizeGrid`.
+
+- **`Slider` : prop `steps`** (paliers discrets). Liste de valeurs autorisées
+  (ex. `[2, 3, 6, 10]`) : le slider n'accepte que ces valeurs.
+  - En interne le slider est piloté sur des index (0…n-1) ; `value` /
+    `defaultValue` et `onValueChange` s'expriment en valeurs réelles.
+  - Les paliers sont répartis régulièrement à l'écran quelle que soit leur valeur ;
+    `min` / `max` / `step` sont ignorés dans ce mode.
+  - Nouvelles stories `UI/Slider › DiscreteSteps` et `CurrentLabelDiscrete`.
+
+- **`Slider` : prop `labelCurrent`**. Label positionné au-dessus du point de la
+  valeur sélectionnée (suit le thumb).
+  - Masqué au min si `labelMin` est défini, et au max si `labelMax` est défini,
+    pour éviter le chevauchement.
+  - Nouvelle story `UI/Slider › CurrentLabel`.
+
+### 🐛 Corrigé
+
+- **`Slider` : centrage des labels sur leur point**. `labelMin`, `labelMax` et
+  `labelCurrent` sont désormais centrés précisément sur le centre réel du thumb
+  (prise en compte de l'« in-bounds offset » de Radix : `offset = 5·(1 − P/50)`).
+  - Le thumb est recentré horizontalement (`-translate-x-1/2`) : il ne déborde
+    plus de la piste aux extrémités et son positionnement devient symétrique.
+
+## [1.12.6] - 2026-07-02
+
+### ✨ Ajouté
+
+- **`Thumbnail` : prop `viewportBgColor`**. Nouvelle prop pour colorer le fond du
+  **viewport** (le conteneur qui entoure l'image, letterboxing compris), distincte
+  de `imageBgColor` qui ne colore que la content-box de l'`<img>` (pixels
+  transparents / letterboxing interne).
+  - Accepte toute valeur CSS (ex. palette du raccourci `D` : `#FFFFFF`, `#D0D0D0`,
+    `#777777`, `#333333`).
+  - Par défaut le viewport reste blanc ; le cas « vue vide » garde `bg-grey-middle`.
+  - Non-breaking : `imageBgColor` conserve son comportement, les deux surfaces
+    restent réglables indépendamment.
+  - Nouvelle story `Components/Thumbnail › WithViewportBackground`.
+
+## [1.12.5] - 2026-06-24
+
+### 🎨 Modifié
+
+- **Scrollbars : héritage du contexte `data-bg` le plus proche**. Les couleurs
+  de scrollbar sont désormais exposées via des custom properties héritables
+  (`--sb-thumb` / `--sb-thumb-hover`) posées sur chaque conteneur `data-bg`.
+  - Un conteneur scrollable **sans `data-bg` propre** (ex. un `overflow:auto`
+    applicatif non géré par la librairie) hérite automatiquement de la couleur
+    de scrollbar du contexte `data-bg` **ancêtre le plus proche**.
+  - L'imbrication (`grey > black > scroller`) est résolue par l'héritage des
+    variables, sans conflit de spécificité ni dépendance à l'ordre des règles.
+  - WebKit : ciblage de `[data-bg]` et `[data-bg] *` via `var(--sb-thumb)`.
+    Firefox : héritage natif de `scrollbar-color`.
+  - Nouvelle story `Layout/Layout › ScrollbarInheritedByNestedScroller`.
+
+## [1.12.4] - 2026-06-24
+
+### 🎨 Modifié
+
+- **Scrollbars adaptées au contexte de fond (`data-bg`)**. La scrollbar native
+  s'adapte désormais à la couleur du conteneur scrollable, avec un thumb dédié
+  par contexte (couleurs issues des variables du design system) :
+  - `data-bg="white"` → thumb `--color-grey-strong` (discret), hover `--color-grey-stronger`.
+  - `data-bg="grey"` → thumb `--color-grey-stronger`, hover `--color-grey-strongest`.
+  - `data-bg="black"` → thumb `--color-grey-strongest`, hover `--color-grey-stronger`.
+  - Support WebKit (`::-webkit-scrollbar-*`) et Firefox (`scrollbar-color` /
+    `scrollbar-width: thin`). Thumb fin arrondi avec marge
+    (`border` transparent + `background-clip: padding-box`).
+  - `SidePanel` et `ActivityPanel` posent désormais `data-bg` sur leur conteneur
+    scrollable interne pour bénéficier du style sur tous les navigateurs.
+  - Nouvelle story `Layout/Layout › ScrollbarByBackground`.
+
+## [1.12.3] - 2026-06-22
+
+### 🌐 Internationalisation
+
+- **Externalisation des textes en dur** : tous les textes utilisateur (libellés,
+  placeholders, `aria-label`, `title`, `alt`) qui étaient codés en dur dans les
+  composants passent désormais par la fonction de traduction `t()`
+  (`useTranslationSafe`), avec traductions EN / FR / ES / IT / DE.
+  - Composants concernés : `ActionBar`, `FullFrame`, `SidePanel`, `ActivityPanel`,
+    `Thumbnail`, `ButtonThumbnailComments`, `ButtonThumbnailTags`, `TagCross`,
+    `ButtonStatus`, `MediaStatus`, `StatusIndicator`, `SelectAutocomplete`,
+    `Pagination`, `FolderBrowser`, `BrandLogo`, `ThemeSwitcher`.
+  - Nouvelles clés de traduction ajoutées dans `component-translations.ts`
+    (`thumbnail.*`, `tag.remove`, `buttonStatus.*`, `mediaStatus.*`,
+    `statusIndicator.label`, `select.noResults`, `select.searching`,
+    `pagination.previousPage`, `pagination.nextPage`, `folderBrowser.rootFolder`,
+    `brandLogo.alt`, `themeSwitcher.*`, `sidePanel.accessibilityTitle`,
+    `notifications.panelTitle`).
+  - Nouvelles props optionnelles `language` / `translations` sur `Thumbnail`,
+    `SelectAutocomplete` et `Pagination` (alignées sur `FolderBrowser` /
+    `DataTable`), pour fonctionner avec ou sans `TranslationProvider`.
+
+Aucun changement cassant : les valeurs par défaut textuelles restent
+surchargeables et le rendu est identique en langue par défaut.
+
+## [1.12.2] - 2026-05-12
+
+### 🔧 Modifié
+
+- Mise à jour de la configuration Tailwind.
+
 ## [1.12.1] - 2026-05-12
 
 ### ✨ Ajouté

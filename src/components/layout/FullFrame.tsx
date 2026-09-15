@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Icon } from '@/components/ui/icons';
 import { VStack, VStackProps } from './VStack';
 import { HStack } from './HStack';
+import { useTranslationSafe } from '@/contexts/TranslationContext';
 
 type BgContext = 'white' | 'grey' | 'black';
 
@@ -80,6 +81,8 @@ export function FullFrame({
   bodyBg = 'white',
   headerContent,
 }: FullFrameProps) {
+  const { t } = useTranslationSafe();
+
   return (
     <div
       className={cn(
@@ -108,7 +111,7 @@ export function FullFrame({
                 size="large"
                 variant="ghost"
                 onClick={onClose}
-                aria-label="Fermer"
+                aria-label={t('button.close')}
                 className="p-0 w-8 h-8"
               >
                 <Icon name="X" size={14} />
@@ -121,7 +124,7 @@ export function FullFrame({
               size="large"
               variant="ghost"
               onClick={onClose}
-              aria-label="Fermer"
+              aria-label={t('button.close')}
               className="p-0 w-8 h-8 ml-auto"
             >
               <Icon name="X" size={14} />

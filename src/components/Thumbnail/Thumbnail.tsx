@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useMemo, useState } from "react";
+import React, { useRef, useCallback, useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import { Layout, VStack } from "@/components/layout";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -20,13 +20,41 @@ import MediaStatus from "@/components/MediaStatus";
 import { MediaStatus as MediaStatusEnum } from "@/utils/mediaStatus";
 import type { TagsData } from "@/components/ui/button-thumbnail-tags";
 import type { CommentData } from "@/components/ui/button-thumbnail-comments";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@/components/ui/popover";
+import { useTranslationSafe, type TranslationMap } from "@/contexts/TranslationContext";
+
+/** Configuration de rejet du bench */
+export interface BenchRejectionOptions {
+  active?: boolean;
+  main?: string[];
+  secondary?: string[];
+}
+
+/** Structure minimale du bench nécessaire pour le Thumbnail */
+export interface ThumbnailBench {
+  config?: {
+    validation?: {
+      rejection_options?: BenchRejectionOptions;
+    };
+  };
+}
+import { UrgentIndicator } from "./UrgentIndicator";
+import { AlertIndicator } from "./AlertIndicator";
+import { VedetteIndicator } from "./VedetteIndicator";
+import { Three60Indicator } from "./Three60Indicator";
+import { ViewIndicator } from "./ViewIndicator";
 
 /** Tailles prédéfinies du thumbnail */
-export type ThumbnailPresetSize = "small" | "large";
+export type ThumbnailPresetSize = "small" | "large" | "auto";
 
 /**
  * Taille du thumbnail:
  * - "small" (100px) ou "large" (340px) pour les tailles prédéfinies
+ * - "auto" : le composant prend toute la largeur disponible de son conteneur
  * - Une valeur CSS personnalisée comme "400px", "200px", "15rem", etc.
  */
 export type ThumbnailSize = ThumbnailPresetSize | (string & {});
@@ -44,14 +72,24 @@ export interface ThumbnailAction {
 
 export interface ThumbnailProps {
   // Image data
+  /** ID de la photo */
+  picture_id?: number;
   /** URL de l'image thumbnail */
   src?: string;
   /** Texte alternatif de l'image */
   alt?: string;
   /** Nom du fichier à afficher */
   filename?: string;
-  /** Placeholder affiché si l'image n'est pas disponible */
-  placeholder?: string;
+  /** Indique si le fichier est urgent */
+  isUrgent?: boolean;
+  /** Indicateur d'alerte */
+  isAlert?: boolean;
+  /** Indicateur de vedette */
+  isVedette?: boolean;
+  /** Indicateur de 360 */
+  is360?: boolean;
+  /** Code de vue du fichier */
+  view?: string;
 
   // Overlay images (master/format)
   /** URL de l'image master à superposer */
@@ -75,6 +113,23 @@ export interface ThumbnailProps {
   /** Indique si le fichier a des annotations */
   hasAnnotations?: boolean;
 
+  // Image appearance
+  /**
+   * Couleur de fond de l'image elle-même (content-box de l'`<img>`).
+   * Utile pour les images avec transparence (PNG) : colore les pixels transparents
+   * et le letterboxing interne à la box de l'image.
+   * Accepte toute valeur CSS valide (ex: "#ffffff", "rgb(255,255,255)", "white").
+   */
+  imageBgColor?: string;
+  /**
+   * Couleur de fond du viewport (le conteneur qui entoure l'image, y compris
+   * l'espace autour d'une image `object-contain`). À distinguer de `imageBgColor`
+   * qui ne colore que la box de l'image.
+   * Par défaut le viewport reste blanc. Accepte toute valeur CSS valide
+   * (ex: "#FFFFFF", "#D0D0D0", "#777777", "#333333").
+   */
+  viewportBgColor?: string;
+
   // Selection
   /** Indique si le thumbnail est sélectionné */
   selected?: boolean;
@@ -83,6 +138,7 @@ export interface ThumbnailProps {
   /**
    * Taille du thumbnail:
    * - "small" (100px) ou "large" (340px) pour les tailles prédéfinies
+   * - "auto" : le composant prend toute la largeur disponible de son conteneur
    * - Une valeur CSS personnalisée comme "400px", "200px", "15rem", etc.
    */
   size?: ThumbnailSize;
@@ -94,12 +150,6 @@ export interface ThumbnailProps {
   actions?: ThumbnailAction[];
   /** Nombre maximum d'actions affichées dans le dropdown */
   maxDropdownItems?: number;
-
-  // Indicators (slots)
-  /** Indicateurs à afficher en haut à gauche */
-  leftIndicators?: React.ReactNode;
-  /** Indicateurs à afficher en haut à droite */
-  rightIndicators?: React.ReactNode;
 
   // Loading states
   /** État de chargement de l'image */
@@ -128,8 +178,74 @@ export interface ThumbnailProps {
   onCommentAdd?: (comment: string) => Promise<void>;
   /** Callback de validation */
   onValidate?: () => void;
-  /** Callback de rejet */
-  onReject?: () => void;
+  /** Callback de rejet. Si rejection_options actif, reçoit le message de refus choisi. */
+  onReject?: (rejectionMessage?: string) => void;
+  /** Données du bench pour les options de rejet */
+  bench?: ThumbnailBench;
+  /**
+   * Désactive le bouton de validation (✓) depuis l'extérieur, sans le masquer.
+   *
+   * Se **combine** avec la désactivation interne liée au `status` (le bouton reste
+   * désactivé si le média est déjà validé) : elle ne la remplace pas.
+   * Optionnelle et `false` par défaut — à `undefined`/`false` le comportement est
+   * strictement identique aux versions antérieures.
+   *
+   * Cas d'usage : verrouiller l'action pendant une écriture en cours (changement de
+   * statut en lot, par exemple) pour interdire une écriture concurrente, au lieu de
+   * laisser un bouton actif dont le clic serait rejeté en aval.
+   */
+  validateDisabled?: boolean;
+  /**
+   * Désactive le bouton de refus (✗) depuis l'extérieur, sans le masquer.
+   *
+   * Se **combine** avec la désactivation interne liée au `status` (le bouton reste
+   * désactivé si le média est déjà refusé / à refaire) : elle ne la remplace pas.
+   * Optionnelle et `false` par défaut — à `undefined`/`false` le comportement est
+   * strictement identique aux versions antérieures.
+   *
+   * Si un menu de motifs de refus est configuré
+   * (`bench.config.validation.rejection_options`), le menu ne peut plus être ouvert
+   * et se referme s'il l'était : aucun motif n'est cliquable pendant la désactivation.
+   */
+  rejectDisabled?: boolean;
+  /**
+   * Désactive le bouton de notation (étoiles) depuis l'extérieur, sans le masquer.
+   *
+   * Contrairement à `validateDisabled` / `rejectDisabled`, il n'y a **aucune**
+   * désactivation interne liée au `status` à combiner : la note reste modifiable
+   * quel que soit le statut du média. La désactivation vient donc uniquement de
+   * l'appelant.
+   * Optionnelle et `false` par défaut — à `undefined`/`false` le comportement est
+   * strictement identique aux versions antérieures.
+   *
+   * Le menu d'étoiles ne peut plus être ouvert et aucune note n'est cliquable
+   * pendant la désactivation.
+   *
+   * Cas d'usage : verrouiller l'action pendant une écriture en cours (notation en
+   * lot depuis une barre d'action, par exemple) pour interdire une écriture
+   * concurrente, au lieu de laisser un bouton actif dont le clic serait rejeté en
+   * aval.
+   */
+  ratingDisabled?: boolean;
+  /**
+   * Désactive le bouton de label (couleurs) depuis l'extérieur, sans le masquer.
+   *
+   * Contrairement à `validateDisabled` / `rejectDisabled`, il n'y a **aucune**
+   * désactivation interne liée au `status` à combiner : le label reste modifiable
+   * quel que soit le statut du média. La désactivation vient donc uniquement de
+   * l'appelant.
+   * Optionnelle et `false` par défaut — à `undefined`/`false` le comportement est
+   * strictement identique aux versions antérieures.
+   *
+   * Le menu de couleurs ne peut plus être ouvert et aucune couleur n'est cliquable
+   * pendant la désactivation.
+   *
+   * Cas d'usage : verrouiller l'action pendant une écriture en cours (pose de label
+   * en lot depuis une barre d'action, par exemple) pour interdire une écriture
+   * concurrente, au lieu de laisser un bouton actif dont le clic serait rejeté en
+   * aval.
+   */
+  labelDisabled?: boolean;
 
   // Drag and drop
   /** Indique si le drag and drop est activé */
@@ -146,6 +262,12 @@ export interface ThumbnailProps {
   isDragged?: boolean;
   /** Indique si ce thumbnail est survolé pendant un drag */
   isDragOver?: boolean;
+
+  // Translation props (optional - works without TranslationProvider)
+  /** Code de langue (ex: "fr", "en", "es", "it", "de") */
+  language?: string;
+  /** Traductions personnalisées pour surcharger les valeurs par défaut */
+  translations?: Partial<TranslationMap>;
 }
 
 /**
@@ -164,21 +286,18 @@ export interface ThumbnailProps {
  *   selected={isSelected}
  *   onSelectionChange={(selected) => setIsSelected(selected)}
  *   onRatingChange={(rating) => updateRating(rating)}
- *   leftIndicators={
- *     <>
- *       {file.isUrgent && <UrgentIndicator />}
- *       {file.hasAlert && <AlertIndicator />}
- *     </>
- *   }
- *   rightIndicators={<ViewIndicator view="F" />}
  * />
  */
 export const Thumbnail: React.FC<ThumbnailProps> = ({
   // Image data
+  picture_id,
   src,
   alt = "",
   filename = "",
-  placeholder = "Image non disponible",
+  isUrgent = false,
+  isAlert = false,
+  isVedette = false,
+  is360 = false,
 
   // Overlay images
   masterSrc,
@@ -194,6 +313,10 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
   comments = [],
   hasAnnotations = false,
 
+  // Image appearance
+  imageBgColor,
+  viewportBgColor,
+
   // Selection
   selected = false,
 
@@ -205,9 +328,7 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
   actions,
   maxDropdownItems = 10,
 
-  // Indicators
-  leftIndicators,
-  rightIndicators,
+  view,
 
   // Loading states
   isLoading = false,
@@ -225,6 +346,11 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
   onCommentAdd,
   onValidate,
   onReject,
+  bench,
+  validateDisabled = false,
+  rejectDisabled = false,
+  ratingDisabled = false,
+  labelDisabled = false,
 
   // Drag and drop
   draggable = false,
@@ -234,18 +360,67 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
   onDragLeave,
   isDragged = false,
   isDragOver = false,
+  language,
+  translations,
 }) => {
+  const { t } = useTranslationSafe(translations, language);
+
   // Ref pour capturer l'événement de clic (pour shiftKey, etc.)
   const clickEventRef = useRef<React.PointerEvent | null>(null);
 
   // État pour gérer les menus mutuellement exclusifs
-  type MenuId = "stars" | "labels" | "tags" | "comments" | "actions" | null;
+  type MenuId = "stars" | "labels" | "tags" | "comments" | "actions" | "reject" | null;
   const [openMenu, setOpenMenu] = useState<MenuId>(null);
+
+  // État pour la vue du menu de rejet (main ou secondary)
+  const [rejectMenuView, setRejectMenuView] = useState<"main" | "secondary">("main");
+
+  // Options de rejet du bench
+  const rejectionOptions = bench?.config?.validation?.rejection_options;
+  const hasRejectionMenu = !!(
+    rejectionOptions?.active &&
+    ((rejectionOptions.main && rejectionOptions.main.length > 0) ||
+      (rejectionOptions.secondary && rejectionOptions.secondary.length > 0))
+  );
+
+  // Désactivation des boutons de validation / refus.
+  // La désactivation interne liée au statut du média est conservée telle quelle et
+  // se combine (OU logique) avec la désactivation externe optionnelle.
+  const isValidatedStatus = status === 50;
+  const isRejectedStatus = status === 31 || status === 35;
+  const validateButtonDisabled = isValidatedStatus || validateDisabled;
+  const rejectButtonDisabled = isRejectedStatus || rejectDisabled;
+  // Rendu de l'état désactivé externe : le `disabled` natif suffit à bloquer le clic
+  // et le focus ; on ajoute le retour visuel (opacité + curseur) que `ButtonStatus`
+  // neutralise volontairement pour la désactivation liée au statut, et que le
+  // `Button` de base ne fournit pas non plus (il ne pose que
+  // `disabled:pointer-events-none`) pour les boutons étoiles / couleurs.
+  const externallyDisabledButtonClass = "disabled:opacity-50";
 
   // Handler pour gérer l'ouverture/fermeture des menus
   const handleMenuOpenChange = useCallback((menuId: MenuId, open: boolean) => {
     setOpenMenu(open ? menuId : null);
   }, []);
+
+  // Si le refus est désactivé alors que le menu de motifs est ouvert, on ferme le
+  // menu et on oublie son état : il ne doit pas se réouvrir tout seul à la levée
+  // de la désactivation.
+  useEffect(() => {
+    if (!rejectButtonDisabled) return;
+    setOpenMenu((current) => (current === "reject" ? null : current));
+    setRejectMenuView("main");
+  }, [rejectButtonDisabled]);
+
+  // Même règle pour la notation et les labels : un menu ne doit pas rester ouvert
+  // quand son bouton vient d'être désactivé de l'extérieur, et on oublie son état
+  // pour qu'il ne se rouvre pas tout seul à la levée de la désactivation.
+  useEffect(() => {
+    setOpenMenu((current) => {
+      if (current === "stars" && ratingDisabled) return null;
+      if (current === "labels" && labelDisabled) return null;
+      return current;
+    });
+  }, [ratingDisabled, labelDisabled]);
 
   // Calcul de la configuration de taille (prédéfinie ou personnalisée)
   const config = useMemo(() => {
@@ -253,20 +428,36 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
     if (size === "large") {
       return {
         containerWidth: "340px",
-        imageMinHeight: "340px",
-        imageMaxHeight: "340px",
+        imageMinHeight: "340px" as string | undefined,
+        imageMaxHeight: "340px" as string | undefined,
         iconSize: 40,
         isSmall: false,
+        isAuto: false,
       };
     }
 
     if (size === "small") {
       return {
         containerWidth: "100px",
-        imageMinHeight: "100px",
-        imageMaxHeight: "100px",
+        imageMinHeight: "100px" as string | undefined,
+        imageMaxHeight: "100px" as string | undefined,
         iconSize: 20,
         isSmall: true,
+        isAuto: false,
+      };
+    }
+
+    // Taille "auto" : le composant occupe toute la largeur disponible.
+    // L'image conserve son ratio (object-contain) et pilote sa propre hauteur ;
+    // aucune hauteur fixe n'est imposée à la box de l'image.
+    if (size === "auto") {
+      return {
+        containerWidth: "100%",
+        imageMinHeight: undefined as string | undefined,
+        imageMaxHeight: undefined as string | undefined,
+        iconSize: 40,
+        isSmall: false,
+        isAuto: true,
       };
     }
 
@@ -277,12 +468,17 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
 
     return {
       containerWidth: size,
-      imageMinHeight: size,
-      imageMaxHeight: size,
+      imageMinHeight: size as string | undefined,
+      imageMaxHeight: size as string | undefined,
       iconSize: isSmallSize ? 20 : 40,
       isSmall: isSmallSize,
+      isAuto: false,
     };
   }, [size]);
+
+  // Hauteur de repli pour les placeholders (chargement / erreur / vue vide)
+  // lorsqu'aucune hauteur d'image n'est imposée (cas "auto").
+  const placeholderMinHeight = config.imageMinHeight ?? "200px";
 
   // Handler pour le drag
   const handleDragStart = useCallback(
@@ -341,15 +537,20 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
   const wrapperClasses = cn(
     "flex flex-col items-center w-full mx-auto h-[fill-available]",
     isDragged && "opacity-40 cursor-grabbing scale-95 transition-all duration-200",
-    isDragOver && "border-2 border-dashed border-primary rounded-sm bg-primary/10 scale-105 transition-all duration-200",
+    "border-[1px] border-dashed rounded-sm bg-primary/10 transition-all duration-200",
+    isDragOver ? "border-grey-stronger" : "border-transparent",
     draggable && "cursor-grab hover:opacity-90 transition-all duration-200",
+    (!picture_id || picture_id === -1) && 'item-image-wrapper-empty-view',
     className
   );
 
   // Container classes (sans les dimensions qui seront en inline)
+  // Le fond du viewport reste blanc par défaut ; s'il est fourni via viewportBgColor,
+  // on laisse le style inline gérer la couleur (sauf cas "vue vide" qui garde bg-grey-middle).
+  const isEmptyView = (!picture_id || picture_id === -1) && view;
   const containerClasses = cn(
-    "relative flex items-center justify-center bg-white border-[0.25px] border-white",
-    selected && "border-primary"
+    "relative flex items-center justify-center border-[0.25px] border-white",
+    isEmptyView ? ' bg-grey-middle' : !viewportBgColor && 'bg-white'
   );
 
   return (
@@ -370,33 +571,39 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
         {/* Image container */}
         <div
           className={containerClasses}
-          style={{ minHeight: config.imageMinHeight
-            
-           }}
+          style={{
+            minHeight: isEmptyView
+              ? "100%"
+              : isLoading
+              ? placeholderMinHeight
+              : config.imageMinHeight,
+            ...(config.isAuto ? { height: "stretch" } : {}),
+            ...(viewportBgColor && !isEmptyView ? { backgroundColor: viewportBgColor } : {}),
+          }}
         >
           {/* Master overlay */}
-          {masterSrc && (
+          {picture_id &&masterSrc && (
             <div className="absolute inset-0 z-10 opacity-50">
               <img src={masterSrc} alt="Master" className="w-full h-full object-contain" />
             </div>
           )}
 
           {/* Format overlay */}
-          {formatSrc && (
+          {picture_id && formatSrc && (
             <div className="absolute inset-0 z-10">
               <img src={formatSrc} alt="Format" className="w-full h-full object-contain" />
             </div>
           )}
 
           {/* Loading spinner */}
-          {isLoading && (
+          {picture_id && isLoading && !hasError && (
             <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
               <div className="w-8 h-8 border-4 border-grey-light border-t-grey-strongest rounded-full animate-spin" />
             </div>
           )}
 
           {/* Shadow layer with hover effects */}
-          {!isLoading && (
+          {!isLoading && picture_id && (
             <div
               className={cn(
                 "absolute inset-0 z-10 bg-black/0 transition-colors cursor-pointer",
@@ -410,7 +617,7 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
               {/* Checkbox */}
               {onSelectionChange && (
                 <div
-                  className="ml-2 mt-2 inline-flex"
+                  className={`${size === "small" ? "ml-1 mt-1" : "ml-2 mt-2"} inline-flex`}
                   onPointerDown={(e) => {
                     clickEventRef.current = e;
                   }}
@@ -436,168 +643,194 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
           )}
 
           {/* Main image */}
-          {!hasError && src ? (
+          {!hasError && src && (
             <img
               src={src}
               alt={alt}
               onError={onImageError}
               onLoad={onImageLoad}
-              className="object-contain block mx-auto max-w-full border-[0.25px] border-grey-light"
-              style={{ maxHeight: config.imageMaxHeight }}
+              className={cn(
+                "object-contain block mx-auto max-w-full border-[0.25px] border-grey-light",
+                config.isAuto && "w-full"
+              )}
+              style={{
+                maxHeight: config.imageMaxHeight,
+                backgroundColor: imageBgColor,
+              }}
             />
-          ) : (
+          )}
+          {hasError && src && (
             <div
-              className="w-full flex items-center justify-center bg-grey-lighter"
-              style={{ minHeight: config.imageMinHeight }}
+              className="w-full flex items-center justify-center bg-grey-middle"
+              style={{ minHeight: placeholderMinHeight }}
             >
-              <span className="text-grey-strongest italic">{placeholder}</span>
+              <Icon name="BrokenFile" size={20} className="text-white" />
+            </div>
+          )}
+          {(!picture_id || picture_id === -1) && view && (
+            <div
+              className="flex items-center justify-center w-full"
+              style={{ minHeight: placeholderMinHeight }}
+            >
+              <Icon name="EmptyFile" size={30} className="text-white" />
             </div>
           )}
 
           {/* Left indicators */}
-          {leftIndicators && (
+          {(isUrgent || isAlert || isVedette || is360) && (
             <VStack
               className={cn(
-                "absolute top-2 left-2 transition-opacity",
+                `absolute ${size === "small" ? "top-1 left-1" : "top-2 left-2"} transition-opacity`,
                 (selected || isDragOver) && "opacity-0"
               )}
               gap={1}
             >
-              {leftIndicators}
+              {isUrgent && <UrgentIndicator />}
+              {isAlert && <AlertIndicator />}
+              {isVedette && <VedetteIndicator />}
+              {is360 && <Three60Indicator />}
             </VStack>
           )}
 
           {/* Right indicators */}
-          {rightIndicators && (
-            <VStack className="absolute top-2 right-2" gap={0}>
-              {rightIndicators}
-            </VStack>
-          )}
+          <VStack className={`absolute ${size === "small" ? "top-1 right-1" : "top-2 right-2"}`} gap={0}>
+            <ViewIndicator view={view} />
+          </VStack>
         </div>
 
         {/* Footer */}
-        <Layout
-          bg={selected ? "black" : "white"}
-          className="flex flex-col p-0 gap-0 w-full min-h-0 flex-shrink-0 transition-colors"
-        >
-          {/* Filename row */}
-          <div className="w-full text-center px-1 pt-1">
-            <TruncatedText
-              text={filename}
-              className={cn(
-                "text-sm cursor-pointer",
-                selected && "text-white"
-              )}
-            />
-          </div>
-
-          {/* Actions row */}
-          <div className="flex items-center justify-end gap-1 px-1 pb-2 pt-1 w-full">
-            {onRatingChange && (
-              <ButtonThumbnailStars
-                value={rating}
-                variant="secondary"
-                onClick={onRatingChange}
-                size="small"
-                compact={size === "small"}
-                className="p-0 w-4 h-4"
-                menuSide="top"
-                menuAlign={size === "small" ? "start" : "end"}
-                menuBgContext="white"
-                open={openMenu === "stars"}
-                onOpenChange={(open) => handleMenuOpenChange("stars", open)}
+        {((picture_id && picture_id !== -1) || !view) && (
+          <Layout
+            bg={selected ? "black" : "white"}
+            className="flex flex-col p-0 gap-0 w-full min-h-0 flex-shrink-0 transition-colors"
+            >
+            {/* Filename row */}
+            <div className="w-full text-center px-1 pt-1">
+              <TruncatedText
+                text={filename}
+                className={cn(
+                  "text-sm cursor-pointer",
+                  selected && "text-white"
+                )}
               />
-            )}
+            </div>
 
-            {onLabelChange && (
-              <ButtonThumbnailLabels
-                value={label}
-                variant="secondary"
-                onClick={onLabelChange}
-                size="small"
-                compact={size === "small"}
-                className="p-0 w-4 h-4"
-                menuSide="top"
-                menuAlign={size === "small" ? "start" : "end"}
-                menuBgContext="white"
-                open={openMenu === "labels"}
-                onOpenChange={(open) => handleMenuOpenChange("labels", open)}
-              />
-            )}
-
-            {(onTagAdd || onTagRemove) && (
-              <ButtonThumbnailTags
-                variant="secondary"
-                value={tags}
-                onAddTag={onTagAdd}
-                onRemoveTag={onTagRemove}
-                size="small"
-                className="p-0 w-4 h-4"
-                menuSide="top"
-                menuAlign="end"
-                open={openMenu === "tags"}
-                onOpenChange={(open) => handleMenuOpenChange("tags", open)}
-              />
-            )}
-
-            {onCommentAdd && (
-              <ButtonThumbnailComments
-                value={comments}
-                hasAnnotations={hasAnnotations}
-                variant="secondary"
-                size="small"
-                onAddComment={onCommentAdd}
-                className="p-0 w-4 h-4"
-                menuSide="top"
-                menuAlign="end"
-                open={openMenu === "comments"}
-                onOpenChange={(open) => handleMenuOpenChange("comments", open)}
-              />
-            )}
-
-            {actions && actions.length > 0 && (
-              <DropdownMenu
-                open={openMenu === "actions"}
-                onOpenChange={(open) => handleMenuOpenChange("actions", open)}
-              >
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    className="p-0 w-6 h-6"
-                    size="medium"
+            {/* Actions row */}
+            <div className="flex items-center justify-end gap-1 px-1 pb-2 pt-1 w-full">
+              {picture_id && onRatingChange && (
+                <span className={cn("inline-flex", ratingDisabled && "cursor-not-allowed")}>
+                  <ButtonThumbnailStars
+                    value={rating}
                     variant="secondary"
-                  >
-                    <span className="text-lg leading-none">...</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  {actions.length === 0 ? (
-                    <DropdownMenuItem disabled>Aucune action</DropdownMenuItem>
-                  ) : (
-                    <>
-                      {actions.slice(0, maxDropdownItems).map((action) => (
-                        <DropdownMenuItem
-                          key={action.key}
-                          onClick={action.action}
-                          disabled={action.disabled}
-                        >
-                          {action.label}
-                        </DropdownMenuItem>
-                      ))}
-                      {actions.length > maxDropdownItems && (
-                        <DropdownMenuItem disabled>
-                          ... et {actions.length - maxDropdownItems} autres actions
-                        </DropdownMenuItem>
-                      )}
-                    </>
-                  )}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
-          </div>
-        </Layout>
+                    onClick={onRatingChange}
+                    size="small"
+                    compact={size === "small"}
+                    className={cn("p-0 w-4 h-4", ratingDisabled && externallyDisabledButtonClass)}
+                    menuSide="top"
+                    menuAlign={size === "small" ? "start" : "end"}
+                    menuBgContext="white"
+                    disabled={ratingDisabled}
+                    open={openMenu === "stars" && !ratingDisabled}
+                    onOpenChange={(open) => handleMenuOpenChange("stars", open)}
+                  />
+                </span>
+              )}
+
+              {picture_id && onLabelChange && (
+                <span className={cn("inline-flex", labelDisabled && "cursor-not-allowed")}>
+                  <ButtonThumbnailLabels
+                    value={label}
+                    variant="secondary"
+                    onClick={onLabelChange}
+                    size="small"
+                    compact={size === "small"}
+                    className={cn("p-0 w-4 h-4", labelDisabled && externallyDisabledButtonClass)}
+                    menuSide="top"
+                    menuAlign={size === "small" ? "start" : "end"}
+                    menuBgContext="white"
+                    disabled={labelDisabled}
+                    open={openMenu === "labels" && !labelDisabled}
+                    onOpenChange={(open) => handleMenuOpenChange("labels", open)}
+                  />
+                </span>
+              )}
+
+              {picture_id && (onTagAdd || onTagRemove) && (
+                <ButtonThumbnailTags
+                  variant="secondary"
+                  value={tags}
+                  onAddTag={onTagAdd}
+                  onRemoveTag={onTagRemove}
+                  size="small"
+                  className="p-0 w-4 h-4"
+                  menuSide="top"
+                  menuAlign="end"
+                  menuBgContext="white"
+                  open={openMenu === "tags"}
+                  onOpenChange={(open) => handleMenuOpenChange("tags", open)}
+                />
+              )}
+
+              {picture_id && onCommentAdd && (
+                <ButtonThumbnailComments
+                  value={comments}
+                  hasAnnotations={hasAnnotations}
+                  variant="secondary"
+                  size="small"
+                  onAddComment={onCommentAdd}
+                  className="p-0 w-4 h-4"
+                  menuSide="top"
+                  menuAlign="end"
+                  menuBgContext="white"
+                  open={openMenu === "comments"}
+                  onOpenChange={(open) => handleMenuOpenChange("comments", open)}
+                />
+              )}
+
+              {picture_id && actions && actions.length > 0 && (
+                <DropdownMenu
+                  open={openMenu === "actions"}
+                  onOpenChange={(open) => handleMenuOpenChange("actions", open)}
+                >
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      className="p-0 w-6 h-6"
+                      size="medium"
+                      variant="secondary"
+                    >
+                      <span className="text-lg leading-none">...</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    {actions.length === 0 ? (
+                      <DropdownMenuItem disabled>{t("thumbnail.noActions")}</DropdownMenuItem>
+                    ) : (
+                      <>
+                        {actions.slice(0, maxDropdownItems).map((action) => (
+                          <DropdownMenuItem
+                            key={action.key}
+                            onClick={action.action}
+                            disabled={action.disabled}
+                          >
+                            {action.label}
+                          </DropdownMenuItem>
+                        ))}
+                        {actions.length > maxDropdownItems && (
+                          <DropdownMenuItem disabled>
+                            {t("thumbnail.moreActions", { count: actions.length - maxDropdownItems })}
+                          </DropdownMenuItem>
+                        )}
+                      </>
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
+            </div>
+          </Layout>
+        )}
 
         {/* Status bar */}
-        {status !== undefined && (
+        {picture_id && status !== undefined && (
           <MediaStatus
             status={status}
             className="flex-shrink-0"
@@ -613,23 +846,150 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
           className="flex justify-center items-center gap-2 min-h-[40px] py-2"
           style={{ width: config.containerWidth }}
         >
-          {onReject && (
-            <ButtonStatus
-              icon="X"
-              status={31}
-              size="small"
-              disabled={status === 31}
-              onClick={onReject}
-            />
+          {picture_id && onReject && !hasRejectionMenu && (
+            <span className={cn("inline-flex", rejectDisabled && "cursor-not-allowed")}>
+              <ButtonStatus
+                icon="X"
+                isActive={isRejectedStatus}
+                status={31}
+                size="small"
+                disabled={rejectButtonDisabled}
+                className={cn(rejectDisabled && externallyDisabledButtonClass)}
+                onClick={() => onReject()}
+              />
+            </span>
           )}
-          {onValidate && (
-            <ButtonStatus
-              icon="Check"
-              status={50}
-              size="small"
-              disabled={status === 50}
-              onClick={onValidate}
-            />
+          {picture_id && onReject && hasRejectionMenu && (
+            <Popover
+              open={openMenu === "reject" && !rejectButtonDisabled}
+              onOpenChange={(open) => {
+                if (open && rejectButtonDisabled) return;
+                handleMenuOpenChange("reject", open);
+                if (!open) setRejectMenuView("main");
+              }}
+            >
+              <PopoverTrigger asChild>
+                <span className={cn("inline-flex", rejectDisabled && "cursor-not-allowed")}>
+                  <ButtonStatus
+                    icon="X"
+                    isActive={isRejectedStatus}
+                    status={31}
+                    size="small"
+                    disabled={rejectButtonDisabled}
+                    className={cn(rejectDisabled && externallyDisabledButtonClass)}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleMenuOpenChange("reject", openMenu !== "reject");
+                    }}
+                  />
+                </span>
+              </PopoverTrigger>
+              <PopoverContent
+                side="top"
+                align="start"
+                sideOffset={8}
+                className="w-auto min-w-[200px] max-w-[280px] rounded-sm border-0 bg-black p-0"
+              >
+                {rejectMenuView === "main" ? (
+                  <VStack gap={0} padding={0}>
+                    {/* Header */}
+                    <div className="flex items-center justify-between px-3 pt-3 pb-2">
+                      <span className="text-sm font-medium text-white">{t("thumbnail.chooseReason")}</span>
+                      <button
+                        type="button"
+                        className="text-white hover:text-grey-lighter transition-colors p-0.5"
+                        onClick={() => handleMenuOpenChange("reject", false)}
+                      >
+                        <Icon name="X" size={10} strokeWidth={1} />
+                      </button>
+                    </div>
+                    {/* Main options */}
+                    {rejectionOptions?.main?.map((reason, index) => (
+                      <button
+                        key={`main-${index}`}
+                        type="button"
+                        className="w-full px-3 py-1.5 text-left text-sm text-white hover:bg-white/10 transition-colors"
+                        onClick={() => {
+                          onReject(reason);
+                          handleMenuOpenChange("reject", false);
+                          setRejectMenuView("main");
+                        }}
+                      >
+                        {reason}
+                      </button>
+                    ))}
+                    {/* Link to secondary options */}
+                    {rejectionOptions?.secondary && rejectionOptions.secondary.length > 0 && (
+                      <>
+                        <div className="mx-3 border-t border-white/20" />
+                        <button
+                          type="button"
+                          className="w-full px-3 py-1.5 flex items-center justify-between text-sm text-grey-lighter hover:bg-white/10 transition-colors"
+                          onClick={() => setRejectMenuView("secondary")}
+                        >
+                          <span>{t("thumbnail.otherReason")}</span>
+                          <Icon name="ChevronRight" size={14} strokeWidth={2} />
+                        </button>
+                      </>
+                    )}
+                  </VStack>
+                ) : (
+                  <VStack gap={0} padding={0}>
+                    {/* Header with back button */}
+                    <div className="flex items-center justify-between px-3 pt-3 pb-2">
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          className="text-white hover:text-grey-lighter transition-colors p-0.5"
+                          onClick={() => setRejectMenuView("main")}
+                        >
+                          <Icon name="ChevronLeft" size={14} strokeWidth={2} />
+                        </button>
+                        <span className="text-sm font-medium text-white">{t("thumbnail.chooseReason")}</span>
+                      </div>
+                      <button
+                        type="button"
+                        className="text-white hover:text-grey-lighter transition-colors p-0.5"
+                        onClick={() => {
+                          handleMenuOpenChange("reject", false);
+                          setRejectMenuView("main");
+                        }}
+                      >
+                        <Icon name="X" size={10} strokeWidth={1} />
+                      </button>
+                    </div>
+                    {/* Secondary options */}
+                    {rejectionOptions?.secondary?.map((reason, index) => (
+                      <button
+                        key={`secondary-${index}`}
+                        type="button"
+                        className="w-full px-3 py-1.5 text-left text-sm text-white hover:bg-white/10 transition-colors"
+                        onClick={() => {
+                          onReject(reason);
+                          handleMenuOpenChange("reject", false);
+                          setRejectMenuView("main");
+                        }}
+                      >
+                        {reason}
+                      </button>
+                    ))}
+                  </VStack>
+                )}
+              </PopoverContent>
+            </Popover>
+          )}
+          {picture_id && onValidate && (
+            <span className={cn("inline-flex", validateDisabled && "cursor-not-allowed")}>
+              <ButtonStatus
+                icon="Check"
+                isActive={isValidatedStatus}
+                status={50}
+                size="small"
+                disabled={validateButtonDisabled}
+                className={cn(validateDisabled && externallyDisabledButtonClass)}
+                onClick={onValidate}
+              />
+            </span>
           )}
         </div>
       )}

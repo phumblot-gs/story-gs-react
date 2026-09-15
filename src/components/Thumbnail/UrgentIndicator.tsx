@@ -26,7 +26,7 @@ export const UrgentIndicator: React.FC<UrgentIndicatorProps> = ({
         className
       )}
     >
-      <Icon name="Urgent" size={10} />
+      <Icon name="Urgent" size={10} className="ml-[1px]" />
     </Badge>
   );
 };

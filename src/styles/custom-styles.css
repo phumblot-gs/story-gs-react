@@ -6,6 +6,59 @@
  * pour pouvoir utiliser les variables CSS définies dans figma-tokens.css
  */
 
+/* ==========================================================================
+ * Tokens de police non issus de Figma
+ *
+ * Déclarés ici, et NON dans src/styles/figma-tokens.css, parce que ce dernier
+ * est régénéré intégralement par scripts/generate-css-tokens.cjs : toute
+ * valeur écrite à la main y serait effacée au prochain `generate:tokens`.
+ *
+ * --badge-fs-label : 10px, taille du texte des Badge.
+ *
+ * ÉCART DÉLIBÉRÉ À LA MAQUETTE, à re-discuter en design : 10px n'existe pas
+ * dans les primitives Figma, dont l'échelle est 9 / 11 / 13 / 16 / 18 / 20px,
+ * et `fontTagFtText` prescrit 13px pour le texte d'un tag (9px étant réservé
+ * au « grade », cf. figma-primitives.json). 10px est un compromis mesuré :
+ * c'est la plus grande taille qui n'aggrave pas le décalage vertical du texte
+ * (mesuré dans Chrome : 1,625px à 9px, 1,578px à 10px, mais 3,531px à 11px —
+ * le décalage double à partir de 11px). Le nom est volontairement porté par le
+ * composant, comme --header-fs-title et --button-fs-header, pour que cet écart
+ * reste visible et ne soit pas pris pour un nouvel échelon global.
+ * ========================================================================== */
+:root {
+  --badge-fs-label: 0.625rem; /* 10px */
+}
+
+/* ==========================================================================
+ * .gs-text-trim — rognage typographique (leading-trim)
+ *
+ * Rogne la boîte de texte sur la hauteur de capitale (bord haut) et sur la
+ * ligne de base (bord bas). Supprime le décalage vertical optique du texte au
+ * lieu de le compenser : le bloc capitale→ligne de base est alors exactement
+ * centré par le `align-items: center` du parent. Mesuré sur AvenirNextLTPro :
+ * décalage résiduel ~0 (contre 1,578px à 10px sans rognage).
+ *
+ * CLASSE GÉNÉRIQUE ET RÉUTILISABLE. Le biais qu'elle corrige est celui de la
+ * police, donc il est présent partout dans la librairie — `Button size="small"`
+ * et `TagText` ont exactement le même. Elle n'est volontairement appliquée QUE
+ * sur le Badge pour l'instant : la généraliser demande de revoir chaque
+ * composant un par un (hauteurs de boîte, `min-h-*`), c'est un chantier DS à
+ * part entière. Réutiliser cette classe plutôt que d'en créer une autre.
+ *
+ * À POSER SUR L'ÉLÉMENT QUI PORTE LE TEXTE, jamais sur un conteneur flex :
+ * `text-box-trim` n'est pas héritée et ne s'applique qu'aux « block containers »
+ * et « inline boxes ». Sur un `inline-flex`, le texte vit dans un élément flex
+ * anonyme qui reprend la valeur initiale, et la règle est inopérante.
+ *
+ * Amélioration progressive : `text-box` est Baseline depuis août 2026 (Chrome
+ * 133+, Safari 18.2+, Firefox 154+). Un moteur plus ancien ignore la
+ * déclaration — la classe ne pose rien d'autre, donc le rendu retombe
+ * exactement sur le précédent. Pas de `@supports`, pas de saut de layout.
+ * ========================================================================== */
+.gs-text-trim {
+  text-box: trim-both cap alphabetic;
+}
+
 /* Styles pour Stepper */
 /* Force l'état actif pour les étapes du Stepper (utilise pressed) */
 [data-bg="white"] .stepper-step.stepper-active,
@@ -470,7 +523,7 @@
   color: var(--color-black) !important;
 }
 
-/* ButtonThumbnailLabels uniquement : sur fond white/grey, hover/selected = fond blanc, texte noir */
+/* ButtonThumbnailLabels et ButtonMenuStatus : sur fond white/grey, hover/selected = fond blanc, texte noir */
 .popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-highlighted],
 .popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-highlighted="true"],
 .popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-labels:focus,
@@ -482,7 +535,19 @@
 [data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-highlighted],
 [data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-labels:focus,
 [data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-highlighted],
-[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-labels:focus {
+[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-labels:focus,
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-highlighted],
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-highlighted="true"],
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-status:focus,
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-status:focus-visible,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-highlighted],
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-highlighted="true"],
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-status:focus,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-status:focus-visible,
+[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-highlighted],
+[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-status:focus,
+[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-highlighted],
+[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-status:focus {
   background: var(--color-white) !important;
   color: var(--color-black) !important;
 }
@@ -625,6 +690,16 @@
 
 [data-bg="black"] .tabs-list {
   border-color: var(--tabs-b-color-stroke-default);
+}
+
+/* Auto margins collapse on overflow so every tab stays reachable. */
+.tabs-list[data-align="right"] > :first-child,
+.tabs-list[data-align="center"] > :first-child {
+  margin-left: auto;
+}
+
+.tabs-list[data-align="center"] > :last-child {
+  margin-right: auto;
 }
 
 /* Indicateur animé de l'onglet actif */
@@ -999,18 +1074,26 @@
   color: var(--color-black) !important;
 }
 
-/* ButtonThumbnailLabels uniquement : sur fond white/grey, item sélectionné = fond blanc, texte noir */
+/* ButtonThumbnailLabels et ButtonMenuStatus : sur fond white/grey, item sélectionné = fond blanc, texte noir */
 .popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"],
 .popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"],
 [data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"],
-[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"] {
+[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"],
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-selected="true"],
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-selected="true"],
+[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-selected="true"],
+[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-selected="true"] {
   background: var(--color-white) !important;
   color: var(--color-black) !important;
 }
 .popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"] .label-menu-text,
 .popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"] .label-menu-text,
 [data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"] .label-menu-text,
-[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"] .label-menu-text {
+[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"] .label-menu-text,
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-selected="true"] .label-menu-text,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-selected="true"] .label-menu-text,
+[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-selected="true"] .label-menu-text,
+[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-selected="true"] .label-menu-text {
   color: var(--color-black) !important;
 }
 
@@ -1068,7 +1151,7 @@
   color: var(--color-black) !important;
 }
 
-/* ButtonThumbnailLabels uniquement : sur fond white/grey, texte noir lors du hover/selected */
+/* ButtonThumbnailLabels et ButtonMenuStatus : sur fond white/grey, texte noir lors du hover/selected */
 .popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-highlighted] .label-menu-text,
 .popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-labels:focus .label-menu-text,
 .popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-highlighted] .label-menu-text,
@@ -1076,7 +1159,15 @@
 [data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-highlighted] .label-menu-text,
 [data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"] .label-menu-text,
 [data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-highlighted] .label-menu-text,
-[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"] .label-menu-text {
+[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"] .label-menu-text,
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-highlighted] .label-menu-text,
+.popup-action[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-status:focus .label-menu-text,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-highlighted] .label-menu-text,
+.popup-action[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-status:focus .label-menu-text,
+[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-highlighted] .label-menu-text,
+[data-bg="white"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-selected="true"] .label-menu-text,
+[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-highlighted] .label-menu-text,
+[data-bg="grey"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-selected="true"] .label-menu-text {
   color: var(--color-black) !important;
 }
 
@@ -1186,7 +1277,7 @@
   background: var(--color-black) !important;
 }
 
-/* ButtonThumbnailLabels avec menuBgContext black : hover/selected = fond noir, texte blanc (explicite) */
+/* ButtonThumbnailLabels et ButtonMenuStatus avec menuBgContext black : hover/selected = fond noir, texte blanc (explicite) */
 .popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-highlighted],
 .popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-highlighted="true"],
 .popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-labels:focus,
@@ -1194,7 +1285,15 @@
 .popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"],
 [data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-highlighted],
 [data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-labels:focus,
-[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"] {
+[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"],
+.popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-highlighted],
+.popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-highlighted="true"],
+.popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-status:focus,
+.popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-status:focus-visible,
+.popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-selected="true"],
+[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-highlighted],
+[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-status:focus,
+[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-selected="true"] {
   background: var(--color-black) !important;
   color: var(--color-white) !important;
 }
@@ -1202,7 +1301,12 @@
 .popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-labels:focus .label-menu-text,
 .popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"] .label-menu-text,
 [data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-highlighted] .label-menu-text,
-[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"] .label-menu-text {
+[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-labels[data-selected="true"] .label-menu-text,
+.popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-highlighted] .label-menu-text,
+.popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-status:focus .label-menu-text,
+.popup-action[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-selected="true"] .label-menu-text,
+[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-highlighted] .label-menu-text,
+[data-bg="black"] .popup-action-item.popup-action-item-menu.popup-action-item-status[data-selected="true"] .label-menu-text {
   color: var(--color-white) !important;
 }
 
@@ -1229,4 +1333,270 @@
 [data-bg="black"] button:hover:not(:disabled) .border-adaptive,
 [data-bg="black"] button[data-open="true"]:not(:disabled) .border-adaptive {
   border-color: rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Styles pour AlertIndicator - animation de pulsation */
+.alert-indicator {
+  animation: alertPulse 8s ease-in-out infinite;
+}
+
+@keyframes alertPulse {
+  0% {
+    background-color: var(--color-orange);
+  }
+  50% {
+    background-color: var(--color-red-strong);
+  }
+  100% {
+    background-color: var(--color-orange);
+  }
+}
+
+/* Styles pour Thumbnail vide (sans picture_id) */
+.item-image-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.item-image-card {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  flex: 1;
+  border-radius: 0.125rem;
+  background: var(--color-white);
+}
+
+.item-image-small {
+  width: 100px;
+  min-width: 100px;
+}
+
+.item-image-large {
+  width: 340px;
+  min-width: 340px;
+}
+
+.item-image-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100px;
+  background: var(--color-grey-lighter);
+  border: 0.25px solid var(--color-grey-light);
+}
+
+.item-image-large .item-image-container {
+  min-height: 340px;
+}
+
+.item-image-right-indicators {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.item-image-large .item-image-right-indicators {
+  top: 0.5rem;
+  right: 0.5rem;
+}
+
+.item-image-footer {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  gap: 0;
+  width: 100%;
+  min-height: 0;
+  flex-shrink: 0;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.item-image-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 40px;
+  padding: 0.5rem 0;
+}
+
+/* ==========================================================================
+ * Scrollbars adaptées au contexte de fond (data-bg)
+ * --------------------------------------------------------------------------
+ * Les couleurs de scrollbar sont exposées via des custom properties
+ * HÉRITABLES posées sur chaque conteneur data-bg (--sb-thumb / --sb-thumb-hover).
+ * Comme les custom properties suivent l'héritage DOM, n'importe quel élément
+ * scrollable résout automatiquement la valeur du data-bg ANCÊTRE LE PLUS PROCHE
+ * — y compris les scrollers qui n'ont pas eux-mêmes de data-bg (ex. un
+ * overflow:auto applicatif placé dans un <Layout bg="black">). L'imbrication
+ * (grey > black > scroller) est gérée nativement par l'héritage des variables,
+ * sans conflit de spécificité ni dépendance à l'ordre des règles.
+ *
+ * - Fond blanc : thumb --color-grey-strong (discret), hover --color-grey-stronger
+ * - Fond gris  : thumb --color-grey-stronger,          hover --color-grey-strongest
+ * - Fond noir  : thumb --color-grey-strongest,         hover --color-grey-stronger
+ * Couleurs issues des variables du design system uniquement.
+ * ========================================================================== */
+
+/* 1) Exposition des couleurs de scrollbar par contexte (variables héritables) */
+[data-bg="white"] {
+  --sb-thumb: var(--color-grey-strong);
+  --sb-thumb-hover: var(--color-grey-stronger);
+}
+[data-bg="grey"] {
+  --sb-thumb: var(--color-grey-stronger);
+  --sb-thumb-hover: var(--color-grey-strongest);
+}
+[data-bg="black"] {
+  --sb-thumb: var(--color-grey-strongest);
+  --sb-thumb-hover: var(--color-grey-stronger);
+}
+
+/* 2) Firefox : scrollbar-color est héritable → le conteneur data-bg ET tous ses
+ * descendants (scrollers applicatifs compris) prennent la couleur du contexte
+ * le plus proche automatiquement. */
+[data-bg="white"],
+[data-bg="grey"],
+[data-bg="black"] {
+  scrollbar-width: thin;
+  scrollbar-color: var(--sb-thumb) transparent;
+}
+
+/* 3) WebKit (Chrome/Safari) : les pseudo-éléments ::-webkit-scrollbar ne sont
+ * pas héritables. On cible donc l'élément data-bg LUI-MÊME *et* tous ses
+ * descendants, et on lit --sb-thumb via var() : la valeur résolue correspond
+ * au data-bg ancêtre le plus proche du scroller. */
+[data-bg]::-webkit-scrollbar,
+[data-bg] *::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+[data-bg]::-webkit-scrollbar-track,
+[data-bg] *::-webkit-scrollbar-track {
+  background: transparent;
+}
+[data-bg]::-webkit-scrollbar-thumb,
+[data-bg] *::-webkit-scrollbar-thumb {
+  background-color: var(--sb-thumb, var(--color-grey-stronger));
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+[data-bg]::-webkit-scrollbar-thumb:hover,
+[data-bg] *::-webkit-scrollbar-thumb:hover {
+  background-color: var(--sb-thumb-hover, var(--color-grey-strongest));
+}
+
+/* ==========================================================================
+ * Badge — variantes contextuelles
+ *
+ * Ces classes sont appliquées par src/components/ui/badge.tsx (badgeVariants).
+ * Elles utilisent exactement les mêmes tokens que les boutons, mais sans les
+ * états hover / active / disabled : un Badge n'est pas interactif.
+ *
+ * HISTORIQUE — ne pas déplacer ce bloc dans src/styles/figma-tokens.css :
+ * ce fichier-là est régénéré intégralement par scripts/generate-css-tokens.cjs
+ * et le bloc y avait déjà été effacé une fois (commit 6c3af9d écrasé par
+ * 08d4809), laissant les 4 variantes de Badge sans aucun style.
+ *
+ * NOTE 1 : on écrit `border-color: transparent` et non `border: transparent`.
+ * Le raccourci remettrait `border-style` à `none`, annulant le `border`
+ * (1px) posé par les classes de base du Badge et modifiant sa hauteur.
+ *
+ * NOTE 2 — pourquoi `:where([data-bg="…"])` et non `[data-bg="…"]` :
+ * `:where()` a une spécificité nulle, donc ces règles pèsent (0,1,0), le poids
+ * d'une simple classe, au lieu de (0,2,0). Sans ça elles battaient les
+ * utilitaires Tailwind du consommateur : `<Badge className="bg-white">` était
+ * silencieusement écrasé par la variante. Avec `:where()`, on retombe à égalité
+ * avec `.bg-white` et c'est l'ordre source qui tranche — `custom-styles.css`
+ * est importé AVANT `@tailwind utilities` dans lib.css et index.css, donc
+ * l'utilitaire du consommateur gagne, ce qui est le comportement attendu.
+ * Les variantes continuent de s'appliquer normalement quand rien ne les
+ * surcharge (le préflight Tailwind ne pèse que (0,0,0)).
+ * Incohérence assumée : les classes `btn-*` restent en (0,2,0). Les harmoniser
+ * est un chantier séparé — ne pas le faire à l'occasion d'un correctif Badge.
+ * ========================================================================== */
+
+/* Badge variants pour background white */
+:where([data-bg="white"]).badge-normal {
+  background: var(--button-w-normal-bg-default);
+  color: var(--button-w-normal-fg-default);
+  border-color: transparent;
+}
+
+:where([data-bg="white"]).badge-secondary {
+  background: var(--button-w-secondary-bg-default);
+  color: var(--button-w-secondary-fg-default);
+  border-color: transparent;
+}
+
+:where([data-bg="white"]).badge-destructive {
+  background: var(--button-w-destructive-bg-default);
+  color: var(--button-w-destructive-fg-default);
+  border-color: transparent;
+}
+
+:where([data-bg="white"]).badge-outline {
+  background: var(--button-w-outline-bg-default);
+  color: var(--button-w-outline-fg-default);
+  border: 1px solid var(--button-w-outline-fg-default);
+}
+
+/* Badge variants pour background grey */
+:where([data-bg="grey"]).badge-normal {
+  background: var(--button-g-normal-bg-default);
+  color: var(--button-g-normal-fg-default);
+  border-color: transparent;
+}
+
+:where([data-bg="grey"]).badge-secondary {
+  background: var(--button-g-secondary-bg-default);
+  color: var(--button-g-secondary-fg-default);
+  border-color: transparent;
+}
+
+:where([data-bg="grey"]).badge-destructive {
+  background: var(--button-g-destructive-bg-default);
+  color: var(--button-g-destructive-fg-default);
+  border-color: transparent;
+}
+
+:where([data-bg="grey"]).badge-outline {
+  background: var(--button-g-outline-bg-default);
+  color: var(--button-g-outline-fg-default);
+  border: 1px solid var(--button-g-outline-fg-default);
+}
+
+/* Badge variants pour background black */
+:where([data-bg="black"]).badge-normal {
+  background: var(--button-b-normal-bg-default);
+  color: var(--button-b-normal-fg-default);
+  border-color: transparent;
+}
+
+:where([data-bg="black"]).badge-secondary {
+  background: var(--button-b-secondary-bg-default);
+  color: var(--button-b-secondary-fg-default);
+  border-color: transparent;
+}
+
+:where([data-bg="black"]).badge-destructive {
+  background: var(--button-b-destructive-bg-default);
+  color: var(--button-b-destructive-fg-default);
+  border-color: transparent;
+}
+
+:where([data-bg="black"]).badge-outline {
+  background: var(--button-b-outline-bg-default);
+  color: var(--button-b-outline-fg-default);
+  border: 1px solid var(--button-b-outline-fg-default);
 }

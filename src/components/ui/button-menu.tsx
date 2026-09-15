@@ -12,8 +12,10 @@ import { VStack } from "@/components/layout"
 import { cn } from "@/lib/utils"
 
 export interface ButtonMenuAction {
+  /** Unique identifier for the action (required for multiSelect mode) */
+  value?: string
   label: string
-  onClick: () => void
+  onClick?: () => void
   disabled?: boolean
   icon?: React.ReactNode
   /** Whether this action is selected. The corresponding menu item will have hover-like styling. */
@@ -106,22 +108,58 @@ export interface ButtonMenuProps extends Omit<ToggleProps, "onClick" | "isActive
   /**
    * Preferred alignment of the menu relative to the trigger.
    * The menu will automatically adjust if there's not enough space.
-   * 
+   *
    * - `"start"`: Aligned to the left (or top) edge of the trigger
    * - `"center"`: Centered relative to the trigger
    * - `"end"`: Aligned to the right (or bottom) edge of the trigger
-   * 
+   *
    * Default: `"start"` (menu aligned to the left)
-   * 
+   *
    * @example
    * // Menu aligned to the right
    * <ButtonMenu menuAlign="end" ... />
-   * 
+   *
    * @example
    * // Menu centered
    * <ButtonMenu menuAlign="center" ... />
    */
   menuAlign?: "start" | "center" | "end"
+  /**
+   * Enable multi-selection mode.
+   *
+   * When enabled:
+   * - The menu stays open after clicking an item
+   * - Checkboxes are displayed for each item
+   * - Use `selected` property on actions to control selection state
+   * - Use `onSelectionChange` to handle selection changes
+   *
+   * @default false
+   *
+   * @example
+   * const [selected, setSelected] = useState<string[]>([]);
+   * <ButtonMenu
+   *   multiSelect
+   *   actions={options.map(opt => ({
+   *     value: opt.id,
+   *     label: opt.name,
+   *     selected: selected.includes(opt.id),
+   *   }))}
+   *   onSelectionChange={setSelected}
+   * />
+   */
+  multiSelect?: boolean
+  /**
+   * Callback called when selection changes in multiSelect mode.
+   *
+   * @param selectedValues - Array of selected action values
+   *
+   * @example
+   * <ButtonMenu
+   *   multiSelect
+   *   onSelectionChange={(values) => console.log('Selected:', values)}
+   * />
+   */
+  onSelectionChange?: (selectedValues: string[]) => void
 }
 
 export const ButtonMenu = React.forwardRef<HTMLButtonElement, ButtonMenuProps>(
@@ -141,6 +179,8 @@ export const ButtonMenu = React.forwardRef<HTMLButtonElement, ButtonMenuProps>(
       menuMaxHeight = "max-h-[calc(100vh-2rem)]",
       menuSide = "bottom",
       menuAlign = "start",
+      multiSelect = false,
+      onSelectionChange,
       ...buttonProps
     },
     ref
@@ -236,7 +276,7 @@ export const ButtonMenu = React.forwardRef<HTMLButtonElement, ButtonMenuProps>(
           <VStack gap={2} padding={2}>
             {actions.map((action, index) => (
               <DropdownMenuItem
-                key={index}
+                key={action.value ?? index}
                 disabled={action.disabled || disabled}
                 data-selected={action.selected ? "true" : "false"}
                 className={cn(
@@ -244,13 +284,31 @@ export const ButtonMenu = React.forwardRef<HTMLButtonElement, ButtonMenuProps>(
                   "flex items-center gap-2",
                   "data-[disabled]:opacity-50 data-[disabled]:cursor-not-allowed"
                 )}
-                onClick={(e) => {
-                  e.stopPropagation()
-                  if (debug) {
-                    console.log("[ButtonMenu] Action clicked:", action.label)
+                onSelect={(e) => {
+                  // IMPORTANT: preventDefault DOIT être appelé en premier pour empêcher la fermeture
+                  if (multiSelect) {
+                    e.preventDefault()
                   }
-                  action.onClick()
-                  handleOpenChange(false)
+
+                  if (debug) {
+                    console.log("[ButtonMenu] Action selected:", action.label, { multiSelect, value: action.value })
+                  }
+
+                  if (multiSelect && action.value !== undefined) {
+                    // Toggle la sélection
+                    const currentSelected = actions
+                      .filter((a) => a.selected && a.value !== undefined)
+                      .map((a) => a.value as string)
+
+                    const newSelected = action.selected
+                      ? currentSelected.filter((v) => v !== action.value)
+                      : [...currentSelected, action.value]
+
+                    onSelectionChange?.(newSelected)
+                  } else if (!multiSelect) {
+                    // Mode simple : appeler onClick
+                    action.onClick?.()
+                  }
                 }}
               >
                 {action.icon && (

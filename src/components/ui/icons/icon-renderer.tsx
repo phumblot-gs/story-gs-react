@@ -107,6 +107,14 @@ export const renderIcon = (
       return <LucideIcons.ChevronUp size={size} strokeWidth={strokeWidth} className="max-w-[12px] max-h-[12px]" />;
     case "Download":
       return <LucideIcons.Download size={size} strokeWidth={strokeWidth} className="max-w-[12px] max-h-[12px]" />;
+    case "EmptyElement":
+      return <CustomIcons.CustomEmptyElementIcon size={size} />;
+    case "EmptyFile":
+      return <CustomIcons.CustomEmptyFileIcon size={size} />;
+    case "EmptySearch":
+      return <CustomIcons.CustomEmptySearchIcon size={size} />;
+    case "BrokenFile":
+      return <CustomIcons.CustomBrokenFileIcon size={size} />;
     case "File":
       return <LucideIcons.File size={size} strokeWidth={strokeWidth} className="max-w-[12px] max-h-[12px]" />;
     case "Folder":

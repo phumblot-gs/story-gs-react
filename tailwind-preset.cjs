@@ -239,6 +239,9 @@ module.exports = {
         lg: "var(--font-size-lg)", // 16px
         xl: "var(--font-size-xl)", // 18px
         xxl: "var(--font-size-xxl)", // 20px
+        // 10px : palier hors echelle Figma, propre au Badge (cf. --badge-fs-label
+        // dans src/styles/custom-styles.css pour la justification de l'ecart).
+        "badge-label": "var(--badge-fs-label)", // 10px
         "header-title": "var(--header-fs-title)",
         "button-header": "var(--button-fs-header)",
       },

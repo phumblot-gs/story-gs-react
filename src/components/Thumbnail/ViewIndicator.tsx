@@ -3,8 +3,8 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
 export interface ViewIndicatorProps {
-  /** Code de vue à afficher (ex: "F", "B", "L", "R", etc.) */
-  view: string;
+  /** Code de vue à afficher (ex: "F", "B", "L", "R", etc.). Si null/undefined/vide, affiche "?" */
+  view?: string | null;
   /** Classes CSS additionnelles */
   className?: string;
 }
@@ -21,17 +21,16 @@ export const ViewIndicator: React.FC<ViewIndicatorProps> = ({
   view,
   className,
 }) => {
-  if (!view) return null;
+  const displayView = view ? (view.length > 5 ? `${view.slice(0, 4)}...` : view) : "?";
 
   return (
     <Badge
       className={cn(
-        "border-none bg-white px-1 text-black",
+        "border-none bg-white px-1 text-black min-w-3 min-h-3 py-0 justify-center items-center",
         className
       )}
-      size="small"
     >
-      {view}
+      {displayView}
     </Badge>
   );
 };

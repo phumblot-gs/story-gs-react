@@ -75,6 +75,8 @@ const Tabs = React.forwardRef<
 Tabs.displayName = TabsPrimitive.Root.displayName
 
 interface TabsListProps extends React.ComponentPropsWithoutRef<typeof TabsPrimitive.List> {
+  /** Horizontal tab alignment. Defaults to left; overflowing tabs remain scrollable. */
+  align?: "left" | "center" | "right"
   className?: string
   debug?: boolean
   rightSlot?: React.ReactNode
@@ -83,7 +85,7 @@ interface TabsListProps extends React.ComponentPropsWithoutRef<typeof TabsPrimit
 const TabsList = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.List>,
   TabsListProps
->(({ className, debug, rightSlot, ...props }, ref) => {
+>(({ className, debug, rightSlot, align = "left", ...props }, ref) => {
   const bg = useBgContext()
   const headerClassName = React.useContext(TabsHeaderClassNameContext)
   const listRef = React.useRef<HTMLDivElement>(null)
@@ -173,7 +175,7 @@ const TabsList = React.forwardRef<
       observer.disconnect()
       resizeObserver.disconnect()
     }
-  }, [updateIndicatorPosition, props.children])
+  }, [updateIndicatorPosition, props.children, align])
 
   // Observer les changements d'attribut data-state pour mettre à jour le label debug
   React.useEffect(() => {
@@ -282,6 +284,7 @@ const TabsList = React.forwardRef<
       <TabsPrimitive.List
         ref={listRef}
         className={cn("tabs-list", className)}
+        data-align={align}
         onScroll={handleScroll}
         // Hover preview: while the mouse is over a trigger, the indicator
         // tracks it; when the mouse leaves the list (without clicking) the
@@ -367,4 +370,3 @@ const TabsContent = React.forwardRef<
 TabsContent.displayName = TabsPrimitive.Content.displayName
 
 export { Tabs, TabsList, TabsTrigger, TabsContent }
-

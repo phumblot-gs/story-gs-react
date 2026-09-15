@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 import { ButtonMenu, ButtonMenuAction } from "@/components/ui/button-menu"
 import { Layout, VStack, HStack } from "@/components/layout"
 import { Icon } from "@/components/ui/icons"
+import { useState } from "react"
 
 const meta = {
   title: "UI/ButtonMenu",
@@ -19,6 +20,7 @@ const meta = {
 - Visual feedback when menu is open (Toggle's isActive state)
 - Auto-positioning menu (drops where there's space)
 - Configurable menu position and alignment (menuSide, menuAlign)
+- **Multi-selection mode** with checkboxes
 - Similar pattern to LanguageSwitcher component
 
 ## Background Context Adaptation
@@ -160,6 +162,36 @@ Controls the alignment of the menu relative to the button:
 \`\`\`
 
 **Note:** The menu will automatically reposition itself if the preferred position doesn't fit on screen (e.g., if the button is at the bottom-right corner, the menu will open above and align to the right).
+
+## Multi-Selection Mode
+
+Enable multi-selection with the \`multiSelect\` prop. In this mode:
+- The menu stays open after clicking an item
+- Checkboxes are displayed for each item
+- Use \`value\` property on actions for identification
+- Use \`selected\` property to control selection state
+- Use \`onSelectionChange\` to handle selection changes
+
+\`\`\`tsx
+const [selected, setSelected] = useState<string[]>([]);
+
+const options = [
+  { value: "edit", label: "Éditer" },
+  { value: "duplicate", label: "Dupliquer" },
+  { value: "delete", label: "Supprimer" },
+];
+
+<ButtonMenu
+  multiSelect
+  actions={options.map(opt => ({
+    ...opt,
+    selected: selected.includes(opt.value),
+  }))}
+  onSelectionChange={setSelected}
+>
+  Sélectionner
+</ButtonMenu>
+\`\`\`
 `,
       },
     },
@@ -221,6 +253,14 @@ Controls the alignment of the menu relative to the button:
       control: "select",
       options: ["start", "center", "end"],
       description: "Preferred alignment of the menu relative to the button. The menu will automatically adjust if there's not enough space. Default: 'start'",
+    },
+    multiSelect: {
+      control: "boolean",
+      description: "Enable multi-selection mode. When enabled, the menu stays open after clicking an item and checkboxes are displayed.",
+    },
+    onSelectionChange: {
+      action: "selectionChange",
+      description: "Callback called when selection changes in multiSelect mode. Receives an array of selected values.",
     },
   },
 } satisfies Meta<typeof ButtonMenu>
@@ -546,5 +586,168 @@ export const WithSelectedActions: Story = {
   },
   parameters: {
     layout: "fullscreen",
+  },
+}
+
+export const MultiSelect: Story = {
+  render: () => {
+    const [selected, setSelected] = useState<string[]>(["duplicate"])
+
+    const options: ButtonMenuAction[] = [
+      { value: "edit", label: "Éditer" },
+      { value: "duplicate", label: "Dupliquer" },
+      { value: "rename", label: "Renommer" },
+      { value: "move", label: "Déplacer" },
+      { value: "delete", label: "Supprimer" },
+    ]
+
+    const actions = options.map((opt) => ({
+      ...opt,
+      selected: selected.includes(opt.value!),
+    }))
+
+    return (
+      <Layout bg="white" padding={6}>
+        <VStack gap={4}>
+          <div>
+            <h3 className="gs-typo-h3 mb-2">Mode Multi-sélection</h3>
+            <p className="text-sm text-grey-stronger mb-4">
+              Le menu reste ouvert après chaque clic. Les checkboxes indiquent les éléments sélectionnés.
+            </p>
+          </div>
+          <ButtonMenu
+            variant="normal"
+            multiSelect
+            actions={actions}
+            onSelectionChange={setSelected}
+          >
+            Sélectionner ({selected.length})
+          </ButtonMenu>
+          <p className="text-sm text-grey-stronger">
+            Sélection : {selected.length > 0 ? selected.join(", ") : "Aucune"}
+          </p>
+        </VStack>
+      </Layout>
+    )
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: "En mode `multiSelect`, le menu reste ouvert après chaque clic et affiche des checkboxes pour indiquer les éléments sélectionnés.",
+      },
+    },
+  },
+}
+
+export const MultiSelectWithIcons: Story = {
+  render: () => {
+    const [selected, setSelected] = useState<string[]>(["star", "bell"])
+
+    const options: ButtonMenuAction[] = [
+      { value: "star", label: "Favoris", icon: <Icon name="Star" size={12} /> },
+      { value: "bell", label: "Notifications", icon: <Icon name="Bell" size={12} /> },
+      { value: "tag", label: "Tags", icon: <Icon name="Tag" size={12} /> },
+      { value: "flag", label: "Drapeaux", icon: <Icon name="Flag" size={12} /> },
+    ]
+
+    const actions = options.map((opt) => ({
+      ...opt,
+      selected: selected.includes(opt.value!),
+    }))
+
+    return (
+      <Layout bg="white" padding={6}>
+        <VStack gap={4}>
+          <div>
+            <h3 className="gs-typo-h3 mb-2">Multi-sélection avec icônes</h3>
+            <p className="text-sm text-grey-stronger mb-4">
+              Les icônes personnalisées sont affichées à côté des checkboxes.
+            </p>
+          </div>
+          <ButtonMenu
+            variant="normal"
+            multiSelect
+            actions={actions}
+            onSelectionChange={setSelected}
+          >
+            Filtres ({selected.length})
+          </ButtonMenu>
+          <p className="text-sm text-grey-stronger">
+            Filtres actifs : {selected.length > 0 ? selected.join(", ") : "Aucun"}
+          </p>
+        </VStack>
+      </Layout>
+    )
+  },
+}
+
+export const MultiSelectBackgrounds: Story = {
+  render: () => {
+    const [selectedWhite, setSelectedWhite] = useState<string[]>(["opt1"])
+    const [selectedGrey, setSelectedGrey] = useState<string[]>(["opt2"])
+    const [selectedBlack, setSelectedBlack] = useState<string[]>(["opt1", "opt3"])
+
+    const options: ButtonMenuAction[] = [
+      { value: "opt1", label: "Option 1" },
+      { value: "opt2", label: "Option 2" },
+      { value: "opt3", label: "Option 3" },
+    ]
+
+    return (
+      <VStack gap={6} padding={6}>
+        <VStack as={Layout} bg="white" padding={6} gap={4} className="border border-grey rounded">
+          <h3 className="gs-typo-h3">Background White</h3>
+          <ButtonMenu
+            variant="normal"
+            multiSelect
+            actions={options.map((opt) => ({
+              ...opt,
+              selected: selectedWhite.includes(opt.value!),
+            }))}
+            onSelectionChange={setSelectedWhite}
+          >
+            Sélection ({selectedWhite.length})
+          </ButtonMenu>
+        </VStack>
+
+        <VStack as={Layout} bg="grey" padding={6} gap={4} className="border border-grey rounded">
+          <h3 className="gs-typo-h3">Background Grey</h3>
+          <ButtonMenu
+            variant="normal"
+            multiSelect
+            actions={options.map((opt) => ({
+              ...opt,
+              selected: selectedGrey.includes(opt.value!),
+            }))}
+            onSelectionChange={setSelectedGrey}
+          >
+            Sélection ({selectedGrey.length})
+          </ButtonMenu>
+        </VStack>
+
+        <VStack as={Layout} bg="black" padding={6} gap={4} className="border border-grey rounded">
+          <h3 className="gs-typo-h3 text-white">Background Black</h3>
+          <ButtonMenu
+            variant="normal"
+            multiSelect
+            actions={options.map((opt) => ({
+              ...opt,
+              selected: selectedBlack.includes(opt.value!),
+            }))}
+            onSelectionChange={setSelectedBlack}
+          >
+            Sélection ({selectedBlack.length})
+          </ButtonMenu>
+        </VStack>
+      </VStack>
+    )
+  },
+  parameters: {
+    layout: "fullscreen",
+    docs: {
+      description: {
+        story: "Le mode multi-sélection s'adapte automatiquement aux différents backgrounds.",
+      },
+    },
   },
 }
