@@ -692,6 +692,16 @@
   border-color: var(--tabs-b-color-stroke-default);
 }
 
+/* Auto margins collapse on overflow so every tab stays reachable. */
+.tabs-list[data-align="right"] > :first-child,
+.tabs-list[data-align="center"] > :first-child {
+  margin-left: auto;
+}
+
+.tabs-list[data-align="center"] > :last-child {
+  margin-right: auto;
+}
+
 /* Indicateur animé de l'onglet actif */
 .tabs-list::after {
   content: '';

@@ -5,6 +5,16 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.13.0] - 2026-09-15
+
+### Ajouté
+
+- `TabsList` : attribut `align="left" | "center" | "right"`, avec `left` par défaut.
+  La ligne inférieure conserve toute la largeur disponible. L'ordre des onglets
+  et le défilement en cas de débordement sont conservés. Avec `rightSlot`,
+  l'alignement porte sur l'espace de la liste, hors zone d'actions.
+- Story Tabs : contrôle d'alignement et exemples gauche, centré et droite.
+
 ## [1.12.14] - 2026-09-14
 
 ### ✨ Ajouté
