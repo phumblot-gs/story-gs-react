@@ -5,6 +5,20 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.15.0] - 2026-09-16
+
+### Added
+
+- `Timeline`: grouped chronological entries with controlled or uncontrolled selection,
+  read-only mode, disabled entries, custom inline content and two densities.
+  Rectangular entries reuse Button ghost and active colors for white, grey and black backgrounds.
+- English Timeline documentation and stories covering backgrounds, selection and empty states.
+- Timeline accepts flat `items` with UTC ISO 8601 `timestamp` values ending in `Z`.
+  Dates and hours are localized to EN/FR/ES/IT/DE using the active language; entries
+  are sorted and grouped by day in the browser timezone or an explicit `timeZone`.
+  Today and Yesterday headings are localized with the full date underneath.
+  Documentation includes UTC data, midnight boundaries and daylight-saving examples.
+
 ## [1.14.0] - 2026-09-16
 
 ### Ajouté
