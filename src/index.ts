@@ -742,3 +742,6 @@ export type { StyleConfig } from "./contexts/StyleProvider";
 // Export root components for easy setup
 export { GSComponentsRoot, GSGlobalStyles } from "./components/GSComponentsRoot";
 export type { GSComponentsRootProps } from "./components/GSComponentsRoot";
+
+export { Timeline } from "./components/ui/timeline";
+export type { TimelineProps, TimelineItem } from "./components/ui/timeline";
