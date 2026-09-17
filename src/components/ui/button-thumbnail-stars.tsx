@@ -78,6 +78,21 @@ export interface ButtonThumbnailStarsProps extends Omit<ToggleProps, "onClick" |
    */
   compact?: boolean
   /**
+   * Mode d'affichage du bouton déclencheur. Le menu n'est pas affecté.
+   *
+   * - `"value"` (défaut) : le bouton affiche la valeur courante — étoile pleine
+   *   jaune + nombre, ou étoile vide si `value` vaut 0. C'est l'usage vignette,
+   *   où voir la note de la photo est toute la fonction du bouton.
+   * - `"neutral"` : le bouton reprend le dessin et les couleurs de
+   *   `ButtonMenuStatus` — rond aux mêmes dimensions, `variant="secondary"` par
+   *   défaut, et une icône `Star` fixe à la place de la valeur. Pour une barre
+   *   d'action qui écrit une note sur une sélection potentiellement hétérogène :
+   *   afficher « 3 » laisserait croire à un état commun à toute la sélection.
+   *
+   * `value` continue de servir dans les deux modes à cocher la bonne ligne du menu.
+   */
+  buttonDisplay?: "value" | "neutral"
+  /**
    * Contexte de fond forcé pour le menu uniquement.
    * Si défini, le menu utilise ces couleurs comme s'il était sur ce fond (ex. toujours fond clair).
    * Le bouton continue d'utiliser le bgContext du parent.
@@ -102,6 +117,8 @@ export const ButtonThumbnailStars = React.forwardRef<HTMLButtonElement, ButtonTh
       menuSide = "bottom",
       menuAlign = "start",
       compact = false,
+      buttonDisplay = "value",
+      variant,
       menuBgContext,
       ...buttonProps
     },
@@ -157,12 +174,25 @@ export const ButtonThumbnailStars = React.forwardRef<HTMLButtonElement, ButtonTh
       return 5
     }
 
+    // Mode neutre : le déclencheur reprend la recette exacte de ButtonMenuStatus
+    // (rond, mêmes dimensions, mêmes couleurs), seule l'icône change.
+    const isNeutralButton = buttonDisplay === "neutral"
+
     // Déterminer les dimensions du bouton selon le size
-    // - small: p-1 w-4 h-4 + icon size={10}
-    // - medium: p-0 w-6 h-6 + icon size={12}
-    // - large: p-0 w-8 h-8 + icon size={14}
-    const buttonSizeClasses = size === "small" ? "p-1 w-5 h-4" : size === "large" ? "p-0 w-10 h-8" : "p-0 w-8 h-6"
+    // - mode "value" : plus large que haut, il faut la place pour l'étoile + le nombre
+    // - mode "neutral" : carré, dimensions identiques à ButtonMenuStatus
+    //   (small: p-1 w-4 h-4, medium: p-0 w-6 h-6, large: p-0 w-8 h-8)
+    const valueButtonSizeClasses = size === "small" ? "p-1 w-5 h-4" : size === "large" ? "p-0 w-10 h-8" : "p-0 w-8 h-6"
+    const neutralButtonSizeClasses = size === "small" ? "p-1 w-4 h-4" : size === "large" ? "p-0 w-8 h-8" : "p-0 w-6 h-6"
+    const buttonSizeClasses = isNeutralButton ? neutralButtonSizeClasses : valueButtonSizeClasses
+    // Mêmes tailles d'icône que ButtonMenuStatus.getIconSize() : 10 / 12 / 14
     const iconSize = size === "small" ? 10 : size === "large" ? 14 : 12
+
+    // Couleurs : dans les barres d'action, ButtonMenuStatus est appelé en
+    // `variant="secondary"` là où ce bouton tomberait sur "normal". En mode neutre on
+    // prend donc "secondary" par défaut pour que les deux boutons soient identiques
+    // sans que l'appelant ait à le savoir, tout en restant surchargeable.
+    const effectiveVariant = isNeutralButton ? variant ?? "secondary" : variant
     const gapClass = size === "small" ? "gap-[1px]" : size === "large" ? "gap-[3px]" : "gap-[2px]"
 
     // Créer les actions prédéfinies (0 à 5 étoiles)
@@ -206,6 +236,10 @@ export const ButtonThumbnailStars = React.forwardRef<HTMLButtonElement, ButtonTh
 
     // Contenu du bouton (menu fermé)
     const buttonContent = React.useMemo(() => {
+      // Mode neutre : icône fixe, la valeur ne pilote plus la face du bouton.
+      if (isNeutralButton) {
+        return <Icon name="Star" size={iconSize} />
+      }
       const textSizeClass = size === "small" ? "text-[9px] mt-0.5" : "text-xs"
       if (normalizedValue === 0) {
         // Si 0 étoile, afficher une étoile vide sans numéro
@@ -220,7 +254,7 @@ export const ButtonThumbnailStars = React.forwardRef<HTMLButtonElement, ButtonTh
           <span className={textSizeClass}>{normalizedValue}</span>
         </div>
       )
-    }, [normalizedValue, iconSize, size])
+    }, [isNeutralButton, normalizedValue, iconSize, size])
 
     React.useEffect(() => {
       if (debug) {
@@ -240,6 +274,7 @@ export const ButtonThumbnailStars = React.forwardRef<HTMLButtonElement, ButtonTh
             disabled={disabled}
             className={cn(buttonSizeClasses, className)}
             isActive={isOpen}
+            variant={effectiveVariant}
             onClick={(e) => {
               e.preventDefault()
             }}

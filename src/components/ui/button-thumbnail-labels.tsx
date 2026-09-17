@@ -11,6 +11,7 @@ import { useIsInActionBar } from "@/components/layout/ActionBar"
 import { VStack } from "@/components/layout"
 import { cn } from "@/lib/utils"
 import { useTranslationSafe, TranslationMap } from "@/contexts/TranslationContext"
+import { Icon } from "@/components/ui/icons"
 
 export type LabelColor = "blue" | "green" | "orange" | "pink" | "purple" | "red" | "yellow" | "white" | "transparent"
 
@@ -29,6 +30,21 @@ export interface ButtonThumbnailLabelsProps extends Omit<ToggleProps, "onClick" 
    * - `true` : Menu compact (grille 3x3 sans labels)
    */
   compact?: boolean
+  /**
+   * Mode d'affichage du bouton déclencheur. Le menu n'est pas affecté.
+   *
+   * - `"value"` (défaut) : le bouton affiche la couleur courante — pastille de la
+   *   couleur, ou rectangle pointillé si aucune. C'est l'usage vignette, où voir la
+   *   couleur de la photo est toute la fonction du bouton.
+   * - `"neutral"` : le bouton reprend le dessin et les couleurs de
+   *   `ButtonMenuStatus` — rond aux mêmes dimensions, `variant="secondary"` par
+   *   défaut, et une icône `Tag` fixe à la place de la valeur. Pour une barre
+   *   d'action qui pose une couleur sur une sélection potentiellement hétérogène :
+   *   afficher une pastille laisserait croire à un état commun à toute la sélection.
+   *
+   * `value` continue de servir dans les deux modes à cocher la bonne ligne du menu.
+   */
+  buttonDisplay?: "value" | "neutral"
   /**
    * Traductions personnalisées pour les noms de couleurs
    * Format : { [key]: { FR: string, EN: string, ... } }
@@ -121,6 +137,8 @@ export const ButtonThumbnailLabels = React.forwardRef<HTMLButtonElement, ButtonT
       onFocus,
       onBlur,
       compact = false,
+      buttonDisplay = "value",
+      variant,
       translations,
       language,
       open: openProp,
@@ -188,9 +206,26 @@ export const ButtonThumbnailLabels = React.forwardRef<HTMLButtonElement, ButtonT
       return 5
     }
 
+    // Mode neutre : le déclencheur reprend la recette exacte de ButtonMenuStatus
+    // (rond, mêmes dimensions, mêmes couleurs), seule l'icône change.
+    const isNeutralButton = buttonDisplay === "neutral"
+
     // Déterminer les dimensions du bouton selon le size
-    const buttonSizeClasses = size === "small" ? "p-1 w-5 h-4" : size === "large" ? "p-0 w-10 h-8" : "p-0 w-8 h-6"
+    // - mode "value" : plus large que haut, il faut la place pour la pastille
+    // - mode "neutral" : carré, dimensions identiques à ButtonMenuStatus
+    //   (small: p-1 w-4 h-4, medium: p-0 w-6 h-6, large: p-0 w-8 h-8)
+    const valueButtonSizeClasses = size === "small" ? "p-1 w-5 h-4" : size === "large" ? "p-0 w-10 h-8" : "p-0 w-8 h-6"
+    const neutralButtonSizeClasses = size === "small" ? "p-1 w-4 h-4" : size === "large" ? "p-0 w-8 h-8" : "p-0 w-6 h-6"
+    const buttonSizeClasses = isNeutralButton ? neutralButtonSizeClasses : valueButtonSizeClasses
     const colorSize = size === "small" ? 10 : size === "large" ? 14 : 12
+    // Mêmes tailles d'icône que ButtonMenuStatus.getIconSize() : 10 / 12 / 14
+    const neutralIconSize = size === "small" ? 10 : size === "large" ? 14 : 12
+
+    // Couleurs : dans les barres d'action, ButtonMenuStatus est appelé en
+    // `variant="secondary"` là où ce bouton tomberait sur "normal". En mode neutre on
+    // prend donc "secondary" par défaut pour que les deux boutons soient identiques
+    // sans que l'appelant ait à le savoir, tout en restant surchargeable.
+    const effectiveVariant = isNeutralButton ? variant ?? "secondary" : variant
 
     // Gérer le clic sur une couleur
     const handleColorClick = React.useCallback(
@@ -262,6 +297,10 @@ export const ButtonThumbnailLabels = React.forwardRef<HTMLButtonElement, ButtonT
 
     // Contenu du bouton (menu fermé) - affiche la couleur actuelle
     const buttonContent = React.useMemo(() => {
+      // Mode neutre : icône fixe, la valeur ne pilote plus la face du bouton.
+      if (isNeutralButton) {
+        return <Icon name="Tag" size={neutralIconSize} />
+      }
       const currentColor = LABEL_COLORS.find((c) => c.value === normalizedValue)
       if (!currentColor || currentColor.value === "transparent") {
         // Si pas de couleur définie, afficher transparent avec bordure pointillée
@@ -290,7 +329,7 @@ export const ButtonThumbnailLabels = React.forwardRef<HTMLButtonElement, ButtonT
           }}
         />
       )
-    }, [normalizedValue, colorSize, bg])
+    }, [isNeutralButton, neutralIconSize, normalizedValue, colorSize, bg])
 
     React.useEffect(() => {
       if (debug) {
@@ -310,6 +349,7 @@ export const ButtonThumbnailLabels = React.forwardRef<HTMLButtonElement, ButtonT
             disabled={disabled}
             className={cn(buttonSizeClasses, className)}
             isActive={isOpen}
+            variant={effectiveVariant}
             onClick={(e) => {
               e.preventDefault()
             }}

@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import { ButtonThumbnailLabels, LabelColor } from "@/components/ui/button-thumbnail-labels"
+import { ButtonMenuStatus, ButtonMenuStatusOption } from "@/components/ui/button-menu-status"
+import { MediaStatus } from "@/utils/mediaStatus"
 import { Layout, VStack, HStack } from "@/components/layout"
 import { useState } from "react"
 import { cn } from "@/lib/utils"
@@ -755,3 +757,115 @@ export const MenuPositioning: Story = {
 
 
 
+
+/**
+ * Mode neutre (`buttonDisplay="neutral"`) : le déclencheur reprend le dessin et les
+ * couleurs de `ButtonMenuStatus`. Les deux boutons sont posés côte à côte pour que la
+ * ressemblance soit vérifiable à l'œil, sur les trois fonds et les trois tailles.
+ */
+export const NeutralButtonDisplay: Story = {
+  render: () => {
+    const [colors, setColors] = useState<Record<string, LabelColor>>({
+      white: "red",
+      grey: "red",
+      black: "red",
+      small: "red",
+      medium: "red",
+      large: "red",
+      value: "red",
+      neutral: "red",
+    })
+    const setColor = (key: string) => (value: LabelColor) =>
+      setColors((previous) => ({ ...previous, [key]: value }))
+
+    const statusOptions: ButtonMenuStatusOption[] = [
+      { status: MediaStatus.SELECTED, label: "Sélectionné" },
+      { status: MediaStatus.VALIDATED, label: "Validé" },
+      { status: MediaStatus.BROADCAST, label: "Diffusé" },
+    ]
+
+    return (
+      <VStack gap={0}>
+        {(["white", "grey", "black"] as const).map((bg) => (
+          <Layout key={bg} bg={bg} padding={6}>
+            <VStack gap={4}>
+              <h3 className="gs-typo-h3">Fond {bg} — côte à côte avec ButtonMenuStatus</h3>
+              <HStack gap={2} align="center">
+                <ButtonMenuStatus
+                  variant="secondary"
+                  currentStatus={MediaStatus.SELECTED}
+                  statusOptions={statusOptions}
+                />
+                <ButtonThumbnailLabels
+                  buttonDisplay="neutral"
+                  value={colors[bg]}
+                  onClick={setColor(bg)}
+                />
+                <span className="text-xs text-grey-stronger">
+                  statut, puis couleurs en mode neutre — même rond, même fond, même couleur de dessin
+                </span>
+              </HStack>
+            </VStack>
+          </Layout>
+        ))}
+
+        <Layout bg="white" padding={6}>
+          <VStack gap={4}>
+            <h3 className="gs-typo-h3">Les trois tailles, appariées</h3>
+            <HStack gap={6} align="start">
+              {(["small", "medium", "large"] as const).map((size) => (
+                <VStack key={size} gap={2} align="center">
+                  <HStack gap={2} align="center">
+                    <ButtonMenuStatus
+                      variant="secondary"
+                      size={size}
+                      currentStatus={MediaStatus.SELECTED}
+                      statusOptions={statusOptions}
+                    />
+                    <ButtonThumbnailLabels
+                      buttonDisplay="neutral"
+                      size={size}
+                      value={colors[size]}
+                      onClick={setColor(size)}
+                    />
+                  </HStack>
+                  <span className="text-xs text-grey-stronger">{size}</span>
+                </VStack>
+              ))}
+            </HStack>
+          </VStack>
+        </Layout>
+
+        <Layout bg="white" padding={6}>
+          <VStack gap={4}>
+            <h3 className="gs-typo-h3">Le défaut n'a pas changé</h3>
+            <HStack gap={6} align="start">
+              <VStack gap={2} align="center">
+                <ButtonThumbnailLabels
+                  value={colors.value}
+                  onClick={setColor("value")}
+                />
+                <span className="text-xs text-grey-stronger">
+                  défaut (`buttonDisplay="value"`) : la couleur est sur le bouton
+                </span>
+              </VStack>
+              <VStack gap={2} align="center">
+                <ButtonThumbnailLabels
+                  buttonDisplay="neutral"
+                  value={colors.neutral}
+                  onClick={setColor("neutral")}
+                />
+                <span className="text-xs text-grey-stronger">
+                  `buttonDisplay="neutral"` : icône fixe, la couleur reste cochée dans le menu
+                </span>
+              </VStack>
+            </HStack>
+          </VStack>
+        </Layout>
+      </VStack>
+    )
+  },
+  parameters: {
+    layout: "fullscreen",
+  },
+}

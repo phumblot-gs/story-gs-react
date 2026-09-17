@@ -5,6 +5,44 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [Non publié] — cible 1.16.0
+
+### ✨ Ajouté
+
+- **`ButtonThumbnailStars` / `ButtonThumbnailLabels` : mode d'affichage neutre du
+  bouton déclencheur** via la prop `buttonDisplay` (`"value" | "neutral"`,
+  `"value"` par défaut, **opt-in, non-breaking**).
+  - `buttonDisplay="neutral"` fait reprendre au déclencheur le dessin et les
+    couleurs de `ButtonMenuStatus` : même rond aux mêmes dimensions
+    (`p-1 w-4 h-4` / `p-0 w-6 h-6` / `p-0 w-8 h-8` selon `size`), même taille
+    d'icône (10 / 12 / 14), et **`variant="secondary"` par défaut** — c'est le
+    variant avec lequel `ButtonMenuStatus` est appelé dans les barres d'action, là
+    où ces deux boutons tombaient sur `normal`. L'appelant n'a donc rien à savoir
+    du variant ; s'il en passe un explicitement, il reste prioritaire.
+  - La face du bouton affiche une **icône fixe** à la place de la valeur : `Star`
+    (le contour, pas `StarFilled`) pour les étoiles, `Tag` pour les couleurs.
+  - Motif : dans une barre d'action qui écrit une note ou une couleur **sur une
+    sélection**, afficher « 3 étoiles » ou une pastille laisse croire à un état
+    commun à toute la sélection et invite à recliquer 3 pour annuler — ce qui
+    aplatit la sélection à 3. Le mode neutre supprime cette lecture.
+  - **`value` continue de servir au menu** dans les deux modes : la bonne ligne
+    reste cochée, exactement comme `currentStatus` pour `ButtonMenuStatus`.
+  - **Rien d'autre ne change** : contenu du menu, `compact`, `menuSide`,
+    `menuAlign`, `menuBgContext`, `useIsInActionBar()`, `sideOffset`, traductions
+    des couleurs.
+  - **Le défaut est inchangé, au pixel.** `Thumbnail` ne passe pas la prop et
+    continue d'afficher la valeur : c'est toute la fonction du bouton sur une
+    vignette. Verrouillé par un test au niveau de `Thumbnail` lui-même
+    (`src/__tests__/thumbnail-shows-rating-label-values.test.tsx`), pas seulement
+    sur les deux boutons isolés.
+  - Stories `NeutralButtonDisplay` sur les deux composants : le mode neutre est
+    posé **à côté d'un `ButtonMenuStatus`** sur les trois fonds et les trois
+    tailles, pour que la ressemblance soit vérifiable à l'œil.
+  - Tests : `src/__tests__/button-thumbnail-neutral-display.test.tsx` (22 cas,
+    dont les contre-épreuves : le défaut affiche toujours la valeur, et un
+    `buttonDisplay="value"` explicite rend un HTML strictement identique à
+    l'omission de la prop).
+
 ## [1.15.0] - 2026-09-16
 
 ### Added
