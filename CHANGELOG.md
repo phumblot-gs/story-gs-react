@@ -43,6 +43,32 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
     `buttonDisplay="value"` explicite rend un HTML strictement identique à
     l'omission de la prop).
 
+### 🎨 Modifié
+
+- **`ButtonMenuStatus` et `ButtonMenuSmall` gardent l'apparence hover tant que leur
+  menu est ouvert**, comme les quatre boutons de vignette. **Changement visuel sur
+  des composants existants**, pas opt-in.
+  - La charte veut qu'un bouton qui ouvre un menu conserve son apparence hover
+    pendant toute la durée d'ouverture. Les quatre menus de vignette
+    (`ButtonThumbnailStars`, `…Labels`, `…Tags`, `…Comments`) le faisaient déjà ;
+    ces deux-là étaient les seules exceptions et restaient plates, ce qui se voyait
+    dans la barre d'action de la page validation où les quatre boutons se côtoient.
+  - **Même mécanisme, pas un second** : une ligne strictement identique à celle des
+    boutons de vignette, `data-open={isOpen ? "true" : "false"}` posée sur le
+    `Toggle` après `{...buttonProps}`. Les règles existantes de `custom-styles.css`
+    (`button[data-open="true"]`) rejouent alors les jetons hover du variant du
+    bouton, par contexte `data-bg`. Aucune CSS ajoutée.
+  - L'attribut est **toujours présent**, valué `"false"` menu fermé : c'est la
+    convention déjà en place, et `button[data-open]` sert de localisateur de
+    déclencheur ailleurs dans la suite de tests.
+  - Variants couverts par la CSS existante : `normal`, `secondary`, `ghost`,
+    `outline`. `destructive` et `link` n'ont pas de règle `data-open` — inchangé,
+    mais à savoir.
+  - Test `src/__tests__/menu-trigger-data-open.test.tsx` (20 cas) : contrat verrouillé
+    par composant, en mode contrôlé et non contrôlé, plus la contre-épreuve
+    d'uniformité qui relit l'attribut sur **les six** composants à menu et exige une
+    seule valeur distincte par état.
+
 ## [1.15.0] - 2026-09-16
 
 ### Added
