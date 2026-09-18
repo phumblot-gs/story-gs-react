@@ -5,6 +5,17 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.17.0] - 2026-09-18
+
+### Ajouté
+
+- `TabsList` : valeur `align="justify"`, qui répartit les onglets à parts égales
+  sur toute la largeur de la liste et centre chaque titre. L'indicateur actif
+  occupe alors toute la largeur de l'onglet. Les libellés ne sont jamais tronqués :
+  si les parts deviennent plus étroites que le titre le plus long, les onglets
+  reprennent leur largeur naturelle et la liste redevient défilante.
+- Story Tabs : option `justify` dans le contrôle d'alignement et exemple « Justifié ».
+
 ## [1.16.1] — 2026-09-18
 
 ### 🎨 Modifié

@@ -54,10 +54,15 @@ import { Tabs, TabsList, TabsTrigger, TabsContent, Layout } from '@story-gs-reac
 
 ## Alignment
 
-Set \`align="left" | "center" | "right"\` on \`TabsList\` (default: \`left\`).
+Set \`align="left" | "center" | "right" | "justify"\` on \`TabsList\` (default: \`left\`).
 The bottom line spans the available list width; tab order is unchanged.
 When tabs overflow, alignment yields to scrolling so all tabs remain reachable.
 With \`rightSlot\`, alignment applies to the list space remaining before the slot.
+
+\`justify\` gives every tab an equal share of the list width and centres its title,
+so the tabs fill the whole component. The active indicator then spans the full tab.
+Labels are never truncated: if the equal shares become narrower than the longest
+title, the tabs revert to their natural width and the list scrolls as usual.
 
 ## Controlled vs Uncontrolled
 
@@ -710,8 +715,8 @@ export const Alignment: StoryObj<React.ComponentProps<typeof TabsList>> = {
   argTypes: {
     align: {
       control: 'inline-radio',
-      options: ['left', 'center', 'right'],
-      description: 'Alignement horizontal des onglets. Par défaut : left.',
+      options: ['left', 'center', 'right', 'justify'],
+      description: 'Alignement horizontal des onglets. Par défaut : left. `justify` répartit les onglets sur toute la largeur, titres centrés.',
       table: { defaultValue: { summary: 'left' } },
     },
   },
@@ -735,3 +740,4 @@ export const Alignment: StoryObj<React.ComponentProps<typeof TabsList>> = {
 export const LeftAligned = { ...Alignment, name: 'À gauche', args: { align: 'left' as const } };
 export const CenterAligned = { ...Alignment, name: 'Centré', args: { align: 'center' as const } };
 export const RightAligned = { ...Alignment, name: 'À droite', args: { align: 'right' as const } };
+export const JustifiedAligned = { ...Alignment, name: 'Justifié', args: { align: 'justify' as const } };

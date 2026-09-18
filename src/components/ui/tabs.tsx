@@ -75,8 +75,11 @@ const Tabs = React.forwardRef<
 Tabs.displayName = TabsPrimitive.Root.displayName
 
 interface TabsListProps extends React.ComponentPropsWithoutRef<typeof TabsPrimitive.List> {
-  /** Horizontal tab alignment. Defaults to left; overflowing tabs remain scrollable. */
-  align?: "left" | "center" | "right"
+  /**
+   * Horizontal tab alignment. Defaults to left; overflowing tabs remain scrollable.
+   * `justify` spreads the tabs evenly over the full list width, each title centred.
+   */
+  align?: "left" | "center" | "right" | "justify"
   className?: string
   debug?: boolean
   rightSlot?: React.ReactNode
