@@ -11,7 +11,6 @@ import { useIsInActionBar } from "@/components/layout/ActionBar"
 import { VStack } from "@/components/layout"
 import { cn } from "@/lib/utils"
 import { useTranslationSafe, TranslationMap } from "@/contexts/TranslationContext"
-import { Icon } from "@/components/ui/icons"
 
 export type LabelColor = "blue" | "green" | "orange" | "pink" | "purple" | "red" | "yellow" | "white" | "transparent"
 
@@ -38,9 +37,12 @@ export interface ButtonThumbnailLabelsProps extends Omit<ToggleProps, "onClick" 
    *   couleur de la photo est toute la fonction du bouton.
    * - `"neutral"` : le bouton reprend le dessin et les couleurs de
    *   `ButtonMenuStatus` — rond aux mêmes dimensions, `variant="secondary"` par
-   *   défaut, et une icône `Tag` fixe à la place de la valeur. Pour une barre
-   *   d'action qui pose une couleur sur une sélection potentiellement hétérogène :
-   *   afficher une pastille laisserait croire à un état commun à toute la sélection.
+   *   défaut, et le **rectangle à bordure pointillée** « pas de couleur » à la place
+   *   de la valeur : c'est le vocabulaire déjà utilisé par la librairie pour une
+   *   pastille sans valeur, et la même forme que les pastilles du menu. Pour une
+   *   barre d'action qui pose une couleur sur une sélection potentiellement
+   *   hétérogène : afficher une pastille colorée laisserait croire à un état commun
+   *   à toute la sélection.
    *
    * `value` continue de servir dans les deux modes à cocher la bonne ligne du menu.
    */
@@ -126,6 +128,28 @@ const LABEL_COLORS: Array<{ value: LabelColor; translationKey: string; cssVar: s
   { value: "yellow", translationKey: "label.yellow", cssVar: "var(--color-yellow)" },
   { value: "white", translationKey: "label.white", cssVar: "var(--label-white)" },
 ]
+
+/**
+ * Rectangle à bordure pointillée de la face du bouton : le vocabulaire de la librairie
+ * pour « une pastille de couleur sans valeur », à la même forme que les pastilles du menu.
+ *
+ * Partagé par la branche « pas de couleur définie » et par le mode neutre, qui n'affiche
+ * jamais la valeur. Un seul rendu, pour que les deux ne puissent pas diverger.
+ *
+ * Défini au niveau module : il ne dépend que de sa taille, donc il ne réinvalide pas le
+ * `useMemo` du contenu du bouton.
+ */
+const renderEmptySwatch = (swatchSize: number) => (
+  <div
+    className="border border-dotted border-adaptive"
+    style={{
+      width: `${swatchSize}px`,
+      height: `${swatchSize * 0.7}px`,
+      backgroundColor: "transparent",
+      borderWidth: "1px",
+    }}
+  />
+)
 
 export const ButtonThumbnailLabels = React.forwardRef<HTMLButtonElement, ButtonThumbnailLabelsProps>(
   (
@@ -217,9 +241,10 @@ export const ButtonThumbnailLabels = React.forwardRef<HTMLButtonElement, ButtonT
     const valueButtonSizeClasses = size === "small" ? "p-1 w-5 h-4" : size === "large" ? "p-0 w-10 h-8" : "p-0 w-8 h-6"
     const neutralButtonSizeClasses = size === "small" ? "p-1 w-4 h-4" : size === "large" ? "p-0 w-8 h-8" : "p-0 w-6 h-6"
     const buttonSizeClasses = isNeutralButton ? neutralButtonSizeClasses : valueButtonSizeClasses
+    // 10 / 12 / 14 : les tailles d'icône de ButtonMenuStatus.getIconSize(). En mode
+    // neutre le rectangle pointillé occupe donc exactement la place qu'y prend l'icône
+    // du bouton statut, dans un rond de mêmes dimensions.
     const colorSize = size === "small" ? 10 : size === "large" ? 14 : 12
-    // Mêmes tailles d'icône que ButtonMenuStatus.getIconSize() : 10 / 12 / 14
-    const neutralIconSize = size === "small" ? 10 : size === "large" ? 14 : 12
 
     // Couleurs : dans les barres d'action, ButtonMenuStatus est appelé en
     // `variant="secondary"` là où ce bouton tomberait sur "normal". En mode neutre on
@@ -297,25 +322,16 @@ export const ButtonThumbnailLabels = React.forwardRef<HTMLButtonElement, ButtonT
 
     // Contenu du bouton (menu fermé) - affiche la couleur actuelle
     const buttonContent = React.useMemo(() => {
-      // Mode neutre : icône fixe, la valeur ne pilote plus la face du bouton.
+      // Mode neutre : la valeur ne pilote jamais la face du bouton. On réutilise le
+      // rectangle pointillé « pas de couleur » — même rendu que la branche ci-dessous.
       if (isNeutralButton) {
-        return <Icon name="Tag" size={neutralIconSize} />
+        return renderEmptySwatch(colorSize)
       }
       const currentColor = LABEL_COLORS.find((c) => c.value === normalizedValue)
       if (!currentColor || currentColor.value === "transparent") {
         // Si pas de couleur définie, afficher transparent avec bordure pointillée
         // La bordure s'adapte automatiquement au hover et à l'état ouvert via CSS
-        return (
-          <div
-            className="border border-dotted border-adaptive"
-            style={{
-              width: `${colorSize}px`,
-              height: `${colorSize * 0.7}px`,
-              backgroundColor: "transparent",
-              borderWidth: "1px",
-            }}
-          />
-        )
+        return renderEmptySwatch(colorSize)
       }
       // Afficher la couleur sélectionnée sans bordure visible
       return (
@@ -329,7 +345,7 @@ export const ButtonThumbnailLabels = React.forwardRef<HTMLButtonElement, ButtonT
           }}
         />
       )
-    }, [isNeutralButton, neutralIconSize, normalizedValue, colorSize, bg])
+    }, [isNeutralButton, normalizedValue, colorSize, bg])
 
     React.useEffect(() => {
       if (debug) {

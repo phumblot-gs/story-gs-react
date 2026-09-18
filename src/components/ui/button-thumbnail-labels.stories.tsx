@@ -759,9 +759,14 @@ export const MenuPositioning: Story = {
 
 
 /**
- * Mode neutre (`buttonDisplay="neutral"`) : le déclencheur reprend le dessin et les
- * couleurs de `ButtonMenuStatus`. Les deux boutons sont posés côte à côte pour que la
+ * Mode neutre (`buttonDisplay="neutral"`) : le déclencheur reprend le rond et les
+ * couleurs de `ButtonMenuStatus`, et affiche le rectangle à bordure pointillée « pas de
+ * couleur » au lieu de la valeur — la même forme que les pastilles du menu, donc lisible
+ * immédiatement comme « couleur ». Les deux boutons sont posés côte à côte pour que la
  * ressemblance soit vérifiable à l'œil, sur les trois fonds et les trois tailles.
+ *
+ * Les valeurs sont volontairement à `red` partout : la face du bouton ne doit jamais la
+ * montrer, alors que le menu ouvert doit bien cocher « Rouge ».
  */
 export const NeutralButtonDisplay: Story = {
   render: () => {
@@ -802,7 +807,8 @@ export const NeutralButtonDisplay: Story = {
                   onClick={setColor(bg)}
                 />
                 <span className="text-xs text-grey-stronger">
-                  statut, puis couleurs en mode neutre — même rond, même fond, même couleur de dessin
+                  statut, puis couleurs en mode neutre (`value="red"`) — même rond, même fond,
+                  et un rectangle pointillé au lieu de la pastille rouge
                 </span>
               </HStack>
             </VStack>
@@ -856,7 +862,7 @@ export const NeutralButtonDisplay: Story = {
                   onClick={setColor("neutral")}
                 />
                 <span className="text-xs text-grey-stronger">
-                  `buttonDisplay="neutral"` : icône fixe, la couleur reste cochée dans le menu
+                  `buttonDisplay="neutral"` : rectangle pointillé, la couleur reste cochée dans le menu
                 </span>
               </VStack>
             </HStack>

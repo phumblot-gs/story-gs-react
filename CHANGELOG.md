@@ -5,6 +5,34 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [Non publié] — cible 1.16.1
+
+### 🎨 Modifié
+
+- **`ButtonThumbnailLabels` : le mode neutre affiche le rectangle à bordure pointillée
+  au lieu de l'icône `Tag`.** Correction visuelle du mode `buttonDisplay="neutral"`
+  livré en 1.16.0, **sans changement d'API**.
+  - `Tag` évoquait les méta-tags, pas la couleur. Le déclencheur reprend désormais le
+    **rectangle pointillé « pas de couleur »** que le composant dessinait déjà dans sa
+    branche « aucune couleur définie » : c'est le vocabulaire de la librairie pour une
+    pastille sans valeur, et la même forme que les pastilles du menu, donc ça se lit
+    immédiatement comme « couleur ».
+  - **Un seul rendu, pas deux** : le rectangle est extrait dans un `renderEmptySwatch`
+    au niveau module, partagé par la branche « pas de couleur » et par le mode neutre,
+    pour qu'ils ne puissent pas diverger.
+  - Dimensions inchangées : le rectangle fait `colorSize` × `colorSize * 0.7`, soit
+    10 / 12 / 14 px de large selon `size` — exactement la place que prend l'icône de
+    `ButtonMenuStatus` dans un rond de mêmes dimensions. Centré par le
+    `inline-flex items-center justify-center` du `Button`.
+  - Nettoyage : `neutralIconSize` et l'import d'`Icon` devenaient morts dans ce
+    fichier, ils sont retirés.
+  - **`ButtonThumbnailStars` est inchangé** : son icône `Star` reste la bonne.
+  - Tests adaptés, et la contre-épreuve renforcée : la face reste pointillée et sans
+    couleur **même avec `value="red"`**, et le rendu neutre est comparé à celui du mode
+    par défaut sans couleur (ils doivent être identiques). Côté `Thumbnail`, un cas
+    dédié vérifie que le rectangle pointillé n'apparaît **jamais** quand la photo a une
+    couleur.
+
 ## [1.16.0] — 2026-09-17
 
 ### ✨ Ajouté

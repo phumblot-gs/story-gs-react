@@ -44,7 +44,7 @@ const menuTriggers = (container: HTMLElement) => {
 /** Thumbnail renders both buttons with `size="small"`, hence 10px icons. */
 const ICON_SIZE = 10;
 
-const iconMarkup = (name: "Star" | "StarFilled" | "Tag") => {
+const iconMarkup = (name: "Star" | "StarFilled") => {
   const { container, unmount } = render(<Icon name={name} size={ICON_SIZE} />);
   const svg = container.querySelector("svg");
   expect(svg).not.toBeNull();
@@ -75,7 +75,7 @@ describe("Thumbnail — the footer keeps displaying the rating and the label val
     expect(stars.querySelector("svg")!.outerHTML).toBe(iconMarkup("Star"));
   });
 
-  it("shows the label colour on the colour trigger, not a Tag icon", () => {
+  it("shows the label colour on the colour trigger", () => {
     const { container } = renderThumbnail({ rating: 4, label: "red" });
     const [, labels] = menuTriggers(container);
 
@@ -83,10 +83,16 @@ describe("Thumbnail — the footer keeps displaying the rating and the label val
     expect(labels.querySelectorAll("svg")).toHaveLength(0);
   });
 
-  it("renders no Tag icon anywhere in the footer", () => {
+  /**
+   * The neutral mode of the colour button draws the dotted "no colour" swatch. Seeing
+   * it on a thumbnail whose photo *has* a colour is the exact shape a leak would take,
+   * so it gets its own assertion rather than riding on the one above.
+   */
+  it("never shows the dotted empty swatch when a colour is set", () => {
     const { container } = renderThumbnail({ rating: 4, label: "red" });
+    const [, labels] = menuTriggers(container);
 
-    expect(container.innerHTML).not.toContain(iconMarkup("Tag"));
+    expect(labels.querySelector(".border-dotted")).toBeNull();
   });
 
   it("shows a dotted swatch when no label is set", () => {
