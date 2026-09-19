@@ -203,6 +203,29 @@ export const EmptyFolder: Story = {
   },
 };
 
+export const EmptyFolderFillContainer: Story = {
+  render: (args) => (
+    <div style={{ height: 500 }}>
+      <FileBrowser {...args} />
+    </div>
+  ),
+  args: {
+    files: [],
+    currentPath: "/Vide",
+    labelRootFolder: "Mes fichiers",
+    showUploadButton: true,
+    heightMode: "fill-container",
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Dossier vide dans un conteneur de hauteur fixe (`heightMode=\"fill-container\"`) : le message occupe la hauteur restante sous l'en-tête des colonnes et y est centré verticalement, à l'intérieur du cadre du tableau — sans ligne horizontale intermédiaire.",
+      },
+    },
+  },
+};
+
 export const SubFolder: Story = {
   args: {
     files: subFolderFiles,
@@ -773,6 +796,94 @@ export const ExternalSelectionReset: Story = {
       description: {
         story:
           "La sélection reste interne au composant, mais le parent peut la vider en changeant `selectionResetKey` — ici un bouton « Tout désélectionner » placé hors du FileBrowser incrémente la clé. Sélectionnez des lignes (clic, Shift+clic, Ctrl/Cmd+clic ou Cmd+A) puis cliquez le bouton : les lignes se désélectionnent et `onSelectionChange` remonte un tableau vide.",
+      },
+    },
+  },
+};
+
+// Arborescence de la story de déplacement : les éléments portent leur dossier
+// dans `parent_path`, et déplacer ne fait que réécrire ce champ.
+const dragDropItems: FileItem[] = [
+  { id: "d1", file_name: "Archives", parent_path: "/", file_size: 0, mime_type: "", is_directory: true, created_at: "2024-03-01T10:00:00Z", updated_at: "2024-03-01T10:00:00Z" },
+  { id: "d2", file_name: "Campagne Été", parent_path: "/", file_size: 0, mime_type: "", is_directory: true, created_at: "2024-03-02T10:00:00Z", updated_at: "2024-03-02T10:00:00Z" },
+  { id: "d3", file_name: "Validé", parent_path: "/", file_size: 0, mime_type: "", is_directory: true, created_at: "2024-03-03T10:00:00Z", updated_at: "2024-03-03T10:00:00Z" },
+  ...Array.from({ length: 24 }, (_, i) => ({
+    id: `p${i}`,
+    file_name: `photo-${String(i + 1).padStart(2, "0")}.jpg`,
+    parent_path: "/",
+    file_size: 1_500_000 + i * 15_000,
+    mime_type: "image/jpeg",
+    is_directory: false,
+    created_at: "2024-03-10T09:00:00Z",
+    updated_at: "2024-03-10T09:00:00Z",
+  })),
+  { id: "a1", file_name: "ancien-brief.pdf", parent_path: "/Archives", file_size: 220_000, mime_type: "application/pdf", is_directory: false, created_at: "2023-11-02T10:00:00Z", updated_at: "2023-11-02T10:00:00Z" },
+];
+
+export const InteractiveDragAndDropMove: Story = {
+  render: (args) => {
+    const [items, setItems] = React.useState<FileItem[]>(dragDropItems);
+    const [currentPath, setCurrentPath] = React.useState("/");
+    const [selectionResetKey, setSelectionResetKey] = React.useState(0);
+    const [lastMove, setLastMove] = React.useState<string | null>(null);
+
+    const visibleItems = items.filter((item) => item.parent_path === currentPath);
+
+    const handleMoveItems = (moved: FileItem[], targetFolder: FileItem) => {
+      const targetPath =
+        targetFolder.parent_path === "/"
+          ? `/${targetFolder.file_name}`
+          : `${targetFolder.parent_path}/${targetFolder.file_name}`;
+      const movedIds = new Set(moved.map((item) => item.id));
+
+      setItems((prev) =>
+        prev.map((item) => (movedIds.has(item.id) ? { ...item, parent_path: targetPath } : item)),
+      );
+      // Les lignes déplacées quittent la vue : la sélection n'a plus de sens.
+      setSelectionResetKey((key) => key + 1);
+      setLastMove(
+        `${moved.length} élément${moved.length > 1 ? "s" : ""} déplacé${moved.length > 1 ? "s" : ""} vers « ${targetFolder.file_name} »`,
+      );
+      args.onMoveItems?.(moved, targetFolder);
+    };
+
+    const handleNavigate = (path: string) => {
+      setCurrentPath(path);
+      setSelectionResetKey((key) => key + 1);
+      args.onNavigate?.(path);
+    };
+
+    return (
+      <div className="space-y-3">
+        <p className="text-sm text-gray-500">
+          Sélectionnez des lignes (clic, Shift+clic, Ctrl/Cmd+clic), puis glissez-les sur un
+          dossier. Glissez vers le haut ou le bas de la liste pour la faire défiler pendant le
+          déplacement. Double-cliquez sur un dossier pour y entrer.
+        </p>
+        <div style={{ height: 420 }}>
+          <FileBrowser
+            {...args}
+            files={visibleItems}
+            currentPath={currentPath}
+            heightMode="fill-container"
+            onNavigate={handleNavigate}
+            onMoveItems={handleMoveItems}
+            selectionResetKey={selectionResetKey}
+          />
+        </div>
+        <p className="text-sm text-gray-500">{lastMove ?? "Aucun déplacement pour l'instant."}</p>
+      </div>
+    );
+  },
+  args: {
+    labelRootFolder: "Mes fichiers",
+    showUploadButton: true,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Déplacement de lignes par glisser-déposer. Fournir `onMoveItems` rend les lignes déplaçables : glisser une ligne sélectionnée déplace toute la sélection, glisser une ligne hors sélection ne déplace qu'elle. Seuls les dossiers hors sélection acceptent le dépôt et s'encadrent en noir au survol. Le composant ne déplace rien lui-même : cette story réécrit le `parent_path` des éléments reçus, puis vide la sélection via `selectionResetKey`.",
       },
     },
   },

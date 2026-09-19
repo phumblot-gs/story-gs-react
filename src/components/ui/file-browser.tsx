@@ -2,14 +2,22 @@
 
 import React, { useState, useCallback, useEffect, useRef, useMemo } from "react";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { IconProvider } from "@/components/ui/icon-provider";
 import { IconName } from "@/components/ui/icons/types";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useTranslationSafe } from "@/contexts/TranslationContext";
 import { TranslationMap } from "@/utils/translations";
-import { BgProvider } from "@/components/layout/BgContext";
+import { BgProvider, useBgContext } from "@/components/layout/BgContext";
+import {
+  INTERNAL_DRAG_TYPE,
+  canDropOnItem,
+  computeAutoScrollSpeed,
+  getDraggedItems,
+  isExternalFileDrag,
+  isInternalItemsDrag,
+} from "@/lib/file-browser-drag";
 
 // Types basés sur le schéma BDD
 export interface FileItem {
@@ -63,6 +71,20 @@ export interface FileBrowserProps {
   onSortChange?: (sortConfig: SortConfig) => void;
   onSelectionChange?: (selectedItems: FileItem[]) => void;
   /**
+   * Déplacement des lignes sélectionnées vers un sous-dossier par glisser-déposer.
+   *
+   * Fournir ce callback rend les lignes déplaçables ; sans lui, le glisser-déposer
+   * interne reste désactivé. Le composant ne possède pas les données : il signale
+   * le déplacement, à charge de l'appelant de l'effectuer puis de re-rendre avec
+   * les nouveaux `files` (et de vider la sélection via `selectionResetKey`).
+   *
+   * `targetFolder` est toujours un dossier, actif, hors des lignes déplacées.
+   * Le composant ne voit que le dossier courant : il ne peut pas détecter qu'on
+   * déplace un dossier dans l'un de ses propres descendants, ce qui reste à
+   * valider côté appelant.
+   */
+  onMoveItems?: (items: FileItem[], targetFolder: FileItem) => void;
+  /**
    * Vide la sélection à chaque changement de valeur (pas au premier rendu).
    * Permet à un parent de désélectionner depuis l'extérieur — par exemple un
    * bouton « Tout désélectionner » — sans rendre la sélection contrôlée :
@@ -87,6 +109,99 @@ export interface SortConfig {
 interface PathSegment {
   name: string;
   path: string;
+}
+
+/**
+ * Dernier segment du breadcrumb : le dossier courant.
+ *
+ * Il prend l'apparence d'un bouton ghost plutôt que du texte nu, pour occuper
+ * la même boîte que les segments navigables (même hauteur, même padding
+ * horizontal). Sans cela, le libellé de la racine n'a pas de padding et se
+ * décale horizontalement dès qu'on entre dans un sous-dossier, où il devient
+ * un bouton.
+ *
+ * Le dossier courant n'est pas une destination : c'est donc un `<span>` — ni
+ * focusable, ni annoncé comme bouton, sans clic ni survol — qui emprunte les
+ * classes de `Button` via `buttonVariants`. `data-bg` est repris du contexte
+ * comme le fait `Button`, car les couleurs ghost sont sélectionnées dessus.
+ * (`Button asChild` ferait le même rendu, mais il est cassé : le `Slot` reçoit
+ * plusieurs enfants et lève « React.Children.only ».)
+ */
+const CurrentFolderSegment: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const bg = useBgContext();
+  return (
+    <span
+      aria-current="page"
+      data-bg={bg || undefined}
+      className={cn(
+        buttonVariants({ variant: "ghost", size: "medium" }),
+        // Le dossier courant reste en gras, comme avant son passage en bouton.
+        "h-6 font-medium pointer-events-none"
+      )}
+    >
+      {children}
+    </span>
+  );
+};
+
+/**
+ * Vignette affichée sous le curseur pendant un déplacement de lignes.
+ *
+ * Construite en DOM impératif, et stylée en `style` inline plutôt qu'en
+ * classes Tailwind : `setDragImage` photographie le nœud à l'instant du
+ * `dragstart`, donc il doit être rendu et stylé immédiatement, sans dépendre
+ * du cycle de rendu React ni de la feuille Tailwind de l'application hôte.
+ * Le nœud est placé hors écran — `display: none` empêcherait la capture.
+ */
+function createRowsDragPreview(items: FileItem[]): HTMLElement {
+  const card = document.createElement("div");
+  card.style.cssText = [
+    "position:fixed",
+    "top:-1000px",
+    "left:-1000px",
+    "pointer-events:none",
+    "display:inline-flex",
+    "align-items:center",
+    "gap:8px",
+    "max-width:320px",
+    "padding:10px 16px",
+    "border-radius:10px",
+    "background:#ffffff",
+    "box-shadow:0 4px 14px rgba(0,0,0,0.18)",
+    "font-size:13px",
+    "line-height:1",
+    "color:#111111",
+  ].join(";");
+
+  const label = document.createElement("span");
+  label.style.cssText = "overflow:hidden;text-overflow:ellipsis;white-space:nowrap;";
+  label.textContent = items[0]?.file_name ?? "";
+  card.appendChild(label);
+
+  if (items.length > 1) {
+    const badge = document.createElement("span");
+    badge.style.cssText = [
+      "position:absolute",
+      "top:-10px",
+      "right:-10px",
+      "min-width:22px",
+      "height:22px",
+      "padding:0 6px",
+      "border-radius:9999px",
+      "background:var(--color-blue-primary,#9ed7f5)",
+      "color:#000000",
+      "font-size:11px",
+      "font-weight:600",
+      "display:flex",
+      "align-items:center",
+      "justify-content:center",
+    ].join(";");
+    badge.textContent = String(items.length);
+    card.appendChild(badge);
+  }
+
+  document.body.appendChild(card);
+  return card;
 }
 
 export const FileBrowser: React.FC<FileBrowserProps> = ({
@@ -123,6 +238,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
   onDateFilterChange,
   onSortChange,
   onSelectionChange,
+  onMoveItems,
   selectionResetKey,
   disabledActions = [],
   hiddenActions = [],
@@ -138,6 +254,14 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
   const [isAddMenuOpen, setIsAddMenuOpen] = useState(false);
   const tableRef = useRef<HTMLDivElement>(null);
   const dragCounter = useRef(0);
+  // Glisser-déposer interne : lignes en cours de déplacement et cible survolée.
+  const [isDraggingRows, setIsDraggingRows] = useState(false);
+  const [dropTargetId, setDropTargetId] = useState<string | null>(null);
+  const draggedItemsRef = useRef<FileItem[]>([]);
+  const draggedIdsRef = useRef<Set<string>>(new Set());
+  // Dernière position verticale du curseur, lue par la boucle d'auto-scroll.
+  const dragPointerYRef = useRef<number | null>(null);
+  const dragPreviewRef = useRef<HTMLElement | null>(null);
   const addMenuRef = useRef<HTMLDivElement>(null);
 
   // Parse le chemin actuel pour créer les segments de navigation
@@ -562,20 +686,27 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
   };
 
   // Gestionnaires drag & drop
+  // Import depuis le bureau. Chaque gestionnaire ne réagit qu'aux drags portant
+  // des fichiers : un déplacement de lignes déclenche les mêmes événements sur
+  // ce conteneur, et sans ce filtre il afficherait l'overlay d'import, forcerait
+  // le curseur en « copie » et remonterait un faux `onFileDrop`.
   const handleDragEnter = useCallback((e: React.DragEvent) => {
+    if (!isExternalFileDrag(e.dataTransfer?.types)) return;
+
     e.preventDefault();
     e.stopPropagation();
 
-    // Vérifier qu'il y a des fichiers dans le drag
-    if (e.dataTransfer.types.includes("Files")) {
-      dragCounter.current++;
-      if (dragCounter.current === 1) {
-        setIsDraggingOver(true);
-      }
+    dragCounter.current++;
+    if (dragCounter.current === 1) {
+      setIsDraggingOver(true);
     }
   }, []);
 
   const handleDragLeave = useCallback((e: React.DragEvent) => {
+    // Le même filtre qu'à l'entrée : décrémenter sur un drag non compté
+    // rendrait le compteur négatif, et l'overlay ne s'afficherait plus ensuite.
+    if (!isExternalFileDrag(e.dataTransfer?.types)) return;
+
     e.preventDefault();
     e.stopPropagation();
 
@@ -586,6 +717,8 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
   }, []);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
+    if (!isExternalFileDrag(e.dataTransfer?.types)) return;
+
     e.preventDefault();
     e.stopPropagation();
 
@@ -596,6 +729,8 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
   }, []);
 
   const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+    if (!isExternalFileDrag(e.dataTransfer?.types)) return;
+
     e.preventDefault();
     e.stopPropagation();
 
@@ -606,6 +741,127 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
       onFileDrop(e);
     }
   }, [onFileDrop]);
+
+  // --- Glisser-déposer interne : déplacement de lignes vers un sous-dossier ---
+
+  const canDragRows = Boolean(onMoveItems);
+
+  const resetRowDrag = useCallback(() => {
+    // La vignette est retirée au plus tard à la fin du drag : le setTimeout du
+    // dragstart suffit en pratique, mais pas si le composant est démonté avant.
+    dragPreviewRef.current?.remove();
+    dragPreviewRef.current = null;
+    draggedItemsRef.current = [];
+    draggedIdsRef.current = new Set();
+    dragPointerYRef.current = null;
+    setDropTargetId(null);
+    setIsDraggingRows(false);
+  }, []);
+
+  const handleRowDragStart = useCallback((e: React.DragEvent, item: FileItem, index: number) => {
+    if (!canDragRows || item.disabled) {
+      e.preventDefault();
+      return;
+    }
+
+    const items = getDraggedItems(item, selectedItems, sortedFiles);
+    if (items.length === 0) {
+      e.preventDefault();
+      return;
+    }
+
+    draggedItemsRef.current = items;
+    draggedIdsRef.current = new Set(items.map(i => i.id));
+
+    e.dataTransfer.effectAllowed = "move";
+    // La charge utile sert à typer le drag ; les lignes elles-mêmes sont lues
+    // depuis la ref, car le contenu du dataTransfer n'est pas lisible pendant
+    // le survol, seulement au drop.
+    e.dataTransfer.setData(INTERNAL_DRAG_TYPE, JSON.stringify(items.map(i => i.id)));
+
+    const preview = createRowsDragPreview(items);
+    dragPreviewRef.current = preview;
+    e.dataTransfer.setDragImage(preview, 16, 16);
+    window.setTimeout(() => preview.remove(), 0);
+
+    // Glisser une ligne hors sélection la sélectionne, comme dans un explorateur.
+    if (!selectedItems.has(item.id)) {
+      setSelectedItems(new Set([item.id]));
+      setLastSelectedIndex(index);
+      setActiveIndex(index);
+    }
+
+    setIsDraggingRows(true);
+  }, [canDragRows, selectedItems, sortedFiles]);
+
+  const handleRowDragOver = useCallback((e: React.DragEvent, item: FileItem) => {
+    if (!isInternalItemsDrag(e.dataTransfer?.types)) return;
+    // Cible invalide : pas de preventDefault, donc le drop reste refusé.
+    if (!canDropOnItem(item, draggedIdsRef.current)) return;
+
+    e.preventDefault();
+    // Sans cela, le gestionnaire du conteneur reprendrait la main sur dropEffect.
+    e.stopPropagation();
+    e.dataTransfer.dropEffect = "move";
+
+    setDropTargetId(prev => (prev === item.id ? prev : item.id));
+  }, []);
+
+  const handleRowDragLeave = useCallback((e: React.DragEvent, item: FileItem) => {
+    // Passer sur un enfant de la ligne émet un dragleave : ne pas l'écouter.
+    const related = e.relatedTarget as Node | null;
+    if (related && e.currentTarget.contains(related)) return;
+
+    setDropTargetId(prev => (prev === item.id ? null : prev));
+  }, []);
+
+  const handleRowDrop = useCallback((e: React.DragEvent, item: FileItem) => {
+    if (!isInternalItemsDrag(e.dataTransfer?.types)) return;
+    if (!canDropOnItem(item, draggedIdsRef.current)) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    const items = draggedItemsRef.current;
+    resetRowDrag();
+
+    if (items.length > 0) {
+      onMoveItems?.(items, item);
+    }
+  }, [onMoveItems, resetRowDrag]);
+
+  // Défilement automatique quand le curseur atteint le haut ou le bas de la
+  // liste, pour atteindre un dossier hors de la zone visible. Piloté par une
+  // boucle d'animation : les événements `dragover` cessent dès que le curseur
+  // s'immobilise, alors que le défilement, lui, doit continuer.
+  useEffect(() => {
+    if (!isDraggingRows) return;
+
+    const trackPointer = (event: DragEvent) => {
+      dragPointerYRef.current = event.clientY;
+    };
+    // En phase de capture : les lignes arrêtent la propagation de leur dragover.
+    document.addEventListener("dragover", trackPointer, true);
+
+    let frame = requestAnimationFrame(function step() {
+      const container = tableRef.current;
+      const pointerY = dragPointerYRef.current;
+
+      if (container && pointerY !== null && container.scrollHeight > container.clientHeight) {
+        const speed = computeAutoScrollSpeed(container.getBoundingClientRect(), pointerY);
+        if (speed !== 0) {
+          container.scrollTop += speed;
+        }
+      }
+
+      frame = requestAnimationFrame(step);
+    });
+
+    return () => {
+      cancelAnimationFrame(frame);
+      document.removeEventListener("dragover", trackPointer, true);
+    };
+  }, [isDraggingRows]);
 
   // Obtenir le nom du dossier courant pour l'overlay
   const getCurrentFolderName = useCallback(() => {
@@ -644,7 +900,10 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
   const tableContainerClasses = cn(
     heightMode === "auto" && "overflow-x-auto",
     heightMode === "fill-container" && "h-full overflow-auto",
-    heightMode === "max-height" && "overflow-auto"
+    heightMode === "max-height" && "overflow-auto",
+    // Dossier vide : la colonne flex laisse le message occuper la hauteur
+    // restante sous l'en-tête, pour l'y centrer verticalement.
+    sortedFiles.length === 0 && "flex flex-col"
   );
 
   const tableContainerStyle = heightMode === "max-height" ? { maxHeight } : undefined;
@@ -678,9 +937,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
             {/* Navigation breadcrumb */}
             {pathSegments.length === 1 ? (
               // Racine uniquement
-              <span className="text-sm font-medium text-gray-900 h-6 py-1">
-                {pathSegments[0].name}
-              </span>
+              <CurrentFolderSegment>{pathSegments[0].name}</CurrentFolderSegment>
             ) : pathSegments.length === 2 ? (
               // Parent + Courant
               <>
@@ -693,9 +950,9 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
                   {pathSegments[0].name}
                 </Button>
                 <span className="text-gray-400">/</span>
-                <span className="text-sm font-medium text-gray-900 h-6 py-1">
+                <CurrentFolderSegment>
                   {pathSegments[pathSegments.length - 1].name}
-                </span>
+                </CurrentFolderSegment>
               </>
             ) : (
               // Grand-parent + Parent + Courant
@@ -718,9 +975,9 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
                   {pathSegments[pathSegments.length - 2].name}
                 </Button>
                 <span className="text-gray-400">/</span>
-                <span className="text-sm font-medium text-gray-900 h-6 py-1">
+                <CurrentFolderSegment>
                   {pathSegments[pathSegments.length - 1].name}
-                </span>
+                </CurrentFolderSegment>
               </>
             )}
           </div>
@@ -931,6 +1188,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
                 const isHovered = hoveredRow === item.id;
                 const isActive = activeIndex === index;
                 const isDisabled = item.disabled === true;
+                const isDropTarget = dropTargetId === item.id;
 
                 return (
                   <tr
@@ -944,8 +1202,16 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
                       !isDisabled && isSelected
                         ? "bg-blue-primary text-black hover:bg-blue-primary"
                         : !isDisabled && "hover:bg-gray-50",
-                      !isDisabled && isActive && !isSelected && "ring-2 ring-inset ring-blue-400"
+                      !isDisabled && isActive && !isSelected && "ring-2 ring-inset ring-blue-400",
+                      // Cible de déplacement survolée : encadrement noir.
+                      isDropTarget && "ring-2 ring-inset ring-black"
                     )}
+                    draggable={canDragRows && !isDisabled}
+                    onDragStart={(e) => handleRowDragStart(e, item, index)}
+                    onDragEnd={resetRowDrag}
+                    onDragOver={(e) => handleRowDragOver(e, item)}
+                    onDragLeave={(e) => handleRowDragLeave(e, item)}
+                    onDrop={(e) => handleRowDrop(e, item)}
                     onClick={(e) => !isDisabled && handleItemSelect(item, index, e.shiftKey, e.ctrlKey || e.metaKey)}
                     onDoubleClick={() => !isDisabled && handleItemDoubleClick(item)}
                     onMouseEnter={() => !isDisabled && setHoveredRow(item.id)}
@@ -1031,6 +1297,11 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
               })}
             </tbody>
           </table>
+          {sortedFiles.length === 0 && (
+            <div className="flex-1 flex items-center justify-center bg-white py-12 text-gray-500">
+              <p className="text-sm">{t('fileBrowser.noFilesInFolder')}</p>
+            </div>
+          )}
           </div>
         </div>
       </BgProvider>
@@ -1062,12 +1333,6 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
               })()
             )}
           </Button>
-        </div>
-      )}
-
-      {sortedFiles.length === 0 && (
-        <div className="text-center py-12 text-gray-500 bg-white border-t border-b border-gray-200">
-          <p className="text-sm">{t('fileBrowser.noFilesInFolder')}</p>
         </div>
       )}
 

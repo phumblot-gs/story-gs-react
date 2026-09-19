@@ -5,6 +5,63 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.19.0] - 2026-09-19
+
+### Ajouté
+
+- `FileBrowser` : déplacement des lignes sélectionnées vers un sous-dossier par
+  glisser-déposer, activé en fournissant `onMoveItems?: (items: FileItem[],
+  targetFolder: FileItem) => void`. Sans ce callback, les lignes ne sont pas
+  déplaçables. Le composant ne possède pas les données : il signale le
+  déplacement, à charge de l'appelant de l'effectuer puis de re-rendre avec les
+  nouveaux `files` — et de vider la sélection via `selectionResetKey`.
+  - Glisser une ligne sélectionnée déplace toute la sélection, dans l'ordre
+    d'affichage ; glisser une ligne hors sélection la sélectionne et ne déplace
+    qu'elle, pour ne jamais déplacer une sélection invisible à l'écran.
+  - Seuls les dossiers actifs hors sélection acceptent le dépôt : ils s'encadrent
+    en noir au survol (`ring-2 ring-inset ring-black`), comme la ligne active.
+  - Défilement automatique quand le curseur atteint le haut ou le bas de la liste,
+    piloté par une boucle d'animation et non par les événements `dragover`, qui
+    cessent dès que le curseur s'immobilise. Actif uniquement si le conteneur est
+    réellement défilant (`heightMode` `fill-container` ou `max-height`).
+  - Vignette sous le curseur reprenant le premier nom déplacé, avec une pastille
+    de comptage au-delà d'un élément. Construite en DOM impératif et stylée en
+    `style` inline : `setDragImage` photographie le nœud au `dragstart`, sans
+    attendre le rendu React ni la feuille Tailwind de l'application hôte.
+- Story FileBrowser « InteractiveDragAndDropMove » : arborescence réelle où le
+  dépôt réécrit le `parent_path`, dans un conteneur de hauteur fixe pour exercer
+  le défilement automatique.
+- `src/lib/file-browser-drag.ts` : logique pure du glisser-déposer
+  (`canDropOnItem`, `getDraggedItems`, `computeAutoScrollSpeed`, discrimination
+  des types de drag), isolée pour être testable — happy-dom n'implémente ni
+  `DataTransfer` ni `setDragImage`.
+
+### Corrigé
+
+- `FileBrowser` : l'import de fichiers depuis le bureau ne capte plus les
+  déplacements de lignes, qui déclenchent les mêmes événements sur le même
+  conteneur. `handleDrop` appelait `onFileDrop` pour **n'importe quel** dépôt : un
+  déplacement relâché à côté d'un dossier était remonté à l'appelant comme un
+  import externe. `handleDragOver` forçait par ailleurs le curseur en « copie »
+  pendant un déplacement. Les quatre gestionnaires filtrent désormais sur la
+  présence du type `Files`.
+- `FileBrowser` : l'overlay d'import réapparaît après un glisser-déposer interne.
+  `handleDragLeave` décrémentait un compteur que `handleDragEnter` n'incrémentait
+  que pour les drags de fichiers ; il passait à -1 dès le premier drag interne et
+  l'overlay ne s'affichait plus ensuite.
+- `FileBrowser` : le message « Aucun fichier dans ce dossier » n'est plus rendu
+  dans un bandeau bordé sous le tableau, où il apparaissait sous une ligne
+  horizontale isolée, collé en bas du composant. Il occupe maintenant la hauteur
+  restante à l'intérieur du cadre du tableau, centré verticalement. Sans hauteur
+  imposée (`heightMode="auto"`), il reste sous l'en-tête, faute d'espace où le
+  centrer.
+- `FileBrowser` : le dernier segment du breadcrumb — le dossier courant — est
+  rendu dans la boîte d'un bouton ghost au lieu d'un texte nu. À la racine, le
+  libellé n'avait aucun padding horizontal et se décalait dès qu'on entrait dans
+  un sous-dossier, où il devenait un bouton. Le segment n'est pas une
+  destination : c'est un `<span>` non focusable, sans clic ni survol, marqué
+  `aria-current="page"`.
+
 ## [1.18.0] - 2026-09-19
 
 ### Ajouté
