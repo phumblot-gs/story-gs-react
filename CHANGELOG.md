@@ -5,6 +5,15 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.17.1] - 2026-09-19
+
+### 🎨 Modifié
+
+- `FileBrowser` : le bouton « Afficher les N fichiers suivants » passe en
+  `size="medium"` (au lieu de `large`) et son conteneur perd son padding bas
+  (`py-3` → `pt-3`). Le bloc de pagination prenait trop de hauteur sous la liste.
+  Sans changement d'API.
+
 ## [1.17.0] - 2026-09-18
 
 ### Ajouté

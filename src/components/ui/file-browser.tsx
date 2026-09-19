@@ -1014,9 +1014,9 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
 
       {/* Show more items button */}
       {hasMore && sortedFiles.length < maxFilesLimit && (
-        <div className="bg-white border-t border-gray-200 px-4 py-3 flex justify-center">
+        <div className="bg-white border-t border-gray-200 px-4 pt-3 flex justify-center">
           <Button
-            size="large"
+            size="medium"
             onClick={onLoadMore}
             disabled={isLoadingMore}
             className="min-w-[200px]"
