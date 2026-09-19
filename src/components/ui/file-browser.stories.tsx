@@ -820,6 +820,24 @@ const dragDropItems: FileItem[] = [
   { id: "a1", file_name: "ancien-brief.pdf", parent_path: "/Archives", file_size: 220_000, mime_type: "application/pdf", is_directory: false, created_at: "2023-11-02T10:00:00Z", updated_at: "2023-11-02T10:00:00Z" },
 ];
 
+export const WithAllActionsHidden: Story = {
+  args: {
+    files: mockFiles,
+    currentPath: "/",
+    labelRootFolder: "Mes fichiers",
+    showUploadButton: true,
+    hiddenActions: ["rename", "move", "download", "share", "delete"] as FileBrowserAction[],
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Les cinq actions masquées : le contrôle de sélection disparaît complètement au lieu d'ouvrir un menu vide. Sélectionnez des lignes pour le vérifier — la sélection continue de fonctionner et reste remontée par `onSelectionChange`.",
+      },
+    },
+  },
+};
+
 export const InteractiveDragAndDropMove: Story = {
   render: (args) => {
     const [items, setItems] = React.useState<FileItem[]>(dragDropItems);

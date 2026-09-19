@@ -5,6 +5,18 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.19.2] - 2026-09-19
+
+### Corrigé
+
+- `FileBrowser` : le contrôle de sélection — le `Select` dont le déclencheur
+  affiche « {n} sélectionné(s) » — n'est plus rendu quand `hiddenActions` masque
+  les cinq actions. Aucune condition ne testait le nombre d'actions restantes :
+  le menu s'ouvrait vide, libellé de sélection compris. La sélection elle-même
+  est inchangée et continue d'être remontée par `onSelectionChange`.
+  Des actions seulement `disabled` gardent le menu, qui les affiche grisées.
+- Story FileBrowser « WithAllActionsHidden » pour ce cas.
+
 ## [1.19.1] - 2026-09-19
 
 ### Corrigé

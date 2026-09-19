@@ -1066,8 +1066,10 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
               </div>
             )}
 
-            {/* Actions en masse (visible uniquement avec sélection) */}
-            {hasSelection && (
+            {/* Actions en masse : uniquement s'il y a une sélection *et* au moins
+                une action non masquée. Masquer les cinq actions laisserait
+                sinon un menu déroulant vide, avec son libellé de sélection. */}
+            {hasSelection && actionConfig.availableActions.length > 0 && (
               <Select
                 value=""
                 onValueChange={(value) => {
