@@ -2,14 +2,14 @@
 
 import React, { useState, useCallback, useEffect, useRef, useMemo } from "react";
 import { cn } from "@/lib/utils";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { IconProvider } from "@/components/ui/icon-provider";
 import { IconName } from "@/components/ui/icons/types";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useTranslationSafe } from "@/contexts/TranslationContext";
 import { TranslationMap } from "@/utils/translations";
-import { BgProvider, useBgContext } from "@/components/layout/BgContext";
+import { BgProvider } from "@/components/layout/BgContext";
 import {
   INTERNAL_DRAG_TYPE,
   canDropOnItem,
@@ -114,35 +114,28 @@ interface PathSegment {
 /**
  * Dernier segment du breadcrumb : le dossier courant.
  *
- * Il prend l'apparence d'un bouton ghost plutôt que du texte nu, pour occuper
- * la même boîte que les segments navigables (même hauteur, même padding
- * horizontal). Sans cela, le libellé de la racine n'a pas de padding et se
- * décale horizontalement dès qu'on entre dans un sous-dossier, où il devient
- * un bouton.
+ * Rendu dans la boîte d'un bouton `outline` plutôt qu'en texte nu : il occupe
+ * ainsi la même place que les segments navigables (même hauteur, même padding
+ * horizontal), et son cadre évite au libellé de flotter à côté des pastilles
+ * pleines des segments parents. Sans cette boîte, la racine n'a aucun padding
+ * et se décale dès qu'on entre dans un sous-dossier, où elle devient un bouton.
  *
- * Le dossier courant n'est pas une destination : c'est donc un `<span>` — ni
- * focusable, ni annoncé comme bouton, sans clic ni survol — qui emprunte les
- * classes de `Button` via `buttonVariants`. `data-bg` est repris du contexte
- * comme le fait `Button`, car les couleurs ghost sont sélectionnées dessus.
- * (`Button asChild` ferait le même rendu, mais il est cassé : le `Slot` reçoit
- * plusieurs enfants et lève « React.Children.only ».)
+ * Le dossier courant n'est pas une destination : `asChild` le rend en `<span>`
+ * — ni focusable, ni annoncé comme bouton — et `pointer-events-none` supprime
+ * clic et survol. `aria-current="page"` signale la position courante.
  */
-const CurrentFolderSegment: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const bg = useBgContext();
-  return (
-    <span
-      aria-current="page"
-      data-bg={bg || undefined}
-      className={cn(
-        buttonVariants({ variant: "ghost", size: "medium" }),
-        // Le dossier courant reste en gras, comme avant son passage en bouton.
-        "h-6 font-medium pointer-events-none"
-      )}
-    >
-      {children}
-    </span>
-  );
-};
+const CurrentFolderSegment: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <Button
+    asChild
+    variant="outline"
+    size="medium"
+    // `!` obligatoire : dans la feuille compilée, la règle `.font-regular` du
+    // bouton est déclarée après `.font-medium`, et gagnerait à spécificité égale.
+    className="h-6 !font-medium pointer-events-none"
+  >
+    <span aria-current="page">{children}</span>
+  </Button>
+);
 
 /**
  * Vignette affichée sous le curseur pendant un déplacement de lignes.

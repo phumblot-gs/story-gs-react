@@ -5,6 +5,27 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.19.1] - 2026-09-19
+
+### Corrigé
+
+- `Button` : `asChild` fonctionne enfin. Le bouton rend le libellé *et* deux
+  décorations (indicateur, étiquette de debug), alors que `Slot` n'accepte qu'un
+  enfant : tout usage de `asChild` levait « React.Children.only », y compris les
+  stories qui le documentent. Les décorations sont désormais injectées dans
+  l'enfant, et l'enfant est laissé intact quand il n'y en a aucune. Le rendu hors
+  `asChild` est inchangé.
+
+### Modifié
+
+- `FileBrowser` : le dossier courant du breadcrumb prend l'apparence d'un bouton
+  `outline` au lieu de `ghost`. Le ghost n'ayant pas de cadre visible, le libellé
+  flottait à côté des pastilles pleines des segments parents. Le segment reste
+  non interactif (`<span>` via `asChild`, `aria-current="page"`), et son libellé
+  garde sa graisse : `!font-medium` est nécessaire, car `.font-regular` du bouton
+  est déclarée après `.font-medium` dans la feuille compilée et l'emporterait à
+  spécificité égale.
+
 ## [1.19.0] - 2026-09-19
 
 ### Ajouté
