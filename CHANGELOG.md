@@ -5,6 +5,24 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.18.0] - 2026-09-19
+
+### Ajouté
+
+- `FileBrowser` : prop optionnelle `selectionResetKey?: number | string`, qui vide
+  la sélection à chaque changement de valeur (pas au premier rendu). Un parent peut
+  ainsi désélectionner depuis l'extérieur — typiquement un bouton « Tout
+  désélectionner » placé hors du composant — en incrémentant la clé, là où l'action
+  ne faisait jusqu'ici que masquer la barre d'actions en laissant les lignes
+  sélectionnées. La sélection reste non contrôlée : shift/ctrl et Cmd+A sont
+  inchangés, et c'est l'effet `onSelectionChange` existant qui remonte `[]` au
+  parent, sans appel supplémentaire.
+- Story FileBrowser « ExternalSelectionReset » : bouton « Tout désélectionner »
+  hors du composant, avec le compteur de sélection et la valeur de la clé.
+- Test `src/__tests__/file-browser-selection-reset.test.tsx` : un changement de clé
+  vide les lignes et produit un `onSelectionChange([])` unique, une valeur identique
+  ne déclenche rien, et le premier rendu ne réinitialise pas.
+
 ## [1.17.1] - 2026-09-19
 
 ### 🎨 Modifié

@@ -2,6 +2,7 @@ import React from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { fn } from "storybook/test";
 import { FileBrowser, type FileItem, type FileBrowserAction } from "./file-browser";
+import { Button } from "./button";
 
 const meta: Meta<typeof FileBrowser> = {
   title: "Components/FileBrowser",
@@ -726,6 +727,52 @@ export const WithHiddenActions: Story = {
     docs: {
       description: {
         story: "Action masquée : share est complètement masquée dans le menu déroulant et les boutons d'actions des lignes. Les autres actions (rename, move, download, delete) restent visibles et actives.",
+      },
+    },
+  },
+};
+export const ExternalSelectionReset: Story = {
+  render: (args) => {
+    const [selectionResetKey, setSelectionResetKey] = React.useState(0);
+    const [selectedCount, setSelectedCount] = React.useState(0);
+
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center gap-4">
+          <Button
+            variant="secondary"
+            onClick={() => setSelectionResetKey((key) => key + 1)}
+            disabled={selectedCount === 0}
+          >
+            Tout désélectionner
+          </Button>
+          <span className="text-sm text-gray-500">
+            {selectedCount} élément{selectedCount > 1 ? "s" : ""} sélectionné
+            {selectedCount > 1 ? "s" : ""} — clé de reset : {selectionResetKey}
+          </span>
+        </div>
+        <FileBrowser
+          {...args}
+          selectionResetKey={selectionResetKey}
+          onSelectionChange={(items) => {
+            setSelectedCount(items.length);
+            args.onSelectionChange?.(items);
+          }}
+        />
+      </div>
+    );
+  },
+  args: {
+    files: mockFiles,
+    currentPath: "/",
+    labelRootFolder: "Mes fichiers",
+    showUploadButton: true,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "La sélection reste interne au composant, mais le parent peut la vider en changeant `selectionResetKey` — ici un bouton « Tout désélectionner » placé hors du FileBrowser incrémente la clé. Sélectionnez des lignes (clic, Shift+clic, Ctrl/Cmd+clic ou Cmd+A) puis cliquez le bouton : les lignes se désélectionnent et `onSelectionChange` remonte un tableau vide.",
       },
     },
   },

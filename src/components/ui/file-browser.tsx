@@ -62,6 +62,13 @@ export interface FileBrowserProps {
   onDateFilterChange?: (filter: string) => void;
   onSortChange?: (sortConfig: SortConfig) => void;
   onSelectionChange?: (selectedItems: FileItem[]) => void;
+  /**
+   * Vide la sélection à chaque changement de valeur (pas au premier rendu).
+   * Permet à un parent de désélectionner depuis l'extérieur — par exemple un
+   * bouton « Tout désélectionner » — sans rendre la sélection contrôlée :
+   * il suffit d'incrémenter la clé. `onSelectionChange` remonte alors `[]`.
+   */
+  selectionResetKey?: number | string;
   // Action control
   disabledActions?: FileBrowserAction[];  // Actions grisées (visibles mais non cliquables)
   hiddenActions?: FileBrowserAction[];    // Actions masquées complètement
@@ -116,6 +123,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
   onDateFilterChange,
   onSortChange,
   onSelectionChange,
+  selectionResetKey,
   disabledActions = [],
   hiddenActions = [],
 }) => {
@@ -371,6 +379,21 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
       setLastSelectedIndex(index);
     }
   }, [sortedFiles, lastSelectedIndex]);
+
+  // Reset externe de la sélection : le parent change `selectionResetKey` pour
+  // vider la sélection. Le ref garde la valeur précédente pour ne rien faire au
+  // premier rendu, et ne réagir qu'aux changements réels. Pas d'appel à
+  // `onSelectionChange` ici : l'effet de notification ci-dessous le fait de
+  // lui-même quand `selectedItems` devient vide.
+  const previousSelectionResetKey = useRef(selectionResetKey);
+  useEffect(() => {
+    if (previousSelectionResetKey.current === selectionResetKey) return;
+    previousSelectionResetKey.current = selectionResetKey;
+
+    setSelectedItems(new Set());
+    setLastSelectedIndex(null);
+    setActiveIndex(null);
+  }, [selectionResetKey]);
 
   // Notifier le parent du changement de sélection
   useEffect(() => {
