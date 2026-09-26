@@ -2,6 +2,15 @@ import { TranslationMap } from './translations';
 
 // Traductions pour tous les composants UI de la librairie
 export const componentTranslations: TranslationMap = {
+  "sidebar.title": {
+    FR: "Navigation", EN: "Navigation", ES: "Navegación", IT: "Navigazione", DE: "Navigation"
+  },
+  "sidebar.toggle": {
+    FR: "Afficher ou masquer la navigation", EN: "Toggle navigation", ES: "Mostrar u ocultar navegación", IT: "Mostra o nascondi navigazione", DE: "Navigation ein- oder ausblenden"
+  },
+  "sidebar.userMenu": {
+    FR: "Menu utilisateur de {name}", EN: "User menu for {name}", ES: "Menú de usuario de {name}", IT: "Menu utente di {name}", DE: "Benutzermenü für {name}"
+  },
   // FileBrowser
   "fileBrowser.filterByDate": {
     EN: "Filter by date",

@@ -330,9 +330,17 @@ For more details about the Workflow component, see the [Workflow documentation](
       options: ["Pencil", "Edit", "Settings", "Plus"],
       description: "Icon to use for the title button"
     },
+    showLogo: {
+      control: "boolean",
+      description: "Whether to display the brand logo (defaults to true)"
+    },
     logo: {
       control: "object",
       description: "Custom logo component to display"
+    },
+    leftContent: {
+      control: false,
+      description: "Navigation controls before the logo, such as SidebarTrigger"
     },
     centerContent: {
       control: "object",

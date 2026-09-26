@@ -5,6 +5,19 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.20.0] - 2026-09-27
+
+### Ajouté
+
+- Sidebar GS exporté depuis la librairie et `/sidebar`, avec les fonds de
+  SidePanel, les composants Button et ButtonMenuSmall, le repli en icônes et
+  une présentation mobile. Prise en charge des providers de thème, de style,
+  d'icônes et de traduction.
+- Menu utilisateur avec avatar, nom et actions dans le pied du Sidebar.
+- PageHeader : propriétés `leftContent` et `showLogo` pour placer le bouton
+  d'ouverture du Sidebar à la place du logo.
+- Stories Sidebar et documentation en anglais, avec tests d'intégration.
+
 ## [1.19.2] - 2026-09-19
 
 ### Corrigé

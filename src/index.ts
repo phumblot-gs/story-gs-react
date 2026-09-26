@@ -745,3 +745,6 @@ export type { GSComponentsRootProps } from "./components/GSComponentsRoot";
 
 export { Timeline } from "./components/ui/timeline";
 export type { TimelineProps, TimelineItem } from "./components/ui/timeline";
+
+// Composable GS Sidebar (Shadcn API, SidePanel background contexts).
+export * from "./components/ui/sidebar";

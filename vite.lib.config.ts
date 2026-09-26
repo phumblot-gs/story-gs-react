@@ -53,6 +53,7 @@ const getEntryPoints = () => {
     'scroll-area',
     'separator',
     'sheet',
+    'sidebar',
     'skeleton',
     'slider',
     'sonner',
