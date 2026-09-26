@@ -5,6 +5,17 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.20.1] - 2026-09-27
+
+### Corrigé
+
+- Sidebar replié : boutons de navigation et menu utilisateur centrés en
+  30 × 30 px, avec une colonne de 60 px par défaut.
+- Alignement vertical des commandes Sidebar avec PageHeader, dont la hauteur
+  de référence est désormais 60 px (`--page-header-height`).
+- Stories Sidebar : logo dans PageHeader et bouton d'ouverture uniquement
+  sur mobile. Documentation anglaise raccourcie, avec exemples de code.
+
 ## [1.20.0] - 2026-09-27
 
 ### Ajouté

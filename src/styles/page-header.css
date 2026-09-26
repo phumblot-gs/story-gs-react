@@ -1,0 +1,9 @@
+/* Shared dimensions for PageHeader and Sidebar navigation controls. */
+:root {
+  --page-header-height: 60px;
+  --page-header-border-height: 3px;
+}
+.gs-page-header-content {
+  min-height: calc(var(--page-header-height) - var(--page-header-border-height));
+}
+.gs-page-header-divider { height: var(--page-header-border-height); }

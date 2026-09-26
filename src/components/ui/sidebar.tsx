@@ -21,7 +21,7 @@ const SIDEBAR_COOKIE_NAME = "sidebar:state"
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
 const SIDEBAR_WIDTH = "300px"
 const SIDEBAR_WIDTH_MOBILE = "300px"
-const SIDEBAR_WIDTH_ICON = "100px"
+const SIDEBAR_WIDTH_ICON = "var(--page-header-height, 60px)"
 const SIDEBAR_KEYBOARD_SHORTCUT = "b"
 
 type SidebarContext = {
@@ -186,7 +186,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
           style={{ "--sidebar-width": SIDEBAR_WIDTH_MOBILE, ...style } as React.CSSProperties} {...props}>
           <SheetTitle className="sr-only">{title ?? t("sidebar.title")}</SheetTitle>
           <BgProvider value={bg}>
-            <div className="flex shrink-0 justify-end p-2"><SidebarTrigger /></div>
+            <SidebarHeader className="items-end"><SidebarTrigger /></SidebarHeader>
             {children}
           </BgProvider>
         </SheetContent>
@@ -245,7 +245,7 @@ SidebarInput.displayName = "SidebarInput"
 
 const SidebarHeader = React.forwardRef<HTMLDivElement, React.ComponentProps<"div">>(
   ({ className, ...props }, ref) => <div ref={ref} data-sidebar="header"
-    className={cn("flex shrink-0 flex-col gap-2 p-2", className)} {...props} />
+    className={cn("gs-sidebar-header flex shrink-0 flex-col justify-center gap-2 p-2", className)} {...props} />
 )
 SidebarHeader.displayName = "SidebarHeader"
 

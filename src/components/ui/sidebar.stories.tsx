@@ -41,6 +41,12 @@ function NavigationHeader({ collapsible }: Pick<SidebarProps, "collapsible">) {
   </SidebarHeader>
 }
 
+function NavigationPageHeader({ title, collapsible }: Pick<SidebarProps, "collapsible"> & { title: string }) {
+  const { isMobile } = useSidebar()
+  return <PageHeader title={title} showTitleButton={false}
+    leftContent={isMobile && collapsible !== "none" ? <SidebarTrigger /> : undefined} />
+}
+
 function Example({ reference = false, ...args }: SidebarProps & { reference?: boolean }) {
   const { t } = useTranslationSafe()
   const [page, setPage] = React.useState("demo.all")
@@ -85,8 +91,7 @@ function Example({ reference = false, ...args }: SidebarProps & { reference?: bo
       </SidebarFooter>
     </Sidebar>
     <SidebarInset>
-      <PageHeader title={t(page)} showLogo={false} showTitleButton={false} leftContent={args.side !== "right" && args.collapsible !== "none" ? <SidebarTrigger /> : undefined}
-        rightContent={args.side === "right" && args.collapsible !== "none" ? <SidebarTrigger /> : undefined} />
+      <NavigationPageHeader title={t(page)} collapsible={args.collapsible} />
       <Layout padding={6} bg="white">
         <Text as="h2" className="gs-typo-h2">{t(page)}</Text>
         <Text as="p" aria-live="polite">{action}</Text>
@@ -120,19 +125,81 @@ const meta = {
   tags: ["autodocs"],
   parameters: {
     layout: "fullscreen",
-    docs: { story: { inline: false, iframeHeight: 640 }, description: { component: `GS-native Sidebar with the Shadcn composition API. Backgrounds and context match SidePanel; the example uses the real PageHeader. Menu entries, actions and the trigger render GS Button directly. The footer renders ButtonMenuSmall. No Sidebar CSS overrides their colors, typography, padding, height or border radius.
+    docs: { story: { inline: false, iframeHeight: 640 }, description: { component: `GS navigation with a persistent icon rail on desktop and an overlay below 768px. Collapsed buttons are 30 × 30px; the rail and PageHeader are 60px by default.
 
-SidebarMenuButton preserves Shadcn default / outline variants and default / sm / lg sizes. It also accepts GS variants and small / medium / large sizes. The default menu variant maps to GS ghost when inactive and normal when active; isActive is forwarded as hasActiveElement. SidebarTrigger uses the same ghost / medium Button as the SidePanel close control, with p-0 w-6 h-6 sizing and a 12px icon. Both opening and closing controls share these dimensions and accept all Button props.
+### Page layout
 
-Use an IconProvider followed by a span label inside SidebarMenuButton for icon collapse. The default icon rail is 100px to accommodate unmodified GS button padding and avatars. Put Sidebar inside SidebarProvider, and put page content inside SidebarInset. The none mode participates in normal document flow; desktop icon mode uses viewport positioning. Documentation examples run in isolated iframes so fixed panels do not overlap the Docs page.
+Keep the logo in PageHeader. Show its navigation trigger only on mobile; desktop uses the control inside SidebarHeader.
 
-Place SidebarTrigger in PageHeader.leftContent and set showLogo={false} so the opening control replaces the logo. For a right Sidebar, use rightContent. The examples omit branding from both the Sidebar and PageHeader. SidebarBrand remains optional and uses the same ThemeProvider logo as PageHeader. On black, invertLogo defaults to true; set it to false for an already light or multicolor logo, or supply a custom logo node.
+\`\`\`tsx
+import {
+  Sidebar, SidebarContent, SidebarHeader, SidebarInset,
+  SidebarMenu, SidebarMenuButton, SidebarMenuItem,
+  SidebarProvider, SidebarTrigger, useSidebar,
+  PageHeader, IconProvider,
+} from "@gs/gs-components-library";
+import "@gs/gs-components-library/styles";
 
-SidebarFooter accepts any content. SidebarUserMenu composes ButtonMenuSmall with an Avatar and user name; actions are supplied by the application and open on the right (menuSide / menuAlign remain configurable). Avatar remains visible when collapsed. Authentication is owned by the application.
+function NavigationLayout() {
+  const { isMobile, state } = useSidebar();
 
-All internal labels use TranslationProvider (sidebar.title, sidebar.toggle, sidebar.userMenu). Navigation labels and action labels are supplied by the consumer. Icons use IconProvider, fonts and colors remain CSS variables for StyleProvider and ThemeProvider.
+  return <>
+    <Sidebar bg="black">
+      {!isMobile && <SidebarHeader className={state === "expanded" ? "items-end" : "items-center"}>
+        <SidebarTrigger>
+          <IconProvider icon={state === "expanded" ? "X" : "Menu"} />
+        </SidebarTrigger>
+      </SidebarHeader>}
+      <SidebarContent>
+        <SidebarMenu className="p-2">
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild isActive tooltip="Media">
+              <a href="/media"><IconProvider icon="File" /><span>Media</span></a>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarContent>
+    </Sidebar>
+    <SidebarInset>
+      <PageHeader title="Media" showTitleButton={false}
+        leftContent={isMobile ? <SidebarTrigger /> : undefined} />
+      <section>Your page content</section>
+    </SidebarInset>
+  </>;
+}
 
-Import from @gs/gs-components-library or @gs/gs-components-library/sidebar. Import @gs/gs-components-library/styles once. Set --sidebar-width and --sidebar-width-icon on SidebarProvider to customize desktop dimensions; mobile uses 300px or Sidebar style overrides.` } },
+export function App() {
+  return <SidebarProvider><NavigationLayout /></SidebarProvider>;
+}
+\`\`\`
+
+### User menu
+
+Add inside Sidebar, after SidebarContent. Actions open on the right; only the avatar remains when collapsed.
+
+\`\`\`tsx
+import { SidebarFooter, SidebarUserMenu } from "@gs/gs-components-library";
+
+<SidebarFooter>
+  <SidebarUserMenu name="Pierre Laurent" actions={[
+    { label: "Switch account", onClick: () => openAccountPicker() },
+    { separator: true },
+    { label: "Log out", onClick: () => logout() },
+  ]} />
+</SidebarFooter>
+\`\`\`
+
+### Dimensions
+
+Set the shared height on a parent of SidebarProvider to resize PageHeader and the collapsed rail together. Use \`collapsible="none"\` to disable collapsing.
+
+\`\`\`tsx
+<div style={{ "--page-header-height": "70px" } as React.CSSProperties}>
+  <SidebarProvider style={{ "--sidebar-width": "320px" } as React.CSSProperties}>
+    <NavigationLayout />
+  </SidebarProvider>
+</div>
+\`\`\`` } },
   },
   argTypes: {
     bg: { control: "select", options: ["black", "white", "grey"] },
