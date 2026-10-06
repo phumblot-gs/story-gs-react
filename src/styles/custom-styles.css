@@ -702,6 +702,21 @@
   margin-right: auto;
 }
 
+/* Justified: every tab takes an equal share of the list width, title centred.
+   `min-width: min-content` keeps labels whole — once they no longer fit, tabs
+   fall back to their natural width and the list scrolls, like the other
+   alignments. The gap is dropped so the slices tile the full width. */
+.tabs-list[data-align="justify"] {
+  gap: 0;
+}
+
+.tabs-list[data-align="justify"] > * {
+  flex: 1 1 0;
+  min-width: min-content;
+  justify-content: center;
+  text-align: center;
+}
+
 /* Indicateur animé de l'onglet actif */
 .tabs-list::after {
   content: '';

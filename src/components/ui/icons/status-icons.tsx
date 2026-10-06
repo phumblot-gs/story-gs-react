@@ -50,8 +50,12 @@ export const CustomStatusIcon: React.FC<CustomIconProps> = ({ size = 12 }) => (
   </svg>
 )
 
+// Le tracé de l'éclair n'est pas centré dans son carré 12×12 : sa boîte
+// englobante va de x=0,70 à x=9,31 (centre 5,0 au lieu de 6), le vertical est
+// juste (centre 5,99). Le viewBox décalé de -1 en x recentre le dessin, plutôt
+// que de compenser avec une marge à chaque usage.
 export const CustomUrgentIcon: React.FC<CustomIconProps> = ({ size = 12, strokeWidth = 0.5 }) => (
-  <svg width={size} height={size} viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <svg width={size} height={size} viewBox="-1 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M5.58552 0.354506L0.740401 6.92926C0.63297 7.06892 0.740401 7.27304 0.91229 7.27304H4.67236C4.81202 7.27304 4.90871 7.40195 4.88722 7.53087L4.03852 11.4628C3.98481 11.6884 4.28561 11.8174 4.42527 11.6347L9.27039 5.05997C9.37782 4.92031 9.27039 4.71619 9.0985 4.71619H5.33843C5.19877 4.71619 5.10208 4.58727 5.12357 4.45836L5.97227 0.526395C6.02599 0.300791 5.72518 0.171874 5.58552 0.354506Z" fill="currentColor" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
 )

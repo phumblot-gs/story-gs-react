@@ -180,6 +180,53 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       onBlur?.(e);
     }, [debug, variant, normalizedVariant, size, normalizedSize, indicator, bg, onBlur]);
 
+    // Décorations rendues à côté du libellé : pastille d'indicateur et étiquette
+    // de debug.
+    const decorations = (
+      <>
+        {indicator && (
+          <StatusIndicator
+            status={MediaStatus.SUBMITTED_FOR_APPROVAL}
+            size={normalizedSize}
+            className="absolute bottom-0 right-0"
+          />
+        )}
+        {debug && (
+          <span className="absolute -top-6 left-0 text-xs bg-pink text-white px-1 rounded whitespace-nowrap">
+            {normalizedVariant}/{normalizedSize}
+          </span>
+        )}
+      </>
+    );
+
+    // `Slot` exige un enfant unique, alors que le bouton en rend trois (libellé
+    // + les deux décorations) : il levait « React.Children.only » dès qu'on
+    // passait `asChild`. Les décorations sont donc injectées *dans* l'enfant
+    // plutôt que rendues à côté de lui — et l'enfant est laissé intact quand il
+    // n'y en a aucune, pour ne rien imposer à un élément sans enfants possibles.
+    const content = asChild
+      ? (indicator || debug)
+        ? (() => {
+            const child = React.Children.only(children) as React.ReactElement<{
+              children?: React.ReactNode;
+            }>;
+            return React.cloneElement(
+              child,
+              undefined,
+              <>
+                {child.props.children}
+                {decorations}
+              </>
+            );
+          })()
+        : children
+      : (
+        <>
+          {children}
+          {decorations}
+        </>
+      );
+
     return (
       <Comp
         ref={ref}
@@ -199,19 +246,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         onBlur={debug ? handleBlur : onBlur}
         {...props}
       >
-        {children}
-        {indicator && (
-          <StatusIndicator
-            status={MediaStatus.SUBMITTED_FOR_APPROVAL}
-            size={normalizedSize}
-            className="absolute bottom-0 right-0"
-          />
-        )}
-        {debug && (
-          <span className="absolute -top-6 left-0 text-xs bg-pink text-white px-1 rounded whitespace-nowrap">
-            {normalizedVariant}/{normalizedSize}
-          </span>
-        )}
+        {content}
       </Comp>
     );
   }

@@ -1,6 +1,6 @@
 {
   "name": "@gs/gs-components-library",
-  "version": "1.15.0",
+  "version": "1.21.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -123,6 +123,11 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
+    },
+    "./sidebar": {
+      "types": "./dist/components/sidebar.d.ts",
+      "import": "./dist/components/sidebar.mjs",
+      "require": "./dist/components/sidebar.cjs"
     },
     "./button": {
       "types": "./dist/components/button.d.ts",

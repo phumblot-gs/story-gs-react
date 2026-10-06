@@ -5,6 +5,295 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.21.0] - 2026-10-06
+
+### Ajouté
+
+- `ContactSheetReference` : une référence de planche contact — case de
+  sélection (état intermédiaire si sélection partielle), bouton urgent, titre,
+  grade, actions d'en-tête (`headerActions`, bouton « Modifier » optionnel),
+  attributs configurables (chemins pointés, jusqu'à 3 colonnes), badges
+  d'export et vignettes. Composant contrôlé, sans copie des données.
+- Exports groupés (badges côte à côte, une seule grille) ou séparés
+  (`exportsLayout="separated"`, exports empilés). Le badge d'un export fonce au
+  survol de ses vignettes.
+- Vignettes : nombre par ligne réglable (`thumbnailsPerRow`), interstice de
+  15 px, nom de fichier tronqué au milieu, emplacements vides (vue attendue sans
+  média), sélection de plage par Maj+clic, un seul callback `onThumbnailChange`.
+- Drag & drop natif au sein d'un export : permutation, insertion, remplissage
+  d'un emplacement vide, déplacement de toute la sélection (aperçu en pile avec
+  le nombre d'images). Les codes de vue restent attachés aux positions : chaque
+  image prend la vue de sa nouvelle position. `onReorder(exportId, pictureIds,
+  slots, details)` fournit l'état final et les changements de vue.
+- Formulaire « Modifier » : attributs modifiables et tags de la référence.
+- `Thumbnail` : props `grade` (Grade medium sous les indicateurs),
+  `viewIndicator` (remplace le badge de vue), `filenameTruncation`.
+- Icônes `ZoomIn` et `ZoomOut` (loupe à trait fin), utilisées au survol des
+  vignettes.
+- Documentation Storybook en anglais avec exemples de code, et story
+  « Reorder Payload ».
+
+### Modifié
+
+- `Thumbnail` : un clic sur la zone blanche du bas sélectionne la vignette
+  (`selectOnFooterClick`, actif par défaut) et un clic sur le nom de fichier le
+  copie avec un retour « Copié » (`copyFilenameOnClick`, actif par défaut).
+  Les deux se désactivent avec `={false}`. Les écrans qui passent
+  `onSelectionChange` obtiennent ces comportements sans changement de code.
+- `Thumbnail` : zone de clic élargie autour de la case à cocher ; badge du code
+  de vue à 80 % d'opacité.
+
+### Corrigé
+
+- Icône `Urgent` recentrée dans son SVG (décalée d'une unité vers la gauche) ;
+  la compensation `ml-[1px]` de `UrgentIndicator` est retirée.
+- Picto de zoom au survol des petites vignettes : un seul SVG au lieu de deux
+  icônes superposées.
+
+## [1.20.1] - 2026-09-27
+
+### Corrigé
+
+- Sidebar replié : boutons de navigation et menu utilisateur centrés en
+  30 × 30 px, avec une colonne de 60 px par défaut.
+- Alignement vertical des commandes Sidebar avec PageHeader, dont la hauteur
+  de référence est désormais 60 px (`--page-header-height`).
+- Stories Sidebar : logo dans PageHeader et bouton d'ouverture uniquement
+  sur mobile. Documentation anglaise raccourcie, avec exemples de code.
+
+## [1.20.0] - 2026-09-27
+
+### Ajouté
+
+- Sidebar GS exporté depuis la librairie et `/sidebar`, avec les fonds de
+  SidePanel, les composants Button et ButtonMenuSmall, le repli en icônes et
+  une présentation mobile. Prise en charge des providers de thème, de style,
+  d'icônes et de traduction.
+- Menu utilisateur avec avatar, nom et actions dans le pied du Sidebar.
+- PageHeader : propriétés `leftContent` et `showLogo` pour placer le bouton
+  d'ouverture du Sidebar à la place du logo.
+- Stories Sidebar et documentation en anglais, avec tests d'intégration.
+
+## [1.19.2] - 2026-09-19
+
+### Corrigé
+
+- `FileBrowser` : le contrôle de sélection — le `Select` dont le déclencheur
+  affiche « {n} sélectionné(s) » — n'est plus rendu quand `hiddenActions` masque
+  les cinq actions. Aucune condition ne testait le nombre d'actions restantes :
+  le menu s'ouvrait vide, libellé de sélection compris. La sélection elle-même
+  est inchangée et continue d'être remontée par `onSelectionChange`.
+  Des actions seulement `disabled` gardent le menu, qui les affiche grisées.
+- Story FileBrowser « WithAllActionsHidden » pour ce cas.
+
+## [1.19.1] - 2026-09-19
+
+### Corrigé
+
+- `Button` : `asChild` fonctionne enfin. Le bouton rend le libellé *et* deux
+  décorations (indicateur, étiquette de debug), alors que `Slot` n'accepte qu'un
+  enfant : tout usage de `asChild` levait « React.Children.only », y compris les
+  stories qui le documentent. Les décorations sont désormais injectées dans
+  l'enfant, et l'enfant est laissé intact quand il n'y en a aucune. Le rendu hors
+  `asChild` est inchangé.
+
+### Modifié
+
+- `FileBrowser` : le dossier courant du breadcrumb prend l'apparence d'un bouton
+  `outline` au lieu de `ghost`. Le ghost n'ayant pas de cadre visible, le libellé
+  flottait à côté des pastilles pleines des segments parents. Le segment reste
+  non interactif (`<span>` via `asChild`, `aria-current="page"`), et son libellé
+  garde sa graisse : `!font-medium` est nécessaire, car `.font-regular` du bouton
+  est déclarée après `.font-medium` dans la feuille compilée et l'emporterait à
+  spécificité égale.
+
+## [1.19.0] - 2026-09-19
+
+### Ajouté
+
+- `FileBrowser` : déplacement des lignes sélectionnées vers un sous-dossier par
+  glisser-déposer, activé en fournissant `onMoveItems?: (items: FileItem[],
+  targetFolder: FileItem) => void`. Sans ce callback, les lignes ne sont pas
+  déplaçables. Le composant ne possède pas les données : il signale le
+  déplacement, à charge de l'appelant de l'effectuer puis de re-rendre avec les
+  nouveaux `files` — et de vider la sélection via `selectionResetKey`.
+  - Glisser une ligne sélectionnée déplace toute la sélection, dans l'ordre
+    d'affichage ; glisser une ligne hors sélection la sélectionne et ne déplace
+    qu'elle, pour ne jamais déplacer une sélection invisible à l'écran.
+  - Seuls les dossiers actifs hors sélection acceptent le dépôt : ils s'encadrent
+    en noir au survol (`ring-2 ring-inset ring-black`), comme la ligne active.
+  - Défilement automatique quand le curseur atteint le haut ou le bas de la liste,
+    piloté par une boucle d'animation et non par les événements `dragover`, qui
+    cessent dès que le curseur s'immobilise. Actif uniquement si le conteneur est
+    réellement défilant (`heightMode` `fill-container` ou `max-height`).
+  - Vignette sous le curseur reprenant le premier nom déplacé, avec une pastille
+    de comptage au-delà d'un élément. Construite en DOM impératif et stylée en
+    `style` inline : `setDragImage` photographie le nœud au `dragstart`, sans
+    attendre le rendu React ni la feuille Tailwind de l'application hôte.
+- Story FileBrowser « InteractiveDragAndDropMove » : arborescence réelle où le
+  dépôt réécrit le `parent_path`, dans un conteneur de hauteur fixe pour exercer
+  le défilement automatique.
+- `src/lib/file-browser-drag.ts` : logique pure du glisser-déposer
+  (`canDropOnItem`, `getDraggedItems`, `computeAutoScrollSpeed`, discrimination
+  des types de drag), isolée pour être testable — happy-dom n'implémente ni
+  `DataTransfer` ni `setDragImage`.
+
+### Corrigé
+
+- `FileBrowser` : l'import de fichiers depuis le bureau ne capte plus les
+  déplacements de lignes, qui déclenchent les mêmes événements sur le même
+  conteneur. `handleDrop` appelait `onFileDrop` pour **n'importe quel** dépôt : un
+  déplacement relâché à côté d'un dossier était remonté à l'appelant comme un
+  import externe. `handleDragOver` forçait par ailleurs le curseur en « copie »
+  pendant un déplacement. Les quatre gestionnaires filtrent désormais sur la
+  présence du type `Files`.
+- `FileBrowser` : l'overlay d'import réapparaît après un glisser-déposer interne.
+  `handleDragLeave` décrémentait un compteur que `handleDragEnter` n'incrémentait
+  que pour les drags de fichiers ; il passait à -1 dès le premier drag interne et
+  l'overlay ne s'affichait plus ensuite.
+- `FileBrowser` : le message « Aucun fichier dans ce dossier » n'est plus rendu
+  dans un bandeau bordé sous le tableau, où il apparaissait sous une ligne
+  horizontale isolée, collé en bas du composant. Il occupe maintenant la hauteur
+  restante à l'intérieur du cadre du tableau, centré verticalement. Sans hauteur
+  imposée (`heightMode="auto"`), il reste sous l'en-tête, faute d'espace où le
+  centrer.
+- `FileBrowser` : le dernier segment du breadcrumb — le dossier courant — est
+  rendu dans la boîte d'un bouton ghost au lieu d'un texte nu. À la racine, le
+  libellé n'avait aucun padding horizontal et se décalait dès qu'on entrait dans
+  un sous-dossier, où il devenait un bouton. Le segment n'est pas une
+  destination : c'est un `<span>` non focusable, sans clic ni survol, marqué
+  `aria-current="page"`.
+
+## [1.18.0] - 2026-09-19
+
+### Ajouté
+
+- `FileBrowser` : prop optionnelle `selectionResetKey?: number | string`, qui vide
+  la sélection à chaque changement de valeur (pas au premier rendu). Un parent peut
+  ainsi désélectionner depuis l'extérieur — typiquement un bouton « Tout
+  désélectionner » placé hors du composant — en incrémentant la clé, là où l'action
+  ne faisait jusqu'ici que masquer la barre d'actions en laissant les lignes
+  sélectionnées. La sélection reste non contrôlée : shift/ctrl et Cmd+A sont
+  inchangés, et c'est l'effet `onSelectionChange` existant qui remonte `[]` au
+  parent, sans appel supplémentaire.
+- Story FileBrowser « ExternalSelectionReset » : bouton « Tout désélectionner »
+  hors du composant, avec le compteur de sélection et la valeur de la clé.
+- Test `src/__tests__/file-browser-selection-reset.test.tsx` : un changement de clé
+  vide les lignes et produit un `onSelectionChange([])` unique, une valeur identique
+  ne déclenche rien, et le premier rendu ne réinitialise pas.
+
+## [1.17.1] - 2026-09-19
+
+### 🎨 Modifié
+
+- `FileBrowser` : le bouton « Afficher les N fichiers suivants » passe en
+  `size="medium"` (au lieu de `large`) et son conteneur perd son padding bas
+  (`py-3` → `pt-3`). Le bloc de pagination prenait trop de hauteur sous la liste.
+  Sans changement d'API.
+
+## [1.17.0] - 2026-09-18
+
+### Ajouté
+
+- `TabsList` : valeur `align="justify"`, qui répartit les onglets à parts égales
+  sur toute la largeur de la liste et centre chaque titre. L'indicateur actif
+  occupe alors toute la largeur de l'onglet. Les libellés ne sont jamais tronqués :
+  si les parts deviennent plus étroites que le titre le plus long, les onglets
+  reprennent leur largeur naturelle et la liste redevient défilante.
+- Story Tabs : option `justify` dans le contrôle d'alignement et exemple « Justifié ».
+
+## [1.16.1] — 2026-09-18
+
+### 🎨 Modifié
+
+- **`ButtonThumbnailLabels` : le mode neutre affiche le rectangle à bordure pointillée
+  au lieu de l'icône `Tag`.** Correction visuelle du mode `buttonDisplay="neutral"`
+  livré en 1.16.0, **sans changement d'API**.
+  - `Tag` évoquait les méta-tags, pas la couleur. Le déclencheur reprend désormais le
+    **rectangle pointillé « pas de couleur »** que le composant dessinait déjà dans sa
+    branche « aucune couleur définie » : c'est le vocabulaire de la librairie pour une
+    pastille sans valeur, et la même forme que les pastilles du menu, donc ça se lit
+    immédiatement comme « couleur ».
+  - **Un seul rendu, pas deux** : le rectangle est extrait dans un `renderEmptySwatch`
+    au niveau module, partagé par la branche « pas de couleur » et par le mode neutre,
+    pour qu'ils ne puissent pas diverger.
+  - Dimensions inchangées : le rectangle fait `colorSize` × `colorSize * 0.7`, soit
+    10 / 12 / 14 px de large selon `size` — exactement la place que prend l'icône de
+    `ButtonMenuStatus` dans un rond de mêmes dimensions. Centré par le
+    `inline-flex items-center justify-center` du `Button`.
+  - Nettoyage : `neutralIconSize` et l'import d'`Icon` devenaient morts dans ce
+    fichier, ils sont retirés.
+  - **`ButtonThumbnailStars` est inchangé** : son icône `Star` reste la bonne.
+  - Tests adaptés, et la contre-épreuve renforcée : la face reste pointillée et sans
+    couleur **même avec `value="red"`**, et le rendu neutre est comparé à celui du mode
+    par défaut sans couleur (ils doivent être identiques). Côté `Thumbnail`, un cas
+    dédié vérifie que le rectangle pointillé n'apparaît **jamais** quand la photo a une
+    couleur.
+
+## [1.16.0] — 2026-09-17
+
+### ✨ Ajouté
+
+- **`ButtonThumbnailStars` / `ButtonThumbnailLabels` : mode d'affichage neutre du
+  bouton déclencheur** via la prop `buttonDisplay` (`"value" | "neutral"`,
+  `"value"` par défaut, **opt-in, non-breaking**).
+  - `buttonDisplay="neutral"` fait reprendre au déclencheur le dessin et les
+    couleurs de `ButtonMenuStatus` : même rond aux mêmes dimensions
+    (`p-1 w-4 h-4` / `p-0 w-6 h-6` / `p-0 w-8 h-8` selon `size`), même taille
+    d'icône (10 / 12 / 14), et **`variant="secondary"` par défaut** — c'est le
+    variant avec lequel `ButtonMenuStatus` est appelé dans les barres d'action, là
+    où ces deux boutons tombaient sur `normal`. L'appelant n'a donc rien à savoir
+    du variant ; s'il en passe un explicitement, il reste prioritaire.
+  - La face du bouton affiche une **icône fixe** à la place de la valeur : `Star`
+    (le contour, pas `StarFilled`) pour les étoiles, `Tag` pour les couleurs.
+  - Motif : dans une barre d'action qui écrit une note ou une couleur **sur une
+    sélection**, afficher « 3 étoiles » ou une pastille laisse croire à un état
+    commun à toute la sélection et invite à recliquer 3 pour annuler — ce qui
+    aplatit la sélection à 3. Le mode neutre supprime cette lecture.
+  - **`value` continue de servir au menu** dans les deux modes : la bonne ligne
+    reste cochée, exactement comme `currentStatus` pour `ButtonMenuStatus`.
+  - **Rien d'autre ne change** : contenu du menu, `compact`, `menuSide`,
+    `menuAlign`, `menuBgContext`, `useIsInActionBar()`, `sideOffset`, traductions
+    des couleurs.
+  - **Le défaut est inchangé, au pixel.** `Thumbnail` ne passe pas la prop et
+    continue d'afficher la valeur : c'est toute la fonction du bouton sur une
+    vignette. Verrouillé par un test au niveau de `Thumbnail` lui-même
+    (`src/__tests__/thumbnail-shows-rating-label-values.test.tsx`), pas seulement
+    sur les deux boutons isolés.
+  - Stories `NeutralButtonDisplay` sur les deux composants : le mode neutre est
+    posé **à côté d'un `ButtonMenuStatus`** sur les trois fonds et les trois
+    tailles, pour que la ressemblance soit vérifiable à l'œil.
+  - Tests : `src/__tests__/button-thumbnail-neutral-display.test.tsx` (22 cas,
+    dont les contre-épreuves : le défaut affiche toujours la valeur, et un
+    `buttonDisplay="value"` explicite rend un HTML strictement identique à
+    l'omission de la prop).
+
+### 🎨 Modifié
+
+- **`ButtonMenuStatus` et `ButtonMenuSmall` gardent l'apparence hover tant que leur
+  menu est ouvert**, comme les quatre boutons de vignette. **Changement visuel sur
+  des composants existants**, pas opt-in.
+  - La charte veut qu'un bouton qui ouvre un menu conserve son apparence hover
+    pendant toute la durée d'ouverture. Les quatre menus de vignette
+    (`ButtonThumbnailStars`, `…Labels`, `…Tags`, `…Comments`) le faisaient déjà ;
+    ces deux-là étaient les seules exceptions et restaient plates, ce qui se voyait
+    dans la barre d'action de la page validation où les quatre boutons se côtoient.
+  - **Même mécanisme, pas un second** : une ligne strictement identique à celle des
+    boutons de vignette, `data-open={isOpen ? "true" : "false"}` posée sur le
+    `Toggle` après `{...buttonProps}`. Les règles existantes de `custom-styles.css`
+    (`button[data-open="true"]`) rejouent alors les jetons hover du variant du
+    bouton, par contexte `data-bg`. Aucune CSS ajoutée.
+  - L'attribut est **toujours présent**, valué `"false"` menu fermé : c'est la
+    convention déjà en place, et `button[data-open]` sert de localisateur de
+    déclencheur ailleurs dans la suite de tests.
+  - Variants couverts par la CSS existante : `normal`, `secondary`, `ghost`,
+    `outline`. `destructive` et `link` n'ont pas de règle `data-open` — inchangé,
+    mais à savoir.
+  - Test `src/__tests__/menu-trigger-data-open.test.tsx` (20 cas) : contrat verrouillé
+    par composant, en mode contrôlé et non contrôlé, plus la contre-épreuve
+    d'uniformité qui relit l'attribut sur **les six** composants à menu et exige une
+    seule valeur distincte par état.
+
 ## [1.15.0] - 2026-09-16
 
 ### Added

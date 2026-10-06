@@ -14,6 +14,8 @@
 
 /* 3. Typographie */
 @import './styles/typography.css';
+@import './styles/page-header.css';
+@import './styles/sidebar.css';
 
 /* 4. Tailwind CSS */
 @tailwind base;

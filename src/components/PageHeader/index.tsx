@@ -10,6 +10,8 @@ import { useTranslationSafe } from "@/contexts/TranslationContext";
 
 export interface PageHeaderProps {
   logo?: React.ReactNode;
+  /** Whether to display the brand logo. */
+  showLogo?: boolean;
   /** When provided, the brand logo becomes a button (e.g. navigate home). */
   onLogoClick?: () => void;
   title: string;
@@ -18,6 +20,8 @@ export interface PageHeaderProps {
   showTitleButton?: boolean;
   titleButtonIcon?: IconName;
   onTitleButtonClick?: () => void;
+  /** Navigation controls displayed before the logo, such as SidebarTrigger. */
+  leftContent?: React.ReactNode;
   centerContent?: React.ReactNode;
   rightContent?: React.ReactNode;
   className?: string;
@@ -26,6 +30,7 @@ export interface PageHeaderProps {
 
 const PageHeader: React.FC<PageHeaderProps> = ({
   logo,
+  showLogo = true,
   onLogoClick,
   title,
   showBackButton = false,
@@ -33,6 +38,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
   showTitleButton = true,
   titleButtonIcon = "Pencil",
   onTitleButtonClick,
+  leftContent,
   centerContent,
   rightContent,
   className,
@@ -53,11 +59,12 @@ const PageHeader: React.FC<PageHeaderProps> = ({
       <HStack
         justify="between"
         align="center"
-        className="px-4 py-2"
+        className="gs-page-header-content px-4 py-2"
       >
         {/* Left Side - with flex-shrink to allow truncation */}
         <HStack gap={4} align="center" className="flex-shrink overflow-hidden">
-          {(() => {
+          {leftContent && <HStack gap={2} align="center" className="flex-shrink-0">{leftContent}</HStack>}
+          {showLogo && (() => {
             // <span class="block"> et non <div> : le modele de contenu de <button>
             // n'accepte que du phrasing content, et cette zone est enveloppee dans
             // un vrai <button> des que onLogoClick est fourni. Rendu identique.
@@ -108,7 +115,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
 
       {/* Gradient border at bottom using CSS variables for customization */}
       <div className={cn(
-        "h-[3px] bg-gradient-to-r from-header-gradient-start to-header-gradient-end",
+        "gs-page-header-divider bg-gradient-to-r from-header-gradient-start to-header-gradient-end",
         isIdle && "bg-size-200 animate-gradient-flow"
       )} />
     </Layout>

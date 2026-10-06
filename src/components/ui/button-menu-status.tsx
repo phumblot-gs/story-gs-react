@@ -260,6 +260,7 @@ export const ButtonMenuStatus = React.forwardRef<HTMLButtonElement, ButtonMenuSt
             onFocus={onFocus}
             onBlur={onBlur}
             {...buttonProps}
+            data-open={isOpen ? "true" : "false"}
           >
             <Icon name="Status" size={getIconSize()} />
           </Toggle>

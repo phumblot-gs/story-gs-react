@@ -1,0 +1,81 @@
+/* Geometry only. Surfaces, typography and controls come from GS components.
+   Collapsed controls use the same square geometry as SidebarTrigger. */
+.gs-sidebar-shell { flex-shrink: 0; }
+.gs-sidebar-shell[data-side="right"], .gs-sidebar-static[data-side="right"] { order: 1; }
+.gs-sidebar-spacer { width: var(--sidebar-width); transition: width 200ms; }
+.gs-sidebar-positioner {
+  position: fixed;
+  inset-block: 0;
+  width: var(--sidebar-width);
+  z-index: 10;
+  transition: width 200ms;
+}
+.gs-sidebar-shell[data-side="left"] .gs-sidebar-positioner { left: 0; }
+.gs-sidebar-shell[data-side="right"] .gs-sidebar-positioner { right: 0; }
+.gs-sidebar-shell[data-variant="inset"] .gs-sidebar-positioner { padding: var(--spacing-2); }
+.gs-sidebar-shell[data-collapsible="icon"] .gs-sidebar-spacer,
+.gs-sidebar-shell[data-collapsible="icon"] .gs-sidebar-positioner { width: var(--sidebar-width-icon); }
+.gs-sidebar-static { width: var(--sidebar-width); flex-shrink: 0; }
+.gs-sidebar-inset { min-height: inherit; }
+.gs-sidebar-provider:has(> [data-variant="inset"]) > .gs-sidebar-inset { margin: var(--spacing-2); }
+.gs-sidebar-menu-item { display: flex; flex-wrap: wrap; align-items: center; gap: var(--spacing-1); }
+.gs-sidebar-menu-item > [data-sidebar="menu-button"] { flex: 1; }
+.gs-sidebar-menu-item > [data-sidebar="menu-sub"] { flex-basis: 100%; }
+.gs-sidebar-menu-button > span:has(svg) { flex-shrink: 0; }
+.gs-sidebar-menu-button > span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.gs-sidebar-menu-action[data-show-on-hover="true"] { opacity: 0; }
+.gs-sidebar-menu-item:hover > .gs-sidebar-menu-action,
+.gs-sidebar-menu-item:focus-within > .gs-sidebar-menu-action,
+.gs-sidebar-menu-action[data-state="open"] { opacity: 1; }
+.gs-sidebar-logo[data-inverted="true"] { filter: invert(1); }
+.gs-sidebar-logo svg { max-width: 100%; max-height: 100%; }
+.gs-sidebar-shell[data-collapsible="icon"] [data-sidebar="group-label"],
+.gs-sidebar-shell[data-collapsible="icon"] [data-sidebar="group-action"],
+.gs-sidebar-shell[data-collapsible="icon"] [data-sidebar="menu-action"],
+.gs-sidebar-shell[data-collapsible="icon"] [data-sidebar="menu-badge"],
+.gs-sidebar-shell[data-collapsible="icon"] [data-sidebar="menu-sub"],
+.gs-sidebar-shell[data-collapsible="icon"] .gs-sidebar-user-chevron { display: none; }
+/* Keep labels available to assistive technologies when only icons are shown. */
+.gs-sidebar-shell[data-collapsible="icon"] .gs-sidebar-menu-button > span:not(:has(svg)),
+.gs-sidebar-shell[data-collapsible="icon"] .gs-sidebar-brand-name,
+.gs-sidebar-shell[data-collapsible="icon"] .gs-sidebar-user-name {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.gs-sidebar-shell[data-collapsible="icon"] .gs-sidebar-menu-button,
+.gs-sidebar-shell[data-collapsible="icon"] [data-sidebar="brand"] > *,
+.gs-sidebar-shell[data-collapsible="icon"] .gs-sidebar-user-menu { justify-content: center; }
+/* Match the GS SidePanel close control (p-0 w-6 h-6), including active items.
+   Disable the menu item's flex growth so the control cannot fill the rail. */
+.gs-sidebar-shell[data-collapsible="icon"] .gs-sidebar-menu-button,
+.gs-sidebar-shell[data-collapsible="icon"] .gs-sidebar-user-menu {
+  flex: none;
+  width: var(--spacing-6);
+  height: var(--spacing-6);
+  padding: 0;
+  margin-inline: auto;
+}
+.gs-sidebar-rail { position: absolute; inset-block: 0; width: var(--spacing-1); cursor: ew-resize; }
+.gs-sidebar-shell[data-side="left"] .gs-sidebar-rail { right: 0; }
+.gs-sidebar-shell[data-side="right"] .gs-sidebar-rail { left: 0; }
+@media (hover: none) { .gs-sidebar-menu-action[data-show-on-hover="true"] { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .gs-sidebar-spacer, .gs-sidebar-positioner { transition: none; }
+}
+/* Inset spacing stays inside the shared collapsed width. */
+.gs-sidebar-shell[data-collapsible="icon"][data-variant="inset"] .gs-sidebar-positioner {
+  padding-inline: 0;
+}
+/* Reserve the same bottom strip as PageHeader's gradient so centers align. */
+.gs-sidebar-header[data-sidebar="header"] {
+  min-height: var(--page-header-height);
+  padding-bottom: calc(var(--spacing-2) + var(--page-header-border-height));
+}
+.gs-sidebar-shell[data-variant="inset"] .gs-sidebar-header[data-sidebar="header"] {
+  min-height: calc(var(--page-header-height) - var(--spacing-2));
+  padding-top: 0;
+}
