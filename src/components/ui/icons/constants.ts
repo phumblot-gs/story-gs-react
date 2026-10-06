@@ -8,5 +8,5 @@ export const AVAILABLE_ICONS = [
   "Help", "Loader", "Logout", "Mail", "Menu", "Minus", "MoreHorizontal", "MoreVertical", "Move", "Pencil",
   "Plus", "Refresh", "RotateCcw", "Scroll", "Search", "Settings", "Share", "Sort", "Star", "StarFilled", "Status",
   "Tag", "ToastErrorIcon", "ToastSuccessIcon", "Switch", "Trash", "Upload", "Urgent",
-  "User", "Users", "Vedette", "X"
+  "User", "Users", "Vedette", "X", "ZoomIn", "ZoomOut"
 ] as const;

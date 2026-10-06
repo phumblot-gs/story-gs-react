@@ -5,6 +5,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Icon } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { TruncatedText } from "@/components/ui/truncated-text";
+import { MiddleTruncatedText } from "@/components/ui/middle-truncated-text";
+import { copyToClipboard } from "@/lib/clipboard";
 import { ButtonThumbnailStars } from "@/components/ui/button-thumbnail-stars";
 import { ButtonThumbnailLabels, type LabelColor } from "@/components/ui/button-thumbnail-labels";
 import { ButtonThumbnailTags } from "@/components/ui/button-thumbnail-tags";
@@ -47,6 +49,7 @@ import { AlertIndicator } from "./AlertIndicator";
 import { VedetteIndicator } from "./VedetteIndicator";
 import { Three60Indicator } from "./Three60Indicator";
 import { ViewIndicator } from "./ViewIndicator";
+import { Grade, type GradeValue } from "@/components/ui/grade";
 
 /** Tailles prédéfinies du thumbnail */
 export type ThumbnailPresetSize = "small" | "large" | "auto";
@@ -80,6 +83,23 @@ export interface ThumbnailProps {
   alt?: string;
   /** Nom du fichier à afficher */
   filename?: string;
+  /**
+   * Troncature du nom de fichier quand il est trop long :
+   * - "end" (défaut) : ellipse en fin, nom complet en infobulle ;
+   * - "middle" : ellipse au milieu, l'extension reste visible (« 7E0125…1.tif »).
+   */
+  filenameTruncation?: "end" | "middle";
+  /**
+   * Un clic sur le nom de fichier le copie dans le presse-papier, avec un
+   * retour visuel « Copié ». Activé par défaut ; `false` pour le désactiver.
+   */
+  copyFilenameOnClick?: boolean;
+  /**
+   * Un clic sur le pied du thumbnail (zone sous l'image, hors boutons et nom
+   * de fichier copiable) équivaut à un clic sur la case à cocher. Nécessite
+   * `onSelectionChange`. Activé par défaut ; `false` pour le désactiver.
+   */
+  selectOnFooterClick?: boolean;
   /** Indique si le fichier est urgent */
   isUrgent?: boolean;
   /** Indicateur d'alerte */
@@ -88,8 +108,15 @@ export interface ThumbnailProps {
   isVedette?: boolean;
   /** Indicateur de 360 */
   is360?: boolean;
+  /** Note de qualité : affiche un Grade (small) sous les indicateurs urgent, alerte, vedette, 360 */
+  grade?: GradeValue;
   /** Code de vue du fichier */
   view?: string;
+  /**
+   * Remplace le badge du code de vue en haut à droite (ex. un Badge orange
+   * « 2 min » avec une icône). `view` garde son rôle pour le reste (vue vide…).
+   */
+  viewIndicator?: React.ReactNode;
 
   // Overlay images (master/format)
   /** URL de l'image master à superposer */
@@ -294,10 +321,14 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
   src,
   alt = "",
   filename = "",
+  filenameTruncation = "end",
+  copyFilenameOnClick = true,
+  selectOnFooterClick = true,
   isUrgent = false,
   isAlert = false,
   isVedette = false,
   is360 = false,
+  grade,
 
   // Overlay images
   masterSrc,
@@ -329,6 +360,7 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
   maxDropdownItems = 10,
 
   view,
+  viewIndicator,
 
   // Loading states
   isLoading = false,
@@ -533,6 +565,36 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
     [onSelectionChange]
   );
 
+  // Copie du nom de fichier : « Copié » s'affiche brièvement par-dessus le nom.
+  const [copied, setCopied] = useState(false);
+  const copiedTimer = useRef<ReturnType<typeof setTimeout>>();
+  useEffect(() => () => clearTimeout(copiedTimer.current), []);
+  const handleFilenameClick = useCallback(
+    async (e: React.MouseEvent) => {
+      if (!copyFilenameOnClick || !filename) return;
+      e.stopPropagation();
+      if (!(await copyToClipboard(filename))) return;
+      setCopied(true);
+      clearTimeout(copiedTimer.current);
+      copiedTimer.current = setTimeout(() => setCopied(false), 1200);
+    },
+    [copyFilenameOnClick, filename]
+  );
+
+  // Clic sur le pied : bascule la sélection, sauf sur un élément interactif.
+  // Les événements React traversent les portails : un clic dans un menu ouvert
+  // depuis le pied (étoiles, tags…) remonte ici, d'où le test `contains`.
+  const handleFooterClick = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      if (!selectOnFooterClick || !onSelectionChange) return;
+      const target = e.target as Element;
+      if (!e.currentTarget.contains(target)) return;
+      if (target.closest("button, a, input, textarea, select, [role='menu'], [role='dialog']")) return;
+      onSelectionChange(!selected, { shiftKey: e.shiftKey, ctrlKey: e.ctrlKey, metaKey: e.metaKey });
+    },
+    [selectOnFooterClick, onSelectionChange, selected]
+  );
+
   // Wrapper classes
   const wrapperClasses = cn(
     "flex flex-col items-center w-full mx-auto h-[fill-available]",
@@ -616,12 +678,24 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
             >
               {/* Checkbox */}
               {onSelectionChange && (
+                // Zone de clic élargie : le padding remplace l'ancienne marge (la case
+                // ne bouge pas) et déborde vers la droite et le bas. Un clic dans
+                // cette zone, hors de la case elle-même, la bascule aussi.
                 <div
-                  className={`${size === "small" ? "ml-1 mt-1" : "ml-2 mt-2"} inline-flex`}
+                  className={cn(
+                    "inline-flex cursor-pointer",
+                    size === "small" ? "pl-1 pt-1 pr-2 pb-2" : "pl-2 pt-2 pr-4 pb-4"
+                  )}
+                  data-testid="thumbnail-checkbox-hit-area"
                   onPointerDown={(e) => {
                     clickEventRef.current = e;
                   }}
-                  onClick={(e) => e.stopPropagation()}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (!(e.target as Element).closest(".thumbnail-checkbox")) {
+                      handleSelectionChange(!selected);
+                    }
+                  }}
                 >
                   <Checkbox
                     checked={selected}
@@ -635,9 +709,8 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
               )}
 
               {/* Search icon */}
-              <span className="search-icon absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white opacity-0 transition-opacity">
-                <Icon name="Plus" strokeWidth={2} size={size === "small" ? 7 : 12} className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 ${size === "small" ? "ml-[-1px]" : "ml-[-2px]"} ${size === "small" ? "mt-[-4px]" : "mt-[-5px]"}`} />
-                <Icon name="Search" size={config.iconSize} strokeWidth={1} />
+              <span className="search-icon flex absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white opacity-0 transition-opacity">
+                <Icon name="ZoomIn" size={config.iconSize} />
               </span>
             </div>
           )}
@@ -677,7 +750,7 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
           )}
 
           {/* Left indicators */}
-          {(isUrgent || isAlert || isVedette || is360) && (
+          {(isUrgent || isAlert || isVedette || is360 || grade) && (
             <VStack
               className={cn(
                 `absolute ${size === "small" ? "top-1 left-1" : "top-2 left-2"} transition-opacity`,
@@ -689,30 +762,68 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
               {isAlert && <AlertIndicator />}
               {isVedette && <VedetteIndicator />}
               {is360 && <Three60Indicator />}
+              {/* La colonne étire ses enfants (align stretch) : self-center garde au
+                  grade sa taille propre au lieu de la largeur du badge le plus large. */}
+              {grade && <Grade value={grade} size="medium" className="self-center" />}
             </VStack>
           )}
 
           {/* Right indicators */}
           <VStack className={`absolute ${size === "small" ? "top-1 right-1" : "top-2 right-2"}`} gap={0}>
-            <ViewIndicator view={view} />
+            {viewIndicator ?? <ViewIndicator view={view} className="opacity-80" />}
           </VStack>
         </div>
 
         {/* Footer */}
         {((picture_id && picture_id !== -1) || !view) && (
+          <div
+            onClick={handleFooterClick}
+            className={cn(selectOnFooterClick && onSelectionChange && "cursor-pointer")}
+            data-testid="thumbnail-footer"
+          >
           <Layout
             bg={selected ? "black" : "white"}
             className="flex flex-col p-0 gap-0 w-full min-h-0 flex-shrink-0 transition-colors"
             >
             {/* Filename row */}
-            <div className="w-full text-center px-1 pt-1">
-              <TruncatedText
-                text={filename}
+            <div className="relative w-full text-center px-1 pt-1">
+              <span
                 className={cn(
-                  "text-sm cursor-pointer",
-                  selected && "text-white"
+                  "inline-flex max-w-full transition-opacity duration-150",
+                  copyFilenameOnClick && "cursor-pointer",
+                  copied && "opacity-0"
                 )}
-              />
+                onClick={copyFilenameOnClick ? handleFilenameClick : undefined}
+                data-testid="thumbnail-filename"
+              >
+                {filenameTruncation === "middle" ? (
+                  <MiddleTruncatedText
+                    text={filename}
+                    className={cn("text-sm cursor-pointer", selected && "text-white")}
+                  />
+                ) : (
+                  <TruncatedText
+                    text={filename}
+                    className={cn(
+                      "text-sm cursor-pointer",
+                      selected && "text-white"
+                    )}
+                  />
+                )}
+              </span>
+              {copied && (
+                <span
+                  role="status"
+                  className={cn(
+                    "pointer-events-none absolute inset-x-0 top-1 flex items-center justify-center gap-1 text-sm",
+                    "animate-in fade-in-0 zoom-in-95 duration-200",
+                    selected ? "text-white" : "text-black"
+                  )}
+                >
+                  <Icon name="Check" size={12} />
+                  {t("thumbnail.copied")}
+                </span>
+              )}
             </div>
 
             {/* Actions row */}
@@ -827,6 +938,7 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
               )}
             </div>
           </Layout>
+          </div>
         )}
 
         {/* Status bar */}

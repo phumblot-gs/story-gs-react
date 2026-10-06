@@ -1059,6 +1059,41 @@ export const componentTranslations: TranslationMap = {
     DE: "Panel"
   },
 
+  // ContactSheetReference
+  "contactSheet.selectReference": {
+    EN: "Select reference {ref}", FR: "Sélectionner la référence {ref}", ES: "Seleccionar la referencia {ref}", IT: "Seleziona il riferimento {ref}", DE: "Referenz {ref} auswählen"
+  },
+  "contactSheet.markUrgent": {
+    EN: "Mark as urgent", FR: "Marquer comme urgente", ES: "Marcar como urgente", IT: "Segna come urgente", DE: "Als dringend markieren"
+  },
+  "contactSheet.unmarkUrgent": {
+    EN: "Remove urgent", FR: "Retirer l'urgence", ES: "Quitar urgencia", IT: "Rimuovi urgenza", DE: "Dringlichkeit entfernen"
+  },
+  "contactSheet.edit": {
+    EN: "Edit", FR: "Modifier", ES: "Editar", IT: "Modifica", DE: "Bearbeiten"
+  },
+  "contactSheet.editTitle": {
+    EN: "Edit reference {ref}", FR: "Modifier la référence {ref}", ES: "Editar la referencia {ref}", IT: "Modifica il riferimento {ref}", DE: "Referenz {ref} bearbeiten"
+  },
+  "contactSheet.tags": {
+    EN: "Tags", FR: "Tags", ES: "Etiquetas", IT: "Tag", DE: "Tags"
+  },
+  "contactSheet.addTag": {
+    EN: "Add", FR: "Ajouter", ES: "Añadir", IT: "Aggiungi", DE: "Hinzufügen"
+  },
+  "contactSheet.addTagPlaceholder": {
+    EN: "New tag", FR: "Nouveau tag", ES: "Nueva etiqueta", IT: "Nuovo tag", DE: "Neuer Tag"
+  },
+  "contactSheet.save": {
+    EN: "Save", FR: "Enregistrer", ES: "Guardar", IT: "Salva", DE: "Speichern"
+  },
+  "contactSheet.cancel": {
+    EN: "Cancel", FR: "Annuler", ES: "Cancelar", IT: "Annulla", DE: "Abbrechen"
+  },
+  "contactSheet.saveError": {
+    EN: "Changes could not be saved", FR: "Les modifications n'ont pas pu être enregistrées", ES: "No se pudieron guardar los cambios", IT: "Impossibile salvare le modifiche", DE: "Änderungen konnten nicht gespeichert werden"
+  },
+
   // Thumbnail
   "thumbnail.noActions": {
     EN: "No action",
@@ -1108,6 +1143,9 @@ export const componentTranslations: TranslationMap = {
     ES: "Añadir una etiqueta",
     IT: "Aggiungi un tag",
     DE: "Tag hinzufügen"
+  },
+  "thumbnail.copied": {
+    EN: "Copied", FR: "Copié", ES: "Copiado", IT: "Copiato", DE: "Kopiert"
   },
   "thumbnail.add": {
     EN: "Add",

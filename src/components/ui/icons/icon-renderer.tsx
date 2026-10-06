@@ -43,6 +43,10 @@ export const renderIcon = (
       return <CustomIcons.CustomRefreshIcon size={size} strokeWidth={strokeWidth} />;
     case "Search":
       return <LucideIcons.Search size={size} strokeWidth={strokeWidth} />;
+    case "ZoomIn":
+      return <CustomIcons.CustomZoomInIcon size={size} strokeWidth={strokeWidth} />;
+    case "ZoomOut":
+      return <CustomIcons.CustomZoomOutIcon size={size} strokeWidth={strokeWidth} />;
     case "Flag":
       return <CustomIcons.CustomFlagIcon size={size} />;
     case "FlagEmpty":

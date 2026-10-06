@@ -5,6 +5,51 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.21.0] - 2026-10-06
+
+### Ajouté
+
+- `ContactSheetReference` : une référence de planche contact — case de
+  sélection (état intermédiaire si sélection partielle), bouton urgent, titre,
+  grade, actions d'en-tête (`headerActions`, bouton « Modifier » optionnel),
+  attributs configurables (chemins pointés, jusqu'à 3 colonnes), badges
+  d'export et vignettes. Composant contrôlé, sans copie des données.
+- Exports groupés (badges côte à côte, une seule grille) ou séparés
+  (`exportsLayout="separated"`, exports empilés). Le badge d'un export fonce au
+  survol de ses vignettes.
+- Vignettes : nombre par ligne réglable (`thumbnailsPerRow`), interstice de
+  15 px, nom de fichier tronqué au milieu, emplacements vides (vue attendue sans
+  média), sélection de plage par Maj+clic, un seul callback `onThumbnailChange`.
+- Drag & drop natif au sein d'un export : permutation, insertion, remplissage
+  d'un emplacement vide, déplacement de toute la sélection (aperçu en pile avec
+  le nombre d'images). Les codes de vue restent attachés aux positions : chaque
+  image prend la vue de sa nouvelle position. `onReorder(exportId, pictureIds,
+  slots, details)` fournit l'état final et les changements de vue.
+- Formulaire « Modifier » : attributs modifiables et tags de la référence.
+- `Thumbnail` : props `grade` (Grade medium sous les indicateurs),
+  `viewIndicator` (remplace le badge de vue), `filenameTruncation`.
+- Icônes `ZoomIn` et `ZoomOut` (loupe à trait fin), utilisées au survol des
+  vignettes.
+- Documentation Storybook en anglais avec exemples de code, et story
+  « Reorder Payload ».
+
+### Modifié
+
+- `Thumbnail` : un clic sur la zone blanche du bas sélectionne la vignette
+  (`selectOnFooterClick`, actif par défaut) et un clic sur le nom de fichier le
+  copie avec un retour « Copié » (`copyFilenameOnClick`, actif par défaut).
+  Les deux se désactivent avec `={false}`. Les écrans qui passent
+  `onSelectionChange` obtiennent ces comportements sans changement de code.
+- `Thumbnail` : zone de clic élargie autour de la case à cocher ; badge du code
+  de vue à 80 % d'opacité.
+
+### Corrigé
+
+- Icône `Urgent` recentrée dans son SVG (décalée d'une unité vers la gauche) ;
+  la compensation `ml-[1px]` de `UrgentIndicator` est retirée.
+- Picto de zoom au survol des petites vignettes : un seul SVG au lieu de deux
+  icônes superposées.
+
 ## [1.20.1] - 2026-09-27
 
 ### Corrigé

@@ -76,6 +76,33 @@ export const CustomSearchIcon: React.FC<CustomIconProps> = ({ size = 12, strokeW
   </svg>
 )
 
+/**
+ * Loupe (géométrie de la loupe Search : cercle + manche à 45°) recentrée dans
+ * le carré 12×12 — boîte englobante 0,75→11,25 sur les deux axes —, avec un
+ * trait plus fin que les autres icônes maison (0,35 contre 0,5) : à 40px il
+ * fait ~1,2px. `sign` ajoute « + » ou « − » (branches de 2,14, le quart du
+ * diamètre intérieur environ).
+ * Un seul SVG : pas de superposition d'icônes à recaler à chaque taille.
+ */
+const ZoomGlass: React.FC<CustomIconProps & { sign: "plus" | "minus" }> = ({
+  size = 12,
+  strokeWidth = 0.35,
+  sign,
+}) => (
+  <svg width={size} height={size} viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="5" cy="5" r="4.25" stroke="currentColor" strokeWidth={strokeWidth} />
+    <path d="M8.01 8.01L11.25 11.25" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" />
+    <path d="M3.93 5H6.07" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" />
+    {sign === "plus" && (
+      <path d="M5 3.93V6.07" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" />
+    )}
+  </svg>
+);
+
+export const CustomZoomInIcon: React.FC<CustomIconProps> = (props) => <ZoomGlass {...props} sign="plus" />;
+
+export const CustomZoomOutIcon: React.FC<CustomIconProps> = (props) => <ZoomGlass {...props} sign="minus" />;
+
 export const CustomFlagEmptyIcon: React.FC<CustomIconProps> = ({ size = 12, strokeWidth = 0.5 }) => (
   <svg width={size} height={size} viewBox="0 0 14 12" preserveAspectRatio="xMidYMid meet" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M11 1.20001H3C1.89543 1.20001 1 2.09544 1 3.20001V8.80001C1 9.90458 1.89543 10.8 3 10.8H11C12.1046 10.8 13 9.90458 13 8.80001V3.20001C13 2.09544 12.1046 1.20001 11 1.20001Z" stroke="currentColor" strokeWidth={strokeWidth} strokeMiterlimit="10"/>

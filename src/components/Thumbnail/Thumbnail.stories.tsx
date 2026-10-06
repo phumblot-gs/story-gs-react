@@ -4,6 +4,8 @@ import { fn } from "@storybook/test";
 import { Thumbnail } from "./Thumbnail";
 import { MediaStatus } from "@/utils/mediaStatus";
 import { Layout, HStack, VStack } from "@/components/layout";
+import { Badge } from "@/components/ui/badge";
+import { Icon } from "@/components/ui/icons";
 
 const meta: Meta<typeof Thumbnail> = {
   title: "Components/Thumbnail",
@@ -301,7 +303,28 @@ export const WithIndicators: Story = {
     isAlert: true,
     isVedette: true,
     is360: true,
+    grade: "B",
     view: "B",
+  },
+};
+
+/**
+ * Badge de vue personnalisé : `viewIndicator` remplace le code de vue en haut à droite.
+ */
+export const WithCustomViewIndicator: Story = {
+  args: {
+    picture_id: 3,
+    src: sampleImageUrl,
+    filename: "custom_view.jpg",
+    status: MediaStatus.SUBMITTED_FOR_APPROVAL,
+    grade: "A",
+    view: "worn",
+    viewIndicator: (
+      <Badge className="!bg-orange text-white px-1 gap-0">
+        <Icon name="Urgent" size={10} />
+        2 min
+      </Badge>
+    ),
   },
 };
 

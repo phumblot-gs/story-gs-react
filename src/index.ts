@@ -724,6 +724,32 @@ export type {
   ViewIndicatorProps,
 } from "./components/Thumbnail";
 
+// Export ContactSheetReference component
+export {
+  ContactSheetReference,
+  ContactSheetThumbnailGrid,
+  ReferenceAttributes,
+  ReferenceEditModal,
+} from "./components/ContactSheetReference";
+export type {
+  ContactSheetReferenceProps,
+  ContactSheetThumbnailGridProps,
+  ReferenceAttributesProps,
+  ReferenceEditModalProps,
+  ReferenceData,
+  ReferenceAttributeConfig,
+  ContactSheetExport,
+  ContactSheetThumbnail,
+  ContactSheetSlot,
+  ReorderHandler,
+  ReorderDetails,
+  ReorderViewChange,
+  ThumbnailChange,
+  ThumbnailFeatures,
+  SelectionModifiers,
+  ReferenceUpdate,
+} from "./components/ContactSheetReference";
+
 // Export utilities
 export * from "./utils/mediaStatus";
 export * from "./lib/utils";
