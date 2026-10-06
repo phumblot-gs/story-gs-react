@@ -5,6 +5,15 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.21.1] - 2026-10-07
+
+### Corrigé
+
+- `Thumbnail` : le bouton « … » du menu d'actions devient un `ButtonMenuSmall`
+  (small, secondary, `p-1 w-4 h-4`) avec l'icône `MoreHorizontal` (10 px), au
+  lieu d'un `Button` medium affichant un texte. Libellé accessible « Actions »
+  traduit (`thumbnail.actions`).
+
 ## [1.21.0] - 2026-10-06
 
 ### Ajouté

@@ -52,7 +52,7 @@ describe("Thumbnail — zones de clic", () => {
     render(
       <Thumbnail {...baseProps} onSelectionChange={onSelectionChange} onValidate={vi.fn()} actions={[{ key: "a", label: "A", action: vi.fn() }]} />,
     );
-    await userEvent.click(screen.getByRole("button", { name: "..." }));
+    await userEvent.click(screen.getByRole("button", { name: "Actions" }));
     expect(onSelectionChange).not.toHaveBeenCalled();
   });
 
