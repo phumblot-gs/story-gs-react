@@ -1095,6 +1095,9 @@ export const componentTranslations: TranslationMap = {
   },
 
   // Thumbnail
+  "thumbnail.actions": {
+    EN: "Actions", FR: "Actions", ES: "Acciones", IT: "Azioni", DE: "Aktionen"
+  },
   "thumbnail.noActions": {
     EN: "No action",
     FR: "Aucune action",

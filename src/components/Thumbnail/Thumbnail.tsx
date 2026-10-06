@@ -4,6 +4,7 @@ import { Layout, VStack } from "@/components/layout";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Icon } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
+import { ButtonMenuSmall } from "@/components/ui/button-menu-small";
 import { TruncatedText } from "@/components/ui/truncated-text";
 import { MiddleTruncatedText } from "@/components/ui/middle-truncated-text";
 import { copyToClipboard } from "@/lib/clipboard";
@@ -11,12 +12,6 @@ import { ButtonThumbnailStars } from "@/components/ui/button-thumbnail-stars";
 import { ButtonThumbnailLabels, type LabelColor } from "@/components/ui/button-thumbnail-labels";
 import { ButtonThumbnailTags } from "@/components/ui/button-thumbnail-tags";
 import { ButtonThumbnailComments } from "@/components/ui/button-thumbnail-comments";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from "@/components/ui/dropdown-menu";
 import { ButtonStatus } from "@/components/ButtonStatus";
 import MediaStatus from "@/components/MediaStatus";
 import { MediaStatus as MediaStatusEnum } from "@/utils/mediaStatus";
@@ -899,42 +894,27 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
               )}
 
               {picture_id && actions && actions.length > 0 && (
-                <DropdownMenu
+                <ButtonMenuSmall
+                  size="small"
+                  variant="secondary"
+                  className="p-1 w-4 h-4"
                   open={openMenu === "actions"}
                   onOpenChange={(open) => handleMenuOpenChange("actions", open)}
+                  aria-label={t("thumbnail.actions")}
+                  actions={[
+                    ...actions.slice(0, maxDropdownItems).map((action) => ({
+                      value: action.key,
+                      label: action.label,
+                      onClick: action.action,
+                      disabled: action.disabled,
+                    })),
+                    ...(actions.length > maxDropdownItems
+                      ? [{ label: t("thumbnail.moreActions", { count: actions.length - maxDropdownItems }), disabled: true }]
+                      : []),
+                  ]}
                 >
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      className="p-0 w-6 h-6"
-                      size="medium"
-                      variant="secondary"
-                    >
-                      <span className="text-lg leading-none">...</span>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    {actions.length === 0 ? (
-                      <DropdownMenuItem disabled>{t("thumbnail.noActions")}</DropdownMenuItem>
-                    ) : (
-                      <>
-                        {actions.slice(0, maxDropdownItems).map((action) => (
-                          <DropdownMenuItem
-                            key={action.key}
-                            onClick={action.action}
-                            disabled={action.disabled}
-                          >
-                            {action.label}
-                          </DropdownMenuItem>
-                        ))}
-                        {actions.length > maxDropdownItems && (
-                          <DropdownMenuItem disabled>
-                            {t("thumbnail.moreActions", { count: actions.length - maxDropdownItems })}
-                          </DropdownMenuItem>
-                        )}
-                      </>
-                    )}
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                  <Icon name="MoreHorizontal" size={10} />
+                </ButtonMenuSmall>
               )}
             </div>
           </Layout>
