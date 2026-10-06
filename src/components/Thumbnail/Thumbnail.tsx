@@ -3,7 +3,6 @@ import { cn } from "@/lib/utils";
 import { Layout, VStack } from "@/components/layout";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Icon } from "@/components/ui/icons";
-import { Button } from "@/components/ui/button";
 import { ButtonMenuSmall } from "@/components/ui/button-menu-small";
 import { TruncatedText } from "@/components/ui/truncated-text";
 import { MiddleTruncatedText } from "@/components/ui/middle-truncated-text";
