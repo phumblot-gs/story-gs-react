@@ -177,3 +177,19 @@ export const GrowWithContentControlled: Story = {
     );
   },
 };
+
+/**
+ * `captureFindShortcut`: press Cmd+F (macOS) or Ctrl+F (Windows, Linux) anywhere on the page —
+ * the search field gets the focus instead of the browser's find bar. Press it again while the
+ * field is focused to open the browser's find bar as usual. Enable it on a single Search per page.
+ */
+export const CaptureFindShortcut: Story = {
+  render: () => (
+    <Layout bg="grey" padding={4}>
+      <VStack gap={3} className="w-full max-w-md">
+        <p className="text-sm">Click anywhere on the page, then press Cmd+F / Ctrl+F.</p>
+        <Search captureFindShortcut placeholder="Search..." defaultValue="robe" />
+      </VStack>
+    </Layout>
+  ),
+};

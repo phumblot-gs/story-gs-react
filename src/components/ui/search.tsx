@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils"
 import { useBgContext } from "@/components/layout/BgContext"
 import { Icon } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { isFindShortcut } from "@/lib/keyboard-shortcuts"
 
 export interface SearchProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'type'> {
   onClear?: () => void
@@ -20,7 +21,15 @@ export interface SearchProps extends Omit<React.InputHTMLAttributes<HTMLInputEle
   maxWidth?: string | number
   /** Nombre maximum de lignes affichées en mode textarea (après collage avec retours à la ligne). Défaut: 10. */
   maxRows?: number
+  /**
+   * Intercepte le raccourci de recherche du navigateur (Cmd+F sur macOS,
+   * Ctrl+F ailleurs) pour donner le focus à ce champ. Si le champ a déjà le
+   * focus, le raccourci est laissé au navigateur : un second appui ouvre la
+   * recherche native. À activer sur un seul Search par page. Défaut: false.
+   */
+  captureFindShortcut?: boolean
 }
+
 
 const Search = React.forwardRef<HTMLInputElement | HTMLTextAreaElement, SearchProps>(
   (
@@ -35,6 +44,7 @@ const Search = React.forwardRef<HTMLInputElement | HTMLTextAreaElement, SearchPr
       minWidth,
       maxWidth,
       maxRows = 10,
+      captureFindShortcut = false,
       ...props
     },
     ref
@@ -57,6 +67,26 @@ const Search = React.forwardRef<HTMLInputElement | HTMLTextAreaElement, SearchPr
       }
       return inputRef.current as any
     }, [hasNewlines])
+
+    // Raccourci de recherche : Cmd/Ctrl+F donne le focus au champ au lieu
+    // d'ouvrir la recherche du navigateur.
+    React.useEffect(() => {
+      if (!captureFindShortcut || disabled) return
+      const handleKeyDown = (event: KeyboardEvent) => {
+        // Un autre Search l'a déjà pris en charge.
+        if (event.defaultPrevented || !isFindShortcut(event)) return
+        const field = textareaRef.current ?? inputRef.current
+        // Champ masqué (display: none, démonté…) : on laisse le navigateur.
+        if (!field || field.getClientRects().length === 0) return
+        // Déjà dans le champ : second appui → recherche native du navigateur.
+        if (document.activeElement === field) return
+        event.preventDefault()
+        field.focus()
+        field.select()
+      }
+      window.addEventListener("keydown", handleKeyDown)
+      return () => window.removeEventListener("keydown", handleKeyDown)
+    }, [captureFindShortcut, disabled])
 
     // Styles basés sur le Select - même logique avec ajustement selon bg
     const getBackgroundStyles = () => {

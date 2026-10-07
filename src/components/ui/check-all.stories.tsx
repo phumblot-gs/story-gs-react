@@ -129,7 +129,7 @@ const ClientSideList = () => {
         <div className="flex items-center">
           {/* w-10 column: aligned above the row checkboxes, as in a contact sheet. */}
           <div className="flex w-10 justify-center">
-            <CheckAll {...pageState} onCheckedChange={(checked) => selection.setMany(pageKeys, checked)} />
+            <CheckAll {...pageState} onCheckedChange={(checked) => selection.setMany(pageKeys, checked)} captureSelectAllShortcut />
           </div>
           <CheckAllPages
             selectedCount={selection.count}
@@ -164,6 +164,10 @@ const ClientSideList = () => {
 /**
  * 51 items, 20 per page, every key in memory. Check a page, change page, pick *All pages*,
  * then uncheck a few rows: the menu switches to *Custom*.
+ *
+ * `captureSelectAllShortcut` is on: click the page background, then press Cmd+A / Ctrl+A to
+ * check the current page. In a text field or with the scope menu open, the shortcut keeps its
+ * usual browser meaning.
  */
 export const PaginatedList: Story = {
   render: () => <ClientSideList />,

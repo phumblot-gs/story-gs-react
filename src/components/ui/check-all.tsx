@@ -2,6 +2,7 @@ import * as React from "react"
 
 import { Checkbox } from "@/components/ui/checkbox"
 import { useTranslationSafe, type TranslationMap } from "@/contexts/TranslationContext"
+import { hasOpenOverlay, isEditableTarget, isSelectAllShortcut } from "@/lib/keyboard-shortcuts"
 
 export type CheckAllState = boolean | "indeterminate"
 
@@ -23,6 +24,14 @@ export interface CheckAllProps {
    */
   onCheckedChange: (checked: boolean) => void
   disabled?: boolean
+  /**
+   * Cmd+A (macOS) / Ctrl+A (elsewhere) checks this checkbox instead of selecting the page text.
+   * Left to the browser when the focus is in a text field, textarea, select, combobox, listbox or
+   * editable element, or when a dialog or menu is open. When everything is already selected, the
+   * shortcut does nothing (it never deselects). Enable it on a single CheckAll per page.
+   * Default: false.
+   */
+  captureSelectAllShortcut?: boolean
   className?: string
   /** Accessible label; defaults to "Select all" / "Deselect all". */
   "aria-label"?: string
@@ -40,18 +49,51 @@ export interface CheckAllProps {
  */
 const CheckAll = React.forwardRef<React.ElementRef<typeof Checkbox>, CheckAllProps>(
   (
-    { selectedCount, totalCount, onCheckedChange, disabled, className, "aria-label": ariaLabel, language, translations },
+    {
+      selectedCount,
+      totalCount,
+      onCheckedChange,
+      disabled,
+      captureSelectAllShortcut = false,
+      className,
+      "aria-label": ariaLabel,
+      language,
+      translations,
+    },
     ref,
   ) => {
     const { t } = useTranslationSafe(translations, language)
     const state = getCheckAllState(selectedCount, totalCount)
+    const inactive = disabled || totalCount <= 0
+
+    // Cmd/Ctrl+A coche la case — sauf là où le raccourci a déjà un sens.
+    const innerRef = React.useRef<HTMLButtonElement>(null)
+    React.useImperativeHandle(ref, () => innerRef.current as HTMLButtonElement)
+    const latest = React.useRef({ state, onCheckedChange })
+    latest.current = { state, onCheckedChange }
+    React.useEffect(() => {
+      if (!captureSelectAllShortcut || inactive) return
+      const handleKeyDown = (event: KeyboardEvent) => {
+        if (event.defaultPrevented || !isSelectAllShortcut(event)) return
+        if (isEditableTarget(document.activeElement) || isEditableTarget(event.target as Element)) return
+        if (hasOpenOverlay()) return
+        // Case masquée (démontée, display: none…) : on laisse le navigateur.
+        const box = innerRef.current
+        if (!box || box.getClientRects().length === 0) return
+        // Bloque aussi la sélection du texte de la page quand tout est déjà coché.
+        event.preventDefault()
+        if (latest.current.state !== true) latest.current.onCheckedChange(true)
+      }
+      window.addEventListener("keydown", handleKeyDown)
+      return () => window.removeEventListener("keydown", handleKeyDown)
+    }, [captureSelectAllShortcut, inactive])
     const label = ariaLabel ?? t(state === true ? "checkAll.deselectAll" : "checkAll.selectAll")
 
     return (
       <Checkbox
-        ref={ref}
+        ref={innerRef}
         checked={state}
-        disabled={disabled || totalCount <= 0}
+        disabled={inactive}
         // Checkbox applies the rule itself: false / indeterminate → true, true → false.
         onCheckedChange={(checked) => onCheckedChange(checked === true)}
         aria-label={label}
