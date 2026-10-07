@@ -629,6 +629,7 @@ export type { TextProps } from "./components/ui/text";
 export { Stepper };
 export type { StepperProps, StepperStep, StepperStepState } from "./components/ui/stepper";
 export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider };
+export type { TooltipContentProps } from "./components/ui/tooltip";
 
 // Backward compatibility - ModalLayer is now Modal in layout
 export { Modal as ModalLayer };

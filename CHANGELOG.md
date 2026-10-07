@@ -5,6 +5,20 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.21.4] - 2026-10-07
+
+### Modifié
+
+- `Tooltip` : s'adapte au fond sur lequel il s'affiche (contexte `data-bg` du
+  Layout parent). Sur fond blanc, gris ou hors Layout : fond noir, texte blanc,
+  bordure `black-secondary`, `rounded-[2px]` (inchangé). Sur fond noir : inversé
+  (fond blanc, texte noir, bordure grise), au lieu d'un tooltip noir à peine
+  visible. Nouvelle prop `bg` sur `TooltipContent` pour forcer le rendu. Même
+  API qu'avant : les composants qui l'utilisent (Sidebar, FileBrowser,
+  TruncatedText…) en profitent sans changement.
+- Le tooltip transmet sa propre surface (`data-bg`) à son contenu.
+- Stories Tooltip et documentation en anglais.
+
 ## [1.21.3] - 2026-10-07
 
 ### Corrigé
