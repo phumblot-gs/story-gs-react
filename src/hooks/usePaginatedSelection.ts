@@ -19,7 +19,8 @@ export interface UsePaginatedSelectionOptions {
   /**
    * Any value describing the list (filters, search…). When it changes the
    * selection is cleared: "all except x" must never silently apply to another
-   * set of items.
+   * set of items. Compared by value (objects through their JSON form), so an
+   * object rebuilt on every render with the same content does not reset it.
    */
   resetKey?: unknown;
 }
@@ -57,6 +58,21 @@ interface State<K> {
 const EMPTY = <K,>(): State<K> => ({ mode: "include", keys: new Set<K>() });
 
 /**
+ * Valeur comparable de `resetKey` : un objet est comparé par son contenu (forme
+ * JSON) et non par sa référence. Sinon un objet recréé à chaque rendu
+ * (`resetKey: { status, search }`) viderait la sélection à chaque rendu — et,
+ * le vidage provoquant un nouveau rendu, bouclerait sans fin.
+ */
+function resetSignature(resetKey: unknown): unknown {
+  if (resetKey === null || typeof resetKey !== "object") return resetKey;
+  try {
+    return JSON.stringify(resetKey);
+  } catch {
+    return resetKey; // structure circulaire : repli sur la référence
+  }
+}
+
+/**
  * Selection state for a paginated list, whatever its items and its pagination
  * (client or server side). Pairs with `CheckAll` (current page) and
  * `CheckAllPages` (scope menu), but works with any UI.
@@ -88,12 +104,13 @@ export function usePaginatedSelection<K = string>({
   const [state, setState] = React.useState<State<K>>(() => EMPTY<K>());
 
   // A different list (filters…) starts from an empty selection.
-  const lastResetKey = React.useRef(resetKey);
+  const signature = resetSignature(resetKey);
+  const lastSignature = React.useRef(signature);
   React.useEffect(() => {
-    if (Object.is(lastResetKey.current, resetKey)) return;
-    lastResetKey.current = resetKey;
+    if (Object.is(lastSignature.current, signature)) return;
+    lastSignature.current = signature;
     setState(EMPTY());
-  }, [resetKey]);
+  }, [signature]);
 
   const isSelected = React.useCallback(
     (key: K) => (state.mode === "include" ? state.keys.has(key) : !state.keys.has(key)),
@@ -113,10 +130,16 @@ export function usePaginatedSelection<K = string>({
     });
   }, []);
 
-  const toggle = React.useCallback(
-    (key: K) => setMany([key], !isSelected(key)),
-    [isSelected, setMany],
-  );
+  // Calculé sur l'état le plus récent (mise à jour fonctionnelle) : deux
+  // bascules dans le même lot ne lisent pas un état périmé.
+  const toggle = React.useCallback((key: K) => {
+    setState((current) => {
+      const next = new Set(current.keys);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return { mode: current.mode, keys: next };
+    });
+  }, []);
   const selectOnly = React.useCallback((keys: K[]) => setState({ mode: "include", keys: new Set(keys) }), []);
   const selectAll = React.useCallback(() => setState({ mode: "exclude", keys: new Set<K>() }), []);
   const clear = React.useCallback(() => setState(EMPTY()), []);

@@ -52,4 +52,31 @@ describe("usePaginatedSelection", () => {
     rerender({ totalCount: 6, resetKey: "filtre-2" });
     expect(result.current.count).toBe(0);
   });
+
+  it("compare resetKey par valeur : un objet recréé à chaque rendu ne vide pas la sélection", () => {
+    let renders = 0;
+    const { result, rerender } = renderHook(
+      ({ status }: { status: string }) => {
+        renders++;
+        if (renders > 50) throw new Error("boucle de rendu");
+        return usePaginatedSelection<string>({ totalCount: 5, resetKey: { status } });
+      },
+      { initialProps: { status: "open" } },
+    );
+    act(() => result.current.selectAll());
+    rerender({ status: "open" });
+    expect(result.current.count).toBe(5);
+    rerender({ status: "closed" });
+    expect(result.current.count).toBe(0);
+  });
+
+  it("toggle s'appuie sur l'état le plus récent", () => {
+    const { result } = setup();
+    act(() => {
+      result.current.toggle("a");
+      result.current.toggle("a");
+      result.current.toggle("b");
+    });
+    expect(result.current.value).toEqual({ mode: "include", keys: ["b"] });
+  });
 });

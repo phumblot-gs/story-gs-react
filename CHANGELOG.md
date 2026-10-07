@@ -23,7 +23,8 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 - `usePaginatedSelection<K>()` : état de sélection d'une liste paginée, par
   clés, en mode `include` ou `exclude` (« tout sauf… »), pour la pagination
   côté client (`resolve(allKeys)`) comme côté serveur (`value` à envoyer à
-  l'API). `resetKey` vide la sélection quand les filtres changent.
+  l'API). `resetKey` vide la sélection quand les filtres changent ; il est
+  comparé par valeur, un objet recréé à chaque rendu ne la vide donc pas.
 - Traductions `checkAll.*` et `checkAllPages.*` dans les 5 langues.
 - Stories « Components/CheckAll » : états, liste paginée côté client,
   pagination côté serveur, libellés traduits.
