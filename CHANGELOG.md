@@ -5,6 +5,15 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.21.6] - 2026-10-08
+
+### Modifié
+
+- `PageHeader` : quand le bouton retour est affiché, le bouton du titre passe
+  en variant `ghost` (au lieu de `secondary`), pour ne pas encadrer le titre de
+  deux boutons pleins. Sans bouton retour, il reste `secondary`. Story « With
+  Back Button ».
+
 ## [1.21.5] - 2026-10-08
 
 ### Modifié
