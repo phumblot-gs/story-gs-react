@@ -6,15 +6,25 @@ export interface PageSearchProps {
   leftContent?: React.ReactNode;
   rightContent?: React.ReactNode;
   className?: string;
-  /** Largeur maximale du contenu de gauche (ex: "max-w-md", "max-w-lg", etc.) */
+  /**
+   * Largeur maximale du contenu de gauche (ex: "max-w-md", "max-w-lg").
+   * Aucune par défaut : le contenu de gauche occupe toute la place disponible.
+   */
   leftContentMaxWidth?: string;
+  /**
+   * Décale le contenu de gauche de 3px vers la gauche, pour l'aligner
+   * verticalement sur les cases à cocher d'une ContactSheetReference placée
+   * dessous. Désactivé par défaut.
+   */
+  alignWithContactSheet?: boolean;
 }
 
 const PageSearch: React.FC<PageSearchProps> = ({
   leftContent,
   rightContent,
   className,
-  leftContentMaxWidth = "max-w-lg",
+  leftContentMaxWidth,
+  alignWithContactSheet = false,
 }) => {
   return (
     <Layout
@@ -22,7 +32,7 @@ const PageSearch: React.FC<PageSearchProps> = ({
       className={cn(
         "border-b",
         "flex items-center justify-between gap-10",
-        "px-4 py-0",
+        "px-4 py-4",
         className
       )}
       style={{ borderBottomColor: "var(--layout-w-color-border-default)" }}
@@ -32,7 +42,11 @@ const PageSearch: React.FC<PageSearchProps> = ({
         <HStack 
           gap={2} 
           align="center" 
-          className={cn("py-2 flex-1 min-w-0", leftContentMaxWidth)}
+          className={cn(
+            "flex-1 min-w-0",
+            alignWithContactSheet && "-ml-[3px]",
+            leftContentMaxWidth
+          )}
         >
           {leftContent}
         </HStack>

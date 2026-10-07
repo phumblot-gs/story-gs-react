@@ -5,6 +5,22 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.21.5] - 2026-10-08
+
+### Modifié
+
+- `PageSearch` : padding de 20 px en haut et en bas (`py-4`, au lieu de 10 px
+  posés sur le seul contenu de gauche).
+- `PageSearch` : plus de largeur maximale par défaut pour le contenu de gauche
+  (`max-w-lg` supprimé) ; `leftContentMaxWidth` reste disponible.
+
+### Ajouté
+
+- `PageSearch` : option `alignWithContactSheet` (désactivée par défaut), qui
+  décale le contenu de gauche de 3 px vers la gauche pour aligner une case à
+  cocher de tête sur celles des `ContactSheetReference`. Story « Aligned With
+  Contact Sheet ».
+
 ## [1.21.4] - 2026-10-07
 
 ### Modifié
