@@ -5,6 +5,24 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.22.1] - 2026-10-08
+
+### Ajouté
+
+- `Search` : option `captureFindShortcut` (désactivée par défaut). Cmd+F sur
+  macOS, Ctrl+F ailleurs, donne le focus au champ (texte sélectionné) au lieu
+  d'ouvrir la recherche du navigateur. Si le champ a déjà le focus, le raccourci
+  est laissé au navigateur : un second appui ouvre la recherche native. Sans
+  effet sur un champ désactivé ou masqué. Story « Capture Find Shortcut ».
+- `CheckAll` : option `captureSelectAllShortcut` (désactivée par défaut).
+  Cmd+A sur macOS, Ctrl+A ailleurs, coche la case (la page courante) au lieu de
+  sélectionner le texte de la page. Laissé au navigateur quand le focus est dans
+  un champ de saisie, une zone de texte, un select, une autocomplétion, une
+  liste ou un élément éditable, ou quand une modale ou un menu est ouvert. Ne
+  désélectionne jamais : sans effet quand tout est déjà coché.
+- Utilitaires `src/lib/keyboard-shortcuts.ts` (`isFindShortcut`,
+  `isSelectAllShortcut`, `isEditableTarget`, `hasOpenOverlay`).
+
 ## [1.22.0] - 2026-10-08
 
 ### Ajouté
