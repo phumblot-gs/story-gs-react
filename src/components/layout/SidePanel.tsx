@@ -11,8 +11,12 @@ import { useTranslationSafe } from "@/contexts/TranslationContext";
 
 type BgContext = 'white' | 'grey' | 'black';
 
+// `top-0` : un élément fixed sans `top` garde sa position « naturelle ». Le
+// panneau étant rendu dans un portail en fin de <body>, il tombait sous tout le
+// contenu — hors de l'écran dès que la page dépasse la hauteur de la fenêtre.
+// `topOffset` reste prioritaire : son `top` est posé en style inline.
 const sidePanelVariants = cva(
-  "fixed z-50 right-0 h-full border-l shadow-lg transition ease-in-out",
+  "fixed z-50 top-0 right-0 h-full border-l shadow-lg transition ease-in-out",
   {
     variants: {
       side: {
@@ -133,6 +137,11 @@ export function SidePanel({
   // Normaliser la largeur
   const normalizedWidth = typeof width === "number" ? `${width}px` : width;
   
+  // Décalage depuis le haut, en CSS. `!== undefined` et non un test de vérité :
+  // `topOffset={0}` doit être pris en compte.
+  const topOffsetCss =
+    topOffset === undefined ? undefined : typeof topOffset === "number" ? `${topOffset}px` : topOffset;
+
   // Déterminer la couleur de fond selon bg
   const bgClass = bg === "white" ? "bg-white" : bg === "grey" ? "bg-grey" : "bg-black";
   
@@ -166,8 +175,7 @@ export function SidePanel({
           )}
           style={{
             width: normalizedWidth,
-            ...(topOffset && { top: typeof topOffset === "number" ? `${topOffset}px` : topOffset }),
-            ...(topOffset && { height: `calc(100% - ${typeof topOffset === "number" ? `${topOffset}px` : topOffset})` }),
+            ...(topOffsetCss !== undefined && { top: topOffsetCss, height: `calc(100% - ${topOffsetCss})` }),
           }}
           data-bg={bg}
           aria-describedby={undefined}
