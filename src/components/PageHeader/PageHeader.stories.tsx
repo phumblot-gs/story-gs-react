@@ -463,6 +463,24 @@ export const WithLogo: Story = {
   )
 };
 
+/**
+ * Back button and title button together: the title button switches to the ghost variant so that
+ * the title is not framed by two filled buttons.
+ */
+export const WithBackButton: Story = {
+  args: {
+    title: "BRANDX",
+    showTitleButton: true,
+    showBackButton: true,
+  },
+  render: (args) => (
+    <PageHeader
+      {...args}
+      logo={<GsLogo />}
+    />
+  )
+};
+
 export const Complete: Story = {
   args: {
     title: "Collection Femme Printemps 2025",

@@ -58,10 +58,13 @@ const PageTitle: React.FC<PageTitleProps> = ({
         <TruncatedText text={title} as="h2" className="gs-typo-h2 whitespace-nowrap" tooltipSide="bottom" />
       </div>
       {showButton && (
+        // Avec le bouton retour, deux boutons secondary encadrant le titre
+        // alourdissent l'en-tête : le bouton du titre passe alors en ghost.
         <Button
-          variant="secondary"
+          variant={showBackButton ? "ghost" : "secondary"}
           className="p-0 w-6 h-6"
           onClick={onButtonClick}
+          data-testid="page-title-button"
         >
           <IconProvider icon={buttonIcon} size={14} />
         </Button>
