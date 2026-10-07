@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SidePanel } from "@/components/layout/SidePanel";
 import { Button } from "@/components/ui/button";
 import { VStack, HStack } from "@/components/layout";
@@ -436,6 +436,51 @@ export const WithTopOffset: Story = {
             <h2 className="gs-typo-h2 text-white mb-4">Panneau avec topOffset</h2>
             <p className="text-white text-sm">
               Ce panneau a un décalage de 50px depuis le haut pour laisser place au PageHeader.
+            </p>
+          </div>
+        </SidePanel>
+      </>
+    );
+  },
+};
+
+/**
+ * Long page: the page behind the panel is several screens high and is scrolled
+ * to the bottom before the panel opens. The panel must stay anchored to the top
+ * of the window — before 1.21.3 it was rendered below the page content, off
+ * screen, and only the overlay was visible.
+ */
+export const LongPage: Story = {
+  name: "Long page",
+  render: () => {
+    const [isOpen, setIsOpen] = useState(false);
+
+    useEffect(() => {
+      // Défile en bas de la page, comme un utilisateur qui ouvre le panneau
+      // depuis le bas d'une longue planche contact.
+      window.scrollTo(0, document.documentElement.scrollHeight);
+    }, []);
+
+    return (
+      <>
+        <div className="bg-grey">
+          {Array.from({ length: 4 }, (_, i) => (
+            <section
+              key={i}
+              className="h-screen flex items-center justify-center border-b border-grey-strong"
+            >
+              <span className="text-sm">Screen {i + 1} / 4 — scroll down</span>
+            </section>
+          ))}
+          <div className="p-6 flex justify-center">
+            <Button onClick={() => setIsOpen(true)}>Open SidePanel (bottom of a long page)</Button>
+          </div>
+        </div>
+        <SidePanel isOpen={isOpen} onClose={() => setIsOpen(false)}>
+          <div className="p-6">
+            <h2 className="gs-typo-h2 text-white mb-4">Long page</h2>
+            <p className="text-white text-sm">
+              The page behind is scrolled to the bottom: the panel stays anchored to the top of the window.
             </p>
           </div>
         </SidePanel>

@@ -5,6 +5,19 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.21.3] - 2026-10-07
+
+### Corrigé
+
+- `SidePanel` : le panneau est visible sur les pages plus hautes que l'écran.
+  Rendu `fixed` dans un portail en fin de page sans `top`, il se plaçait sous
+  tout le contenu, hors de l'écran ; il est désormais ancré en haut de la
+  fenêtre (`top-0`). `topOffset` reste prioritaire. Le contournement
+  `className="top-0"` n'est plus nécessaire.
+- `SidePanel` : `topOffset={0}` est pris en compte (il était ignoré).
+- Story « Long page » : page de plusieurs écrans, défilée vers le bas avant
+  l'ouverture du panneau.
+
 ## [1.21.2] - 2026-10-07
 
 ### Ajouté
