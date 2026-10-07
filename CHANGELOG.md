@@ -5,6 +5,30 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.22.0] - 2026-10-08
+
+### Ajouté
+
+- `CheckAll` : case « tout sélectionner » d'une liste (typiquement la page
+  courante d'une liste paginée), quel que soit le type d'objet. Ne connaît que
+  des compteurs (`selectedCount`, `totalCount`) : décochée, cochée ou
+  indéterminée ; un clic sélectionne (depuis décochée ou indéterminée) ou
+  désélectionne (depuis cochée). Libellé accessible traduit. Utilitaire
+  `getCheckAllState`.
+- `CheckAllPages` : menu de portée de la sélection à côté de `CheckAll` —
+  « Page courante (n) », « Toutes les pages (n) », « Tout désélectionner » ;
+  affiche la portée courante, y compris « Personnalisée (n) » en lecture seule.
+  « Page courante » est masqué s'il n'y a qu'une page. Utilitaire
+  `getCheckAllPagesScope`.
+- `usePaginatedSelection<K>()` : état de sélection d'une liste paginée, par
+  clés, en mode `include` ou `exclude` (« tout sauf… »), pour la pagination
+  côté client (`resolve(allKeys)`) comme côté serveur (`value` à envoyer à
+  l'API). `resetKey` vide la sélection quand les filtres changent ; il est
+  comparé par valeur, un objet recréé à chaque rendu ne la vide donc pas.
+- Traductions `checkAll.*` et `checkAllPages.*` dans les 5 langues.
+- Stories « Components/CheckAll » : états, liste paginée côté client,
+  pagination côté serveur, libellés traduits.
+
 ## [1.21.6] - 2026-10-08
 
 ### Modifié
