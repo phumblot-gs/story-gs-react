@@ -5,6 +5,19 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.21.2] - 2026-10-07
+
+### Ajouté
+
+- Icône `Reports` (axes et trois barres d'histogramme), au format des icônes
+  maison : 12 × 12, `currentColor`, trait de 0,5 réglable.
+
+### Corrigé
+
+- `ContactSheetReference` : quand aucune vignette n'affiche les boutons de
+  validation, le padding bas passe de 15 à 25 px. L'écart entre le bas des
+  vignettes et le bas de la référence est le même avec ou sans boutons.
+
 ## [1.21.1] - 2026-10-07
 
 ### Corrigé

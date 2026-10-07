@@ -80,3 +80,13 @@ export const CustomBrokenFileIcon: React.FC<CustomIconProps> = ({ size = 12 }) =
     <path fill="currentColor" d="m50,.71l-.71-.71-8.79,8.79V3H9.5v36.79L0,49.29l.71.71,8.79-8.79v5.79h31V10.21L50,.71ZM10.5,4h29v5.79l-29,29V4Zm0,42v-4.5h29v4.5H10.5Zm29-5.5H10.5v-.29l29-29v29.29Z"/>
   </svg>
 )
+
+/** Rapports : axes et trois barres d'histogramme. */
+export const CustomReportsIcon: React.FC<CustomIconProps> = ({ size = 12, strokeWidth = 0.5 }) => (
+  <svg width={size} height={size} viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M1 1v10h10" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round"/>
+    <rect x="3" y="7" width="1.5" height="3" rx="0.25" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round"/>
+    <rect x="6" y="3" width="1.5" height="7" rx="0.25" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round"/>
+    <rect x="9" y="5" width="1.5" height="5" rx="0.25" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+)
