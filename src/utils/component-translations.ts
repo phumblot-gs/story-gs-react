@@ -378,6 +378,57 @@ export const componentTranslations: TranslationMap = {
     DE: "Abbrechen"
   },
 
+  // CheckAll / CheckAllPages
+  "checkAll.selectAll": {
+    EN: "Select all",
+    FR: "Tout sélectionner",
+    ES: "Seleccionar todo",
+    IT: "Seleziona tutto",
+    DE: "Alle auswählen"
+  },
+  "checkAll.deselectAll": {
+    EN: "Deselect all",
+    FR: "Tout désélectionner",
+    ES: "Deseleccionar todo",
+    IT: "Deseleziona tutto",
+    DE: "Alle abwählen"
+  },
+  "checkAllPages.label": {
+    EN: "Selection scope",
+    FR: "Étendue de la sélection",
+    ES: "Alcance de la selección",
+    IT: "Ambito della selezione",
+    DE: "Auswahlbereich"
+  },
+  "checkAllPages.placeholder": {
+    EN: "Selection",
+    FR: "Sélection",
+    ES: "Selección",
+    IT: "Selezione",
+    DE: "Auswahl"
+  },
+  "checkAllPages.page": {
+    EN: "Current page ({count})",
+    FR: "Page courante ({count})",
+    ES: "Página actual ({count})",
+    IT: "Pagina corrente ({count})",
+    DE: "Aktuelle Seite ({count})"
+  },
+  "checkAllPages.all": {
+    EN: "All pages ({count})",
+    FR: "Toutes les pages ({count})",
+    ES: "Todas las páginas ({count})",
+    IT: "Tutte le pagine ({count})",
+    DE: "Alle Seiten ({count})"
+  },
+  "checkAllPages.custom": {
+    EN: "Custom ({count})",
+    FR: "Personnalisée ({count})",
+    ES: "Personalizada ({count})",
+    IT: "Personalizzata ({count})",
+    DE: "Benutzerdefiniert ({count})"
+  },
+
   // Pagination
   "pagination.previous": {
     EN: "Previous",
