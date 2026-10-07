@@ -381,3 +381,33 @@ describe("ContactSheetReference — exportsLayout", () => {
     expect(sections[1].querySelectorAll("[data-picture-id]")).toHaveLength(1);
   });
 });
+
+describe("ContactSheetReference — espacement bas", () => {
+  const content = (container: HTMLElement) => container.querySelector('[data-testid="reference-content"]');
+
+  it("garde 15px sous les boutons de validation (10px + 15px = 25px)", () => {
+    const { container } = render(
+      <ContactSheetReference reference={reference} exports={makeExports()} onThumbnailChange={vi.fn()} />,
+    );
+    expect(content(container)).toHaveClass("pb-3");
+  });
+
+  it("passe à 25px quand aucune vignette n'affiche de boutons de validation", () => {
+    const { container, rerender } = render(<ContactSheetReference reference={reference} exports={makeExports()} />);
+    expect(content(container)).toHaveClass("pb-5");
+    rerender(
+      <ContactSheetReference
+        reference={reference}
+        exports={makeExports()}
+        onThumbnailChange={vi.fn()}
+        thumbnailFeatures={{ validation: false }}
+      />,
+    );
+    expect(content(container)).toHaveClass("pb-5");
+  });
+
+  it("reste à 15px sans vignettes", () => {
+    const { container } = render(<ContactSheetReference reference={reference} />);
+    expect(content(container)).toHaveClass("pb-3");
+  });
+});

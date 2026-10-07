@@ -57,6 +57,8 @@ export const renderIcon = (
       return <CustomIcons.CustomScrollIcon size={size} strokeWidth={strokeWidth} />;
 
     // Item icons
+    case "Reports":
+      return <CustomIcons.CustomReportsIcon size={size} strokeWidth={strokeWidth} />;
     case "Tag":
       return <CustomIcons.CustomTagIcon size={size} strokeWidth={strokeWidth} />;
     case "Bell":
