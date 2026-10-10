@@ -228,6 +228,9 @@ export const ButtonMenuSmall = React.forwardRef<HTMLButtonElement, ButtonMenuSma
             onFocus={onFocus}
             onBlur={onBlur}
             {...buttonProps}
+            // Déclencheur de menu : l'état ouvert est porté par aria-expanded (Radix),
+            // pas par l'aria-pressed qu'ajoute Toggle.
+            aria-pressed={undefined}
             data-open={isOpen ? "true" : "false"}
           >
             {children}

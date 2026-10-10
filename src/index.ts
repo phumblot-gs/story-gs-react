@@ -728,6 +728,7 @@ export type {
   ThumbnailSize,
   ThumbnailPresetSize,
   ThumbnailAction,
+  ThumbnailStatusButton,
   AlertIndicatorProps,
   VedetteIndicatorProps,
   UrgentIndicatorProps,

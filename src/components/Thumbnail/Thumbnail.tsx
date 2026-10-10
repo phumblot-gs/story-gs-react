@@ -22,6 +22,7 @@ import {
   PopoverContent,
 } from "@/components/ui/popover";
 import { useTranslationSafe, type TranslationMap } from "@/contexts/TranslationContext";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 /** Configuration de rejet du bench */
 export interface BenchRejectionOptions {
@@ -55,6 +56,42 @@ export type ThumbnailPresetSize = "small" | "large" | "auto";
  * - Une valeur CSS personnalisée comme "400px", "200px", "15rem", etc.
  */
 export type ThumbnailSize = ThumbnailPresetSize | (string & {});
+
+/**
+ * Bouton de statut affiché sous la vignette (✓ / ✗). Données pures : c'est
+ * l'application qui décide des boutons, de leur état actif et de leur
+ * désactivation selon l'état de l'image.
+ */
+export interface ThumbnailStatusButton {
+  /** Identifiant renvoyé au clic ("select", "validate", "refuse"…). Unique dans la vignette. */
+  key: string;
+  icon: "Check" | "X";
+  /** Statut dont le bouton prend la couleur (MediaStatus : 30, 31, 50…). */
+  status: MediaStatusEnum;
+  /** Bouton du statut courant (fond plein). Peut rester cliquable. */
+  isActive?: boolean;
+  /** Non cliquable. Rendu grisé s'il est inactif, aspect normal s'il est actif (statut courant). */
+  disabled?: boolean;
+  /** Libellé accessible et infobulle (défaut : celui de ButtonStatus). */
+  label?: string;
+  /** Ouvre le menu des motifs de refus du bench (si configuré) au lieu de cliquer directement. */
+  rejectionReasons?: boolean;
+}
+
+/** Bouton de statut prêt à rendre : nouveau mode ou ancien mode (onValidate / onReject). */
+interface ResolvedStatusButton {
+  key: string;
+  icon: "Check" | "X";
+  status: MediaStatusEnum;
+  isActive: boolean;
+  disabled: boolean;
+  /** Rendu grisé (opacité + curseur interdit). */
+  greyed: boolean;
+  label?: string;
+  /** Ouvre le menu des motifs de refus. */
+  withReasons: boolean;
+  onSelect: (reason?: string) => void;
+}
 
 export interface ThumbnailAction {
   /** Clé unique de l'action */
@@ -197,9 +234,25 @@ export interface ThumbnailProps {
   onTagRemove?: (tag: string) => void;
   /** Callback d'ajout de commentaire */
   onCommentAdd?: (comment: string) => Promise<void>;
-  /** Callback de validation */
+  /**
+   * Boutons de statut sous la vignette, dans l'ordre d'affichage (0, 1 ou 2).
+   * Défini (même `[]`), il remplace entièrement onValidate / onReject /
+   * validateDisabled / rejectDisabled. Avec `[]`, la ligne est vide mais garde
+   * sa hauteur (alignement de grille). Aucune règle de statut n'est appliquée :
+   * `isActive` et `disabled` viennent de l'application.
+   */
+  statusButtons?: ThumbnailStatusButton[];
+  /** Clic sur un bouton de statut ; `reason` = motif choisi dans le menu des motifs de refus. */
+  onStatusButtonClick?: (key: string, reason?: string) => void;
+  /**
+   * Callback de validation.
+   * @deprecated Utiliser `statusButtons` et `onStatusButtonClick`.
+   */
   onValidate?: () => void;
-  /** Callback de rejet. Si rejection_options actif, reçoit le message de refus choisi. */
+  /**
+   * Callback de rejet. Si rejection_options actif, reçoit le message de refus choisi.
+   * @deprecated Utiliser `statusButtons` (avec `rejectionReasons`) et `onStatusButtonClick`.
+   */
   onReject?: (rejectionMessage?: string) => void;
   /** Données du bench pour les options de rejet */
   bench?: ThumbnailBench;
@@ -214,6 +267,8 @@ export interface ThumbnailProps {
    * Cas d'usage : verrouiller l'action pendant une écriture en cours (changement de
    * statut en lot, par exemple) pour interdire une écriture concurrente, au lieu de
    * laisser un bouton actif dont le clic serait rejeté en aval.
+   *
+   * @deprecated Utiliser `statusButtons` avec `disabled`.
    */
   validateDisabled?: boolean;
   /**
@@ -227,6 +282,8 @@ export interface ThumbnailProps {
    * Si un menu de motifs de refus est configuré
    * (`bench.config.validation.rejection_options`), le menu ne peut plus être ouvert
    * et se referme s'il l'était : aucun motif n'est cliquable pendant la désactivation.
+   *
+   * @deprecated Utiliser `statusButtons` avec `disabled`.
    */
   rejectDisabled?: boolean;
   /**
@@ -370,6 +427,8 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
   onTagAdd,
   onTagRemove,
   onCommentAdd,
+  statusButtons,
+  onStatusButtonClick,
   onValidate,
   onReject,
   bench,
@@ -395,7 +454,9 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
   const clickEventRef = useRef<React.PointerEvent | null>(null);
 
   // État pour gérer les menus mutuellement exclusifs
-  type MenuId = "stars" | "labels" | "tags" | "comments" | "actions" | "reject" | null;
+  // Menus du pied, plus un menu des motifs de refus par bouton de statut
+  // (`status:<key>`).
+  type MenuId = "stars" | "labels" | "tags" | "comments" | "actions" | `status:${string}` | null;
   const [openMenu, setOpenMenu] = useState<MenuId>(null);
 
   // État pour la vue du menu de rejet (main ou secondary)
@@ -423,6 +484,53 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
   // `disabled:pointer-events-none`) pour les boutons étoiles / couleurs.
   const externallyDisabledButtonClass = "disabled:opacity-50";
 
+  // Boutons de statut à rendre. `statusButtons` défini : les données de
+  // l'application, sans aucune règle de statut. Sinon, ancien mode : ✗ puis ✓
+  // construits depuis onReject / onValidate avec les règles 31 / 35 / 50, pour
+  // un rendu strictement identique aux versions antérieures.
+  const resolvedStatusButtons: ResolvedStatusButton[] =
+    statusButtons !== undefined
+      ? statusButtons.map((button) => ({
+          key: button.key,
+          icon: button.icon,
+          status: button.status,
+          isActive: !!button.isActive,
+          disabled: !!button.disabled,
+          // Désactivé inactif : grisé. Désactivé actif (statut courant) : aspect normal.
+          greyed: !!button.disabled && !button.isActive,
+          label: button.label,
+          withReasons: !!button.rejectionReasons && hasRejectionMenu,
+          onSelect: (reason?: string) => onStatusButtonClick?.(button.key, reason),
+        }))
+      : [
+          ...(onReject
+            ? [{
+                key: "reject",
+                icon: "X" as const,
+                status: 31 as MediaStatusEnum,
+                isActive: isRejectedStatus,
+                disabled: rejectButtonDisabled,
+                // Ancien mode : seule la désactivation externe grise le bouton.
+                greyed: rejectDisabled,
+                withReasons: hasRejectionMenu,
+                onSelect: (reason?: string) => (reason === undefined ? onReject() : onReject(reason)),
+              }]
+            : []),
+          ...(onValidate
+            ? [{
+                key: "validate",
+                icon: "Check" as const,
+                status: 50 as MediaStatusEnum,
+                isActive: isValidatedStatus,
+                disabled: validateButtonDisabled,
+                greyed: validateDisabled,
+                withReasons: false,
+                onSelect: () => onValidate(),
+              }]
+            : []),
+        ];
+  const showStatusRow = statusButtons !== undefined || !!onValidate || !!onReject;
+
   // Handler pour gérer l'ouverture/fermeture des menus
   const handleMenuOpenChange = useCallback((menuId: MenuId, open: boolean) => {
     setOpenMenu(open ? menuId : null);
@@ -431,11 +539,21 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
   // Si le refus est désactivé alors que le menu de motifs est ouvert, on ferme le
   // menu et on oublie son état : il ne doit pas se réouvrir tout seul à la levée
   // de la désactivation.
+  const disabledReasonMenus = resolvedStatusButtons
+    .filter((button) => button.withReasons && button.disabled)
+    .map((button) => `status:${button.key}`)
+    .join("|");
   useEffect(() => {
-    if (!rejectButtonDisabled) return;
-    setOpenMenu((current) => (current === "reject" ? null : current));
-    setRejectMenuView("main");
-  }, [rejectButtonDisabled]);
+    if (!disabledReasonMenus) return;
+    const closed = disabledReasonMenus.split("|");
+    setOpenMenu((current) => {
+      if (current && closed.includes(current)) {
+        setRejectMenuView("main");
+        return null;
+      }
+      return current;
+    });
+  }, [disabledReasonMenus]);
 
   // Même règle pour la notation et les labels : un menu ne doit pas rester ouvert
   // quand son bouton vient d'être désactivé de l'extérieur, et on oublie son état
@@ -588,6 +706,164 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
     },
     [selectOnFooterClick, onSelectionChange, selected]
   );
+
+  // Bouton de statut : direct, ou ouvrant le menu des motifs de refus. Avec un
+  // `label`, une infobulle (Tooltip) est posée sur le conteneur — il reçoit le
+  // survol même quand le bouton est désactivé.
+  const renderStatusButton = (button: ResolvedStatusButton) => {
+    const menuId = `status:${button.key}` as const;
+    const wrapperClass = cn("inline-flex", button.greyed && "cursor-not-allowed");
+    const buttonClass = cn(button.greyed && externallyDisabledButtonClass);
+    const withTooltip = (node: React.ReactElement) =>
+      button.label ? (
+        <TooltipProvider key={button.key}>
+          <Tooltip>
+            <TooltipTrigger asChild>{node}</TooltipTrigger>
+            <TooltipContent side="bottom">{button.label}</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      ) : (
+        node
+      );
+
+    if (!button.withReasons) {
+      return withTooltip(
+        <span key={button.key} className={wrapperClass}>
+          <ButtonStatus
+            icon={button.icon}
+            isActive={button.isActive}
+            status={button.status}
+            size="small"
+            disabled={button.disabled}
+            className={buttonClass}
+            aria-label={button.label}
+            onClick={() => button.onSelect()}
+          />
+        </span>
+      );
+    }
+
+    const choose = (reason: string) => {
+      button.onSelect(reason);
+      handleMenuOpenChange(menuId, false);
+      setRejectMenuView("main");
+    };
+    return (
+      <Popover
+        key={button.key}
+        open={openMenu === menuId && !button.disabled}
+        onOpenChange={(open) => {
+          if (open && button.disabled) return;
+          handleMenuOpenChange(menuId, open);
+          if (!open) setRejectMenuView("main");
+        }}
+      >
+        {withTooltip(
+          <PopoverTrigger asChild>
+            <span className={wrapperClass}>
+              <ButtonStatus
+                icon={button.icon}
+                isActive={button.isActive}
+                status={button.status}
+                size="small"
+                disabled={button.disabled}
+                className={buttonClass}
+                aria-label={button.label}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleMenuOpenChange(menuId, openMenu !== menuId);
+                }}
+              />
+            </span>
+          </PopoverTrigger>
+        )}
+        <PopoverContent
+          side="top"
+          align="start"
+          sideOffset={8}
+          className="w-auto min-w-[200px] max-w-[280px] rounded-sm border-0 bg-black p-0"
+        >
+          {rejectMenuView === "main" ? (
+            <VStack gap={0} padding={0}>
+              {/* Header */}
+              <div className="flex items-center justify-between px-3 pt-3 pb-2">
+                <span className="text-sm font-medium text-white">{t("thumbnail.chooseReason")}</span>
+                <button
+                  type="button"
+                  className="text-white hover:text-grey-lighter transition-colors p-0.5"
+                  onClick={() => handleMenuOpenChange(menuId, false)}
+                >
+                  <Icon name="X" size={10} strokeWidth={1} />
+                </button>
+              </div>
+              {/* Main options */}
+              {rejectionOptions?.main?.map((reason, index) => (
+                <button
+                  key={`main-${index}`}
+                  type="button"
+                  className="w-full px-3 py-1.5 text-left text-sm text-white hover:bg-white/10 transition-colors"
+                  onClick={() => choose(reason)}
+                >
+                  {reason}
+                </button>
+              ))}
+              {/* Link to secondary options */}
+              {rejectionOptions?.secondary && rejectionOptions.secondary.length > 0 && (
+                <>
+                  <div className="mx-3 border-t border-white/20" />
+                  <button
+                    type="button"
+                    className="w-full px-3 py-1.5 flex items-center justify-between text-sm text-grey-lighter hover:bg-white/10 transition-colors"
+                    onClick={() => setRejectMenuView("secondary")}
+                  >
+                    <span>{t("thumbnail.otherReason")}</span>
+                    <Icon name="ChevronRight" size={14} strokeWidth={2} />
+                  </button>
+                </>
+              )}
+            </VStack>
+          ) : (
+            <VStack gap={0} padding={0}>
+              {/* Header with back button */}
+              <div className="flex items-center justify-between px-3 pt-3 pb-2">
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    className="text-white hover:text-grey-lighter transition-colors p-0.5"
+                    onClick={() => setRejectMenuView("main")}
+                  >
+                    <Icon name="ChevronLeft" size={14} strokeWidth={2} />
+                  </button>
+                  <span className="text-sm font-medium text-white">{t("thumbnail.chooseReason")}</span>
+                </div>
+                <button
+                  type="button"
+                  className="text-white hover:text-grey-lighter transition-colors p-0.5"
+                  onClick={() => {
+                    handleMenuOpenChange(menuId, false);
+                    setRejectMenuView("main");
+                  }}
+                >
+                  <Icon name="X" size={10} strokeWidth={1} />
+                </button>
+              </div>
+              {/* Secondary options */}
+              {rejectionOptions?.secondary?.map((reason, index) => (
+                <button
+                  key={`secondary-${index}`}
+                  type="button"
+                  className="w-full px-3 py-1.5 text-left text-sm text-white hover:bg-white/10 transition-colors"
+                  onClick={() => choose(reason)}
+                >
+                  {reason}
+                </button>
+              ))}
+            </VStack>
+          )}
+        </PopoverContent>
+      </Popover>
+    );
+  };
 
   // Wrapper classes
   const wrapperClasses = cn(
@@ -931,157 +1207,13 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
         )}
       </Layout>
 
-      {/* Validation/Rejection buttons */}
-      {(onValidate || onReject) && (
+      {/* Status buttons (✗ / ✓) */}
+      {showStatusRow && (
         <div
           className="flex justify-center items-center gap-2 min-h-[40px] py-2"
           style={{ width: config.containerWidth }}
         >
-          {picture_id && onReject && !hasRejectionMenu && (
-            <span className={cn("inline-flex", rejectDisabled && "cursor-not-allowed")}>
-              <ButtonStatus
-                icon="X"
-                isActive={isRejectedStatus}
-                status={31}
-                size="small"
-                disabled={rejectButtonDisabled}
-                className={cn(rejectDisabled && externallyDisabledButtonClass)}
-                onClick={() => onReject()}
-              />
-            </span>
-          )}
-          {picture_id && onReject && hasRejectionMenu && (
-            <Popover
-              open={openMenu === "reject" && !rejectButtonDisabled}
-              onOpenChange={(open) => {
-                if (open && rejectButtonDisabled) return;
-                handleMenuOpenChange("reject", open);
-                if (!open) setRejectMenuView("main");
-              }}
-            >
-              <PopoverTrigger asChild>
-                <span className={cn("inline-flex", rejectDisabled && "cursor-not-allowed")}>
-                  <ButtonStatus
-                    icon="X"
-                    isActive={isRejectedStatus}
-                    status={31}
-                    size="small"
-                    disabled={rejectButtonDisabled}
-                    className={cn(rejectDisabled && externallyDisabledButtonClass)}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleMenuOpenChange("reject", openMenu !== "reject");
-                    }}
-                  />
-                </span>
-              </PopoverTrigger>
-              <PopoverContent
-                side="top"
-                align="start"
-                sideOffset={8}
-                className="w-auto min-w-[200px] max-w-[280px] rounded-sm border-0 bg-black p-0"
-              >
-                {rejectMenuView === "main" ? (
-                  <VStack gap={0} padding={0}>
-                    {/* Header */}
-                    <div className="flex items-center justify-between px-3 pt-3 pb-2">
-                      <span className="text-sm font-medium text-white">{t("thumbnail.chooseReason")}</span>
-                      <button
-                        type="button"
-                        className="text-white hover:text-grey-lighter transition-colors p-0.5"
-                        onClick={() => handleMenuOpenChange("reject", false)}
-                      >
-                        <Icon name="X" size={10} strokeWidth={1} />
-                      </button>
-                    </div>
-                    {/* Main options */}
-                    {rejectionOptions?.main?.map((reason, index) => (
-                      <button
-                        key={`main-${index}`}
-                        type="button"
-                        className="w-full px-3 py-1.5 text-left text-sm text-white hover:bg-white/10 transition-colors"
-                        onClick={() => {
-                          onReject(reason);
-                          handleMenuOpenChange("reject", false);
-                          setRejectMenuView("main");
-                        }}
-                      >
-                        {reason}
-                      </button>
-                    ))}
-                    {/* Link to secondary options */}
-                    {rejectionOptions?.secondary && rejectionOptions.secondary.length > 0 && (
-                      <>
-                        <div className="mx-3 border-t border-white/20" />
-                        <button
-                          type="button"
-                          className="w-full px-3 py-1.5 flex items-center justify-between text-sm text-grey-lighter hover:bg-white/10 transition-colors"
-                          onClick={() => setRejectMenuView("secondary")}
-                        >
-                          <span>{t("thumbnail.otherReason")}</span>
-                          <Icon name="ChevronRight" size={14} strokeWidth={2} />
-                        </button>
-                      </>
-                    )}
-                  </VStack>
-                ) : (
-                  <VStack gap={0} padding={0}>
-                    {/* Header with back button */}
-                    <div className="flex items-center justify-between px-3 pt-3 pb-2">
-                      <div className="flex items-center gap-2">
-                        <button
-                          type="button"
-                          className="text-white hover:text-grey-lighter transition-colors p-0.5"
-                          onClick={() => setRejectMenuView("main")}
-                        >
-                          <Icon name="ChevronLeft" size={14} strokeWidth={2} />
-                        </button>
-                        <span className="text-sm font-medium text-white">{t("thumbnail.chooseReason")}</span>
-                      </div>
-                      <button
-                        type="button"
-                        className="text-white hover:text-grey-lighter transition-colors p-0.5"
-                        onClick={() => {
-                          handleMenuOpenChange("reject", false);
-                          setRejectMenuView("main");
-                        }}
-                      >
-                        <Icon name="X" size={10} strokeWidth={1} />
-                      </button>
-                    </div>
-                    {/* Secondary options */}
-                    {rejectionOptions?.secondary?.map((reason, index) => (
-                      <button
-                        key={`secondary-${index}`}
-                        type="button"
-                        className="w-full px-3 py-1.5 text-left text-sm text-white hover:bg-white/10 transition-colors"
-                        onClick={() => {
-                          onReject(reason);
-                          handleMenuOpenChange("reject", false);
-                          setRejectMenuView("main");
-                        }}
-                      >
-                        {reason}
-                      </button>
-                    ))}
-                  </VStack>
-                )}
-              </PopoverContent>
-            </Popover>
-          )}
-          {picture_id && onValidate && (
-            <span className={cn("inline-flex", validateDisabled && "cursor-not-allowed")}>
-              <ButtonStatus
-                icon="Check"
-                isActive={isValidatedStatus}
-                status={50}
-                size="small"
-                disabled={validateButtonDisabled}
-                className={cn(validateDisabled && externallyDisabledButtonClass)}
-                onClick={onValidate}
-              />
-            </span>
-          )}
+          {picture_id && resolvedStatusButtons.map((button) => renderStatusButton(button))}
         </div>
       )}
     </div>

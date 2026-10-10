@@ -148,11 +148,13 @@ export const ContactSheetReference: React.FC<ContactSheetReferenceProps> = ({
   const pictureIds = media.map((th) => th.picture_id as number);
   const selectedCount = media.filter((th) => th.selected).length;
   const hasThumbnails = exports.some((e) => e.thumbnails.length > 0);
-  // Les vignettes affichent une ligne de boutons ✗ / ✓ (40px, boutons de 20px :
-  // 10px sous les boutons) seulement si la validation est active. Sans elle, le
-  // padding bas compense ces 10px : 25px entre le bas des vignettes et le bord,
-  // comme avec les boutons (10px + 15px).
-  const showsValidation = !!onThumbnailChange && thumbnailFeatures?.validation !== false;
+  // Les vignettes affichent une ligne de boutons de statut (40px, boutons de
+  // 20px : 10px sous les boutons) avec les boutons en données (`statusButtons`)
+  // ou l'ancienne validation. Sans ligne, le padding bas compense ces 10px :
+  // 25px entre le bas des vignettes et le bord, comme avec les boutons (10px + 15px).
+  const showsValidation =
+    exports.some((e) => e.thumbnails.some((th) => th.statusButtons !== undefined)) ||
+    (!!onThumbnailChange && thumbnailFeatures?.validation !== false);
   // Cochée : la référence et toutes ses vignettes. Intermédiaire : sélection
   // partielle (vignettes décochées une à une, ou vignettes seules cochées).
   const checkState: boolean | "indeterminate" =

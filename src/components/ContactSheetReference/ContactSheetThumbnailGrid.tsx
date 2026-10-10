@@ -394,8 +394,15 @@ export const ContactSheetThumbnailGrid: React.FC<ContactSheetThumbnailGridProps>
     (change: DistributiveOmit<ThumbnailChange, "pictureId" | "exportId">) =>
       onThumbnailChange?.({ ...change, pictureId: thumb.picture_id as number, exportId } as ThumbnailChange);
 
+  // Alignement : dès qu'une vignette a des boutons de statut (données), la
+  // ligne de boutons est réservée (vide) pour celles qui n'en ont pas — sauf si
+  // l'ancien mode (onValidate / onReject) leur en donne déjà une.
+  const hasStatusButtons = exports.some((group) => group.thumbnails.some((t) => t.statusButtons !== undefined));
+
   const renderThumbnail = (thumb: ContactSheetThumbnail, exportId: string | number) => {
     const send = emit(thumb, exportId);
+    const statusButtons =
+      thumb.statusButtons ?? (hasStatusButtons && !enabled?.validation ? [] : undefined);
     return (
       <Thumbnail
         filenameTruncation="middle"
@@ -403,6 +410,7 @@ export const ContactSheetThumbnailGrid: React.FC<ContactSheetThumbnailGridProps>
         language={language}
         translations={translations}
         {...thumb}
+        statusButtons={statusButtons}
         size={thumbnailSize}
         onSelectionChange={
           enabled?.selection
@@ -420,6 +428,9 @@ export const ContactSheetThumbnailGrid: React.FC<ContactSheetThumbnailGridProps>
         onTagAdd={enabled?.tags ? (tag) => send({ type: "tagAdd", tag }) : undefined}
         onTagRemove={enabled?.tags ? (tag) => send({ type: "tagRemove", tag }) : undefined}
         onCommentAdd={enabled?.comments ? async (comment) => { await send({ type: "comment", comment }); } : undefined}
+        onStatusButtonClick={
+          onThumbnailChange ? (key, reason) => send({ type: "statusButton", key, reason }) : undefined
+        }
         onValidate={enabled?.validation ? () => send({ type: "validate" }) : undefined}
         onReject={enabled?.validation ? (reason) => send({ type: "reject", reason }) : undefined}
         onImageClick={enabled?.open ? () => send({ type: "open" }) : undefined}

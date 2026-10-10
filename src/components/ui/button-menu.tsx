@@ -262,6 +262,9 @@ export const ButtonMenu = React.forwardRef<HTMLButtonElement, ButtonMenuProps>(
             onFocus={onFocus}
             onBlur={onBlur}
             {...buttonProps}
+            // Déclencheur de menu : l'état ouvert est porté par aria-expanded (Radix),
+            // pas par l'aria-pressed qu'ajoute Toggle.
+            aria-pressed={undefined}
           >
             {children}
           </Toggle>

@@ -5,6 +5,48 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.23.0] - 2026-10-11
+
+### Ajouté
+
+- `Thumbnail` : boutons de statut génériques sous la vignette. `statusButtons`
+  (0, 1 ou 2 `ThumbnailStatusButton` : `key`, `icon`, `status`, `isActive`,
+  `disabled`, `label`, `rejectionReasons`) décrit les boutons en données, et
+  `onStatusButtonClick(key, reason?)` reçoit la clé du bouton cliqué. Aucune
+  règle de statut codée en dur : un bouton peut être actif et cliquable.
+  Désactivé inactif : grisé ; désactivé actif : aspect normal. `[]` garde la
+  hauteur de la ligne. `rejectionReasons` ouvre le menu des motifs de refus du
+  bench (un menu par bouton). `label` donne l'`aria-label` et une infobulle
+  (`Tooltip`). Type `ThumbnailStatusButton` exporté.
+- `ContactSheetReference` : `statusButtons` passe par chaque vignette ; un clic
+  remonte l'événement `{ type: "statusButton", key, reason? }` par
+  `onThumbnailChange`. Les boutons s'affichent selon les données. Dès qu'une
+  vignette d'une référence a des boutons, la ligne est réservée pour toutes,
+  pour garder les vignettes alignées.
+- `ButtonStatus` : prop `aria-label` qui remplace le libellé calculé, et
+  `aria-pressed` selon `isActive`.
+- Stories « Status Buttons » (Thumbnail et ContactSheetReference) et
+  documentation en anglais.
+
+### Modifié
+
+- Accessibilité des boutons « actifs », homogénéisée : `aria-pressed` pour les
+  interrupteurs (`Toggle`, `ButtonStatus`) ; les déclencheurs de menu
+  (`ButtonMenu`, `ButtonMenuSmall`, `ButtonMenuStatus`, `ButtonThumbnailStars`,
+  `ButtonThumbnailLabels`, `ButtonThumbnailTags`, `ButtonThumbnailComments`)
+  n'exposent plus que `aria-expanded` (l'`aria-pressed` hérité de `Toggle`,
+  contradictoire, est retiré) ; `Stepper` pose `aria-current="step"` sur
+  l'étape en cours. Aucun changement visuel.
+
+### Déprécié
+
+- `Thumbnail` : `onValidate`, `onReject`, `validateDisabled` et
+  `rejectDisabled`, remplacés par `statusButtons` / `onStatusButtonClick`. Ils
+  restent fonctionnels à l'identique quand `statusButtons` n'est pas défini.
+- `ContactSheetReference` : `thumbnailFeatures.validation` et les événements
+  `validate` / `reject` ne pilotent plus que l'ancien mode (vignettes sans
+  `statusButtons`).
+
 ## [1.22.1] - 2026-10-08
 
 ### Ajouté
