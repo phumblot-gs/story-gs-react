@@ -31,6 +31,8 @@ export interface ButtonStatusProps {
   className?: string;
   size?: "small" | "medium" | "large";
   debug?: boolean;
+  /** Libellé accessible ; remplace le libellé calculé (« Approve - Validated »…). */
+  "aria-label"?: string;
 }
 
 export const ButtonStatus: React.FC<ButtonStatusProps> = ({
@@ -44,6 +46,7 @@ export const ButtonStatus: React.FC<ButtonStatusProps> = ({
   className = "",
   size = "medium",
   debug = false,
+  "aria-label": ariaLabel,
 }) => {
   const { t } = useTranslationSafe();
 
@@ -108,7 +111,9 @@ export const ButtonStatus: React.FC<ButtonStatusProps> = ({
         onClick={handleClick}
         onFocus={handleFocus}
         onBlur={handleBlur}
-        aria-label={`${icon === "Check" ? t("buttonStatus.approve") : t("buttonStatus.reject")} - ${statusName}`}
+        aria-label={ariaLabel ?? `${icon === "Check" ? t("buttonStatus.approve") : t("buttonStatus.reject")} - ${statusName}`}
+        // Bouton du statut courant : il se comporte comme un interrupteur enfoncé.
+        aria-pressed={isActive}
         style={{
           // Set CSS variables for dynamic colors
           "--status-bg-color": `var(--${statusColorClass == "status-refused" ? "status-refused-button" : statusColorClass}-color)`,

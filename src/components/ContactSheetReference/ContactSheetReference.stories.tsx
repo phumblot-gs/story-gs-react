@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icons";
 import { MediaStatus } from "@/utils/mediaStatus";
 import { ContactSheetReference, type ContactSheetReferenceProps } from "./ContactSheetReference";
+import type { ThumbnailStatusButton } from "@/components/Thumbnail/Thumbnail";
 import type {
   ContactSheetExport,
   ContactSheetThumbnail,
@@ -95,6 +96,25 @@ const exports: ContactSheetExport[] = [
 With several exports, \`exportsLayout\` chooses how they are laid out: \`"grouped"\` (default) shows
 the export badges side by side then a single grid; \`"separated"\` stacks the exports 20px apart,
 each with its own badge and grid.
+
+### Status buttons
+
+The buttons under each thumbnail are data: give each thumbnail \`statusButtons\` (0, 1 or 2
+\`ThumbnailStatusButton\`, decided from the image state) and handle the \`statusButton\` change of
+\`onThumbnailChange\` (\`{ type: "statusButton", key, reason?, pictureId, exportId }\`). As soon as one
+thumbnail of the reference has \`statusButtons\`, the row is reserved for all of them, so the
+thumbnails stay aligned. See the **Status Buttons** story.
+
+\`\`\`tsx
+thumbnails: images.map((image) => ({ picture_id: image.id, src: image.url, statusButtons: statusButtonsOf(image) }))
+
+onThumbnailChange={(change) => {
+  if (change.type === "statusButton") updateStatus(change.pictureId, change.key, change.reason);
+}}
+\`\`\`
+
+**Deprecated:** \`thumbnailFeatures.validation\` and the \`validate\` / \`reject\` changes only drive the
+legacy buttons (\`onValidate\` / \`onReject\`) of thumbnails without \`statusButtons\`.
 
 Interactions are opt-in: each one appears when its callback is provided — \`onSelectionChange\`
 (checkbox), \`onUrgentChange\` (urgent toggle), \`onReferenceUpdate\` (Edit form),
@@ -602,6 +622,103 @@ export const ReorderPayload: Story = {
       );
     };
     return <Payload />;
+  },
+};
+
+// --- Status buttons ------------------------------------------------------------
+
+type ImageState =
+  | "unmatched"
+  | "suggestion"
+  | "associated"
+  | "selected"
+  | "processing"
+  | "toValidate"
+  | "validated"
+  | "refused";
+
+/** The application decides the buttons from the image state (here: the mediagrade rules). */
+const statusButtonsOf = (state: ImageState): ThumbnailStatusButton[] => {
+  if (state === "unmatched" || state === "suggestion") return [];
+  if (state === "associated" || state === "selected") {
+    return [{ key: "select", icon: "Check", status: MediaStatus.SELECTED, isActive: state === "selected", label: state === "selected" ? "Deselect" : "Select" }];
+  }
+  const processing = state === "processing";
+  return [
+    { key: "refuse", icon: "X", status: MediaStatus.REFUSED_1, isActive: state === "refused", disabled: processing || state === "refused", rejectionReasons: true, label: "Refuse" },
+    { key: "validate", icon: "Check", status: MediaStatus.VALIDATED, isActive: state === "validated", disabled: processing || state === "validated", label: "Validate" },
+  ];
+};
+
+const STATUS_OF: Record<ImageState, MediaStatus | undefined> = {
+  unmatched: undefined,
+  suggestion: undefined,
+  associated: MediaStatus.NOT_SELECTED,
+  selected: MediaStatus.SELECTED,
+  processing: MediaStatus.SUBMITTED_FOR_APPROVAL,
+  toValidate: MediaStatus.SUBMITTED_FOR_APPROVAL,
+  validated: MediaStatus.VALIDATED,
+  refused: MediaStatus.REFUSED_1,
+};
+
+/** Transitions triggered by a click: associated ↔ selected, to validate → validated / refused… */
+const nextState = (state: ImageState, key: string): ImageState => {
+  if (key === "select") return state === "selected" ? "associated" : "selected";
+  if (key === "validate") return "validated";
+  if (key === "refuse") return "refused";
+  return state;
+};
+
+const REJECTION_BENCH = {
+  config: { validation: { rejection_options: { active: true, main: ["Blurry", "Wrong framing"], secondary: ["Other"] } } },
+};
+
+/**
+ * Status buttons decided from the image state (`statusButtons`), with local state: click a button
+ * to move the image to its next state — associated ↔ selected, to validate → validated / refused,
+ * validated → refused, refused → validated. The filename shows the current state; the last change
+ * is printed below.
+ */
+export const StatusButtons: Story = {
+  render: () => {
+    const StatusDemo = () => {
+      const initial: ImageState[] = ["unmatched", "suggestion", "associated", "selected", "processing", "toValidate", "validated", "refused"];
+      const [states, setStates] = useState<ImageState[]>(initial);
+      const [last, setLast] = useState<string>("");
+      const exports: ContactSheetExport[] = [
+        {
+          id: "e",
+          name: "Status buttons",
+          thumbnails: states.map((state, i) => ({
+            picture_id: i + 1,
+            src: `https://picsum.photos/seed/status-${i}/600/750`,
+            filename: `${state}.tif`,
+            status: STATUS_OF[state],
+            statusButtons: statusButtonsOf(state),
+          })),
+        },
+      ];
+      return (
+        <Layout bg="grey" className="min-h-screen">
+          <ContactSheetReference
+            reference={{ reference_id: 9, ref: "STATUS-DEMO" }}
+            exports={exports}
+            thumbnailsPerRow={8}
+            bench={REJECTION_BENCH}
+            thumbnailFeatures={{ validation: false }}
+            onThumbnailChange={(change) => {
+              if (change.type !== "statusButton") return;
+              setLast(JSON.stringify({ pictureId: change.pictureId, key: change.key, reason: change.reason }));
+              setStates((all) => all.map((state, i) => (i + 1 === change.pictureId ? nextState(state, change.key) : state)));
+            }}
+          />
+          <pre className="m-4 p-3 bg-white text-xs" data-testid="last-status-change">
+            {last || "Click a status button."}
+          </pre>
+        </Layout>
+      );
+    };
+    return <StatusDemo />;
   },
 };
 

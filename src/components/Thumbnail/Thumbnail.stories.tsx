@@ -12,6 +12,43 @@ const meta: Meta<typeof Thumbnail> = {
   component: Thumbnail,
   parameters: {
     layout: "centered",
+    docs: {
+      description: {
+        component: `
+Thumbnail of a media: image, indicators, filename, rating / label / tags / comments buttons, status
+bar, and the status buttons row underneath.
+
+### Status buttons
+
+The buttons under the thumbnail are **data**: pass \`statusButtons\` (0, 1 or 2
+\`ThumbnailStatusButton\`) and handle \`onStatusButtonClick(key, reason?)\`. The application decides
+each button from the image state; no status rule is hard-coded.
+
+\`\`\`tsx
+<Thumbnail
+  picture_id={42}
+  src="/photo.jpg"
+  statusButtons={[
+    { key: "refuse", icon: "X", status: 31, rejectionReasons: true, label: "Refuse" },
+    { key: "validate", icon: "Check", status: 50, isActive: true, disabled: true, label: "Validated" },
+  ]}
+  onStatusButtonClick={(key, reason) => updateStatus(picture_id, key, reason)}
+/>
+\`\`\`
+
+- \`isActive\`: current status (filled). An active button can stay clickable (e.g. *Select* to deselect).
+- \`disabled\`: not clickable — greyed when inactive, normal look when active (current status).
+- \`rejectionReasons\`: opens the bench rejection reasons menu (when configured); the reason is
+  passed to \`onStatusButtonClick\`.
+- \`label\`: accessible label and tooltip.
+- \`statusButtons={[]}\`: no button, but the row keeps its height (grid alignment).
+
+**Deprecated:** \`onValidate\`, \`onReject\`, \`validateDisabled\` and \`rejectDisabled\` still work
+unchanged when \`statusButtons\` is not set, but are superseded by \`statusButtons\` /
+\`onStatusButtonClick\`. See the **Status Buttons** story.
+`,
+      },
+    },
   },
   tags: ["autodocs"],
   argTypes: {
@@ -932,6 +969,10 @@ const benchWithRejectionOptions = {
   },
 };
 
+/**
+ * **Legacy API (deprecated)** — `onValidate` / `onReject` / `validateDisabled` /
+ * `rejectDisabled`. Prefer `statusButtons` (see the Status Buttons story).
+ */
 export const WithRejectionOptions: Story = {
   render: () => (
     <Layout bg="white" padding={4}>
@@ -976,6 +1017,9 @@ export const WithRejectionOptions: Story = {
 };
 
 /**
+ * **Legacy API (deprecated)** — `onValidate` / `onReject` / `validateDisabled` /
+ * `rejectDisabled`. Prefer `statusButtons` (see the Status Buttons story).
+ *
  * Désactivation externe des actions de validation / refus
  *
  * `validateDisabled` et `rejectDisabled` désactivent les boutons ✓ / ✗ sans les
@@ -1169,6 +1213,9 @@ export const DisabledRatingAndLabelActions: Story = {
 };
 
 /**
+ * **Legacy API (deprecated)** — `onValidate` / `onReject` / `validateDisabled` /
+ * `rejectDisabled`. Prefer `statusButtons` (see the Status Buttons story).
+ *
  * Verrouillage pendant une écriture (simulation)
  *
  * Reproduit le cas d'usage de la page validation : le clic déclenche une écriture
@@ -1210,3 +1257,46 @@ export const DisabledDuringWrite: Story = {
     return <WriteLockDemo />;
   },
 };
+
+/**
+ * Status buttons as data (`statusButtons` + `onStatusButtonClick`): one thumbnail per case of the
+ * image lifecycle. Clicks are logged in the Actions panel. Hover a button to see its tooltip.
+ */
+export const StatusButtons: Story = {
+  render: () => {
+    const select = { key: "select", icon: "Check" as const, status: MediaStatus.SELECTED, label: "Select" };
+    const refuse = { key: "refuse", icon: "X" as const, status: MediaStatus.REFUSED_1, label: "Refuse", rejectionReasons: true };
+    const validate = { key: "validate", icon: "Check" as const, status: MediaStatus.VALIDATED, label: "Validate" };
+    const cases = [
+      { title: "No button ([])", status: MediaStatus.NOT_SELECTED, buttons: [] },
+      { title: "1 button, inactive", status: MediaStatus.NOT_SELECTED, buttons: [select] },
+      { title: "1 button, active and clickable", status: MediaStatus.SELECTED, buttons: [{ ...select, isActive: true, label: "Deselect" }] },
+      { title: "Processing: both disabled (greyed)", status: MediaStatus.SUBMITTED_FOR_APPROVAL, buttons: [{ ...refuse, disabled: true }, { ...validate, disabled: true }] },
+      { title: "To validate: both clickable", status: MediaStatus.SUBMITTED_FOR_APPROVAL, buttons: [refuse, validate] },
+      { title: "Validated: ✓ active (disabled)", status: MediaStatus.VALIDATED, buttons: [refuse, { ...validate, isActive: true, disabled: true }] },
+      { title: "Refused: ✗ active (disabled)", status: MediaStatus.REFUSED_1, buttons: [{ ...refuse, isActive: true, disabled: true }, validate] },
+    ];
+    return (
+      <Layout bg="grey" padding={4}>
+        <div className="grid grid-cols-4 gap-4">
+          {cases.map((c, i) => (
+            <VStack key={c.title} gap={1} className="items-center">
+              <Thumbnail
+                picture_id={i + 1}
+                src={[sampleImageUrl, sampleImageUrl2, sampleImageUrl3][i % 3]}
+                filename={`status_${i + 1}.jpg`}
+                status={c.status}
+                size="200px"
+                bench={benchWithRejectionOptions}
+                statusButtons={c.buttons}
+                onStatusButtonClick={fn()}
+              />
+              <span className="text-xs text-center">{c.title}</span>
+            </VStack>
+          ))}
+        </div>
+      </Layout>
+    );
+  },
+};
+

@@ -5,6 +5,7 @@ export type {
   ThumbnailSize,
   ThumbnailPresetSize,
   ThumbnailAction,
+  ThumbnailStatusButton,
 } from "./Thumbnail";
 
 // Menu context for coordinating menus

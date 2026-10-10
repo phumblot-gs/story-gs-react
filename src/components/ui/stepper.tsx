@@ -148,6 +148,7 @@ const Stepper = React.forwardRef<HTMLDivElement, StepperProps>(
                     !isClickable && "cursor-default"
                   )}
                   style={getStepButtonStyle(state, variant, bg)}
+                  aria-current={isActive ? "step" : undefined}
                   onClick={isClickable ? handleClick : undefined}
                   disabled={!isClickable}
                   aria-label={step.title || `Étape ${index + 1}`}

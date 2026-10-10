@@ -35,6 +35,12 @@ export interface ReferenceAttributeConfig {
 /**
  * Thumbnail data: the Thumbnail display props, without its callbacks (replaced by
  * `onThumbnailChange`) nor the props driven by the contact sheet (size, drag).
+ *
+ * `statusButtons` (the ✗ / ✓ buttons under the thumbnail) is passed per thumbnail:
+ * 0, 1 or 2 buttons depending on the image state, decided by the application. A
+ * click is reported as a `statusButton` change. As soon as one thumbnail of the
+ * reference has `statusButtons`, the button row is reserved for all of them so
+ * that the rows stay aligned.
  */
 export type ContactSheetThumbnail = Omit<
   ThumbnailProps,
@@ -163,7 +169,11 @@ export type ThumbnailChange = { pictureId: number; exportId: string | number } &
   | { type: "tagAdd"; tag: string }
   | { type: "tagRemove"; tag: string }
   | { type: "comment"; comment: string }
+  /** Click on a status button (`statusButtons`); `reason` = rejection reason picked in the menu. */
+  | { type: "statusButton"; key: string; reason?: string }
+  /** @deprecated Legacy validate button; use `statusButtons` and the `statusButton` change. */
   | { type: "validate" }
+  /** @deprecated Legacy reject button; use `statusButtons` and the `statusButton` change. */
   | { type: "reject"; reason?: string }
   | { type: "open" }
 );
@@ -175,6 +185,12 @@ export interface ThumbnailFeatures {
   label?: boolean;
   tags?: boolean;
   comments?: boolean;
+  /**
+   * Legacy validate / reject buttons (onValidate / onReject) on thumbnails without
+   * `statusButtons`. Status buttons given as data (`statusButtons`) are shown
+   * regardless of this flag.
+   * @deprecated Pass `statusButtons` per thumbnail instead.
+   */
   validation?: boolean;
   open?: boolean;
 }

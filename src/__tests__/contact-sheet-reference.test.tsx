@@ -411,3 +411,78 @@ describe("ContactSheetReference — espacement bas", () => {
     expect(content(container)).toHaveClass("pb-3");
   });
 });
+
+describe("ContactSheetReference — boutons de statut (statusButtons)", () => {
+  const select = { key: "select", icon: "Check" as const, status: MediaStatus.SELECTED, label: "Select" };
+  const refuse = { key: "refuse", icon: "X" as const, status: MediaStatus.REFUSED_1, label: "Refuse" };
+  const validate = { key: "validate", icon: "Check" as const, status: MediaStatus.VALIDATED, label: "Validate" };
+  const mixed: ContactSheetExport[] = [
+    {
+      id: "e",
+      thumbnails: [
+        { picture_id: 1, src: "/1.jpg", filename: "1.tif", statusButtons: [select] },
+        { picture_id: 2, src: "/2.jpg", filename: "2.tif", statusButtons: [refuse, validate] },
+        { picture_id: 3, src: "/3.jpg", filename: "3.tif", statusButtons: [] },
+        { picture_id: 4, src: "/4.jpg", filename: "4.tif" },
+      ],
+    },
+  ];
+  const row = (container: HTMLElement, id: number) =>
+    container.querySelector(`[data-picture-id="${id}"] .min-h-\\[40px\\]`);
+
+  it("remonte le clic avec la clé, la vignette et l'export", async () => {
+    const onThumbnailChange = vi.fn();
+    render(
+      <ContactSheetReference
+        reference={reference}
+        exports={mixed}
+        onThumbnailChange={onThumbnailChange}
+        thumbnailFeatures={{ validation: false }}
+      />,
+    );
+    await userEvent.click(screen.getByRole("button", { name: "Validate" }));
+    expect(onThumbnailChange).toHaveBeenCalledWith({
+      type: "statusButton",
+      key: "validate",
+      reason: undefined,
+      pictureId: 2,
+      exportId: "e",
+    });
+  });
+
+  it("grille mixte : bon nombre de boutons par vignette, lignes alignées", () => {
+    const { container } = render(
+      <ContactSheetReference
+        reference={reference}
+        exports={mixed}
+        onThumbnailChange={vi.fn()}
+        thumbnailFeatures={{ validation: false }}
+      />,
+    );
+    expect(row(container, 1)!.querySelectorAll("button")).toHaveLength(1);
+    expect(row(container, 2)!.querySelectorAll("button")).toHaveLength(2);
+    expect(row(container, 3)!.querySelectorAll("button")).toHaveLength(0);
+    // Sans statusButtons ni ancien mode : ligne réservée (vide) pour l'alignement.
+    expect(row(container, 4)).toBeInTheDocument();
+    expect(row(container, 4)!.querySelectorAll("button")).toHaveLength(0);
+  });
+
+  it("s'affiche selon les données, même avec validation: false (drapeau déprécié)", () => {
+    render(<ContactSheetReference reference={reference} exports={mixed} thumbnailFeatures={{ validation: false }} />);
+    expect(screen.getByRole("button", { name: "Select" })).toBeInTheDocument();
+  });
+
+  it("les vignettes sans statusButtons gardent l'ancien mode quand il est actif", () => {
+    const { container } = render(
+      <ContactSheetReference reference={reference} exports={mixed} onThumbnailChange={vi.fn()} />,
+    );
+    const legacy = row(container, 4)!;
+    expect(legacy.querySelectorAll("button")).toHaveLength(2);
+    expect(legacy.querySelector("button[aria-label^='Approve']")).toBeInTheDocument();
+  });
+
+  it("garde 15px de padding bas : la ligne de boutons est présente", () => {
+    const { container } = render(<ContactSheetReference reference={reference} exports={mixed} />);
+    expect(container.querySelector('[data-testid="reference-content"]')).toHaveClass("pb-3");
+  });
+});
