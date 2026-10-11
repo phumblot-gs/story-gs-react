@@ -407,6 +407,14 @@ import type {
 // Export layout components
 export { Layout, HStack, VStack, Modal, FullFrame, ActionBar, ActionBarProvider, SidePanel } from "./components/layout";
 export type { LayoutProps, HStackProps, VStackProps, ModalProps, FullFrameProps, ActionBarProps, SidePanelProps } from "./components/layout";
+export { PageFillLayout } from "./components/layout";
+export type { PageFillLayoutProps, PageFillStickyValue } from "./components/layout";
+export {
+  usePageFirstScroll,
+  NATIVE_SCROLL_ATTRIBUTE,
+  PAGE_SCROLLBAR_HIDDEN_CLASS,
+} from "./hooks/usePageFirstScroll";
+export type { UsePageFirstScrollOptions } from "./hooks/usePageFirstScroll";
 
 // Export icons
 export * from "./components/ui/icons";

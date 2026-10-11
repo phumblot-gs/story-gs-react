@@ -62,6 +62,12 @@ export interface TabsWithViewsProps {
   className?: string;
   debug?: boolean;
   children?: React.ReactNode;
+  /**
+   * Fills the height of the parent container (e.g. the PageFillLayout panel): the tab bar keeps its
+   * natural height, the content (`children`) takes the rest in a `flex-1 min-h-0` column, with no
+   * imposed scrolling — each tab picks its own (`overflow-y-auto`, `overflow-hidden`…).
+   */
+  fillHeight?: boolean;
 }
 
 type Sortable = { createdAt: string | number };
@@ -416,6 +422,7 @@ export const TabsWithViews: React.FC<TabsWithViewsProps> = ({
   className,
   debug,
   children,
+  fillHeight = false,
 }) => {
   const { t } = useTranslationSafe(translations, language);
 
@@ -504,7 +511,8 @@ export const TabsWithViews: React.FC<TabsWithViewsProps> = ({
       <Tabs
         value={activeTab}
         onValueChange={onActiveTabChange}
-        className={className}
+        className={fillHeight ? cn(className, "shrink-0") : className}
+        rootClassName={fillHeight ? "flex flex-col h-full min-h-0" : undefined}
         debug={debug}
       >
         <TabsList rightSlot={rightSlot}>
@@ -533,7 +541,13 @@ export const TabsWithViews: React.FC<TabsWithViewsProps> = ({
             );
           })}
         </TabsList>
-        {children}
+        {fillHeight ? (
+          <div className="flex-1 min-h-0 flex flex-col" data-tabs-fill-content>
+            {children}
+          </div>
+        ) : (
+          children
+        )}
       </Tabs>
 
       <ViewFormModal

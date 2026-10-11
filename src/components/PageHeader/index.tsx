@@ -28,7 +28,11 @@ export interface PageHeaderProps {
   isIdle?: boolean;
 }
 
-const PageHeader: React.FC<PageHeaderProps> = ({
+/**
+ * En-tête de page. Transmet sa `ref` à l'élément racine (bordure comprise) :
+ * `stickyTop={headerRef}` de PageFillLayout mesure ainsi sa hauteur réelle.
+ */
+const PageHeader = React.forwardRef<HTMLDivElement, PageHeaderProps>(({
   logo,
   showLogo = true,
   onLogoClick,
@@ -43,12 +47,13 @@ const PageHeader: React.FC<PageHeaderProps> = ({
   rightContent,
   className,
   isIdle = false,
-}) => {
+}, ref) => {
   const { logo: themeLogo } = useThemeValues();
   const { t } = useTranslationSafe();
 
   return (
     <Layout
+      ref={ref}
       bg="white"
       as="header"
       className={cn(
@@ -120,6 +125,8 @@ const PageHeader: React.FC<PageHeaderProps> = ({
       )} />
     </Layout>
   );
-};
+});
+
+PageHeader.displayName = "PageHeader";
 
 export default PageHeader;

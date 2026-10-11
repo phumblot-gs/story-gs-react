@@ -5,6 +5,40 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.24.0] - 2026-10-11
+
+### Ajouté
+
+- `PageFillLayout` : mise en page avec une partie haute repliable
+  (`collapsible`) qui défile avec la page, puis un panneau de la hauteur exacte
+  de la fenêtre moins les éléments collants (`stickyTop`, `stickyBottom` :
+  nombre, valeur CSS ou ref d'un élément mesuré), avec un plancher
+  `minPanelHeight`. Hauteur exposée en variable CSS `--page-panel-height`,
+  calculée en CSS pur quand c'est possible. Racine sans `overflow` : c'est la
+  fenêtre qui défile.
+  - `pageFirstScroll` (actif par défaut) : la molette vers le bas au-dessus du
+    panneau replie d'abord la partie haute, puis le contenu défile. Ce qui
+    reste à défiler est mesuré depuis la position du panneau et borné par le
+    défilement réellement possible de la fenêtre (arrondis, pages courtes).
+    Zone exclue avec `data-native-scroll`.
+  - `hidePageScrollbar` (désactivé par défaut) : masque la barre de défilement
+    de la fenêtre (classe `gs-page-scrollbar-hidden` sur `<html>`, compteur de
+    références, règle CSS brute).
+  - `onCollapsedChange` : partie haute repliée ou de nouveau visible, appelé au
+    changement d'état seulement.
+- `usePageFirstScroll(ref, options)` : la molette « page d'abord » seule, pour
+  une page qui ne peut pas adopter le composant. Constantes
+  `NATIVE_SCROLL_ATTRIBUTE` et `PAGE_SCROLLBAR_HIDDEN_CLASS`.
+- `TabsWithViews` : option `fillHeight`. La barre d'onglets garde sa hauteur,
+  le contenu prend le reste dans une colonne `flex-1 min-h-0`.
+- `Tabs` : prop `rootClassName` pour l'élément racine (`className` reste
+  transmis à l'en-tête des onglets).
+- `PageHeader` transmet sa `ref` à son élément racine (`forwardRef`), pour
+  mesurer sa hauteur réelle (`stickyTop={headerRef}`).
+- Stories « Layout/PageFillLayout » (Home, Without top, Collapsed callback,
+  Native scroll zone) et documentation en anglais, avec les limites connues
+  (tactile, `overscroll-behavior: contain`).
+
 ## [1.23.0] - 2026-10-11
 
 ### Ajouté

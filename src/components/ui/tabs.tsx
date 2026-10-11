@@ -41,12 +41,17 @@ export function computeActiveTabIndicator(
 
 interface TabsProps extends React.ComponentPropsWithoutRef<typeof TabsPrimitive.Root> {
   debug?: boolean
+  /**
+   * Classes de l'élément racine. (`className` est transmis à l'en-tête des
+   * onglets `.tabs-header`, pas à la racine.)
+   */
+  rootClassName?: string
 }
 
 const Tabs = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.Root>,
   TabsProps
->(({ debug, className, onValueChange, ...props }, ref) => {
+>(({ debug, className, rootClassName, onValueChange, ...props }, ref) => {
   const bg = useBgContext()
 
   // Debug mode : wrapper pour onValueChange avec log
@@ -65,7 +70,7 @@ const Tabs = React.forwardRef<
     <TabsHeaderClassNameContext.Provider value={className}>
       <TabsPrimitive.Root
         ref={ref}
-        className={debug ? "ring-2 ring-pink ring-offset-2" : undefined}
+        className={cn(debug && "ring-2 ring-pink ring-offset-2", rootClassName) || undefined}
         onValueChange={debug ? handleValueChange : onValueChange}
         {...props}
       />
