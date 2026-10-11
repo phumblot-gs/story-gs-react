@@ -1642,3 +1642,19 @@
 .gs-timeline-row[data-disabled="true"] .gs-timeline-time, .gs-timeline-row[data-disabled="true"] .gs-timeline-marker { opacity: .5; }
 .gs-timeline[data-density="comfortable"] .gs-timeline-row { min-height: 82px; }
 .gs-timeline[data-density="comfortable"] .gs-timeline-entry { padding-top: 15px; padding-bottom: 15px; }
+
+/* ==========================================================================
+ * .gs-page-scrollbar-hidden — barre de défilement de la fenêtre masquée
+ *
+ * Posée sur <html> par usePageFirstScroll / PageFillLayout (hidePageScrollbar),
+ * avec un compteur de références. Masque la barre de la fenêtre, qui doublait
+ * celle du contenu du panneau ; le défilement reste actif (molette, trackpad,
+ * clavier). En CSS brut et non en utilitaire Tailwind : la feuille de
+ * l'application réémet ses propres utilitaires, qui l'emporteraient.
+ * ========================================================================== */
+html.gs-page-scrollbar-hidden {
+  scrollbar-width: none;
+}
+html.gs-page-scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}

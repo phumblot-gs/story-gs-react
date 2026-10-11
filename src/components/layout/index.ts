@@ -21,5 +21,8 @@ export { useActionBarContext } from './ActionBarContext';
 
 export { useBgContext, BgProvider } from './BgContext';
 
+export { PageFillLayout } from './PageFillLayout';
+export type { PageFillLayoutProps, PageFillStickyValue } from './PageFillLayout';
+
 export { SidePanel } from './SidePanel';
 export type { SidePanelProps } from './SidePanel';
