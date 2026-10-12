@@ -2,6 +2,7 @@
 import { useTheme } from "next-themes"
 import { Toaster as Sonner, toast as sonnerToast } from "sonner"
 import { IconProvider } from "./icon-provider"
+import { Spinner } from "./spinner"
 
 type ToasterProps = React.ComponentProps<typeof Sonner> & {
   defaultDuration?: number
@@ -16,19 +17,24 @@ const Toaster = ({ defaultDuration = 2000, debug = false, ...props }: ToasterPro
       theme={theme as ToasterProps["theme"]}
       className="toaster group"
       position="top-center"
+      // Toast de chargement : le Spinner GS remplace le spinner à 12 barres de
+      // sonner (qui ignore l'option `icon` d'un toast de type loading).
+      icons={{ loading: <Spinner size={16} decorative />, ...props.icons }}
       toastOptions={{
         duration: defaultDuration,
         classNames: {
-          toast: "group toast group-[.toaster]:shadow-lg rounded-sm px-[30px] py-[20px]",
+          toast: "gs-toast group toast group-[.toaster]:shadow-lg rounded-sm px-[30px] py-[20px]",
           title: "text-[1rem] italic font-[300]",
           description: "font-[300]",
           actionButton: "group-[.toast]:bg-primary group-[.toast]:text-primary-foreground",
           cancelButton: "group-[.toast]:bg-muted group-[.toast]:text-muted-foreground",
-          success: "!bg-green !text-white",
+          // #2E7D32 : contraste suffisant avec le texte blanc (le vert du
+          // système, #89CC52, ne l'est pas). Limité au toast de succès.
+          success: "!bg-[#2E7D32] !text-white",
           error: "!bg-red-strong !text-white",
           info: "!bg-pastel-yellow-secondary !text-black",
           warning: "!bg-orange !text-white",
-          loading: "!bg-grey !text-white",
+          loading: "!bg-grey !text-black",
         },
       }}
       {...props}
@@ -39,29 +45,53 @@ const Toaster = ({ defaultDuration = 2000, debug = false, ...props }: ToasterPro
 type ToastType = "success" | "error" | "warning" | "info" | "loading" | "default"
 
 interface ToastProps {
+  /**
+   * Identifiant du toast. Un second appel avec le même id met à jour le toast
+   * en place (texte, type, icône) au lieu d'en créer un nouveau. Seuls les
+   * champs fournis sont modifiés : une mise à jour du titre garde la
+   * description et la durée.
+   */
+  id?: string | number
   title?: string
   description?: string
   type?: ToastType
+  /**
+   * Durée d'affichage en ms, `Infinity` pour rester jusqu'à la fermeture.
+   * Défaut 3000 à la création. Un toast `loading` reste affiché tant qu'il
+   * n'est pas mis à jour ou fermé ; passé ensuite en success ou error, son
+   * délai de fermeture commence à ce moment-là.
+   */
   duration?: number
   action?: React.ReactNode
   debug?: boolean
 }
 
+const DEFAULT_TOAST_DURATION = 3000
+
+/** Ferme un toast par son id, ou tous les toasts sans argument. */
+const dismissToast = (id?: string | number) => sonnerToast.dismiss(id)
+
 const toast = ({
+  id,
   title,
   description,
   type = "default",
-  duration = 3000,
+  duration,
   action,
   debug = false
 }: ToastProps) => {
+  // Mise à jour d'un toast existant : sonner fusionne { ...ancien, ...nouveau },
+  // un champ envoyé à `undefined` effacerait l'ancien (description) et une
+  // durée par défaut écraserait `Infinity`. On n'envoie donc que les champs
+  // fournis, et la durée par défaut seulement à la création.
+  const isUpdate = id !== undefined && sonnerToast.getToasts().some((t) => t.id === id)
   // Déterminer quelle icône utiliser en fonction du type de toast
   const getIcon = () => {
     switch (type) {
       case "success": 
-        return <IconProvider icon="ToastSuccessIcon" className="mr-[20px]" size={16} />;
+        return <IconProvider icon="ToastSuccessIcon" size={16} />;
       case "error":
-        return <IconProvider icon="ToastErrorIcon" className="mr-[20px]" size={16} />;
+        return <IconProvider icon="ToastErrorIcon" size={16} />;
       case "warning":
       case "info":
       case "loading":
@@ -103,12 +133,18 @@ const toast = ({
     console.log(`[Toast Debug] Creating toast: ${type} - ${title}`);
   }
   
-  return toastFunction(title, {
-    description,
-    duration,
-    action: actionWithDebug,
-    icon
-  });
+  const options: Parameters<typeof sonnerToast>[1] = { icon }
+  if (id !== undefined) options.id = id
+  if (description !== undefined) options.description = description
+  if (actionWithDebug !== undefined) options.action = actionWithDebug
+  if (duration !== undefined) options.duration = duration
+  else if (!isUpdate) options.duration = DEFAULT_TOAST_DURATION
+  // `sonnerToast()` ne pose pas de type : sans lui, une mise à jour vers
+  // "default" garderait le type précédent.
+  if (type === "default") (options as { type?: string }).type = "default"
+
+  return toastFunction(title, options);
 };
 
-export { Toaster, toast, sonnerToast }
+export { Toaster, toast, dismissToast, sonnerToast }
+export type { ToastProps, ToastType }

@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { useBgContext } from "@/components/layout/BgContext";
 import { StatusIndicator } from "@/components/StatusIndicator";
 import { MediaStatus } from "@/utils/mediaStatus";
+import { Spinner } from "./spinner";
 
 // Types
 export type ButtonVariant = "normal" | "secondary" | "ghost" | "outline" | "destructive" | "link";
@@ -120,10 +121,19 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   hasActiveElement?: boolean;
   asChild?: boolean;
   debug?: boolean;
+  /**
+   * État de chargement : bouton `disabled` et `aria-busy`, Spinner décoratif
+   * (12 px en small, 16 px sinon) devant `loadingLabel`. Dès que la prop est
+   * fournie (même à `false`), les deux libellés sont superposés pour que la
+   * largeur du bouton ne change pas d'un état à l'autre. Sans effet avec `asChild`.
+   */
+  loading?: boolean;
+  /** Libellé pendant le chargement (ex. « Import en cours… »). Défaut : `children`. */
+  loadingLabel?: React.ReactNode;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ variant, size, indicator, hasActiveElement, debug, className, children, asChild = false, onClick, onFocus, onBlur, ...props }, ref) => {
+  ({ variant, size, indicator, hasActiveElement, debug, className, children, asChild = false, loading, loadingLabel, onClick, onFocus, onBlur, ...props }, ref) => {
     const Comp = asChild ? Slot : "button";
     const normalizedVariant = normalizeVariant(variant);
     const normalizedSize = normalizeSize(size);
@@ -204,7 +214,38 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     // passait `asChild`. Les décorations sont donc injectées *dans* l'enfant
     // plutôt que rendues à côté de lui — et l'enfant est laissé intact quand il
     // n'y en a aucune, pour ne rien imposer à un élément sans enfants possibles.
-    const content = asChild
+    // Chargement : libellé normal et libellé de chargement superposés dans la
+    // même cellule de grille. Le bouton prend la largeur du plus long et ne
+    // bouge pas ; seul le calque actif est visible (fondu de 160 ms) et lu par
+    // les technologies d'assistance.
+    const loadingMode = loading !== undefined && !asChild;
+    const layer = (visible: boolean, node: React.ReactNode) => (
+      <span
+        aria-hidden={visible ? undefined : true}
+        className={cn("gs-state-fade inline-flex items-center justify-center [grid-area:1/1]", !visible && "opacity-0")}
+        style={{ gap: "inherit" }}
+      >
+        {node}
+      </span>
+    );
+
+    const content = loadingMode
+      ? (
+        <>
+          <span className="inline-grid" style={{ gap: "inherit" }}>
+            {layer(!loading, children)}
+            {layer(
+              !!loading,
+              <>
+                <Spinner size={normalizedSize === "small" ? 12 : 16} decorative />
+                {loadingLabel ?? children}
+              </>
+            )}
+          </span>
+          {decorations}
+        </>
+      )
+      : asChild
       ? (indicator || debug)
         ? (() => {
             const child = React.Children.only(children) as React.ReactElement<{
@@ -232,6 +273,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         data-bg={bg || undefined}
         data-has-active-element={hasActiveElement ? "true" : undefined}
+        data-loading={loadingMode && loading ? "true" : undefined}
         className={cn(
           buttonVariants({
             variant: normalizedVariant,
@@ -245,6 +287,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         onFocus={debug ? handleFocus : onFocus}
         onBlur={debug ? handleBlur : onBlur}
         {...props}
+        {...(loadingMode && loading ? { disabled: true, "aria-busy": true } : {})}
       >
         {content}
       </Comp>

@@ -1,3 +1,4 @@
+import * as React from "react";
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { fn } from "@storybook/test";
@@ -6,6 +7,7 @@ import { MediaStatus } from "@/utils/mediaStatus";
 import { Layout, HStack, VStack } from "@/components/layout";
 import { Badge } from "@/components/ui/badge";
 import { Icon } from "@/components/ui/icons";
+import { withReducedMotion } from "@/stories/reducedMotion";
 
 const meta: Meta<typeof Thumbnail> = {
   title: "Components/Thumbnail",
@@ -547,9 +549,64 @@ export const AutoSizeGrid: Story = {
 };
 
 /**
- * Loading state
+ * Loading state: 32 px Spinner centred in the image area (decorative; `aria-busy` on the image area, so a
+ * grid of loading thumbnails does not announce "Loading" dozens of times).
  */
 export const Loading: Story = {
+  args: {
+    picture_id: 8,
+    filename: "loading_photo.jpg",
+    isLoading: true,
+    status: MediaStatus.SUBMITTED_FOR_APPROVAL,
+  },
+};
+
+/** `isLoading` → loaded image after 2 s ("Replay" restarts). */
+export const LoadingToImage: Story = {
+  render: (args) => {
+    const [loading, setLoading] = useState(true);
+    const [run, setRun] = useState(0);
+    React.useEffect(() => {
+      setLoading(true);
+      const timer = setTimeout(() => setLoading(false), 2000);
+      return () => clearTimeout(timer);
+    }, [run]);
+    return (
+      <VStack gap={3} align="center">
+        <Thumbnail {...args} isLoading={loading} />
+        <button className="text-xs underline" onClick={() => setRun(run + 1)}>Replay</button>
+      </VStack>
+    );
+  },
+  args: {
+    picture_id: 8,
+    src: sampleImageUrl,
+    filename: "loading_photo.jpg",
+    status: MediaStatus.SUBMITTED_FOR_APPROVAL,
+  },
+};
+
+/** `isLoading` → existing error state (broken file) after 2 s. */
+export const LoadingFailure: Story = {
+  render: (args) => {
+    const [loading, setLoading] = useState(true);
+    React.useEffect(() => {
+      const timer = setTimeout(() => setLoading(false), 2000);
+      return () => clearTimeout(timer);
+    }, []);
+    return <Thumbnail {...args} isLoading={loading} hasError={!loading} />;
+  },
+  args: {
+    picture_id: 9,
+    src: sampleImageUrl,
+    filename: "missing_photo.jpg",
+    status: MediaStatus.SUBMITTED_FOR_APPROVAL,
+  },
+};
+
+/** Reduced motion: static 32 px indicator. */
+export const LoadingReducedMotion: Story = {
+  decorators: [withReducedMotion],
   args: {
     picture_id: 8,
     filename: "loading_photo.jpg",

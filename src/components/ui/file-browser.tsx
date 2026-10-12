@@ -1307,16 +1307,11 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
           <Button
             size="medium"
             onClick={onLoadMore}
-            disabled={isLoadingMore}
+            loading={isLoadingMore}
+            loadingLabel={t('fileBrowser.loading')}
             className="min-w-[200px]"
           >
-            {isLoadingMore ? (
-              <span className="flex items-center space-x-2">
-                <IconProvider icon="Loader" size={16} className="animate-spin" />
-                <span>{t('fileBrowser.loading')}</span>
-              </span>
-            ) : (
-              (() => {
+            {(() => {
                 // Calculer le nombre d'éléments restants à charger
                 const remainingCount = totalFiles !== null && totalFiles !== undefined
                   ? totalFiles - sortedFiles.length  // Nombre exact restant si totalFiles est connu
@@ -1325,8 +1320,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
                   count: formatNumber(remainingCount),
                   plural: remainingCount > 1 ? 's' : '',
                 });
-              })()
-            )}
+              })()}
           </Button>
         </div>
       )}
