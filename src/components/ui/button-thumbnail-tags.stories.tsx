@@ -111,7 +111,7 @@ The menu styles adapt automatically based on the parent Layout's \`data-bg\`:
     },
     variant: {
       control: "select",
-      options: ["normal", "secondary", "ghost", "outline", "destructive", "link"],
+      options: ["normal", "secondary", "ghost", "outline", "destructive", "link", "inverse"],
       description: "Button variant (inherited from Button)",
     },
     size: {

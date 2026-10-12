@@ -8,7 +8,11 @@ import { MediaStatus } from "@/utils/mediaStatus";
 import { Spinner } from "./spinner";
 
 // Types
-export type ButtonVariant = "normal" | "secondary" | "ghost" | "outline" | "destructive" | "link";
+/**
+ * `inverse` : symétrique de `normal`, s'adapte au fond. Sur blanc et gris : noir,
+ * texte blanc ; sur noir : blanc, texte noir. Survol et appui : bleu, texte noir.
+ */
+export type ButtonVariant = "normal" | "secondary" | "ghost" | "outline" | "destructive" | "link" | "inverse";
 export type ButtonSize = "small" | "medium" | "large";
 
 // Mapping pour compatibilité shadcn
@@ -39,6 +43,9 @@ function normalizeVariant(variant?: ButtonVariant | ShadcnVariant): ButtonVarian
 
     case "link":
       return "link";
+
+    case "inverse":
+      return "inverse";
 
     default:
       return "normal";
@@ -83,6 +90,7 @@ const buttonVariants = cva(
         outline: "btn-outline",
         destructive: "btn-destructive",
         link: "btn-link hover:underline active:underline",
+        inverse: "btn-inverse",
       },
       size: {
         small: "px-2 py-[4px] h-4 text-xs leading-tight gap-1 [&_svg]:h-[12px] [&_svg]:w-[12px]",      // 8px horizontal, 4px vertical, 20px height (h-4), gap 4px, font 9px avec leading-tight (11.25px), icônes 12px

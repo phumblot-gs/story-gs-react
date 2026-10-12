@@ -107,7 +107,7 @@ When \`allowCompletedClick\` is enabled:
     variant: {
       description: "Button variant (normal, secondary, outline, ghost)",
       control: "select",
-      options: ["normal", "secondary", "outline", "ghost"],
+      options: ["normal", "secondary", "outline", "ghost", "inverse"],
       table: {
         defaultValue: { summary: "normal" },
       },

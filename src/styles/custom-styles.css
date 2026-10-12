@@ -1749,6 +1749,21 @@ html.gs-page-scrollbar-hidden::-webkit-scrollbar {
   background: var(--button-w-destructive-bg-default);
   color: var(--button-w-destructive-fg-default);
 }
+[data-bg="white"].btn-inverse[data-loading="true"]:disabled {
+  opacity: 1;
+  background: var(--button-w-inverse-bg-default);
+  color: var(--button-w-inverse-fg-default);
+}
+[data-bg="grey"].btn-inverse[data-loading="true"]:disabled {
+  opacity: 1;
+  background: var(--button-g-inverse-bg-default);
+  color: var(--button-g-inverse-fg-default);
+}
+[data-bg="black"].btn-inverse[data-loading="true"]:disabled {
+  opacity: 1;
+  background: var(--button-b-inverse-bg-default);
+  color: var(--button-b-inverse-fg-default);
+}
 [data-bg="white"].btn-link[data-loading="true"]:disabled {
   opacity: 1;
   color: var(--button-w-link-fg-default);

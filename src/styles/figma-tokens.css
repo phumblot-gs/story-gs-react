@@ -1,7 +1,7 @@
 /**
  * Variables CSS générées automatiquement depuis les tokens Figma
  * NE PAS MODIFIER DIRECTEMENT - Généré par scripts/generate-css-tokens.cjs
- * Date: 2026-04-27T20:41:53.636Z
+ * Date: 2026-10-12T21:58:51.788Z
  */
 
 :root {
@@ -859,6 +859,30 @@
   --button-b-link-fg-hover: #ffffff;
   --button-b-link-fg-pressed: #cdedff;
   --button-b-link-fg-disabled: #c1c1c1;
+  --button-w-inverse-bg-default: #292828;
+  --button-w-inverse-fg-default: #ffffff;
+  --button-w-inverse-bg-hover: #cdedff;
+  --button-w-inverse-fg-hover: #292828;
+  --button-w-inverse-bg-pressed: #cdedff;
+  --button-w-inverse-fg-pressed: #292828;
+  --button-w-inverse-bg-disabled: #f3f3f3;
+  --button-w-inverse-fg-disabled: #c1c1c1;
+  --button-g-inverse-bg-default: #292828;
+  --button-g-inverse-fg-default: #ffffff;
+  --button-g-inverse-bg-hover: #cdedff;
+  --button-g-inverse-fg-hover: #292828;
+  --button-g-inverse-bg-pressed: #cdedff;
+  --button-g-inverse-fg-pressed: #292828;
+  --button-g-inverse-bg-disabled: #ffffff;
+  --button-g-inverse-fg-disabled: #c1c1c1;
+  --button-b-inverse-bg-default: #ffffff;
+  --button-b-inverse-fg-default: #292828;
+  --button-b-inverse-bg-hover: #cdedff;
+  --button-b-inverse-fg-hover: #292828;
+  --button-b-inverse-bg-pressed: #cdedff;
+  --button-b-inverse-fg-pressed: #292828;
+  --button-b-inverse-bg-disabled: #3a3a3a;
+  --button-b-inverse-fg-disabled: #c1c1c1;
 }
 
 /* Variables shadcn contextuelles par type de fond */
@@ -1046,6 +1070,28 @@
   text-decoration: none;
 }
 
+[data-bg="white"].btn-inverse {
+  background: var(--button-w-inverse-bg-default);
+  color: var(--button-w-inverse-fg-default);
+}
+
+[data-bg="white"].btn-inverse:hover:not(:disabled) {
+  background: var(--button-w-inverse-bg-hover);
+  color: var(--button-w-inverse-fg-hover);
+}
+
+[data-bg="white"].btn-inverse:active:not(:disabled) {
+  background: var(--button-w-inverse-bg-pressed);
+  color: var(--button-w-inverse-fg-pressed);
+}
+
+[data-bg="white"].btn-inverse:disabled {
+  background: var(--button-w-inverse-bg-disabled);
+  color: var(--button-w-inverse-fg-disabled);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
 
 /* Button variants pour background grey */
 [data-bg="grey"].btn-normal {
@@ -1164,6 +1210,28 @@
   text-decoration: none;
 }
 
+[data-bg="grey"].btn-inverse {
+  background: var(--button-g-inverse-bg-default);
+  color: var(--button-g-inverse-fg-default);
+}
+
+[data-bg="grey"].btn-inverse:hover:not(:disabled) {
+  background: var(--button-g-inverse-bg-hover);
+  color: var(--button-g-inverse-fg-hover);
+}
+
+[data-bg="grey"].btn-inverse:active:not(:disabled) {
+  background: var(--button-g-inverse-bg-pressed);
+  color: var(--button-g-inverse-fg-pressed);
+}
+
+[data-bg="grey"].btn-inverse:disabled {
+  background: var(--button-g-inverse-bg-disabled);
+  color: var(--button-g-inverse-fg-disabled);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
 
 /* Button variants pour background black */
 [data-bg="black"].btn-normal {
@@ -1280,6 +1348,28 @@
 [data-bg="black"].btn-link {
   color: var(--button-b-link-fg-default);
   text-decoration: none;
+}
+
+[data-bg="black"].btn-inverse {
+  background: var(--button-b-inverse-bg-default);
+  color: var(--button-b-inverse-fg-default);
+}
+
+[data-bg="black"].btn-inverse:hover:not(:disabled) {
+  background: var(--button-b-inverse-bg-hover);
+  color: var(--button-b-inverse-fg-hover);
+}
+
+[data-bg="black"].btn-inverse:active:not(:disabled) {
+  background: var(--button-b-inverse-bg-pressed);
+  color: var(--button-b-inverse-fg-pressed);
+}
+
+[data-bg="black"].btn-inverse:disabled {
+  background: var(--button-b-inverse-bg-disabled);
+  color: var(--button-b-inverse-fg-disabled);
+  cursor: not-allowed;
+  opacity: 0.5;
 }
 
 
