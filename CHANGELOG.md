@@ -5,6 +5,60 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.26.0] - 2026-10-12
+
+### Ajouté
+
+- `Spinner` : indicateur de chargement du design system. Anneau avec un arc de
+  270° sur une piste à 18 % d'opacité, couleur héritée du texte
+  (`currentColor`), un tour en 900 ms en rotation linéaire continue.
+  - Tailles `12 | 16 | 24 | 32` (épaisseur 1,5 / 2 / 2 / 3 px), 16 par défaut,
+    dimensions fixes dans les conteneurs flex.
+  - Seul : région de statut avec un nom accessible (`label`, défaut
+    « Chargement en cours » traduit, clé `spinner.loading`). À côté d'un texte
+    qui décrit déjà le chargement : `decorative` (`aria-hidden`).
+  - Animations réduites (`prefers-reduced-motion: reduce`, ou attribut
+    `data-gs-reduced-motion` sur un ancêtre, exporté en
+    `REDUCED_MOTION_ATTRIBUTE` pour les stories et les tests) : rotation
+    arrêtée, transitions supprimées.
+- `Button` : props `loading` et `loadingLabel`. Pendant le chargement, le
+  bouton est `disabled` et `aria-busy`, avec un Spinner décoratif (12 px en
+  small, 16 px sinon) et les couleurs de l'état normal (pas l'opacité de
+  l'état désactivé). Dès que `loading` est fourni, les deux libellés sont
+  superposés : la largeur ne change pas, fondu de 160 ms. Sans `loading`,
+  rendu inchangé.
+- `toast` :
+  - `id` : un second appel avec le même id met à jour le toast en place
+    (texte, type, icône) sans en créer un nouveau. Seuls les champs fournis
+    sont envoyés : une mise à jour garde la description et la durée.
+  - `duration: Infinity` : le toast reste jusqu'à sa fermeture.
+  - `dismissToast(id?)` : ferme un toast, ou tous.
+  - Types `ToastProps` et `ToastType` exportés.
+- Stories : « UI/Spinner » (Default, Sizes, Backgrounds, Inherits text
+  color, Inline with text, Reduced motion, Standalone accessible, Decorative
+  with label), Button (Loading on click, Loading sizes, Loading variants,
+  Loading reduced motion, Loading failure), Toaster (Loading, Loading counter
+  updates, Loading to success, Loading to error, Loading long text, Loading
+  reduced motion, Loading long running), Thumbnail (Loading to image, Loading
+  failure, Loading reduced motion), FileBrowser (Loading more, Loading more to
+  results).
+
+### Modifié
+
+- Toast de chargement : Spinner GS de 16 px au lieu du spinner à 12 barres de
+  sonner, fond `#EFEFEF` et texte `#292828` (le texte blanc était illisible).
+  Toutes les icônes de toast sont dans un emplacement de 16 × 16 px, à 20 px
+  du texte, avec un fondu de 160 ms ; le fond et le texte passent en fondu au
+  changement de type (chargement → succès).
+- Toast de succès : fond `#2E7D32` (contraste suffisant avec le texte blanc).
+  Le jeton `green` du système n'est pas modifié.
+- Un toast `loading` reste affiché jusqu'à sa mise à jour : passé en succès ou
+  en erreur, son délai de fermeture commence à ce moment-là.
+- `Thumbnail` : Spinner de 32 px (décoratif) au lieu de l'anneau gris, et
+  `aria-busy` sur la zone image pendant le chargement.
+- `FileBrowser` : le bouton « afficher plus » utilise `Button loading`
+  (Spinner de 16 px au lieu de l'icône Loader tournante).
+
 ## [1.25.0] - 2026-10-12
 
 ### Modifié

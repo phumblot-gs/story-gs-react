@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/popover";
 import { useTranslationSafe, type TranslationMap } from "@/contexts/TranslationContext";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Spinner } from "@/components/ui/spinner";
 
 /** Configuration de rejet du bench */
 export interface BenchRejectionOptions {
@@ -903,6 +904,7 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
         {/* Image container */}
         <div
           className={containerClasses}
+          aria-busy={picture_id && isLoading && !hasError ? true : undefined}
           style={{
             minHeight: isEmptyView
               ? "100%"
@@ -928,9 +930,12 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
           )}
 
           {/* Loading spinner */}
+          {/* Décoratif : dans une grille, des dizaines de régions de statut
+              annonceraient « Chargement en cours » en boucle. L'état est porté
+              par aria-busy sur la zone image. */}
           {picture_id && isLoading && !hasError && (
-            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-              <div className="w-8 h-8 border-4 border-grey-light border-t-grey-strongest rounded-full animate-spin" />
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-black">
+              <Spinner size={32} decorative />
             </div>
           )}
 

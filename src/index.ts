@@ -276,7 +276,8 @@ import {
 } from "./components/ui/sheet";
 import { Skeleton } from "./components/ui/skeleton";
 import { Slider } from "./components/ui/slider";
-import { Toaster, toast } from "./components/ui/sonner";
+import { Toaster, toast, dismissToast } from "./components/ui/sonner";
+import { Spinner, REDUCED_MOTION_ATTRIBUTE } from "./components/ui/spinner";
 import { Switch } from "./components/ui/switch";
 import { TagText } from "./components/ui/tag-text";
 import { TagStar } from "./components/ui/tag-star";
@@ -623,7 +624,10 @@ export {
 };
 export { Skeleton };
 export { Slider };
-export { Toaster, toast };
+export { Toaster, toast, dismissToast };
+export type { ToastProps, ToastType } from "./components/ui/sonner";
+export { Spinner, REDUCED_MOTION_ATTRIBUTE };
+export type { SpinnerProps, SpinnerSize } from "./components/ui/spinner";
 export { CheckAll, getCheckAllState } from "./components/ui/check-all";
 export type { CheckAllProps, CheckAllState } from "./components/ui/check-all";
 export { CheckAllPages, getCheckAllPagesScope } from "./components/ui/check-all-pages";

@@ -1,7 +1,8 @@
 
 import React, { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { Toaster, toast } from "./sonner";
+import { Toaster, toast, dismissToast } from "./sonner";
+import { withReducedMotion } from "@/stories/reducedMotion";
 import { Button } from "./button-default";
 
 const meta: Meta<typeof Toaster> = {
@@ -297,4 +298,135 @@ export const ToastTypes: Story = {
       </div>
     );
   },
+};
+
+// --- Loading toasts -------------------------------------------------------------
+
+/**
+ * Interactive loading scenario: "Start" opens a loading toast (`id` fixed), optional counter updates in
+ * the SAME toast, then "Finish" (or "Fail") turns it into a success (or error) toast with the same id.
+ * The success closing delay only starts at that moment. No toast is created automatically.
+ */
+function LoadingScenario({
+  id,
+  title,
+  counter,
+  doneTitle = "Tri des visuels terminé",
+  errorTitle = "Le tri des visuels a échoué",
+  autoFinishAfter,
+}: {
+  id: string;
+  title: string | ((count: number) => string);
+  counter?: boolean;
+  doneTitle?: string;
+  errorTitle?: string;
+  /** Finishes on its own after N seconds (long-running demo). */
+  autoFinishAfter?: number;
+}) {
+  const [running, setRunning] = useState(false);
+  const [elapsed, setElapsed] = useState(0);
+  const timer = React.useRef<ReturnType<typeof setInterval>>();
+  const label = (count: number) => (typeof title === "function" ? title(count) : title);
+
+  const stop = () => {
+    clearInterval(timer.current);
+    setRunning(false);
+  };
+  React.useEffect(() => () => clearInterval(timer.current), []);
+
+  const start = () => {
+    let count = 1;
+    setElapsed(0);
+    setRunning(true);
+    toast({ id, type: "loading", title: label(count) });
+    timer.current = setInterval(() => {
+      count += 1;
+      setElapsed(count - 1);
+      if (counter) toast({ id, type: "loading", title: label(count) });
+      if (autoFinishAfter && count > autoFinishAfter) {
+        clearInterval(timer.current);
+        setRunning(false);
+        toast({ id, type: "success", title: doneTitle });
+      }
+    }, 1000);
+  };
+  const finish = () => {
+    stop();
+    toast({ id, type: "success", title: doneTitle });
+  };
+  const fail = () => {
+    stop();
+    toast({ id, type: "error", title: errorTitle });
+  };
+
+  return (
+    <div className="flex flex-col items-center gap-4">
+      <Toaster />
+      <div className="flex gap-3">
+        <Button onClick={start} disabled={running}>Start</Button>
+        <Button onClick={finish} disabled={!running}>Finish</Button>
+        <Button onClick={fail} disabled={!running}>Fail</Button>
+        <Button onClick={() => { stop(); dismissToast(id); }}>Dismiss</Button>
+      </div>
+      {running && <span className="text-xs">Running for {elapsed} s</span>}
+    </div>
+  );
+}
+
+/**
+ * Neutral loading toast: grey background, dark text, 16 px Spinner, 20 px between the spinner and the
+ * text. It stays visible until it is updated or dismissed.
+ *
+ * ```tsx
+ * toast({ id: "sort", type: "loading", title: "Tri automatique des visuels" });
+ * // later, same toast:
+ * toast({ id: "sort", type: "success", title: "Tri des visuels terminé" });
+ * dismissToast("sort"); // or close it
+ * ```
+ */
+export const Loading: Story = {
+  render: () => <LoadingScenario id="loading" title="Tri automatique des visuels" />,
+};
+
+/** The counter is updated every second in a single toast (no new toast, no entry animation replayed). */
+export const LoadingCounterUpdates: Story = {
+  render: () => (
+    <LoadingScenario
+      id="counter"
+      counter
+      title={(n) => `Analyse des visuels en cours (${n} référence${n > 1 ? "s" : ""})`}
+      doneTitle="Analyse des visuels terminée"
+    />
+  ),
+};
+
+/** "Finish": the same toast turns into a success (160 ms fade of the icon and colours), then closes after the usual delay. */
+export const LoadingToSuccess: Story = {
+  render: () => <LoadingScenario id="to-success" title="Tri automatique des visuels" />,
+};
+
+/** "Fail": the same toast turns into an error. */
+export const LoadingToError: Story = {
+  render: () => <LoadingScenario id="to-error" title="Tri automatique des visuels" />,
+};
+
+/** Long label: the text wraps without squeezing the spinner. */
+export const LoadingLongText: Story = {
+  render: () => (
+    <LoadingScenario
+      id="long-text"
+      title="Analyse des visuels en cours (128 références) : détourage, recadrage et contrôle des formats demandés par le cahier des charges"
+    />
+  ),
+};
+
+/** Reduced motion: static spinner, immediate state change. */
+export const LoadingReducedMotion: Story = {
+  decorators: [withReducedMotion],
+  render: () => <LoadingScenario id="reduced" title="Tri automatique des visuels" />,
+};
+
+/** An action longer than the usual toast duration (8 s): the toast stays until the end, then the success closes after 3 s. */
+export const LoadingLongRunning: Story = {
+  render: () => <LoadingScenario id="long-running" title="Import des visuels" doneTitle="Import terminé" autoFinishAfter={8} />,
 };

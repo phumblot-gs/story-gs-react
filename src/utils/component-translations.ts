@@ -1110,6 +1110,15 @@ export const componentTranslations: TranslationMap = {
     DE: "Panel"
   },
 
+  // Spinner
+  "spinner.loading": {
+    EN: "Loading",
+    FR: "Chargement en cours",
+    ES: "Cargando",
+    IT: "Caricamento in corso",
+    DE: "Wird geladen"
+  },
+
   // Modal
   "modal.accessibilityTitle": {
     EN: "Dialog",

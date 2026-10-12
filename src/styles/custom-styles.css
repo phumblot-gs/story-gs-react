@@ -1658,3 +1658,158 @@ html.gs-page-scrollbar-hidden {
 html.gs-page-scrollbar-hidden::-webkit-scrollbar {
   display: none;
 }
+
+/* ==========================================================================
+ * Spinner, transitions d'état et animations réduites
+ *
+ * .gs-spinner : un tour en 900 ms, rotation linéaire continue, quelle que soit
+ * la taille. .gs-state-fade : fondu de 160 ms entre deux états (bouton en
+ * chargement → succès, icône d'un toast).
+ *
+ * Animations réduites : la préférence système, ou l'attribut
+ * `data-gs-reduced-motion` posé sur un ancêtre (point d'accroche des stories et
+ * des tests, sans prop publique), arrêtent la rotation et suppriment les
+ * transitions. Le spinner reste visible ; le texte porte l'état « en cours ».
+ * ========================================================================== */
+@keyframes gs-spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes gs-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.gs-spinner {
+  animation: gs-spin 900ms linear infinite;
+  transform-origin: 50% 50%;
+}
+.gs-state-fade {
+  transition: opacity 160ms linear;
+}
+
+/* Toasts : couleur du fond et du texte en fondu au changement de type
+ * (chargement → succès), sans toucher aux transitions de sonner ; l'icône
+ * apparaît en fondu dans son emplacement de 16 × 16 px, à 20 px du texte. */
+[data-sonner-toast].gs-toast {
+  transition: transform 400ms, opacity 400ms, height 400ms, box-shadow 200ms, background-color 160ms linear, color 160ms linear;
+}
+[data-sonner-toast].gs-toast [data-icon] {
+  width: 16px;
+  height: 16px;
+  /* 20 px jusqu'au texte : 14 px de marge + 6 px de `gap` du toast sonner. */
+  margin: 0 14px 0 0;
+}
+[data-sonner-toast].gs-toast [data-icon] > * {
+  animation: gs-fade-in 160ms linear;
+}
+[data-sonner-toast].gs-toast [data-icon] .sonner-loader {
+  position: static;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gs-spinner { animation: none; }
+  .gs-state-fade { transition: none; }
+  [data-sonner-toast].gs-toast { transition: transform 400ms, opacity 400ms, height 400ms, box-shadow 200ms; }
+  [data-sonner-toast].gs-toast [data-icon] > * { animation: none; }
+}
+[data-gs-reduced-motion] .gs-spinner { animation: none; }
+[data-gs-reduced-motion] .gs-state-fade { transition: none; }
+[data-gs-reduced-motion] [data-sonner-toast].gs-toast { transition: transform 400ms, opacity 400ms, height 400ms, box-shadow 200ms; }
+[data-gs-reduced-motion] [data-sonner-toast].gs-toast [data-icon] > * { animation: none; }
+
+/* Bouton en chargement : réellement disabled (aucun clic, aria-busy), mais avec
+ * les couleurs de l'état normal et sans l'opacité de 50 % de l'état désactivé :
+ * le spinner et le libellé restent bien lisibles. */
+[data-loading="true"]:disabled {
+  cursor: progress;
+}
+[data-bg="white"].btn-normal[data-loading="true"]:disabled {
+  opacity: 1;
+  background: var(--button-w-normal-bg-default);
+  color: var(--button-w-normal-fg-default);
+}
+[data-bg="white"].btn-secondary[data-loading="true"]:disabled {
+  opacity: 1;
+  background: var(--button-w-secondary-bg-default);
+  color: var(--button-w-secondary-fg-default);
+}
+[data-bg="white"].btn-ghost[data-loading="true"]:disabled {
+  opacity: 1;
+  background: var(--button-w-ghost-bg-default);
+  color: var(--button-w-ghost-fg-default);
+}
+[data-bg="white"].btn-outline[data-loading="true"]:disabled {
+  opacity: 1;
+  background: var(--button-w-outline-bg-default);
+  color: var(--button-w-outline-fg-default);
+  border-color: var(--button-w-outline-fg-default);
+}
+[data-bg="white"].btn-destructive[data-loading="true"]:disabled {
+  opacity: 1;
+  background: var(--button-w-destructive-bg-default);
+  color: var(--button-w-destructive-fg-default);
+}
+[data-bg="white"].btn-link[data-loading="true"]:disabled {
+  opacity: 1;
+  color: var(--button-w-link-fg-default);
+}
+[data-bg="grey"].btn-normal[data-loading="true"]:disabled {
+  opacity: 1;
+  background: var(--button-g-normal-bg-default);
+  color: var(--button-g-normal-fg-default);
+}
+[data-bg="grey"].btn-secondary[data-loading="true"]:disabled {
+  opacity: 1;
+  background: var(--button-g-secondary-bg-default);
+  color: var(--button-g-secondary-fg-default);
+}
+[data-bg="grey"].btn-ghost[data-loading="true"]:disabled {
+  opacity: 1;
+  background: var(--button-g-ghost-bg-default);
+  color: var(--button-g-ghost-fg-default);
+}
+[data-bg="grey"].btn-outline[data-loading="true"]:disabled {
+  opacity: 1;
+  background: var(--button-g-outline-bg-default);
+  color: var(--button-g-outline-fg-default);
+  border-color: var(--button-g-outline-fg-default);
+}
+[data-bg="grey"].btn-destructive[data-loading="true"]:disabled {
+  opacity: 1;
+  background: var(--button-g-destructive-bg-default);
+  color: var(--button-g-destructive-fg-default);
+}
+[data-bg="grey"].btn-link[data-loading="true"]:disabled {
+  opacity: 1;
+  color: var(--button-g-link-fg-default);
+}
+[data-bg="black"].btn-normal[data-loading="true"]:disabled {
+  opacity: 1;
+  background: var(--button-b-normal-bg-default);
+  color: var(--button-b-normal-fg-default);
+}
+[data-bg="black"].btn-secondary[data-loading="true"]:disabled {
+  opacity: 1;
+  background: var(--button-b-secondary-bg-default);
+  color: var(--button-b-secondary-fg-default);
+}
+[data-bg="black"].btn-ghost[data-loading="true"]:disabled {
+  opacity: 1;
+  background: var(--button-b-ghost-bg-default);
+  color: var(--button-b-ghost-fg-default);
+}
+[data-bg="black"].btn-outline[data-loading="true"]:disabled {
+  opacity: 1;
+  background: var(--button-b-outline-bg-default);
+  color: var(--button-b-outline-fg-default);
+  border-color: var(--button-b-outline-fg-default);
+}
+[data-bg="black"].btn-destructive[data-loading="true"]:disabled {
+  opacity: 1;
+  background: var(--button-b-destructive-bg-default);
+  color: var(--button-b-destructive-fg-default);
+}
+[data-bg="black"].btn-link[data-loading="true"]:disabled {
+  opacity: 1;
+  color: var(--button-b-link-fg-default);
+}

@@ -906,3 +906,15 @@ export const InteractiveDragAndDropMove: Story = {
     },
   },
 };
+
+/** "Show more" button while loading: 16 px Spinner (Button `loading`), files already listed stay usable. */
+export const LoadingMore: Story = {
+  ...PaginationLoading,
+  name: "Loading more",
+};
+
+/** Click "show more": Spinner during 1.5 s, then the new files are added and the Spinner disappears. */
+export const LoadingMoreToResults: Story = {
+  ...InteractivePagination,
+  name: "Loading more to results",
+};

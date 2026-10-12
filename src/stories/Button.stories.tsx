@@ -2,6 +2,8 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Button } from "@/components/ui/button";
 import { Layout, VStack, HStack } from "@/components/layout";
 import { Icon } from "@/components/ui/icons";
+import { ButtonLoadingDemo } from "./ButtonLoadingDemo";
+import { withReducedMotion } from "./reducedMotion";
 
 const meta = {
   title: "UI/Button",
@@ -21,6 +23,8 @@ const meta = {
 - Active indicator state (e.g. active filter: hover background + blue-primary text/icon)
 - Polymorphic component support via \`asChild\` prop
 - Event handlers (onClick, onFocus, onBlur)
+- Loading state (\`loading\`, \`loadingLabel\`): disabled + \`aria-busy\`, decorative Spinner (12 px in small, 16 px
+  otherwise), constant width (both labels are stacked as soon as \`loading\` is provided)
 - Debug mode for development
 - Shadcn UI compatibility
 
@@ -741,6 +745,80 @@ export const DebugMode: Story = {
           </div>
         </VStack>
       </VStack>
+    </Layout>
+  ),
+};
+
+// --- Loading ------------------------------------------------------------------
+
+const VARIANTS = ["normal", "secondary", "ghost", "outline", "destructive", "link"] as const;
+
+/**
+ * Reference scenario with the real Button: click → 3 s simulated action (disabled, `aria-busy`, Spinner,
+ * "Import en cours…") → success icon and "Import terminé" (160 ms fade, no layout shift) → back to the
+ * initial label after 1.5 s. Clicking during the success restarts an action and cancels the previous reset.
+ *
+ * ```tsx
+ * <Button loading={isImporting} loadingLabel="Import en cours…" onClick={runImport}>
+ *   Importer les visuels
+ * </Button>
+ * ```
+ */
+export const LoadingOnClick: Story = {
+  render: () => (
+    <Layout bg="white" padding={6}>
+      <ButtonLoadingDemo />
+    </Layout>
+  ),
+};
+
+/** Loading in every Button size: 12 px Spinner in small, 16 px otherwise. */
+export const LoadingSizes: Story = {
+  render: () => (
+    <Layout bg="white" padding={6}>
+      <HStack gap={4} align="center">
+        <Button size="small" loading loadingLabel="Import…">Importer</Button>
+        <Button size="medium" loading loadingLabel="Import en cours…">Importer les visuels</Button>
+        <Button size="large" loading loadingLabel="Import en cours…">Importer les visuels</Button>
+      </HStack>
+    </Layout>
+  ),
+};
+
+/** Loading in every variant, on their real backgrounds. The Spinner takes the text colour. */
+export const LoadingVariants: Story = {
+  render: () => (
+    <VStack gap={0}>
+      {(["white", "grey", "black"] as const).map((bg) => (
+        <Layout key={bg} bg={bg} padding={6}>
+          <HStack gap={3} align="center" wrap>
+            {VARIANTS.map((variant) => (
+              <Button key={variant} variant={variant} loading loadingLabel={variant}>
+                {variant}
+              </Button>
+            ))}
+          </HStack>
+        </Layout>
+      ))}
+    </VStack>
+  ),
+};
+
+/** Same scenario with reduced motion: static Spinner, states replaced without transition. */
+export const LoadingReducedMotion: Story = {
+  decorators: [withReducedMotion],
+  render: () => (
+    <Layout bg="white" padding={6}>
+      <ButtonLoadingDemo />
+    </Layout>
+  ),
+};
+
+/** Failed action: loading ends, an accessible message is shown, the button is enabled again to retry. */
+export const LoadingFailure: Story = {
+  render: () => (
+    <Layout bg="white" padding={6}>
+      <ButtonLoadingDemo fail />
     </Layout>
   ),
 };
