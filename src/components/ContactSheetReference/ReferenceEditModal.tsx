@@ -99,6 +99,12 @@ export const ReferenceEditModal: React.FC<ReferenceEditModalProps> = ({
       onClose={() => !saving && onClose()}
       maxWidth="min(90vw, 520px)"
       className="w-full"
+      title={t("contactSheet.editTitle", { ref: reference.ref })}
+      header={
+        <h2 className="text-base font-bold m-0">
+          {t("contactSheet.editTitle", { ref: reference.ref })}
+        </h2>
+      }
       footer={
         <>
           <Button variant="secondary" onClick={onClose} disabled={saving}>
@@ -112,10 +118,6 @@ export const ReferenceEditModal: React.FC<ReferenceEditModalProps> = ({
     >
       <form onSubmit={handleSubmit} className="w-full">
         <VStack gap={3} padding={4}>
-          <h2 className="text-base font-bold m-0">
-            {t("contactSheet.editTitle", { ref: reference.ref })}
-          </h2>
-
           {attributes.map((attribute) => {
             const id = `ref-${reference.reference_id}-${attribute.key}`;
             return (

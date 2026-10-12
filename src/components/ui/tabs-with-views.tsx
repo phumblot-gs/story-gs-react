@@ -276,6 +276,9 @@ const ViewFormModal: React.FC<ViewFormModalProps> = ({
       isOpen={isOpen}
       onClose={onClose}
       className="w-[480px]"
+      title={title}
+      header={<h3 className="gs-typo-h3">{title}</h3>}
+      headerClassName="px-5"
       footer={
         <>
           <Button variant="secondary" onClick={onClose} disabled={submitting}>
@@ -288,7 +291,6 @@ const ViewFormModal: React.FC<ViewFormModalProps> = ({
       }
     >
       <VStack gap={4} padding={5}>
-        <h3 className="gs-typo-h3">{title}</h3>
 
         <VStack gap={2}>
           <Label htmlFor="tabs-view-name">{nameLabel}</Label>
@@ -387,6 +389,9 @@ const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({
       isOpen={isOpen}
       onClose={onClose}
       className="w-[420px]"
+      title={title}
+      header={<h3 className="gs-typo-h3">{title}</h3>}
+      headerClassName="px-5"
       footer={
         <>
           <Button variant="secondary" onClick={onClose} disabled={submitting}>
@@ -399,7 +404,6 @@ const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({
       }
     >
       <VStack gap={3} padding={5}>
-        <h3 className="gs-typo-h3">{title}</h3>
         <p className="text-sm">{message}</p>
         {error && <span className="text-xs text-destructive">{error}</span>}
       </VStack>
