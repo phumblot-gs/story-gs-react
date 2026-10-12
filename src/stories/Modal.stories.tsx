@@ -2,6 +2,8 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useState } from "react";
 import { Modal } from "@/components/layout/Modal";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import { SidePanel } from "@/components/layout/SidePanel";
 
 const meta = {
   title: "Layout/Modal",
@@ -10,18 +12,32 @@ const meta = {
     layout: "centered",
     docs: {
       description: {
-        component: `Modal component built with the Figma design system. Modal displays a centered overlay dialog with customizable content and footer.
+        component: `Centered modal dialog built on **Radix Dialog**, with a fixed header, a scrolling body and a fixed footer.
 
 ## Features
-- Centered overlay dialog (fixed positioning, z-index 50)
-- Automatic body scroll lock when open
-- Close on overlay click (configurable)
-- Close on Escape key (configurable)
-- Customizable maximum dimensions (maxHeight, maxWidth)
-- Footer automatically wrapped in HStack with proper styling
-- Scrollable content area
-- Customizable overlay and content styling
-- Built with Layout components (VStack, HStack) for consistency
+- Portaled, centered dialog (z-index 50; the last opened dialog is on top)
+- **Nested dialogs**: opened over a \`SidePanel\` (or any Radix dialog), whether rendered inside its React tree or next to it at page level, the modal is on top, its body scrolls (wheel and touch), focus is trapped inside it, and Escape / overlay click close **only the modal** (a second Escape closes the SidePanel)
+- Scroll lock of the page handled by Radix
+- \`header\` and \`footer\`: fixed areas with a separator; the body (\`flex-1 min-h-0\`) is the only scrolling area
+- \`bg\` (\`white\` | \`grey\` | \`black\`, default white): background of the whole dialog, provided (BgContext) to header, body and footer so Button, Switch, Label… adapt; separators follow (\`border-grey-strongest\` on black); darker overlay on black
+- \`padding\` (4 | 6 | 8): shared by header, body and footer. Without it, the body has **no padding** (the content sets its own) and header / footer keep 4
+- \`title\`: accessible name (screen readers only), default "Dialog" translated
+- \`initialFocus\`: element focused on open (default: the first focusable element)
+- Close on overlay click / Escape (configurable), \`maxHeight\` / \`maxWidth\`
+
+\`\`\`tsx
+<Modal
+  isOpen={isOpen}
+  onClose={() => setIsOpen(false)}
+  title="Displayed catalogue fields"
+  bg="black"
+  padding={8}
+  header={<h2 className="gs-typo-h2 text-white">Displayed catalogue fields</h2>}
+  footer={<Button onClick={() => setIsOpen(false)}>Close</Button>}
+>
+  {fields.map((field) => <Switch key={field.id} … />)}
+</Modal>
+\`\`\`
 
 ## Basic Usage
 
@@ -56,7 +72,7 @@ function App() {
 
 ## With Footer
 
-The \`footer\` prop accepts React nodes that are automatically wrapped in an HStack with \`justify="end"\`, \`align="center"\`, \`gap={3}\`, and \`padding={4}\`:
+The \`footer\` prop accepts React nodes that are laid out in a fixed row with \`justify="end"\`, \`align="center"\`, \`gap={3}\`, and \`padding={4}\`:
 
 \`\`\`tsx
 <Modal
@@ -85,7 +101,7 @@ The \`footer\` prop accepts React nodes that are automatically wrapped in an HSt
 \`\`\`
 
 **Footer styling:**
-- Automatically wrapped in \`HStack\`
+- Fixed row, outside the scrolling body
 - Right-aligned (\`justify="end"\`)
 - Vertically centered (\`align="center"\`)
 - Gap of 3 (15px) between items
@@ -174,12 +190,13 @@ Customize overlay, content, and footer styling using className props:
 **Available className props:**
 - \`overlayClassName\`: Styles for the overlay backdrop
 - \`contentClassName\`: Styles for the scrollable content area
-- \`footerClassName\`: Styles for the footer HStack
-- \`className\`: Styles for the modal VStack container
+- \`headerClassName\`: Styles for the fixed header
+- \`footerClassName\`: Styles for the fixed footer
+- \`className\`: Styles for the dialog window
 
 ## Body Scroll Lock
 
-When the modal is open, the body scroll is automatically locked to prevent background scrolling. This is handled internally and restored when the modal closes.
+When the modal is open, the page scroll is locked by Radix and restored when the modal closes. Only the latest lock applies: a modal opened over a SidePanel keeps a scrollable body.
 
 ## Common Use Cases
 
@@ -280,7 +297,7 @@ When the modal is open, the body scroll is automatically locked to prevent backg
     },
     footer: {
       control: false,
-      description: 'React nodes to display in the footer. Automatically wrapped in an HStack with right alignment.',
+      description: 'React nodes to display in the footer. Fixed row, right-aligned.',
     },
     overlayClassName: {
       control: 'text',
@@ -290,13 +307,31 @@ When the modal is open, the body scroll is automatically locked to prevent backg
       control: 'text',
       description: 'Additional Tailwind CSS classes for the scrollable content area',
     },
+    header: {
+      control: false,
+      description: 'Fixed area at the top, with a bottom separator. Never scrolls.',
+    },
+    bg: {
+      control: 'inline-radio',
+      options: ['white', 'grey', 'black'],
+      description: 'Background of the whole dialog, provided to header, body and footer. Default: "white"',
+    },
+    padding: {
+      control: 'inline-radio',
+      options: [4, 6, 8],
+      description: 'Padding shared by header, body and footer. Without it, the body has no padding.',
+    },
+    title: {
+      control: 'text',
+      description: 'Accessible name (screen readers only). Default: "Dialog" translated',
+    },
     footerClassName: {
       control: 'text',
-      description: 'Additional Tailwind CSS classes for the footer HStack',
+      description: 'Additional Tailwind CSS classes for the fixed footer',
     },
     className: {
       control: 'text',
-      description: 'Additional Tailwind CSS classes for the modal VStack container',
+      description: 'Additional Tailwind CSS classes for the dialog window',
     },
   },
 } satisfies Meta<typeof Modal>;
@@ -351,7 +386,7 @@ export const WithFooter: Story = {
           <div className="p-6">
             <h2 className="gs-typo-h1 mb-4">Modale avec footer</h2>
             <p className="text-sm text-grey-stronger mb-4">
-              Le footer est automatiquement wrappé dans un HStack avec justify="end", align="center", gap={3}, padding={4}.
+              Le footer est une rangée fixe avec justify="end", align="center", gap={3}, padding={4}.
             </p>
             <input
               type="text"
@@ -481,6 +516,93 @@ export const CompleteExample: Story = {
           </div>
         </Modal>
       </>
+    );
+  },
+};
+
+const FIELDS = Array.from({ length: 40 }, (_, i) => `Catalogue field ${i + 1}`);
+
+/**
+ * Fixed header and footer, 40 switches, black background: only the body scrolls, the separators keep
+ * the same spacing above and below (`padding={8}`), and Switch / Button adapt to the black background.
+ */
+export const FixedHeaderBlack: Story = {
+  name: "Fixed header and footer, long list, black background",
+  render: () => {
+    const [isOpen, setIsOpen] = useState(false);
+    const [enabled, setEnabled] = useState<Record<string, boolean>>({});
+    return (
+      <>
+        <Button onClick={() => setIsOpen(true)}>Open the fields</Button>
+        <Modal
+          isOpen={isOpen}
+          onClose={() => setIsOpen(false)}
+          bg="black"
+          padding={8}
+          title="Displayed catalogue fields"
+          className="w-[480px]"
+          header={<h2 className="gs-typo-h2 m-0 text-white">Displayed catalogue fields</h2>}
+          footer={<Button onClick={() => setIsOpen(false)}>Close</Button>}
+        >
+          <div className="flex flex-col gap-3">
+            {FIELDS.map((field) => (
+              <label key={field} className="flex items-center justify-between gap-4 text-sm">
+                {field}
+                <Switch
+                  value={!!enabled[field]}
+                  onValueChange={(value) => setEnabled({ ...enabled, [field]: value })}
+                />
+              </label>
+            ))}
+          </div>
+        </Modal>
+      </>
+    );
+  },
+};
+
+/**
+ * Modal opened from a SidePanel and rendered **next to it** at page level (the mediagrade case): the
+ * modal is on top, its body scrolls, Escape or a click on its overlay closes only the modal; a second
+ * Escape closes the SidePanel.
+ */
+export const OverSidePanel: Story = {
+  name: "Modal over a SidePanel",
+  parameters: { layout: "fullscreen" },
+  render: () => {
+    const [panelOpen, setPanelOpen] = useState(false);
+    const [modalOpen, setModalOpen] = useState(false);
+    return (
+      <div className="p-6">
+        <Button onClick={() => setPanelOpen(true)}>Open the SidePanel</Button>
+        <SidePanel
+          isOpen={panelOpen}
+          onClose={() => setPanelOpen(false)}
+          width={360}
+          headerContent={<span className="text-sm font-medium text-white">Filters</span>}
+        >
+          <div className="flex flex-col gap-4 p-4 text-sm text-white">
+            <p className="m-0">The modal below is rendered next to this panel, not inside it.</p>
+            <Button onClick={() => setModalOpen(true)}>Choose the fields</Button>
+          </div>
+        </SidePanel>
+        <Modal
+          isOpen={modalOpen}
+          onClose={() => setModalOpen(false)}
+          bg="black"
+          padding={8}
+          title="Displayed catalogue fields"
+          className="w-[480px]"
+          header={<h2 className="gs-typo-h2 m-0 text-white">Displayed catalogue fields</h2>}
+          footer={<Button onClick={() => setModalOpen(false)}>Close</Button>}
+        >
+          <div className="flex flex-col gap-3 text-sm">
+            {FIELDS.map((field) => (
+              <div key={field}>{field}</div>
+            ))}
+          </div>
+        </Modal>
+      </div>
     );
   },
 };

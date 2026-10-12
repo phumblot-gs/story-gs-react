@@ -1110,6 +1110,15 @@ export const componentTranslations: TranslationMap = {
     DE: "Panel"
   },
 
+  // Modal
+  "modal.accessibilityTitle": {
+    EN: "Dialog",
+    FR: "Fenêtre",
+    ES: "Ventana",
+    IT: "Finestra",
+    DE: "Dialog"
+  },
+
   // ContactSheetReference
   "contactSheet.selectReference": {
     EN: "Select reference {ref}", FR: "Sélectionner la référence {ref}", ES: "Seleccionar la referencia {ref}", IT: "Seleziona il riferimento {ref}", DE: "Referenz {ref} auswählen"

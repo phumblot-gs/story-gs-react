@@ -5,6 +5,50 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.25.0] - 2026-10-12
+
+### Modifié
+
+- `Modal` reconstruit sur Radix Dialog (portail, overlay, contenu). API
+  existante inchangée (`isOpen`, `onClose`, `footer`, classes,
+  `closeOnOverlayClick`, `closeOnEscape`, `maxHeight`, `maxWidth`), alias
+  `ModalLayer` conservé.
+  - Dialog imbriqué : ouverte au-dessus d'un `SidePanel` (ou de tout dialog
+    Radix), qu'elle soit rendue dans son arbre React ou à côté au niveau de la
+    page, la modale passe devant (dernier portail ouvert, z-50), son corps
+    défile (molette et tactile), le focus y est piégé, et Échap ou un clic sur
+    son overlay ne ferment qu'elle. Un second Échap ferme le SidePanel.
+  - Verrou de défilement de la page géré par Radix : la gestion manuelle de
+    `document.body.style.overflow` est supprimée.
+  - Focus : à l'ouverture, le premier élément focusable reçoit le focus (sauf
+    si un champ a déjà `autoFocus`), puis il est rendu au déclencheur à la
+    fermeture. Le footer n'a plus d'`overflow-auto` hérité de `Layout`.
+- `ReferenceEditModal` et les modales de vues de `TabsWithViews` : le titre
+  passe dans le `header` fixe et ne défile plus avec le contenu.
+
+### Ajouté
+
+- `Modal` :
+  - `header` (nœud ou fonction) et `headerClassName` : zone fixe en haut, avec
+    un séparateur. Structure header (fixe) / corps (`flex-1 min-h-0`, seule
+    zone qui défile) / footer (fixe).
+  - `bg` (`white` | `grey` | `black`, défaut `white`) : fond de toute la
+    fenêtre, transmis par `BgProvider` au header, au corps et au footer.
+    Séparateurs assortis (`border-grey-strongest` sur noir), texte blanc et
+    overlay plus sombre sur noir.
+  - `padding` (4 | 6 | 8) : commun au header, au corps et au footer. Sans
+    valeur, le corps reste sans padding (le contenu pose le sien) et le header
+    et le footer gardent 4.
+  - `title` : nom accessible (lecteurs d'écran), défaut « Fenêtre » traduit.
+    Plus d'avertissement Radix.
+  - `initialFocus` : élément qui reçoit le focus à l'ouverture.
+- Stories « Modal over a SidePanel » et « Fixed header and footer, long list,
+  black background ».
+- Tests : modale au-dessus d'un SidePanel, rendue à côté ou dans son arbre
+  (Échap, overlay, focus, défilement du corps non bloqué), structure, fond,
+  padding, et un test sur le bundle construit (`dist/`) qui vérifie que
+  SidePanel et Modal partagent la même pile de calques Radix.
+
 ## [1.24.0] - 2026-10-11
 
 ### Ajouté
