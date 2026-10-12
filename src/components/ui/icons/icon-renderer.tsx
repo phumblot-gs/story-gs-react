@@ -123,6 +123,8 @@ export const renderIcon = (
       return <CustomIcons.CustomBrokenFileIcon size={size} />;
     case "File":
       return <LucideIcons.File size={size} strokeWidth={strokeWidth} className="max-w-[12px] max-h-[12px]" />;
+    case "FileImage":
+      return <LucideIcons.FileImage size={size} strokeWidth={strokeWidth} className="max-w-[12px] max-h-[12px]" />;
     case "Folder":
       return <LucideIcons.Folder size={size} strokeWidth={strokeWidth} className="max-w-[12px] max-h-[12px]" />;
     case "Globe":

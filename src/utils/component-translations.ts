@@ -19,13 +19,6 @@ export const componentTranslations: TranslationMap = {
     IT: "Filtra per data",
     DE: "Nach Datum filtern"
   },
-  "fileBrowser.refresh": {
-    EN: "Refresh",
-    FR: "Actualiser",
-    ES: "Actualizar",
-    IT: "Aggiorna",
-    DE: "Aktualisieren"
-  },
   "fileBrowser.selected": {
     EN: "{count} selected",
     FR: "{count} sélectionné{plural}",
@@ -138,40 +131,77 @@ export const componentTranslations: TranslationMap = {
     IT: "Nessun file",
     DE: "Keine Dateien"
   },
-  "fileBrowser.filesLimitReached": {
-    EN: "{count} files (limit reached)",
-    FR: "{count} fichier{plural} (limite atteinte)",
-    ES: "{count} archivo{plural} (límite alcanzado)",
-    IT: "{count} file{plural} (limite raggiunto)",
-    DE: "{count} Dateien (Limit erreicht)"
+  // Compteur d'éléments (fichiers et dossiers). Le pluriel passe par les clés
+  // `_plural` (Number(count) !== 1), correct aussi en italien et en allemand.
+  "fileBrowser.itemsLimitReached": {
+    EN: "{count} item (limit reached)",
+    FR: "{count} élément (limite atteinte)",
+    ES: "{count} elemento (límite alcanzado)",
+    IT: "{count} elemento (limite raggiunto)",
+    DE: "{count} Element (Limit erreicht)"
   },
-  "fileBrowser.filesAndMore": {
-    EN: "{count} files and more...",
-    FR: "{count} fichier{plural} et plus...",
-    ES: "{count} archivo{plural} y más...",
-    IT: "{count} file{plural} e altro...",
-    DE: "{count} Dateien und mehr..."
+  "fileBrowser.itemsLimitReached_plural": {
+    EN: "{count} items (limit reached)",
+    FR: "{count} éléments (limite atteinte)",
+    ES: "{count} elementos (límite alcanzado)",
+    IT: "{count} elementi (limite raggiunto)",
+    DE: "{count} Elemente (Limit erreicht)"
   },
-  "fileBrowser.filesCount": {
-    EN: "{count} file",
-    FR: "{count} fichier",
-    ES: "{count} archivo",
-    IT: "{count} file",
-    DE: "{count} Datei"
+  "fileBrowser.itemsAndMore": {
+    EN: "{count} item and more...",
+    FR: "{count} élément et plus...",
+    ES: "{count} elemento y más...",
+    IT: "{count} elemento e altro...",
+    DE: "{count} Element und mehr..."
   },
-  "fileBrowser.filesCount_plural": {
-    EN: "{count} files",
-    FR: "{count} fichiers",
-    ES: "{count} archivos",
-    IT: "{count} file",
-    DE: "{count} Dateien"
+  "fileBrowser.itemsAndMore_plural": {
+    EN: "{count} items and more...",
+    FR: "{count} éléments et plus...",
+    ES: "{count} elementos y más...",
+    IT: "{count} elementi e altro...",
+    DE: "{count} Elemente und mehr..."
+  },
+  "fileBrowser.itemsCount": {
+    EN: "{count} item",
+    FR: "{count} élément",
+    ES: "{count} elemento",
+    IT: "{count} elemento",
+    DE: "{count} Element"
+  },
+  "fileBrowser.itemsCount_plural": {
+    EN: "{count} items",
+    FR: "{count} éléments",
+    ES: "{count} elementos",
+    IT: "{count} elementi",
+    DE: "{count} Elemente"
+  },
+  "fileBrowser.noItems": {
+    EN: "No items",
+    FR: "Aucun élément",
+    ES: "Ningún elemento",
+    IT: "Nessun elemento",
+    DE: "Keine Elemente"
+  },
+  "fileBrowser.rootFolder": {
+    EN: "My files",
+    FR: "Mes fichiers",
+    ES: "Mis archivos",
+    IT: "I miei file",
+    DE: "Meine Dateien"
+  },
+  "fileBrowser.add": {
+    EN: "Add",
+    FR: "Ajouter",
+    ES: "Añadir",
+    IT: "Aggiungi",
+    DE: "Hinzufügen"
   },
   "fileBrowser.limitWarning": {
-    EN: "The maximum limit of {limit} files has been reached. Use filters to refine your search.",
-    FR: "La limite maximale de {limit} fichiers a été atteinte. Utilisez les filtres pour affiner votre recherche.",
-    ES: "Se ha alcanzado el límite máximo de {limit} archivos. Use filtros para refinar su búsqueda.",
-    IT: "È stato raggiunto il limite massimo di {limit} file. Utilizza i filtri per affinare la ricerca.",
-    DE: "Das maximale Limit von {limit} Dateien wurde erreicht. Verwenden Sie Filter, um Ihre Suche zu verfeinern."
+    EN: "The maximum limit of {limit} items has been reached. Use filters to refine your search.",
+    FR: "La limite maximale de {limit} éléments a été atteinte. Utilisez les filtres pour affiner votre recherche.",
+    ES: "Se ha alcanzado el límite máximo de {limit} elementos. Use filtros para refinar su búsqueda.",
+    IT: "È stato raggiunto il limite massimo di {limit} elementi. Utilizza i filtri per affinare la ricerca.",
+    DE: "Das maximale Limit von {limit} Elementen wurde erreicht. Verwenden Sie Filter, um Ihre Suche zu verfeinern."
   },
   "fileBrowser.noFilesInFolder": {
     EN: "No files in this folder",

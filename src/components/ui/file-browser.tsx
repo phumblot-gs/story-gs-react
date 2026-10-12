@@ -3,6 +3,7 @@
 import React, { useState, useCallback, useEffect, useRef, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { ButtonMenuSmall } from "@/components/ui/button-menu-small";
 import { IconProvider } from "@/components/ui/icon-provider";
 import { IconName } from "@/components/ui/icons/types";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -34,17 +35,32 @@ export interface FileItem {
 
 export type HeightMode = "auto" | "fill-container" | "max-height";
 
+const IMAGE_EXTENSIONS = /\.(jpe?g|png|gif|webp|avif|bmp|tiff?|svg|heic|heif|psd|raw|cr2|cr3|nef|arw|dng)$/i;
+
+/** Image : type MIME `image/*`, ou à défaut extension d'image connue. */
+export const isImageFile = (item: Pick<FileItem, "mime_type" | "file_name" | "is_directory">): boolean =>
+  !item.is_directory &&
+  (item.mime_type ? item.mime_type.startsWith("image/") : IMAGE_EXTENSIONS.test(item.file_name ?? ""));
+
 export type FileBrowserAction = "rename" | "move" | "download" | "share" | "delete";
 
 export interface FileBrowserProps {
   files: FileItem[];
   currentPath: string;
+  /** Libellé du dossier racine. Défaut : « Mes fichiers » traduit (`fileBrowser.rootFolder`). */
   labelRootFolder?: string;
   showUploadButton?: boolean;
   debug?: boolean;
   className?: string;
   initialSort?: SortConfig;
   heightMode?: HeightMode;
+  /**
+   * Décalage de l'en-tête de colonnes collant quand c'est la page qui défile
+   * (`heightMode="auto"`) : hauteur du header collant de l'application (px ou
+   * valeur CSS). Défaut 0. Sans effet dans les autres modes, où l'en-tête
+   * colle en haut de la zone qui défile.
+   */
+  stickyHeaderOffset?: number | string;
   maxHeight?: string;
   // Translation props (optional - works without TranslationProvider)
   language?: string;                          // Language code (e.g., "fr", "en", "es", "it")
@@ -56,7 +72,9 @@ export interface FileBrowserProps {
   onLoadMore?: () => void;       // Callback appelé quand l'utilisateur demande plus de fichiers
   maxFilesLimit?: number;        // Limite maximale de fichiers (défaut: 10000)
   onNavigate?: (path: string) => void;
+  /** @deprecated Le bouton « Actualiser » a été retiré : prop ignorée, conservée pour la compatibilité. */
   onRefresh?: () => void;
+  /** @deprecated Non utilisé (l'import passe par onImportFiles / onImportFolders). */
   onUpload?: () => void;
   onCreateFolder?: () => void;
   onImportFiles?: () => void;
@@ -91,6 +109,14 @@ export interface FileBrowserProps {
    * il suffit d'incrémenter la clé. `onSelectionChange` remonte alors `[]`.
    */
   selectionResetKey?: number | string;
+  /**
+   * Boutons supplémentaires de la barre d'actions en masse, rendus à gauche des
+   * actions natives (ex. « Ajouter au projet »). Appelé avec les éléments
+   * sélectionnés ; masqués, comme les actions natives, sans sélection. Rester
+   * homogène avec les actions natives : `Button variant="secondary"` en `w-6 h-6`,
+   * icône de 14 px et `Tooltip`.
+   */
+  renderBulkActions?: (selectedItems: FileItem[]) => React.ReactNode;
   // Action control
   disabledActions?: FileBrowserAction[];  // Actions grisées (visibles mais non cliquables)
   hiddenActions?: FileBrowserAction[];    // Actions masquées complètement
@@ -200,12 +226,13 @@ function createRowsDragPreview(items: FileItem[]): HTMLElement {
 export const FileBrowser: React.FC<FileBrowserProps> = ({
   files = [],
   currentPath = "/",
-  labelRootFolder = "Mes fichiers",
+  labelRootFolder: labelRootFolderProp,
   showUploadButton = false,
   debug = false,
   className,
   initialSort = { field: "file_name", direction: "asc" },
   heightMode = "auto",
+  stickyHeaderOffset = 0,
   maxHeight = "600px",
   // Translation props
   language,
@@ -217,7 +244,6 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
   onLoadMore,
   maxFilesLimit = 10000,
   onNavigate,
-  onRefresh,
   onUpload,
   onCreateFolder,
   onImportFiles,
@@ -233,10 +259,12 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
   onSelectionChange,
   onMoveItems,
   selectionResetKey,
+  renderBulkActions,
   disabledActions = [],
   hiddenActions = [],
 }) => {
   const { t } = useTranslationSafe(translations, language);
+  const labelRootFolder = labelRootFolderProp ?? t('fileBrowser.rootFolder');
   const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
   const [hoveredRow, setHoveredRow] = useState<string | null>(null);
   const [lastSelectedIndex, setLastSelectedIndex] = useState<number | null>(null);
@@ -244,7 +272,6 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
   const [dateFilter, setDateFilter] = useState<DateFilter>("all");
   const [sortConfig, setSortConfig] = useState<SortConfig>(initialSort);
   const [isDraggingOver, setIsDraggingOver] = useState(false);
-  const [isAddMenuOpen, setIsAddMenuOpen] = useState(false);
   const tableRef = useRef<HTMLDivElement>(null);
   const dragCounter = useRef(0);
   // Glisser-déposer interne : lignes en cours de déplacement et cible survolée.
@@ -255,7 +282,6 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
   // Dernière position verticale du curseur, lue par la boucle d'auto-scroll.
   const dragPointerYRef = useRef<number | null>(null);
   const dragPreviewRef = useRef<HTMLElement | null>(null);
-  const addMenuRef = useRef<HTMLDivElement>(null);
 
   // Parse le chemin actuel pour créer les segments de navigation
   const getPathSegments = useCallback((): PathSegment[] => {
@@ -285,7 +311,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
 
   // Détermine l'icône de dossier appropriée selon le contexte
   const getFolderIcon = (item: FileItem): IconName => {
-    if (!item.is_directory) return "File";
+    if (!item.is_directory) return isImageFile(item) ? "FileImage" : "File";
 
     // Utiliser Folder standard pour tous les dossiers
     return "Folder";
@@ -306,34 +332,29 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
   };
 
-  // Génère le texte du compteur de fichiers selon la logique demandée
+  // Texte du compteur d'éléments : fichiers ET dossiers (les dossiers sont des
+  // lignes de `files`). `totalFiles` doit compter les deux aussi.
   const getFileCountText = (): string => {
     const currentCount = sortedFiles.length;
     const isLimitReached = currentCount >= maxFilesLimit;
 
     if (currentCount === 0) {
-      return t('fileBrowser.noFiles');
+      return t('fileBrowser.noItems');
     }
 
     if (isLimitReached) {
-      return t('fileBrowser.filesLimitReached', {
-        count: formatNumber(currentCount),
-        plural: currentCount > 1 ? 's' : '',
-      });
+      return t('fileBrowser.itemsLimitReached', { count: formatNumber(currentCount) });
     }
 
     if (hasMore && (totalFiles === null || totalFiles === undefined || totalFiles > currentCount)) {
-      return t('fileBrowser.filesAndMore', {
-        count: formatNumber(currentCount),
-        plural: currentCount > 1 ? 's' : '',
-      });
+      return t('fileBrowser.itemsAndMore', { count: formatNumber(currentCount) });
     }
 
     if (totalFiles !== null && totalFiles !== undefined && totalFiles !== currentCount) {
-      return t('fileBrowser.filesCount', { count: formatNumber(totalFiles) });
+      return t('fileBrowser.itemsCount', { count: formatNumber(totalFiles) });
     }
 
-    return t('fileBrowser.filesCount', { count: formatNumber(currentCount) });
+    return t('fileBrowser.itemsCount', { count: formatNumber(currentCount) });
   };
 
   // Formate la date avec validation
@@ -862,20 +883,50 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
     return segments[segments.length - 1].name;
   }, [getPathSegments]);
 
-  // Close add menu when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (addMenuRef.current && !addMenuRef.current.contains(event.target as Node)) {
-        setIsAddMenuOpen(false);
-      }
-    };
 
-    if (isAddMenuOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-      return () => document.removeEventListener("mousedown", handleClickOutside);
-    }
-  }, [isAddMenuOpen]);
-
+  // Bouton d'action : partagé par les lignes (survol) et la barre d'actions en
+  // masse, pour que les deux aient exactement les mêmes icônes, infobulles,
+  // dimensions et règles (hiddenActions / disabledActions).
+  const actionButtons: Record<FileBrowserAction, { icon: IconName; tooltip: string }> = {
+    rename: { icon: "Pencil", tooltip: t('fileBrowser.rename') },
+    move: { icon: "FolderMoved", tooltip: t('fileBrowser.moveTo') },
+    download: { icon: "Download", tooltip: t('fileBrowser.download') },
+    share: { icon: "Share", tooltip: t('fileBrowser.share') },
+    delete: { icon: "Trash", tooltip: t('fileBrowser.delete') },
+  };
+  const renderActionButton = (
+    action: FileBrowserAction,
+    items: FileItem[],
+    extraDisabled = false,
+    variant: "ghost" | "secondary" = "ghost",
+  ) => {
+    const isActionDisabled = actionConfig.isDisabled(action) || extraDisabled;
+    const config = actionButtons[action];
+    return (
+      <Tooltip key={action}>
+        <TooltipTrigger asChild>
+          <Button
+            variant={variant}
+            size="medium"
+            className="p-0 w-6 h-6"
+            disabled={isActionDisabled}
+            aria-disabled={isActionDisabled}
+            aria-label={config.tooltip}
+            data-action={action}
+            onClick={(e) => {
+              e.stopPropagation();
+              if (!isActionDisabled) {
+                handleAction(action, items);
+              }
+            }}
+          >
+            <IconProvider icon={config.icon} size={14} />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>{config.tooltip}</TooltipContent>
+      </Tooltip>
+    );
+  };
 
   // Calculer les classes CSS selon le heightMode
   const containerClasses = cn(
@@ -891,7 +942,9 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
   );
 
   const tableContainerClasses = cn(
-    heightMode === "auto" && "overflow-x-auto",
+    // `clip` et non `auto` : un conteneur `overflow-x-auto` devient une zone de
+    // défilement, et l'en-tête de colonnes collerait à lui au lieu de la page.
+    heightMode === "auto" && "overflow-x-clip",
     heightMode === "fill-container" && "h-full overflow-auto",
     heightMode === "max-height" && "overflow-auto",
     // Dossier vide : la colonne flex laisse le message occuper la hauteur
@@ -899,7 +952,23 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
     sortedFiles.length === 0 && "flex flex-col"
   );
 
-  const tableContainerStyle = heightMode === "max-height" ? { maxHeight } : undefined;
+  // En-tête de colonnes collant : en haut de la zone qui défile (tableau), ou
+  // sous le header de l'application quand c'est la page qui défile. Le trait
+  // du bas est une ombre : la bordure du <tr> ne suivrait pas les cellules.
+  const stickyHeaderCell = "sticky z-10 bg-gray-50 shadow-[inset_0_-1px_0_rgb(229,231,235)]";
+  const stickyHeaderStyle: React.CSSProperties = {
+    top: heightMode === "auto"
+      ? (typeof stickyHeaderOffset === "number" ? `${stickyHeaderOffset}px` : stickyHeaderOffset)
+      : 0,
+  };
+
+  // Gouttière de barre de défilement réservée (aussi sur la barre d'actions en
+  // masse) : les boutons des lignes restent alignés sur ceux de la barre, que
+  // la barre de défilement soit affichée ou non.
+  const tableContainerStyle: React.CSSProperties = {
+    scrollbarGutter: "stable",
+    ...(heightMode === "max-height" ? { maxHeight } : {}),
+  };
 
   return (
     <TooltipProvider>
@@ -975,12 +1044,37 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
             )}
           </div>
 
+          {/* Compteur d'éléments (fichiers et dossiers) et menu « Ajouter » */}
+          <div className="flex items-center gap-4">
+            <span className="text-sm text-gray-600" data-item-count>
+              {getFileCountText()}
+            </span>
+            {showUploadButton && (
+              <ButtonMenuSmall
+                variant="normal"
+                size="medium"
+                menuAlign="end"
+                actions={[
+                  { value: "new-folder", label: t('fileBrowser.newFolder'), onClick: () => onCreateFolder?.() },
+                  { value: "import-files", label: t('fileBrowser.importFiles'), onClick: () => onImportFiles?.() },
+                  { value: "import-folders", label: t('fileBrowser.importFolders'), onClick: () => onImportFolders?.() },
+                ]}
+              >
+                <IconProvider icon="Plus" size={14} />
+                {t('fileBrowser.add')}
+              </ButtonMenuSmall>
+            )}
+          </div>
         </div>
       </BgProvider>
 
       {/* Barre de sélection fixe */}
       <BgProvider value="white">
-        <div className="flex items-center justify-between px-4 py-3 bg-white border-b border-gray-200">
+        <div
+          className="flex items-center justify-between px-4 py-3 bg-white border-b border-gray-200 overflow-hidden"
+          // Même gouttière que le tableau quand il défile lui-même.
+          style={heightMode === "auto" ? undefined : { scrollbarGutter: "stable" }}
+        >
           <div className="flex items-center space-x-4">
             {/* Filtre par date */}
             <Select value={dateFilter} onValueChange={handleDateFilterChange}>
@@ -997,123 +1091,27 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
                 <SelectItem value="beforeLastYear">{getDateFilterLabel("beforeLastYear")}</SelectItem>
               </SelectContent>
             </Select>
-
-            {/* Compteur de fichiers */}
-            <span className="text-sm text-gray-600">
-              {getFileCountText()}
-            </span>
           </div>
 
-          {/* Partie droite : Boutons + Actions en masse */}
-          <div className="flex items-center space-x-2">
-            {/* Boutons d'actions */}
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="medium"
-                  className="p-0 w-6 h-6"
-                  onClick={onRefresh}
-                >
-                  <IconProvider icon="Refresh" size={14} />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>{t('fileBrowser.refresh')}</TooltipContent>
-            </Tooltip>
-            {showUploadButton && (
-              <div className="relative" ref={addMenuRef}>
-                <Button
-                  variant="normal"
-                  size="medium"
-                  className="p-0 w-6 h-6"
-                  onClick={() => setIsAddMenuOpen(!isAddMenuOpen)}
-                >
-                  <IconProvider icon="Plus" size={14} />
-                </Button>
-                {isAddMenuOpen && (
-                  <div className="absolute right-0 top-full mt-1 z-50 overflow-hidden rounded-none border shadow-lg bg-black text-white border-grey-strongest">
-                    <div className="p-0">
-                      <button
-                        onClick={() => {
-                          onCreateFolder?.();
-                          setIsAddMenuOpen(false);
-                        }}
-                        className="w-full px-4 py-2 text-left text-sm whitespace-nowrap bg-black-secondary text-white hover:bg-white hover:text-black active:bg-white active:text-blue-primary transition-colors duration-200"
-                      >
-                        {t('fileBrowser.newFolder')}
-                      </button>
-                      <button
-                        onClick={() => {
-                          onImportFiles?.();
-                          setIsAddMenuOpen(false);
-                        }}
-                        className="w-full px-4 py-2 text-left text-sm whitespace-nowrap bg-black-secondary text-white hover:bg-white hover:text-black active:bg-white active:text-blue-primary transition-colors duration-200"
-                      >
-                        {t('fileBrowser.importFiles')}
-                      </button>
-                      <button
-                        onClick={() => {
-                          onImportFolders?.();
-                          setIsAddMenuOpen(false);
-                        }}
-                        className="w-full px-4 py-2 text-left text-sm whitespace-nowrap bg-black-secondary text-white hover:bg-white hover:text-black active:bg-white active:text-blue-primary transition-colors duration-200"
-                      >
-                        {t('fileBrowser.importFolders')}
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Actions en masse : uniquement s'il y a une sélection *et* au moins
-                une action non masquée. Masquer les cinq actions laisserait
-                sinon un menu déroulant vide, avec son libellé de sélection. */}
-            {hasSelection && actionConfig.availableActions.length > 0 && (
-              <Select
-                value=""
-                onValueChange={(value) => {
-                  if (value !== "placeholder" && value !== "") {
-                    handleAction(value, getSelectedItems());
-                  }
-                }}
-              >
-                <SelectTrigger className="w-48">
-                  <SelectValue placeholder={t('fileBrowser.selected', {
-                    count: selectedItems.size.toString(),
-                    plural: selectedItems.size > 1 ? 's' : ''
-                  })} />
-                </SelectTrigger>
-                <SelectContent>
-                  {actionConfig.availableActions.map((action) => {
-                    // Conserver la logique existante pour rename : désactiver si plusieurs items sélectionnés
-                    // (seulement si rename n'est ni dans hiddenActions ni dans disabledActions)
-                    const isRenameDisabledBySelection = action === "rename" && selectedItems.size > 1;
-                    const isDisabled = actionConfig.isDisabled(action) || isRenameDisabledBySelection;
-                    
-                    const actionLabels: Record<FileBrowserAction, string> = {
-                      rename: t('fileBrowser.rename'),
-                      move: t('fileBrowser.moveTo'),
-                      download: t('fileBrowser.download'),
-                      share: t('fileBrowser.share'),
-                      delete: t('fileBrowser.delete'),
-                    };
-
-                    return (
-                      <SelectItem
-                        key={action}
-                        value={action}
-                        disabled={isDisabled}
-                        className={isDisabled ? "opacity-50 cursor-not-allowed" : ""}
-                      >
-                        {actionLabels[action]}
-                      </SelectItem>
-                    );
-                  })}
-                </SelectContent>
-              </Select>
-            )}
-          </div>
+          {/* Actions en masse, masquées sans sélection : nombre d'éléments
+              sélectionnés, boutons de l'appelant, puis les mêmes boutons que
+              sur les lignes, alignés sur eux (même marge droite, et même
+              gouttière de barre de défilement que le tableau). */}
+          {hasSelection && (actionConfig.availableActions.length > 0 || renderBulkActions) && (
+            <div className="flex items-center space-x-1" data-bulk-actions>
+              <span className="mr-3 text-sm text-gray-600" data-selection-count>
+                {t('fileBrowser.selected', {
+                  count: selectedItems.size.toString(),
+                  plural: selectedItems.size > 1 ? 's' : ''
+                })}
+              </span>
+              {renderBulkActions?.(getSelectedItems())}
+              {actionConfig.availableActions.map((action) =>
+                // Renommer ne s'applique qu'à un seul élément.
+                renderActionButton(action, getSelectedItems(), action === "rename" && selectedItems.size > 1, "secondary")
+              )}
+            </div>
+          )}
         </div>
       </BgProvider>
 
@@ -1141,7 +1139,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
             <table className="w-full">
             <thead>
               <tr className="bg-gray-50 border-b border-gray-200">
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                <th className={cn(stickyHeaderCell, "px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider")} style={stickyHeaderStyle}>
                   <button
                     onClick={() => handleSort("file_name")}
                     className="flex items-center space-x-1 hover:text-gray-900 transition-colors uppercase"
@@ -1152,7 +1150,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
                     )}
                   </button>
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                <th className={cn(stickyHeaderCell, "px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider")} style={stickyHeaderStyle}>
                   <button
                     onClick={() => handleSort("updated_at")}
                     className="flex items-center space-x-1 hover:text-gray-900 transition-colors uppercase"
@@ -1163,7 +1161,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
                     )}
                   </button>
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                <th className={cn(stickyHeaderCell, "px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider")} style={stickyHeaderStyle}>
                   <button
                     onClick={() => handleSort("file_size")}
                     className="flex items-center space-x-1 hover:text-gray-900 transition-colors uppercase"
@@ -1174,7 +1172,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
                     )}
                   </button>
                 </th>
-                <th className="w-48"></th>
+                <th className={cn(stickyHeaderCell, "w-48")} style={stickyHeaderStyle}></th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-100">
@@ -1248,42 +1246,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
                     <td className="px-4 py-2">
                       {isHovered && !isDisabled && (
                         <div className="flex items-center justify-end space-x-1">
-                          {actionConfig.availableActions.map((action) => {
-                            const isActionDisabled = actionConfig.isDisabled(action);
-                            
-                            const actionConfigs: Record<FileBrowserAction, { icon: IconName; tooltip: string }> = {
-                              rename: { icon: "Pencil", tooltip: t('fileBrowser.rename') },
-                              move: { icon: "FolderMoved", tooltip: t('fileBrowser.moveTo') },
-                              download: { icon: "Download", tooltip: t('fileBrowser.download') },
-                              share: { icon: "Share", tooltip: t('fileBrowser.share') },
-                              delete: { icon: "Trash", tooltip: t('fileBrowser.delete') },
-                            };
-
-                            const config = actionConfigs[action];
-
-                            return (
-                              <Tooltip key={action}>
-                                <TooltipTrigger asChild>
-                                  <Button
-                                    variant="ghost"
-                                    size="medium"
-                                    className="p-0 w-6 h-6"
-                                    disabled={isActionDisabled}
-                                    aria-disabled={isActionDisabled}
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      if (!isActionDisabled) {
-                                        handleAction(action, [item]);
-                                      }
-                                    }}
-                                  >
-                                    <IconProvider icon={config.icon} size={14} />
-                                  </Button>
-                                </TooltipTrigger>
-                                <TooltipContent>{config.tooltip}</TooltipContent>
-                              </Tooltip>
-                            );
-                          })}
+                          {actionConfig.availableActions.map((action) => renderActionButton(action, [item]))}
                         </div>
                       )}
                     </td>

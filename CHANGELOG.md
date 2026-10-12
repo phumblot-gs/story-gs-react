@@ -5,6 +5,96 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.27.0] - 2026-10-12
+
+### Modifié
+
+- `FileBrowser` :
+  - Bouton « Actualiser » retiré. La prop `onRefresh` est conservée mais
+    obsolète et ignorée (retrait prévu en version majeure) ; traduction
+    `fileBrowser.refresh` supprimée.
+  - Compteur déplacé sur la ligne du breadcrumb, ferré à droite, et formulé en
+    « X éléments » (fichiers et dossiers ; `totalFiles` doit compter les deux).
+    Nouvelles clés `fileBrowser.itemsCount`, `itemsAndMore`,
+    `itemsLimitReached` (avec `_plural`) et `noItems` ; les anciennes
+    `filesCount`, `filesAndMore` et `filesLimitReached` sont supprimées. Le
+    bandeau de limite parle aussi d'éléments.
+  - Le « + » devient un `ButtonMenuSmall` « + Ajouter » (clavier, Échap), à
+    droite du compteur. Mêmes entrées : nouveau dossier, import de fichiers,
+    import de dossiers.
+  - Actions en masse : le menu déroulant est remplacé par les mêmes boutons
+    que sur les lignes (mêmes icônes, infobulles, `hiddenActions` et
+    `disabledActions`), en variant `secondary`, précédés du nombre d'éléments
+    sélectionnés. « Renommer »
+    est désactivé quand plusieurs éléments sont sélectionnés. Gouttière de
+    barre de défilement réservée sur la barre et le tableau : les boutons
+    restent alignés sur ceux des lignes.
+
+  - Libellé de la racine traduit par défaut (clé `fileBrowser.rootFolder` :
+    « Mes fichiers », « My files », « Mis archivos », « I miei file »,
+    « Meine Dateien ») au lieu de « Mes fichiers » en dur ; `labelRootFolder`
+    le surcharge toujours.
+  - En mode `auto`, le conteneur du tableau passe de `overflow-x-auto` à
+    `overflow-x-clip`, pour que l'en-tête de colonnes colle à la page.
+- `Button` (et tous les composants qui en dérivent : Toggle, ButtonMenu,
+  ButtonMenuSmall…) : padding horizontal de la taille `medium` ramené de
+  `px-4` (20 px) à `px-3` (15 px).
+
+### Corrigé
+
+- `useTranslationSafe` : `useMemo` était appelé seulement quand `language` ou
+  `translations` étaient fournis. Un composant traduit (FileBrowser, Modal,
+  Spinner…) qui recevait ou perdait l'une de ces props sans être remonté
+  plantait (« Cannot read properties of undefined »). Le hook est maintenant
+  appelé à chaque rendu.
+
+### Ajouté
+
+- `FileBrowser` :
+  - En-tête de colonnes collant (`sticky`) : en haut de la zone qui défile en
+    `fill-container` et `max-height`, et sous le header de l'application en
+    `auto` grâce à `stickyHeaderOffset` (px ou valeur CSS, défaut 0). Story
+    « Sticky header ».
+  - Icône `FileImage` (nouvelle dans l'IconProvider) pour les fichiers image :
+    type MIME `image/*`, ou à défaut extension d'image connue. Utilitaire
+    `isImageFile` exporté depuis le module.
+- `FileBrowser` : `renderBulkActions(selectedItems)` pour ajouter des boutons
+  à gauche des actions en masse (ex. « Ajouter au projet »). Masqués sans
+  sélection, comme les actions natives. Story « With bulk actions », avec deux
+  lignes présélectionnées.
+- `Stepper` : `layout="inline"`. Ronds à la hauteur d'un bouton medium
+  (30 px), titre à droite du rond (gras pour l'étape active, gris pour les
+  étapes à venir), étapes à venir cerclées sans fond, étapes terminées avec
+  une coche, trait fin et court entre les étapes. Le rond et le titre forment
+  un seul bouton. `layout="stacked"` (défaut) inchangé. Stories « Inline » et
+  « Inline progress ».
+- `FullFrame` :
+  - `padding` (4 | 6 | 8) : padding horizontal du header et du footer, et
+    padding du body, pour aligner leurs contenus. Le header passe d'une hauteur
+    fixe de 60 px à une hauteur minimale de 60 px. Sans `padding`, rendu
+    inchangé.
+  - `footer`, `footerBg` (défaut : celui du body) et `footerClassName` : zone
+    fixe en bas, hors de la zone qui défile.
+  - Le body est un conteneur de défilement (`ScrollContainerProvider`,
+    `container-type: size`) : un `PageFillLayout` posé dedans s'y adapte.
+  - Story « Project wizard » : header et body gris, partie haute repliable
+    (Stepper inline, titre, description), FileBrowser qui remplit la hauteur,
+    footer Précédent / Suivant.
+- `PageFillLayout` dans un conteneur de défilement (corps d'un FullFrame, ou
+  `scrollContainer={ref}`) : la molette replie d'abord la partie haute en
+  faisant défiler le conteneur, le panneau prend la hauteur visible du
+  conteneur (`cqh`) et se cale contre son haut une fois replié ;
+  `onCollapsedChange` et `hidePageScrollbar` portent sur le conteneur.
+  `scrollContainer={null}` force la fenêtre. Sans conteneur, comportement
+  inchangé.
+- `usePageFirstScroll` : option `scrollContainer`, et `remainingPageScroll`
+  accepte un conteneur. Exports `ScrollContainerProvider`,
+  `useScrollContainer` et `SCROLLBAR_HIDDEN_CLASS`.
+- `FileBrowser` : page de documentation Storybook (Docs) en anglais : modèle
+  de données, en-tête, filtre de date, sélection et clavier, actions et
+  actions en masse, tri, glisser-déposer, pagination, modes de hauteur,
+  icônes, traductions et props obsolètes (`onRefresh`, `onUpload`).
+
 ## [1.26.0] - 2026-10-12
 
 ### Ajouté

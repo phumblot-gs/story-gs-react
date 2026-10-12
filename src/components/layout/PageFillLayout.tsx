@@ -2,6 +2,7 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 import { BgProvider } from "./BgContext";
 import { remainingPageScroll, usePageFirstScroll } from "@/hooks/usePageFirstScroll";
+import { useScrollContainer } from "./ScrollContainerContext";
 
 type BgValue = "white" | "grey" | "black";
 
@@ -41,6 +42,14 @@ export interface PageFillLayoutProps {
   collapsibleClassName?: string;
   /** Classes of the panel. */
   panelClassName?: string;
+  /**
+   * Element that scrolls instead of the window. Default: the nearest scroll container provided by the
+   * context (e.g. a FullFrame body), otherwise the window. Pass `null` to force the window.
+   * In a container, the folded panel sits against the top of the visible area (the container's top
+   * padding scrolls away with the collapsible part); its height is the visible height minus the
+   * container's bottom padding and `stickyTop` / `stickyBottom`.
+   */
+  scrollContainer?: React.RefObject<HTMLElement> | null;
 }
 
 const isRef = (value: PageFillStickyValue | undefined): value is React.RefObject<HTMLElement> =>
@@ -70,6 +79,30 @@ function useMeasuredHeight(value: PageFillStickyValue | undefined): number | nul
   return height;
 }
 
+/** Padding haut (px) d'un conteneur de défilement, tenu à jour (ResizeObserver + resize). */
+function useContainerPaddingTop(container: React.RefObject<HTMLElement> | null): number {
+  const [padding, setPadding] = React.useState(0);
+  // Effet passif et non layout : le conteneur est un ancêtre, sa ref n'est
+  // attachée qu'après les layout effects de ses descendants (dont celui-ci).
+  React.useEffect(() => {
+    const element = container?.current;
+    if (!element) {
+      setPadding(0);
+      return;
+    }
+    const measure = () => setPadding(parseFloat(getComputedStyle(element).paddingTop) || 0);
+    measure();
+    window.addEventListener("resize", measure);
+    const observer = typeof ResizeObserver === "undefined" ? null : new ResizeObserver(measure);
+    observer?.observe(element);
+    return () => {
+      window.removeEventListener("resize", measure);
+      observer?.disconnect();
+    };
+  }, [container]);
+  return padding;
+}
+
 /**
  * Page layout: a collapsible top part that scrolls with the page, then a panel whose height is
  * exactly the window height minus the sticky header (and footer). Once the top part is folded,
@@ -93,9 +126,13 @@ export const PageFillLayout = React.forwardRef<HTMLElement, PageFillLayoutProps>
       className,
       collapsibleClassName,
       panelClassName,
+      scrollContainer: scrollContainerProp,
     },
     ref,
   ) => {
+    const contextContainer = useScrollContainer();
+    const scrollContainer = scrollContainerProp !== undefined ? scrollContainerProp : contextContainer;
+    const inContainer = scrollContainer !== null;
     const panelRef = React.useRef<HTMLDivElement>(null);
     const topProbeRef = React.useRef<HTMLDivElement>(null);
 
@@ -107,7 +144,14 @@ export const PageFillLayout = React.forwardRef<HTMLElement, PageFillLayoutProps>
     const topCss = isRef(stickyTop) ? `${measuredTop ?? 0}px` : toCssLength(stickyTop);
     const bottomCss = isRef(stickyBottom) ? `${measuredBottom ?? 0}px` : toCssLength(stickyBottom);
     // Calcul CSS pur : pas de JavaScript ni de décalage au premier rendu.
-    const panelHeight = `max(${minPanelHeight}px, calc(100dvh - ${topCss} - ${bottomCss}))`;
+    // Dans un conteneur, le panneau replié se cale contre le haut de la zone
+    // visible : le padding haut du conteneur défile avec la partie haute (un
+    // padding ne masque pas le contenu qui défile dessous). Hauteur : `100cqh`
+    // (zone de contenu, padding exclu, via `container-type: size`) + padding
+    // haut ; le padding bas reste visible sous le panneau.
+    const containerPaddingTop = useContainerPaddingTop(inContainer ? scrollContainer : null);
+    const viewportHeight = inContainer ? `(100cqh + ${containerPaddingTop}px)` : "100dvh";
+    const panelHeight = `max(${minPanelHeight}px, calc(${viewportHeight} - ${topCss} - ${bottomCss}))`;
 
     // stickyTop en px, pour la molette et l'état replié. Une valeur CSS (var(),
     // calc()…) est résolue par une sonde invisible de cette hauteur.
@@ -117,7 +161,12 @@ export const PageFillLayout = React.forwardRef<HTMLElement, PageFillLayoutProps>
       return topProbeRef.current?.getBoundingClientRect().height ?? 0;
     }, [stickyTop]);
 
-    usePageFirstScroll(panelRef, { enabled: pageFirstScroll, hidePageScrollbar, stickyTop: getStickyTopPx });
+    usePageFirstScroll(panelRef, {
+      enabled: pageFirstScroll,
+      hidePageScrollbar,
+      stickyTop: getStickyTopPx,
+      scrollContainer,
+    });
 
     // État replié : même mesure (bornée) que la molette, signalé au changement seulement.
     const collapsedRef = React.useRef(false);
@@ -127,19 +176,20 @@ export const PageFillLayout = React.forwardRef<HTMLElement, PageFillLayoutProps>
       const update = () => {
         const panel = panelRef.current;
         if (!panel) return;
-        const collapsed = remainingPageScroll(panel, getStickyTopPx()) <= 1;
+        const collapsed = remainingPageScroll(panel, getStickyTopPx(), scrollContainer?.current) <= 1;
         if (collapsed === collapsedRef.current) return;
         collapsedRef.current = collapsed;
         onCollapsedChangeRef.current?.(collapsed);
       };
       update();
-      window.addEventListener("scroll", update, { passive: true });
+      const scrollTarget: HTMLElement | Window = scrollContainer?.current ?? window;
+      scrollTarget.addEventListener("scroll", update, { passive: true });
       window.addEventListener("resize", update);
       return () => {
-        window.removeEventListener("scroll", update);
+        scrollTarget.removeEventListener("scroll", update);
         window.removeEventListener("resize", update);
       };
-    }, [getStickyTopPx]);
+    }, [getStickyTopPx, scrollContainer]);
 
     return (
       <BgProvider value={bg}>
@@ -148,6 +198,7 @@ export const PageFillLayout = React.forwardRef<HTMLElement, PageFillLayoutProps>
           ref={ref}
           data-bg={bg}
           data-page-fill-layout
+          data-scroll-container={inContainer ? "" : undefined}
           className={cn(
             "flex flex-col",
             bg === "white" && "bg-white",

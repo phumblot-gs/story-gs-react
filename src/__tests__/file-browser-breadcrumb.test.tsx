@@ -96,7 +96,7 @@ describe("FileBrowser — breadcrumb current folder", () => {
 
     // py-1 (secondaire) et py-[4px] (outline, qui compense sa bordure) valent
     // tous deux 4px : seul le padding horizontal décide du décalage signalé.
-    for (const boxClass of ["px-4", "text-base", "h-6", "rounded-full"]) {
+    for (const boxClass of ["px-3", "text-base", "h-6", "rounded-full"]) {
       expect(atRoot).toContain(boxClass);
       expect(inSubFolder).toContain(boxClass);
     }

@@ -1813,3 +1813,12 @@ html.gs-page-scrollbar-hidden::-webkit-scrollbar {
   opacity: 1;
   color: var(--button-b-link-fg-default);
 }
+
+/* Barre de défilement d'un conteneur masquée (PageFillLayout dans un FullFrame,
+ * hidePageScrollbar) ; le défilement reste actif. */
+.gs-scrollbar-hidden {
+  scrollbar-width: none;
+}
+.gs-scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}

@@ -1,8 +1,10 @@
 import React from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { fn } from "storybook/test";
+import { fn, userEvent, within } from "storybook/test";
 import { FileBrowser, type FileItem, type FileBrowserAction } from "./file-browser";
 import { Button } from "./button";
+import { IconProvider } from "./icon-provider";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip";
 
 const meta: Meta<typeof FileBrowser> = {
   title: "Components/FileBrowser",
@@ -11,10 +13,148 @@ const meta: Meta<typeof FileBrowser> = {
     layout: "padded",
     docs: {
       description: {
-        component: "Un composant de navigation de fichiers avec breadcrumb, sélection multiple et actions contextuelles.",
+        component: `
+File browser for one folder at a time: breadcrumb, item counter, "+ Add" menu, date filter, bulk actions,
+sortable table with per-row actions, keyboard navigation, drag and drop and pagination.
+
+The component **does not own the data**: it shows the \`files\` of \`currentPath\` and reports what the user
+does through callbacks. The application loads the folder, applies the date filter, performs the actions and
+re-renders with the new \`files\`.
+
+\`\`\`
++--------------------------------------------------------------------+
+| My files / Projects / Spring            12 items   [+ Add v]       |  breadcrumb, counter, add menu
++--------------------------------------------------------------------+
+| [All v]              2 selected  [app buttons] [native actions]    |  date filter, bulk actions
++--------------------------------------------------------------------+
+| NAME ^              LAST MODIFIED        SIZE                      |  sticky column header
+| [folder] Spring     20/01/2024 15:45     -                         |
+| [image]  front.jpg  23/01/2024 10:30     2.3 MB   [row actions]    |  row actions on hover
++--------------------------------------------------------------------+
+\`\`\`
+
+## Basic usage
+
+\`\`\`tsx
+import { FileBrowser, type FileItem } from "@gs/gs-components-library";
+
+<FileBrowser
+  files={files}                       // FileItem[] of the current folder (files AND sub-folders)
+  currentPath={path}                  // "/" or "/Projects/Spring"
+  onNavigate={setPath}                // breadcrumb click, double click or Enter on a folder
+  showUploadButton
+  onCreateFolder={openNewFolderDialog}
+  onImportFiles={pickFiles}
+  onImportFolders={pickFolders}
+  onRename={([item]) => rename(item)}
+  onMove={(items) => openMoveDialog(items)}
+  onDownload={(items) => download(items)}
+  onDelete={(items) => confirmDelete(items)}
+/>
+\`\`\`
+
+\`FileItem\`: \`id\`, \`file_name\`, \`parent_path\`, \`file_size\` (bytes), \`mime_type\` (or \`null\`),
+\`is_directory\`, \`created_at\`, \`updated_at\` (ISO dates), optional \`disabled\` (greyed, not selectable).
+
+## Header
+
+- **Breadcrumb**: root, parent and current folder (deeper levels collapse into "…"). The root label is
+  translated ("My files", "Mes fichiers"…), override it with \`labelRootFolder\`.
+- **Counter**: "X items", counting **files and folders**. With pagination it shows "X items and more…" or
+  "X items (limit reached)". \`totalFiles\` must count folders too.
+- **"+ Add"** (\`showUploadButton\`, default false): \`ButtonMenuSmall\` with *New folder* (\`onCreateFolder\`),
+  *Import files* (\`onImportFiles\`) and *Import folders* (\`onImportFolders\`).
+
+## Date filter
+
+The select (*All*, *Today*, *Last 7 days*, *Last 30 days*, *This year*, *Last year*, *Before last year*) calls
+\`onDateFilterChange(value)\`. Filtering is done by the application, which re-renders with the filtered \`files\`.
+
+## Selection and keyboard
+
+- Click selects a row, **Cmd/Ctrl + click** toggles a row, **Shift + click** selects a range.
+- With the table focused: **↑ / ↓** move the active row (**Shift** extends the selection), **Enter** opens the
+  active folder, **Cmd/Ctrl + A** selects everything.
+- \`onSelectionChange(items)\` reports the selection. To clear it from outside (after a delete, a move…),
+  change \`selectionResetKey\`.
+
+## Actions
+
+The same five actions exist on each row (on hover) and in the bulk actions bar: **Rename** (\`onRename\`),
+**Move** (\`onMove\`), **Download** (\`onDownload\`), **Share** (\`onShare\`) and **Delete** (\`onDelete\`). Each
+callback receives an array of items (one item for a row action).
+
+- \`hiddenActions\`: removed everywhere. \`disabledActions\`: visible but greyed.
+- **Bulk actions bar**: only visible when something is selected. It shows the number of selected items, the
+  application's buttons, then the native actions in \`secondary\` variant, aligned with the row buttons.
+  *Rename* is disabled when several items are selected.
+- \`renderBulkActions={(items) => …}\`: extra buttons rendered on the left of the native actions (e.g. *Add to
+  project*). Keep them consistent: \`Button variant="secondary"\`, \`className="p-0 w-6 h-6"\`, 14 px icon,
+  \`Tooltip\`. See *With bulk actions*.
+
+\`\`\`tsx
+<FileBrowser
+  {...props}
+  renderBulkActions={(items) => (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button variant="secondary" size="medium" className="p-0 w-6 h-6" aria-label="Add to project"
+          onClick={() => addToProject(items)}>
+          <IconProvider icon="Plus" size={14} />
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent>Add to project</TooltipContent>
+    </Tooltip>
+  )}
+/>
+\`\`\`
+
+## Sorting
+
+Clicking a column header (*Name*, *Last modified*, *Size*) sorts the loaded items, ascending then descending.
+Initial order: \`initialSort\`; changes are reported by \`onSortChange(sortConfig)\`.
+
+## Drag and drop
+
+- **Import**: dropping files or folders from the computer shows an overlay and calls \`onFileDrop(event)\` with
+  the full event (folders can be read with \`webkitGetAsEntry()\`).
+- **Move inside the browser**: providing \`onMoveItems(items, targetFolder)\` makes rows draggable; dropping the
+  selection on a folder calls it. The component only sees the current folder: checking that a folder is not
+  moved into one of its own descendants is up to the application.
+
+## Pagination
+
+\`hasMore\`, \`isLoadingMore\` and \`onLoadMore\` add a "Show N more items" button under the table (with a
+loading state); \`totalFiles\` (or \`null\` if unknown) gives the exact remaining count. Above
+\`maxFilesLimit\` (default 10,000) a warning asks to use the filters.
+
+## Height and scrolling
+
+- \`heightMode="auto"\` (default): the page scrolls. The column header sticks under the application's sticky
+  header thanks to \`stickyHeaderOffset\` (px or CSS value, default 0).
+- \`heightMode="fill-container"\`: fills its parent (which needs a height); the table scrolls inside.
+- \`heightMode="max-height"\` with \`maxHeight\`: the table scrolls beyond that height.
+
+In the last two modes the column header sticks to the top of the table.
+
+## Icons
+
+Folders, files, and image files (\`image/*\` MIME type, or an image extension when \`mime_type\` is null: jpg,
+png, tiff, psd, raw…) get their own icon. \`isImageFile(item)\` is exported from the module.
+
+## Translations
+
+Works without a \`TranslationProvider\` (English). Use the provider, or \`language\` (\`"FR"\`, \`"EN"\`, \`"ES"\`,
+\`"IT"\`, \`"DE"\`) and \`translations\` to override any \`fileBrowser.*\` key.
+
+## Deprecated
+
+\`onRefresh\` is ignored (the refresh button was removed). \`onUpload\` is not used.
+`,
       },
     },
   },
+  tags: ["autodocs"],
   argTypes: {
     currentPath: {
       control: "text",
@@ -26,14 +166,13 @@ const meta: Meta<typeof FileBrowser> = {
     },
     showUploadButton: {
       control: "boolean",
-      description: "Affiche le bouton d'upload (+)",
+      description: "Affiche le menu « + Ajouter » (nouveau dossier, import de fichiers / dossiers)",
     },
     debug: {
       control: "boolean",
       description: "Active le mode debug avec logs console",
     },
     onNavigate: { action: "navigate" },
-    onRefresh: { action: "refresh" },
     onUpload: { action: "upload" },
     onCreateFolder: { action: "createFolder" },
     onImportFiles: { action: "importFiles" },
@@ -75,7 +214,6 @@ const meta: Meta<typeof FileBrowser> = {
   },
   args: {
     onNavigate: fn(),
-    onRefresh: fn(),
     onUpload: fn(),
     onCreateFolder: fn(),
     onImportFiles: fn(),
@@ -98,6 +236,26 @@ type Story = StoryObj<typeof FileBrowser>;
 
 // Données de test
 const mockFiles: FileItem[] = [
+  {
+    id: "img-1",
+    file_name: "packshot-front.jpg",
+    parent_path: "/",
+    file_size: 2457600,
+    mime_type: "image/jpeg",
+    is_directory: false,
+    created_at: "2024-01-12T09:00:00Z",
+    updated_at: "2024-01-23T09:30:00Z",
+  },
+  {
+    id: "img-2",
+    file_name: "logo.png",
+    parent_path: "/",
+    file_size: 81920,
+    mime_type: null,
+    is_directory: false,
+    created_at: "2024-01-11T09:00:00Z",
+    updated_at: "2024-01-21T08:00:00Z",
+  },
   {
     id: "1",
     file_name: "Documents",
@@ -187,7 +345,6 @@ export const Default: Story = {
   args: {
     files: mockFiles,
     currentPath: "/",
-    labelRootFolder: "Mes fichiers",
     showUploadButton: true,
     debug: false,
   },
@@ -197,7 +354,6 @@ export const EmptyFolder: Story = {
   args: {
     files: [],
     currentPath: "/Vide",
-    labelRootFolder: "Mes fichiers",
     showUploadButton: true,
     debug: false,
   },
@@ -212,7 +368,6 @@ export const EmptyFolderFillContainer: Story = {
   args: {
     files: [],
     currentPath: "/Vide",
-    labelRootFolder: "Mes fichiers",
     showUploadButton: true,
     heightMode: "fill-container",
   },
@@ -230,7 +385,6 @@ export const SubFolder: Story = {
   args: {
     files: subFolderFiles,
     currentPath: "/Images",
-    labelRootFolder: "Mes fichiers",
     showUploadButton: true,
     debug: false,
   },
@@ -251,7 +405,6 @@ export const DeepFolder: Story = {
       },
     ],
     currentPath: "/Images/Archives",
-    labelRootFolder: "Mes fichiers",
     showUploadButton: false,
     debug: false,
   },
@@ -261,7 +414,6 @@ export const WithoutUploadButton: Story = {
   args: {
     files: mockFiles,
     currentPath: "/",
-    labelRootFolder: "Mes fichiers",
     showUploadButton: false,
     debug: false,
   },
@@ -281,7 +433,6 @@ export const DebugMode: Story = {
   args: {
     files: mockFiles.slice(0, 3),
     currentPath: "/",
-    labelRootFolder: "Mes fichiers",
     showUploadButton: true,
     debug: true,
   },
@@ -307,7 +458,6 @@ export const LargeFileList: Story = {
       updated_at: new Date(2024, 0, i + 5).toISOString(),
     })),
     currentPath: "/",
-    labelRootFolder: "Mes fichiers",
     showUploadButton: true,
     debug: false,
   },
@@ -324,7 +474,6 @@ export const WithDragAndDrop: Story = {
   args: {
     files: mockFiles,
     currentPath: "/Documents/Projets",
-    labelRootFolder: "Mes fichiers",
     showUploadButton: true,
     debug: false,
     onFileDrop: (event: React.DragEvent<HTMLDivElement>) => {
@@ -438,9 +587,7 @@ export const InteractiveNavigation: Story = {
     );
   },
   args: {
-    labelRootFolder: "Mes fichiers",
     showUploadButton: true,
-    onRefresh: fn(),
     onUpload: fn(),
     onCreateFolder: fn(),
     onImportFiles: fn(),
@@ -478,7 +625,6 @@ export const WithDisabledItems: Story = {
       },
     ],
     currentPath: "/",
-    labelRootFolder: "Mes fichiers",
     showUploadButton: true,
     debug: false,
   },
@@ -505,7 +651,6 @@ export const PaginationWithKnownTotal: Story = {
       updated_at: new Date(2024, 0, i + 5).toISOString(),
     })),
     currentPath: "/",
-    labelRootFolder: "Mes fichiers",
     showUploadButton: true,
     totalFiles: 5432,
     hasMore: true,
@@ -534,7 +679,6 @@ export const PaginationWithUnknownTotal: Story = {
       updated_at: new Date(2024, 0, i + 5).toISOString(),
     })),
     currentPath: "/",
-    labelRootFolder: "Mes fichiers",
     showUploadButton: true,
     totalFiles: null,
     hasMore: true,
@@ -563,7 +707,6 @@ export const PaginationLoading: Story = {
       updated_at: new Date(2024, 0, i + 5).toISOString(),
     })),
     currentPath: "/",
-    labelRootFolder: "Mes fichiers",
     showUploadButton: true,
     totalFiles: null,
     hasMore: true,
@@ -592,7 +735,6 @@ export const PaginationLimitReached: Story = {
       updated_at: new Date(2024, 0, i + 5).toISOString(),
     })),
     currentPath: "/",
-    labelRootFolder: "Mes fichiers",
     showUploadButton: true,
     totalFiles: 15000,
     hasMore: true,
@@ -621,7 +763,6 @@ export const PaginationComplete: Story = {
       updated_at: new Date(2024, 0, i + 5).toISOString(),
     })),
     currentPath: "/",
-    labelRootFolder: "Mes fichiers",
     showUploadButton: true,
     totalFiles: 543,
     hasMore: false,
@@ -693,10 +834,8 @@ export const InteractivePagination: Story = {
   },
   args: {
     currentPath: "/",
-    labelRootFolder: "Mes fichiers",
     showUploadButton: true,
     maxFilesLimit: 10000,
-    onRefresh: fn(),
     onUpload: fn(),
     onCreateFolder: fn(),
     onImportFiles: fn(),
@@ -723,7 +862,6 @@ export const WithDisabledActions: Story = {
   args: {
     files: mockFiles,
     currentPath: "/",
-    labelRootFolder: "Mes fichiers",
     showUploadButton: true,
     debug: false,
     disabledActions: ["rename", "move", "share", "delete"] as FileBrowserAction[],
@@ -741,7 +879,6 @@ export const WithHiddenActions: Story = {
   args: {
     files: mockFiles,
     currentPath: "/",
-    labelRootFolder: "Mes fichiers",
     showUploadButton: true,
     debug: false,
     hiddenActions: ["share"] as FileBrowserAction[],
@@ -788,7 +925,6 @@ export const ExternalSelectionReset: Story = {
   args: {
     files: mockFiles,
     currentPath: "/",
-    labelRootFolder: "Mes fichiers",
     showUploadButton: true,
   },
   parameters: {
@@ -824,7 +960,6 @@ export const WithAllActionsHidden: Story = {
   args: {
     files: mockFiles,
     currentPath: "/",
-    labelRootFolder: "Mes fichiers",
     showUploadButton: true,
     hiddenActions: ["rename", "move", "download", "share", "delete"] as FileBrowserAction[],
   },
@@ -894,7 +1029,6 @@ export const InteractiveDragAndDropMove: Story = {
     );
   },
   args: {
-    labelRootFolder: "Mes fichiers",
     showUploadButton: true,
   },
   parameters: {
@@ -917,4 +1051,94 @@ export const LoadingMore: Story = {
 export const LoadingMoreToResults: Story = {
   ...InteractivePagination,
   name: "Loading more to results",
+};
+
+/**
+ * `renderBulkActions` : deux boutons de l'application à gauche des actions natives, un bouton texte
+ * « Ajouter au projet » et un bouton icône « Ajouter aux favoris » (étoile) au format des actions natives
+ * (`secondary`, `w-6 h-6`, icône de 14 px, Tooltip). Deux lignes sont sélectionnées au chargement, y compris
+ * sur la page Docs ; sans sélection, toute la barre est masquée.
+ */
+export const WithBulkActions: Story = {
+  name: "With bulk actions",
+  // Sur la page Docs, Storybook ne lance pas `play` par défaut : sans
+  // sélection, la barre (et donc les boutons additionnels) resterait masquée.
+  parameters: { docs: { story: { autoplay: true } } },
+  args: {
+    files: mockFiles,
+    currentPath: "/",
+    showUploadButton: true,
+    renderBulkActions: (items: FileItem[]) => (
+      <>
+        {/* Bouton texte : action propre à l'application, bien distincte des icônes natives. */}
+        <Button
+          variant="secondary"
+          size="medium"
+          className="h-6"
+          onClick={() => console.log("[Story] Ajouter au projet", items)}
+        >
+          Ajouter au projet
+        </Button>
+        {/* Bouton icône, au format exact des actions natives. */}
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="secondary"
+              size="medium"
+              className="p-0 w-6 h-6"
+              aria-label="Ajouter aux favoris"
+              onClick={() => console.log("[Story] Ajouter aux favoris", items)}
+            >
+              <IconProvider icon="Star" size={14} />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>Ajouter {items.length} élément{items.length > 1 ? "s" : ""} aux favoris</TooltipContent>
+        </Tooltip>
+      </>
+    ),
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    // Une instance `setup()` garde la touche Ctrl enfoncée entre les deux appels.
+    const user = userEvent.setup();
+    await user.click(canvas.getByText("Documents"));
+    await user.keyboard("{Control>}");
+    await user.click(canvas.getByText("packshot-front.jpg"));
+    await user.keyboard("{/Control}");
+  },
+};
+
+/**
+ * En-tête de colonnes collant. Ici c'est la page qui défile (`heightMode="auto"`) : l'en-tête colle sous le
+ * header collant de l'application grâce à `stickyHeaderOffset={60}`. En `fill-container` ou `max-height`, il
+ * colle en haut de la zone qui défile.
+ */
+export const StickyHeader: Story = {
+  name: "Sticky header",
+  parameters: { layout: "fullscreen" },
+  render: (args) => (
+    <div>
+      <div className="sticky top-0 z-20 flex h-[60px] items-center border-b border-grey-strong bg-white px-4 text-sm">
+        Application header (sticky, 60 px)
+      </div>
+      <div className="p-4">
+        <FileBrowser {...args} />
+      </div>
+    </div>
+  ),
+  args: {
+    files: Array.from({ length: 60 }, (_, i) => ({
+      id: `file-${i}`,
+      file_name: i % 6 === 0 ? `Dossier ${i}` : `visuel-${i.toString().padStart(2, "0")}.jpg`,
+      parent_path: "/",
+      file_size: 1048576 + i * 1000,
+      mime_type: i % 6 === 0 ? null : "image/jpeg",
+      is_directory: i % 6 === 0,
+      created_at: new Date(2024, 0, i + 1).toISOString(),
+      updated_at: new Date(2024, 0, i + 5).toISOString(),
+    })),
+    currentPath: "/",
+    showUploadButton: true,
+    stickyHeaderOffset: 60,
+  },
 };

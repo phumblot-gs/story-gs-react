@@ -30,10 +30,18 @@ export interface StepperProps {
   allowCompletedClick?: boolean
   /** Callback appelé lors du clic sur une étape completed sans onClick explicite */
   onStepClick?: (stepIndex: number, step: StepperStep) => void
+  /**
+   * Disposition :
+   * - `"stacked"` (défaut) : rond de 40 px, titre en petit sous le rond, trait épais entre les ronds ;
+   * - `"inline"` : rond à la hauteur d'un bouton medium (30 px), titre à droite du rond (gras pour
+   *   l'étape active, gris pour les étapes à venir), étapes à venir cerclées sans fond, trait fin et
+   *   court entre les étapes.
+   */
+  layout?: "stacked" | "inline"
 }
 
 const Stepper = React.forwardRef<HTMLDivElement, StepperProps>(
-  ({ steps, variant = "normal", className, debug = false, allowCompletedClick = false, onStepClick }, ref) => {
+  ({ steps, variant = "normal", className, debug = false, allowCompletedClick = false, onStepClick, layout = "stacked" }, ref) => {
     const bg = useBgContext()
 
     // Détermine les variables CSS pour la ligne de connexion selon le variant et l'état
@@ -100,7 +108,95 @@ const Stepper = React.forwardRef<HTMLDivElement, StepperProps>(
     }
 
     if (debug) {
-      console.log("[Stepper] Rendering", { steps, variant, bg })
+      console.log("[Stepper] Rendering", { steps, variant, bg, layout })
+    }
+
+    if (layout === "inline") {
+      const isBlack = bg === "black"
+      return (
+        <div
+          ref={ref}
+          className={cn("flex flex-wrap items-center gap-y-2", className)}
+          data-bg={bg || undefined}
+          data-layout="inline"
+        >
+          {steps.map((step, index) => {
+            const state = step.state || "future"
+            const isCompleted = state === "completed"
+            const isActive = state === "active"
+            const isFuture = state === "future"
+            const isLast = index === steps.length - 1
+            const hasExplicitOnClick = Boolean(step.onClick)
+            const isClickableCompleted = allowCompletedClick && isCompleted && !hasExplicitOnClick
+            const isClickable = hasExplicitOnClick || isClickableCompleted
+            const handleClick = () => {
+              if (step.onClick) step.onClick()
+              else if (isClickableCompleted && onStepClick) onStepClick(index, step)
+            }
+
+            // À venir : cerclé, sans fond, chiffre gris. Actif et terminé : styles du variant (comme en stacked).
+            const circleStyle: React.CSSProperties = isFuture
+              ? {
+                  backgroundColor: "transparent",
+                  border: `1px solid var(${isBlack ? "--color-grey-strongest" : "--color-grey-strong"})`,
+                  color: `var(${isBlack ? "--color-grey-stronger" : "--color-grey-strongest"})`,
+                }
+              : getStepButtonStyle(state, variant, bg)
+
+            return (
+              <React.Fragment key={index}>
+                {/* Étape : rond + titre dans un seul bouton (zone de clic élargie au titre). */}
+                <button
+                  type="button"
+                  className={cn(
+                    "group flex shrink-0 items-center gap-2 rounded-full bg-transparent p-0 text-base",
+                    isClickable ? "cursor-pointer" : "cursor-default"
+                  )}
+                  aria-current={isActive ? "step" : undefined}
+                  aria-label={step.title || `Étape ${index + 1}`}
+                  onClick={isClickable ? handleClick : undefined}
+                  disabled={!isClickable}
+                  data-state={state}
+                >
+                  <span
+                    className={cn(
+                      "stepper-step flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-base transition-colors",
+                      !isFuture && `btn-${variant}`,
+                      isCompleted && "stepper-completed",
+                      isActive && "stepper-active"
+                    )}
+                    style={circleStyle}
+                  >
+                    {isCompleted ? <Icon name="Check" size={12} /> : step.label}
+                  </span>
+                  {step.title && (
+                    <span
+                      className={cn(
+                        "whitespace-nowrap",
+                        isActive && "font-semibold",
+                        isFuture
+                          ? isBlack ? "text-grey-stronger" : "text-grey-strongest"
+                          : isBlack ? "text-white" : "text-black"
+                      )}
+                    >
+                      {step.title}
+                    </span>
+                  )}
+                </button>
+
+                {/* Trait fin et court, 15 px de chaque côté. */}
+                {!isLast && (
+                  <div
+                    aria-hidden="true"
+                    className="mx-3 h-px w-6 shrink-0"
+                    style={{ backgroundColor: `var(${isBlack ? "--color-grey-strongest" : "--color-grey-strong"})` }}
+                  />
+                )}
+              </React.Fragment>
+            )
+          })}
+        </div>
+      )
     }
 
     return (

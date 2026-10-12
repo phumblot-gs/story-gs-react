@@ -51,8 +51,13 @@ const headerRef = useRef<HTMLDivElement>(null);
   \`flex-1 min-h-0\` column; each tab chooses its own scrolling (\`overflow-y-auto\`, \`overflow-hidden\`…).
 - \`usePageFirstScroll(ref, options)\` is exported for pages that cannot use the component.
 
-**Assumption:** the **window** scrolls — no ancestor with \`overflow\` or a fixed height (the root of the
-component sets none).
+**Scrolling element:** by default the **window** scrolls — no ancestor with \`overflow\` or a fixed height (the
+root of the component sets none). Inside a **scroll container** (e.g. the body of a \`FullFrame\`, which provides
+it through \`ScrollContainerProvider\`), the component uses that container automatically: the panel height is the
+container's visible height minus its bottom padding (\`100cqh\`, the container has \`container-type: size\`), the
+folded panel sits against the top of the container, and the wheel, \`onCollapsedChange\` and
+\`hidePageScrollbar\` act on the container. \`scrollContainer={ref}\` sets it explicitly, \`scrollContainer={null}\`
+forces the window. See *Layout/FullFrame → Project wizard*.
 
 **Known limits:** touch scrolling scrolls the content first (the top part only folds when swiping outside
 the panel); keyboard is not handled; a content with \`overscroll-behavior: contain\` prevents wheel-up from

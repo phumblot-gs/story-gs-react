@@ -23,6 +23,25 @@ The \`Stepper\` component displays progress through multiple steps in a wizard o
 - **Completed step clicks**: Optional ability to make completed steps clickable without explicit onClick handlers
 - **Context adaptation**: Automatically adapts to parent \`data-bg\` context
 
+## Layouts
+
+- \`layout="stacked"\` (default): 40 px circle, small title under it, thick connector.
+- \`layout="inline"\`: circle at the height of a medium button (30 px), title on the right of the circle
+  (bold when active, grey when future), future steps outlined without background, completed steps
+  with a check, thin short connector (30 px, 15 px on each side). Wraps on narrow screens.
+
+\`\`\`tsx
+<Stepper
+  layout="inline"
+  steps={[
+    { label: 1, title: "Images", state: "active" },
+    { label: 2, title: "Catalogue" },
+    { label: 3, title: "Matching" },
+    { label: 4, title: "Validation" },
+  ]}
+/>
+\`\`\`
+
 ## Step States
 
 - **future**: Step not yet reached (default variant style)
@@ -416,3 +435,47 @@ export const DebugMode: Story = {
   },
 }
 
+
+const INLINE_STEPS: StepperStep[] = [
+  { label: 1, title: "Images", state: "active" },
+  { label: 2, title: "Catalogue" },
+  { label: 3, title: "Rapprochement" },
+  { label: 4, title: "Validation" },
+]
+
+/** `layout="inline"`: title on the right, outlined future steps, thin connectors, on white, grey and black. */
+export const Inline: Story = {
+  parameters: { layout: "fullscreen" },
+  render: () => (
+    <div>
+      {(["white", "grey", "black"] as const).map((bg) => (
+        <Layout key={bg} bg={bg} padding={6}>
+          <Stepper layout="inline" steps={INLINE_STEPS} />
+        </Layout>
+      ))}
+    </div>
+  ),
+}
+
+/** `layout="inline"` while progressing: completed steps show a check and stay clickable to go back. */
+export const InlineProgress: Story = {
+  parameters: { layout: "fullscreen" },
+  render: () => {
+    const titles = ["Images", "Catalogue", "Rapprochement", "Validation"]
+    const [current, setCurrent] = useState(2)
+    const steps: StepperStep[] = titles.map((title, index) => ({
+      label: index + 1,
+      title,
+      state: index < current ? "completed" : index === current ? "active" : "future",
+    }))
+    return (
+      <Layout bg="grey" padding={6}>
+        <Stepper layout="inline" steps={steps} allowCompletedClick onStepClick={(index) => setCurrent(index)} />
+        <div className="mt-4 flex gap-2">
+          <button className="text-xs underline" onClick={() => setCurrent(Math.max(0, current - 1))}>Previous</button>
+          <button className="text-xs underline" onClick={() => setCurrent(Math.min(titles.length - 1, current + 1))}>Next</button>
+        </div>
+      </Layout>
+    )
+  },
+}

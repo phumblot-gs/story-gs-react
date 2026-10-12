@@ -86,7 +86,7 @@ const buttonVariants = cva(
       },
       size: {
         small: "px-2 py-[4px] h-4 text-xs leading-tight gap-1 [&_svg]:h-[12px] [&_svg]:w-[12px]",      // 8px horizontal, 4px vertical, 20px height (h-4), gap 4px, font 9px avec leading-tight (11.25px), icônes 12px
-        medium: "px-4 py-1 text-base gap-2",            // 16px horizontal, 4px vertical, gap 8px, font 16px (anciennement large)
+        medium: "px-3 py-1 text-base gap-2",            // 15px horizontal (échelle de 5px), 5px vertical, gap 10px, font 16px (anciennement large)
         large: "px-5 py-[15px] text-base gap-[5px]",     // 20px horizontal, 15px vertical, gap 5px, font 16px (nouvelle taille depuis Figma)
       },
     },
