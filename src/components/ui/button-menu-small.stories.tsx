@@ -137,7 +137,7 @@ Controls the alignment of the menu relative to the button:
   argTypes: {
     variant: {
       control: "select",
-      options: ["normal", "secondary", "ghost", "outline", "destructive", "link"],
+      options: ["normal", "secondary", "ghost", "outline", "destructive", "link", "inverse"],
       description: "Button variant (inherited from Button)",
     },
     size: {

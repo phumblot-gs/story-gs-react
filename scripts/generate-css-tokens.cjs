@@ -305,7 +305,7 @@ function generateButtonTokensCSS(tokens) {
  * Génère les classes CSS Button contextuelles pour chaque variant
  */
 function generateButtonClassesCSS(tokens) {
-  const variants = ['normal', 'secondary', 'ghost', 'outline', 'destructive', 'link'];
+  const variants = ['normal', 'secondary', 'ghost', 'outline', 'destructive', 'link', 'inverse'];
   const backgrounds = [
     { name: 'white', prefix: 'W' },
     { name: 'grey', prefix: 'G' },

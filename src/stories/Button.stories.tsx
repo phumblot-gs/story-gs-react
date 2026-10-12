@@ -15,7 +15,10 @@ const meta = {
         component: `Button component built with the Figma design system. The Button automatically inherits color context via \`data-bg\` from the parent Layout.
 
 ## Features
-- Multiple visual variants (normal, secondary, ghost, outline, destructive, link)
+- Multiple visual variants (normal, secondary, ghost, outline, destructive, link, inverse)
+- \`inverse\`: the reverse of \`normal\`, adapted to the background: black with white text on white and grey,
+  white with black text on black; hover and pressed: blue with black text. Available on every component built
+  on Button (Toggle, ButtonMenu, ButtonMenuSmall, Stepper…)
 - Three sizes (small, medium, large)
 - Automatic context-aware styling based on parent background
 - Icon support with Icon component
@@ -133,7 +136,7 @@ import { Link } from 'react-router-dom';
   argTypes: {
     variant: {
       control: 'select',
-      options: ['normal', 'secondary', 'ghost', 'outline', 'destructive', 'link'],
+      options: ['normal', 'secondary', 'ghost', 'outline', 'destructive', 'link', 'inverse'],
       description: 'Button variant (normal, secondary, ghost, outline, destructive, link)',
     },
     size: {
@@ -208,6 +211,7 @@ export const AllVariants: Story = {
           <Button variant="outline">Outline</Button>
           <Button variant="destructive">Destructive</Button>
           <Button variant="link">Link</Button>
+          <Button variant="inverse">Inverse</Button>
         </HStack>
       </VStack>
 
@@ -220,6 +224,7 @@ export const AllVariants: Story = {
           <Button variant="outline">Outline</Button>
           <Button variant="destructive">Destructive</Button>
           <Button variant="link">Link</Button>
+          <Button variant="inverse">Inverse</Button>
         </HStack>
       </VStack>
 
@@ -232,6 +237,7 @@ export const AllVariants: Story = {
           <Button variant="outline">Outline</Button>
           <Button variant="destructive">Destructive</Button>
           <Button variant="link">Link</Button>
+          <Button variant="inverse">Inverse</Button>
         </HStack>
       </VStack>
     </VStack>
@@ -629,6 +635,7 @@ export const ShadcnCompatibility: Story = {
           <Button variant="outline">Outline</Button>
           <Button variant="destructive">Destructive</Button>
           <Button variant="link">Link</Button>
+          <Button variant="inverse">Inverse</Button>
         </HStack>
         <HStack gap={3}>
           <Button size="sm">Small (sm)</Button>
@@ -751,7 +758,7 @@ export const DebugMode: Story = {
 
 // --- Loading ------------------------------------------------------------------
 
-const VARIANTS = ["normal", "secondary", "ghost", "outline", "destructive", "link"] as const;
+const VARIANTS = ["normal", "secondary", "ghost", "outline", "destructive", "link", "inverse"] as const;
 
 /**
  * Reference scenario with the real Button: click → 3 s simulated action (disabled, `aria-busy`, Spinner,

@@ -149,7 +149,7 @@ When set, the menu is styled as if it were on that background (e.g. \`menuBgCont
     },
     variant: {
       control: "select",
-      options: ["normal", "secondary", "ghost", "outline", "destructive", "link"],
+      options: ["normal", "secondary", "ghost", "outline", "destructive", "link", "inverse"],
       description: "Button variant (inherited from Button)",
     },
     size: {

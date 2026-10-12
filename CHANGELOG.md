@@ -5,6 +5,21 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.27.1] - 2026-10-12
+
+### Ajouté
+
+- Variante de bouton `inverse`, symétrique de `normal`, qui s'adapte au fond :
+  noir (#292828) à texte blanc sur fond blanc et gris, blanc à texte noir sur
+  fond noir ; survol et appui en bleu (#CDEDFF) à texte noir ; état désactivé
+  identique à `normal`. Jetons `buttonXInverse…` déclarés dans
+  `figma-primitives.json` (modes clair et sombre) et variante ajoutée au
+  générateur de `figma-tokens.css`, comme les autres variantes.
+  Disponible sur `Button` et sur tous les composants qui en dérivent (Toggle,
+  ButtonMenu, ButtonMenuSmall, Stepper…), y compris l'état de chargement.
+  Stories : option « inverse » dans les contrôles, ajout dans « All variants »
+  et « Loading variants ».
+
 ## [1.27.0] - 2026-10-12
 
 ### Modifié
