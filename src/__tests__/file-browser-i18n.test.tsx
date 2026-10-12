@@ -74,7 +74,7 @@ describe("FileBrowser — Bug 1 plural placeholder substitution", () => {
     );
     const html = document.body.innerHTML;
     expect(html).not.toContain("{plural}");
-    expect(html).toContain("1 fichier (limite atteinte)");
+    expect(html).toContain("1 élément (limite atteinte)");
   });
 
   it("renders plural form (with 's') in FR for count > 1", () => {
@@ -89,7 +89,7 @@ describe("FileBrowser — Bug 1 plural placeholder substitution", () => {
     );
     const html = document.body.innerHTML;
     expect(html).not.toContain("{plural}");
-    expect(html).toContain("1 000 fichiers (limite atteinte)");
+    expect(html).toContain("1 000 éléments (limite atteinte)");
   });
 });
 

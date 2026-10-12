@@ -181,33 +181,38 @@ export const useTranslationSafe = (
   // If props are provided, they take priority over context
   const hasCustomProps = customTranslations !== undefined || customLanguage !== undefined;
 
+  // Règle des hooks : useMemo est appelé à chaque rendu, avec ou sans props de
+  // traduction. Appelé seulement dans la branche `hasCustomProps`, il changeait
+  // l'ordre des hooks quand `language` / `translations` apparaissait ou
+  // disparaissait sur un composant déjà monté (« Cannot read properties of
+  // undefined »).
+  // Merge translations: customTranslations > context translations (if exists) > defaultTranslations
+  const mergedTranslations = useMemo(() => {
+    const base = { ...defaultTranslations };
+
+    // Add context custom translations if context exists
+    // Note: context already has merged translations from TranslationProvider
+
+    // Add custom translations from props (highest priority)
+    if (customTranslations) {
+      Object.keys(customTranslations).forEach(key => {
+        if (!base[key]) {
+          base[key] = { ...customTranslations[key] };
+        } else {
+          base[key] = { ...base[key], ...customTranslations[key] };
+        }
+      });
+    }
+
+    return base;
+  }, [customTranslations]);
+
   if (hasCustomProps) {
     // Use props with higher priority
     const propsLanguage: Language = {
       code: customLanguage?.toUpperCase() || context?.currentLanguage.code || "EN",
       name: customLanguage || context?.currentLanguage.name || "English"
     };
-
-    // Merge translations: customTranslations > context translations (if exists) > defaultTranslations
-    const mergedTranslations = useMemo(() => {
-      const base = { ...defaultTranslations };
-
-      // Add context custom translations if context exists
-      // Note: context already has merged translations from TranslationProvider
-
-      // Add custom translations from props (highest priority)
-      if (customTranslations) {
-        Object.keys(customTranslations).forEach(key => {
-          if (!base[key]) {
-            base[key] = { ...customTranslations[key] };
-          } else {
-            base[key] = { ...base[key], ...customTranslations[key] };
-          }
-        });
-      }
-
-      return base;
-    }, [customTranslations]);
 
     const t = (key: string, params?: Record<string, string | number>): string => {
       // Handle pluralization if count parameter exists

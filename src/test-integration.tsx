@@ -81,7 +81,7 @@ const TranslationTestPanel: React.FC = () => {
       </div>
       <div className="space-y-1 text-sm">
         <p>Current language: {language.code}</p>
-        <p>Test translation: {t('fileBrowser.refresh')}</p>
+        <p>Test translation: {t('fileBrowser.add')}</p>
         <p>Column name: {t('fileBrowser.columnName')}</p>
         <p>No files: {t('fileBrowser.noFiles')}</p>
       </div>

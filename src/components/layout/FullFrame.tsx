@@ -1,4 +1,5 @@
-import { ReactNode } from 'react';
+import { ReactNode, useRef } from 'react';
+import { ScrollContainerProvider } from './ScrollContainerContext';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Icon } from '@/components/ui/icons';
@@ -29,7 +30,30 @@ export interface FullFrameProps {
 
   /** Contenu personnalisé du header. Si non fourni, affiche uniquement le bouton de fermeture */
   headerContent?: ReactNode;
+
+  /**
+   * Marge commune : padding horizontal du header et padding du body, pour que le
+   * contenu du header (nom du projet…) soit aligné sur celui du body (stepper,
+   * titre…). 4 = 20 px, 6 = 30 px, 8 = 40 px. Sans valeur : rendu historique
+   * (header en px-3, body sans padding).
+   */
+  padding?: 4 | 6 | 8;
+
+  /**
+   * Zone fixe en bas (boutons « Précédent / Suivant »…), qui ne défile jamais.
+   * Même padding horizontal que le header.
+   */
+  footer?: ReactNode;
+
+  /** Background du footer (défaut : celui du body). */
+  footerBg?: BgContext;
+
+  /** Classes du footer (ex. `border-t border-grey` pour un séparateur). */
+  footerClassName?: string;
 }
+
+const HEADER_PADDING: Record<4 | 6 | 8, string> = { 4: 'px-4', 6: 'px-6', 8: 'px-8' };
+const BODY_PADDING: Record<4 | 6 | 8, string> = { 4: 'p-4', 6: 'p-6', 8: 'p-8' };
 
 /**
  * Composant FullFrame pour affichage en mode popup sur toute la fenêtre
@@ -80,8 +104,13 @@ export function FullFrame({
   headerBg = 'white',
   bodyBg = 'white',
   headerContent,
+  padding,
+  footer,
+  footerBg,
+  footerClassName,
 }: FullFrameProps) {
   const { t } = useTranslationSafe();
+  const bodyRef = useRef<HTMLDivElement>(null);
 
   return (
     <div
@@ -97,8 +126,11 @@ export function FullFrame({
         bg={headerBg}
         align="center"
         className={cn(
-          'h-12',
-          'px-3 py-2',
+          // Hauteur minimale de 60 px plutôt que fixe : le header peut porter
+          // un contenu plus haut (titre sur deux lignes…).
+          'min-h-12',
+          padding ? HEADER_PADDING[padding] : 'px-3',
+          'py-2',
           'justify-between',
           'shrink-0'
         )}
@@ -133,18 +165,43 @@ export function FullFrame({
         )}
       </HStack>
 
-      {/* Body */}
-      <VStack
-        bg={bodyBg}
-        {...bodyProps}
-        className={cn(
-          'flex-1',
-          'overflow-auto',
-          bodyProps?.className
-        )}
-      >
-        {children}
-      </VStack>
+      {/* Body : seule zone qui défile. Fournie par contexte comme conteneur de
+          défilement : un PageFillLayout posé dedans s'y adapte (partie haute
+          repliable, panneau à la hauteur du body). `container-type: size`
+          permet au panneau de se dimensionner en `cqh`. */}
+      <ScrollContainerProvider value={bodyRef}>
+        <VStack
+          bg={bodyBg}
+          {...bodyProps}
+          ref={bodyRef}
+          style={{ containerType: 'size', ...bodyProps?.style }}
+          className={cn(
+            'flex-1',
+            'min-h-0',
+            'overflow-auto',
+            padding && BODY_PADDING[padding],
+            bodyProps?.className
+          )}
+        >
+          {children}
+        </VStack>
+      </ScrollContainerProvider>
+
+      {/* Footer */}
+      {footer && (
+        <HStack
+          bg={footerBg ?? bodyBg}
+          align="center"
+          className={cn(
+            'shrink-0',
+            padding ? HEADER_PADDING[padding] : 'px-3',
+            'py-4',
+            footerClassName
+          )}
+        >
+          {footer}
+        </HStack>
+      )}
     </div>
   );
 }

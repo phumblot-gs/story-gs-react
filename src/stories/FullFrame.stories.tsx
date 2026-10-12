@@ -1,4 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { Stepper } from "@/components/ui/stepper";
+import { PageFillLayout } from "@/components/layout/PageFillLayout";
+import { FileBrowser, type FileItem } from "@/components/ui/file-browser";
 import { useState } from "react";
 import { FullFrame } from "@/components/layout/FullFrame";
 import { Button } from "@/components/ui/button";
@@ -128,10 +131,47 @@ You can customize the body layout using \`bodyProps\` which accepts all VStack p
 
 ## Header Specifications
 
-- **Height**: 60px (using Tailwind \`h-12\` class)
-- **Padding**: Horizontal \`px-3\` (15px), Vertical \`py-2\` (10px)
+- **Height**: at least 60px (\`min-h-12\`), grows with taller content
+- **Padding**: Horizontal \`px-3\` (15px) by default, or the shared \`padding\`; vertical \`py-2\` (10px)
 - **Close button**: Large size, ghost variant, 32x32px (w-8 h-8), X icon size 14px
 - **Vertical alignment**: Elements are centered vertically using \`align="center"\`
+
+## Shared padding
+
+\`padding={4 | 6 | 8}\` (20 / 30 / 40 px) sets the header's horizontal padding **and** the body's padding, so
+the header content (e.g. the project name) is aligned with the body content (stepper, title…). Without it, the
+historical rendering is kept (header \`px-3\`, body without padding). See *Project wizard*:
+
+\`\`\`tsx
+<FullFrame headerBg="grey" bodyBg="grey" padding={6} headerContent={<span>Projet TEST DECAT</span>} onClose={close}>
+  <Stepper layout="inline" steps={steps} />
+  <h1 className="gs-typo-h1">Choisir les images du projet</h1>
+</FullFrame>
+\`\`\`
+
+## Footer
+
+\`footer\` adds a fixed area at the bottom (Previous / Next buttons…), outside the scrolling body, with the same
+horizontal padding as the header (\`padding\`). \`footerBg\` defaults to \`bodyBg\`; \`footerClassName\` adds e.g. a
+separator (\`border-t border-grey\`).
+
+## Page fill layout inside the FullFrame
+
+The body is a **scroll container** (provided through \`ScrollContainerProvider\`, with \`container-type: size\`).
+A \`PageFillLayout\` placed in it behaves as on a page: the collapsible part (stepper, title…) folds first with the
+mouse wheel, then the panel fills the body height and its content scrolls inside it. See *Project wizard*.
+
+\`\`\`tsx
+<FullFrame padding={6} headerBg="grey" bodyBg="grey" headerContent={projectName} footer={<WizardButtons />} onClose={close}>
+  <PageFillLayout as="div" bg="grey" hidePageScrollbar collapsibleClassName="pb-6"
+    collapsible={<><Stepper layout="inline" steps={steps} /><h1 className="gs-typo-h1">Choisir les images</h1></>}>
+    <FileBrowser heightMode="fill-container" {...fileBrowserProps} />
+  </PageFillLayout>
+</FullFrame>
+\`\`\`
+
+Known limits (same as PageFillLayout): touch scrolling scrolls the list first (the top part folds when swiping on
+it, or when the list reaches its end); keyboard scrolling is native (no page-first sequence).
 
 ## Body Specifications
 
@@ -404,6 +444,85 @@ export const ComplexContent: Story = {
                 </Button>
               </HStack>
             </div>
+          </FullFrame>
+        )}
+      </>
+    );
+  },
+};
+
+const WIZARD_FILES: FileItem[] = Array.from({ length: 80 }, (_, i) => ({
+  id: `wf-${i}`,
+  file_name: i % 8 === 0 ? `Séance ${i / 8 + 1}` : `visuel-${String(i).padStart(3, "0")}.jpg`,
+  parent_path: "/",
+  file_size: i % 8 === 0 ? 0 : 2_000_000 + i * 1000,
+  mime_type: i % 8 === 0 ? null : "image/jpeg",
+  is_directory: i % 8 === 0,
+  created_at: new Date(2024, 0, (i % 28) + 1).toISOString(),
+  updated_at: new Date(2024, 1, (i % 28) + 1).toISOString(),
+}));
+
+/**
+ * Project creation wizard, same layout as `PageFillLayout` inside the FullFrame:
+ * - fixed header (project name, close button) and fixed footer (Previous / Next);
+ * - collapsible top part in the body (stepper, title, description);
+ * - a panel that fills the body height (here a `FileBrowser heightMode="fill-container"`).
+ *
+ * Mouse wheel over the list: the top part folds first, then the list scrolls inside the panel. Wheel up:
+ * the list goes back to its top, then the top part comes back. `padding={6}` aligns the header, the body
+ * and the footer.
+ */
+export const ProjectWizard: Story = {
+  render: () => {
+    const [isOpen, setIsOpen] = useState(true);
+    return (
+      <>
+        {!isOpen && (
+          <div className="fixed inset-0 flex items-center justify-center bg-grey">
+            <Button onClick={() => setIsOpen(true)}>Ouvrir l'assistant</Button>
+          </div>
+        )}
+        {isOpen && (
+          <FullFrame
+            headerBg="grey"
+            bodyBg="grey"
+            padding={6}
+            headerContent={<span className="text-sm text-grey-strongest">Projet TEST DECAT</span>}
+            onClose={() => setIsOpen(false)}
+            footer={
+              <div className="flex w-full items-center justify-between">
+                <Button variant="secondary" disabled>Précédent</Button>
+                <Button>Suivant</Button>
+              </div>
+            }
+          >
+            <PageFillLayout
+              as="div"
+              bg="grey"
+              hidePageScrollbar
+              collapsibleClassName="pb-6"
+              collapsible={
+                <div className="flex flex-col gap-6">
+                  <Stepper
+                    layout="inline"
+                    steps={[
+                      { label: 1, title: "Images", state: "active" },
+                      { label: 2, title: "Catalogue" },
+                      { label: 3, title: "Rapprochement" },
+                      { label: 4, title: "Validation" },
+                    ]}
+                  />
+                  <div className="flex flex-col gap-2">
+                    <h1 className="gs-typo-h1 m-0">Choisir les images du projet</h1>
+                    <p className="m-0 text-base text-grey-strongest">
+                      Sélectionnez des fichiers, puis ajoutez-les au projet. Vous pourrez ensuite les rapprocher du catalogue.
+                    </p>
+                  </div>
+                </div>
+              }
+            >
+              <FileBrowser files={WIZARD_FILES} currentPath="/" heightMode="fill-container" language="FR" />
+            </PageFillLayout>
           </FullFrame>
         )}
       </>

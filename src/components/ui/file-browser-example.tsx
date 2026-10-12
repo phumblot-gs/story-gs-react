@@ -160,7 +160,6 @@ export function FileBrowserExample() {
 
           // IMPORTANT: Ces callbacks doivent être définis pour que les interactions fonctionnent
           onNavigate={handleNavigate} // ← Crucial pour la navigation par double-clic
-          onRefresh={handleRefresh}
           onDelete={handleDelete}
           onMove={handleMove}
           onRename={handleRename}
