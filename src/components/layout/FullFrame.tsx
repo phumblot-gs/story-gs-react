@@ -1,4 +1,6 @@
 import { ReactNode, useRef } from 'react';
+import { useFullFrameEscape } from '@/hooks/useFullFrameEscape';
+import { useFullFrameWheel } from '@/hooks/useFullFrameWheel';
 import { ScrollContainerProvider } from './ScrollContainerContext';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -13,8 +15,11 @@ export interface FullFrameProps {
   /** Enfants du body (sera dans un VStack) */
   children: ReactNode;
 
-  /** Callback appelé lors du clic sur le bouton de fermeture */
+  /** Callback appelé par le bouton de fermeture ou Échap. */
   onClose?: () => void;
+
+  /** Échap ferme uniquement le FullFrame du dessus, si l’événement n’est pas déjà traité. Défaut true. */
+  closeOnEscape?: boolean;
 
   /** Classes Tailwind supplémentaires pour le conteneur principal */
   className?: string;
@@ -99,6 +104,7 @@ const BODY_PADDING: Record<4 | 6 | 8, string> = { 4: 'p-4', 6: 'p-6', 8: 'p-8' }
 export function FullFrame({
   children,
   onClose,
+  closeOnEscape = true,
   className,
   bodyProps,
   headerBg = 'white',
@@ -110,10 +116,14 @@ export function FullFrame({
   footerClassName,
 }: FullFrameProps) {
   const { t } = useTranslationSafe();
+  const frameRef = useRef<HTMLDivElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
+  useFullFrameWheel(frameRef, bodyRef);
+  useFullFrameEscape(frameRef, { closeOnEscape, onClose });
 
   return (
     <div
+      ref={frameRef}
       className={cn(
         'fixed inset-0 z-50',
         'flex flex-col',

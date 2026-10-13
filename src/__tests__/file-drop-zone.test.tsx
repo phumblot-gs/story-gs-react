@@ -130,12 +130,59 @@ describe('FileBrowser external drop integration', () => {
     expect(onFilesDrop).toHaveBeenCalledOnce();
     expect(onFileDrop).not.toHaveBeenCalled();
   });
+  it('forwards the native event for legacy directory imports without enforcing new rules', () => {
+    const onFileDrop = vi.fn();
+    render(<FileBrowser files={[]} currentPath="/" onFileDrop={onFileDrop} />);
+    const target = document.querySelector('[data-file-drop-target]')!;
+    const transfer = dt(['Files'], [{ kind: 'file', type: '' }], []);
+    const event = new Event('drop', { bubbles: true, cancelable: true });
+    Object.defineProperty(event, 'dataTransfer', { value: transfer });
+    fireEvent(target, event);
+    expect(onFileDrop).toHaveBeenCalledOnce();
+    expect(onFileDrop.mock.calls[0][0].nativeEvent).toBe(event);
+    expect(onFileDrop.mock.calls[0][0].dataTransfer).toBe(transfer);
+    expect(screen.queryByRole('alert')).toBeNull();
+  });
+  it('handles pending legacy imports and rejection within the list without duplicate callbacks', async () => {
+    let reject!: (error: Error) => void;
+    const onFileDrop = vi.fn(() => new Promise<void>((_, no) => { reject = no; }));
+    const onFileDropError = vi.fn();
+    render(<FileBrowser files={[]} currentPath="/" onFileDrop={onFileDrop} onFileDropError={onFileDropError} />);
+    const target = document.querySelector('[data-file-drop-target]')!;
+    fireEvent.drop(target, { dataTransfer: dt(['Files'], [], [image()]) });
+    expect(target).toHaveAttribute('aria-busy', 'true');
+    expect(target).toContainElement(screen.getByRole('status'));
+    fireEvent.drop(target, { dataTransfer: dt(['Files'], [], [image()]) });
+    expect(onFileDrop).toHaveBeenCalledOnce();
+    await act(async () => reject(new Error('network')));
+    expect(target).toContainElement(screen.getByRole('alert'));
+    expect(onFileDropError).toHaveBeenCalledOnce();
+    expect(target).toHaveAttribute('aria-busy', 'false');
+  });
+  it('keeps imports disabled without a handler and excludes the breadcrumb from the target', () => {
+    const onFilesDrop = vi.fn();
+    const { rerender } = render(<FileBrowser files={[]} currentPath="/EXPORT GS" language="fr" />);
+    const target = document.querySelector('[data-file-drop-target]')!;
+    fireEvent.dragEnter(target, { dataTransfer: dt() });
+    expect(screen.queryByRole('status')).toBeNull();
+    rerender(<FileBrowser files={[]} currentPath="/EXPORT GS" language="fr" onFilesDrop={onFilesDrop} />);
+    const breadcrumb = screen.getByText('EXPORT GS', { selector: '[aria-current]' });
+    fireEvent.dragEnter(breadcrumb, { dataTransfer: dt() });
+    fireEvent.drop(breadcrumb, { dataTransfer: dt(['Files'], [], [image()]) });
+    expect(onFilesDrop).not.toHaveBeenCalled();
+    expect(screen.queryByRole('status')).toBeNull();
+  });
   it('clears stale feedback on folder navigation', async () => {
     const props = { files: [], onFilesDrop: vi.fn() };
     const { rerender } = render(<FileBrowser {...props} currentPath="/one" />);
+    const table = document.querySelector('table');
+    const focusTarget = document.querySelector('[tabindex="0"]') as HTMLElement;
+    focusTarget.focus();
     fireEvent.dragEnter(document.querySelector('[data-file-drop-target]')!, { dataTransfer: dt() });
     rerender(<FileBrowser {...props} currentPath="/two" />);
     await waitFor(() => expect(screen.queryByRole('status')).toBeNull());
+    expect(document.querySelector('table')).toBe(table);
+    expect(document.activeElement).toBe(focusTarget);
   });
 });
 

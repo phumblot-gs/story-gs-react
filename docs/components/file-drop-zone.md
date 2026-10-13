@@ -1,6 +1,6 @@
 # FileDropZone and external FileBrowser deposits
 
-`FileDropZone` is a file picker and drop target. `FileDropFeedback` supplies the same visual language inside the FileBrowser list, leaving the breadcrumb and toolbar visible.
+`FileDropZone` is a file picker and drop target. `FileBrowser` uses `FileDropZone mode="overlay"` directly around its list, leaving the breadcrumb and toolbar visible.
 
 ## Excel: one workbook, then application analysis and validation
 
@@ -73,7 +73,7 @@ The picker button uses `chooseButtonVariant` (default `normal`) and `chooseButto
 
 `Components/FileDropZone`: Excel, multiple images, size limit, disabled, English, reduced motion, callback failure, custom validation, accepted/refused/unknown/mixed hover and an interactive scenario simulator. The simulator illustrates declared metadata, not actual content validation.
 
-`Components/FileBrowser / ExternalFileDropFeedback`: PNG/PDF, count and mixed/unknown batches; breadcrumb stays visible. `ExternalFileDropLongList` covers an auto-height list extending beyond the viewport: the feedback message remains within the visible portion. Existing internal drag stories remain available.
+External deposit examples live under `Components/FileDropZone`, including `FileBrowserScenarios` and `OverlayFileBrowser`. The FileBrowser stories keep their internal row drag-and-drop examples.
 
 
 ## Overlay on an existing surface
@@ -95,3 +95,10 @@ The picker button uses `chooseButtonVariant` (default `normal`) and `chooseButto
 The overlay owns external file events in the capture phase. A wrapped FileBrowser's own import callback is therefore not also invoked; internal row drags pass through untouched. In nested drop zones the outer overlay owns external deposits. Wrap only the intended destination and configure its rules there. `disabled` disables deposits, without disabling or dimming child controls. Keep an accessible file-picker action in the host: overlay mode does not render the standalone `chooseButton*` button/input, label or description.
 
 `OverlayFileBrowser` wraps the complete browser, including its breadcrumb and toolbar. Use the FileBrowser's existing `fileDropOptions` / `onFilesDrop` integration instead when feedback should cover only its list. `OverlayDataTable` wraps a sortable, selectable catalogue table. Both stories provide native file picking and simulations for compatible, incompatible, unknown and mixed files, plus asynchronous success and failure. Simulated files illustrate eligibility; they are not real parsed workbooks.
+
+
+### FileBrowser composition and legacy events
+
+FileBrowser delegates external deposits, eligibility and transient state to a single FileDropZone in overlay mode. Its list, scrolling and internal row handlers remain mounted. `resetKey={currentPath}` clears feedback when navigating without remounting those children. FileDropZone also accepts `resetKey` for other destination changes.
+
+The optional second argument of `FileDropZone.onFilesDrop(files, event)` is the native React drag event for a drop; picker selection supplies no event. FileBrowser uses it to adapt the historical `onFileDrop(event)` callback. `validateDrop` defaults to `true`; FileBrowser disables it only for legacy event-based imports with no `fileDropOptions`, preserving integrations that handle directories themselves. Modern file callbacks and explicit rules always enable validation. Processing and errors now stay above the list without resizing it.

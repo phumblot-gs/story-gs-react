@@ -19,8 +19,7 @@ import {
   isInternalItemsDrag,
 } from "@/lib/file-browser-drag";
 
-import { useFileDrop } from "@/hooks/use-file-drop";
-import { FileDropFeedback, FileDropResult } from "./file-drop-feedback";
+import { FileDropZone } from "./file-drop-zone";
 import type { FileDropOptions, FileDropValidation } from "@/lib/file-drop";
 
 // Types basés sur le schéma BDD
@@ -709,20 +708,6 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
     }
   };
 
-  const externalDrop = useFileDrop({
-    options: fileDropOptions,
-    disabled: !onFileDrop && !onFilesDrop,
-    resetKey: currentPath,
-    // Legacy event-based imports may handle directories themselves.
-    validateDrop: Boolean(fileDropOptions || onFilesDrop),
-    onFilesDrop: (droppedFiles, event) => {
-      if (onFilesDrop) return onFilesDrop(droppedFiles);
-      if (event) return onFileDrop?.(event);
-    },
-    onRejected: onFileDropRejected,
-    onError: onFileDropError,
-  });
-
   // --- Glisser-déposer interne : déplacement de lignes vers un sous-dossier ---
 
   const canDragRows = Boolean(onMoveItems);
@@ -1088,8 +1073,25 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
 
       {/* Tableau */}
       <BgProvider value="grey">
-        <div className={cn("relative", tableWrapperClasses)} {...externalDrop.handlers} data-file-drop-target>
-          <FileDropFeedback preview={externalDrop.preview} options={fileDropOptions} destination={getCurrentFolderName()} language={language} translations={translations} />
+        <FileDropZone
+          mode="overlay"
+          className={tableWrapperClasses}
+          data-file-drop-target
+          options={fileDropOptions}
+          disabled={!onFileDrop && !onFilesDrop}
+          resetKey={currentPath}
+          // Legacy event-based imports may handle directories themselves.
+          validateDrop={Boolean(fileDropOptions || onFilesDrop)}
+          onFilesDrop={(droppedFiles, event) => {
+            if (onFilesDrop) return onFilesDrop(droppedFiles);
+            if (event) return onFileDrop?.(event);
+          }}
+          onDropRejected={onFileDropRejected}
+          onDropError={onFileDropError}
+          destination={getCurrentFolderName()}
+          language={language}
+          translations={translations}
+        >
           <div
             className={cn("border-t border-b border-gray-200 select-none outline-none", tableContainerClasses)}
             style={tableContainerStyle}
@@ -1221,10 +1223,8 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
             </div>
           )}
           </div>
-        </div>
+        </FileDropZone>
       </BgProvider>
-
-      <FileDropResult {...externalDrop} options={fileDropOptions} language={language} translations={translations} />
 
       {/* Show more items button */}
       {hasMore && sortedFiles.length < maxFilesLimit && (

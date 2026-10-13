@@ -5,6 +5,35 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.28.1] - 2026-10-13
+
+### Corrigé
+
+- `FullFrame` : la molette sur le header ou le footer fait défiler le body.
+  Dans un `PageFillLayout`, la partie haute se replie avant le défilement de
+  la liste. Les contrôles défilants, gestes de zoom et défilements horizontaux
+  conservent leur comportement natif.
+- `FullFrame` : Échap appelle le même `onClose` que le bouton X, uniquement
+  sur le FullFrame du dessus. Les événements déjà traités par une modale,
+  un menu, une liste déroulante ou un tooltip Radix sont ignorés. Nouvelle
+  prop `closeOnEscape` (défaut `true`) pour désactiver le raccourci ; un frame
+  non fermable protège aussi ceux situés dessous. Les répétitions de touche
+  sont ignorées pour éviter de fermer plusieurs frames en maintenant Échap.
+
+### Modifié
+
+- `FileBrowser` utilise directement `FileDropZone mode="overlay"` autour de
+  sa liste, avec une seule gestion des dépôts et des erreurs. Le breadcrumb,
+  les filtres, les déplacements internes et le callback historique
+  `onFileDrop(event)` sont conservés. Le changement de dossier réinitialise
+  le retour de dépôt sans remonter la table ni perdre son focus.
+- `FileDropZone` : ajout de `resetKey`, de l’événement natif optionnel en
+  second argument de `onFilesDrop` et de `validateDrop` (défaut `true`), pour
+  préserver les imports historiques de dossiers du FileBrowser.
+- Retrait des stories External File Drop de FileBrowser ; les exemples de
+  dépôt restent dans FileDropZone. Ajout de stories FullFrame pour la molette,
+  les fenêtres Radix, les frames empilés et la désactivation d’Échap.
+
 ## [1.28.0] - 2026-10-13
 
 ### Ajouté
