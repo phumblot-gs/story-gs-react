@@ -180,6 +180,6 @@ describe("FileBrowser — desktop import is not confused with a row drag", () =>
 
     fireEvent.dragEnter(container, { dataTransfer: makeDataTransfer(["Files"]) });
 
-    expect(screen.getByText(/Déposer|Drop/i)).toBeInTheDocument();
+    expect(screen.getByRole("status")).toHaveAttribute("data-state", "unknown");
   });
 });

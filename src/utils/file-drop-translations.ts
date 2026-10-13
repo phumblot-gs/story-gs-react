@@ -1,0 +1,20 @@
+import type { TranslationMap } from './translations';
+export const fileDropTranslations: TranslationMap = {
+  'fileDrop.accepted': { FR: 'Relâchez pour déposer', EN: 'Drop to add files', ES: 'Suelta para añadir archivos', IT: 'Rilascia per aggiungere i file', DE: 'Dateien zum Hinzufügen ablegen' },
+  'fileDrop.rejected': { FR: 'Dépôt non accepté', EN: 'Drop not accepted', ES: 'No se acepta la carga', IT: 'Rilascio non accettato', DE: 'Ablegen nicht erlaubt' },
+  'fileDrop.unknown': { FR: 'Déposer pour vérifier', EN: 'Drop to check files', ES: 'Suelta para comprobar los archivos', IT: 'Rilascia per verificare i file', DE: 'Zur Prüfung ablegen' },
+  'fileDrop.mixed': { FR: 'Ce lot contient des formats différents', EN: 'This batch contains different formats', ES: 'Este lote contiene formatos distintos', IT: 'Il gruppo contiene formati diversi', DE: 'Diese Auswahl enthält verschiedene Formate' },
+  'fileDrop.checkAfterDrop': { FR: 'Les fichiers seront vérifiés après dépôt.', EN: 'Files will be checked after dropping.', ES: 'Los archivos se comprobarán después de soltarlos.', IT: 'I file saranno verificati dopo il rilascio.', DE: 'Die Dateien werden nach dem Ablegen geprüft.' },
+  'fileDrop.formats': { FR: 'Formats acceptés : {accept}', EN: 'Accepted formats: {accept}', ES: 'Formatos aceptados: {accept}', IT: 'Formati accettati: {accept}', DE: 'Akzeptierte Formate: {accept}' },
+  'fileDrop.count': { FR: 'Nombre maximal de fichiers : {limit}', EN: 'Maximum number of files: {limit}', ES: 'Número máximo de archivos: {limit}', IT: 'Numero massimo di file: {limit}', DE: 'Maximale Dateianzahl: {limit}' },
+  'fileDrop.destination': { FR: 'Destination : {destination}', EN: 'Destination: {destination}', ES: 'Destino: {destination}', IT: 'Destinazione: {destination}', DE: 'Ziel: {destination}' },
+  'fileDrop.noPartial': { FR: 'Aucun fichier du lot n’a été transmis.', EN: 'No files from this batch were submitted.', ES: 'No se ha enviado ningún archivo del lote.', IT: 'Nessun file del gruppo è stato inviato.', DE: 'Keine Datei dieser Auswahl wurde übermittelt.' },
+  'fileDrop.formatError': { FR: 'Format non accepté : {name}.', EN: 'Unsupported format: {name}.', ES: 'Formato no admitido: {name}.', IT: 'Formato non accettato: {name}.', DE: 'Nicht unterstütztes Format: {name}.' },
+  'fileDrop.sizeError': { FR: 'Fichier trop volumineux : {name}. Limite : {limit} octets.', EN: 'File too large: {name}. Limit: {limit} bytes.', ES: 'Archivo demasiado grande: {name}. Límite: {limit} bytes.', IT: 'File troppo grande: {name}. Limite: {limit} byte.', DE: 'Datei zu groß: {name}. Grenze: {limit} Bytes.' },
+  'fileDrop.emptyError': { FR: 'Fichier vide : {name}.', EN: 'Empty file: {name}.', ES: 'Archivo vacío: {name}.', IT: 'File vuoto: {name}.', DE: 'Leere Datei: {name}.' },
+  'fileDrop.unreadable': { FR: 'Un élément ne peut pas être lu. Choisissez des fichiers accessibles.', EN: 'An item cannot be read. Choose accessible files.', ES: 'No se puede leer un elemento. Elige archivos accesibles.', IT: 'Un elemento non è leggibile. Scegli file accessibili.', DE: 'Ein Element ist nicht lesbar. Wählen Sie zugängliche Dateien.' },
+  'fileDrop.failed': { FR: 'L’ajout des fichiers a échoué. Réessayez.', EN: 'Adding files failed. Try again.', ES: 'No se pudieron añadir los archivos. Inténtalo de nuevo.', IT: 'Aggiunta dei file non riuscita. Riprova.', DE: 'Dateien konnten nicht hinzugefügt werden. Erneut versuchen.' },
+  'fileDrop.busy': { FR: 'Ajout des fichiers en cours…', EN: 'Adding files…', ES: 'Añadiendo archivos…', IT: 'Aggiunta dei file…', DE: 'Dateien werden hinzugefügt…' },
+  'fileDrop.choose': { FR: 'Choisir un fichier', EN: 'Choose a file', ES: 'Elegir un archivo', IT: 'Scegli un file', DE: 'Datei auswählen' },
+  'fileDrop.prompt': { FR: 'Glissez vos fichiers ici', EN: 'Drag files here', ES: 'Arrastra los archivos aquí', IT: 'Trascina i file qui', DE: 'Dateien hierher ziehen' },
+};

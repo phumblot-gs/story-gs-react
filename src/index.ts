@@ -800,3 +800,11 @@ export type { TimelineProps, TimelineItem } from "./components/ui/timeline";
 
 // Composable GS Sidebar (Shadcn API, SidePanel background contexts).
 export * from "./components/ui/sidebar";
+
+// File drop: shared feedback, eligibility and a standalone accessible picker/drop zone.
+export { FileDropZone } from "./components/ui/file-drop-zone";
+export type { FileDropZoneProps } from "./components/ui/file-drop-zone";
+export { FileDropFeedback } from "./components/ui/file-drop-feedback";
+export type { FileDropFeedbackProps } from "./components/ui/file-drop-feedback";
+export { previewFileDrag, validateDroppedFiles } from "./lib/file-drop";
+export type { FileDropOptions, FileDropState, FileDropRejection, FileDropRejectionCode, FileDropValidation, FileDragPreview } from "./lib/file-drop";

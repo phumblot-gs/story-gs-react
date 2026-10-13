@@ -16,9 +16,12 @@ import {
   canDropOnItem,
   computeAutoScrollSpeed,
   getDraggedItems,
-  isExternalFileDrag,
   isInternalItemsDrag,
 } from "@/lib/file-browser-drag";
+
+import { useFileDrop } from "@/hooks/use-file-drop";
+import { FileDropFeedback, FileDropResult } from "./file-drop-feedback";
+import type { FileDropOptions, FileDropValidation } from "@/lib/file-drop";
 
 // Types basés sur le schéma BDD
 export interface FileItem {
@@ -79,6 +82,11 @@ export interface FileBrowserProps {
   onCreateFolder?: () => void;
   onImportFiles?: () => void;
   onImportFolders?: () => void;
+  /** Optional eligibility rules for external imports; internal row moves are unaffected. */
+  fileDropOptions?: FileDropOptions;
+  onFilesDrop?: (files: File[]) => void | Promise<void>;
+  onFileDropRejected?: (validation: FileDropValidation) => void;
+  onFileDropError?: (error: unknown) => void;
   onFileDrop?: (event: React.DragEvent<HTMLDivElement>) => void | Promise<void>;
   onRename?: (items: FileItem[]) => void;
   onMove?: (items: FileItem[]) => void;
@@ -249,6 +257,10 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
   onImportFiles,
   onImportFolders,
   onFileDrop,
+  fileDropOptions,
+  onFilesDrop,
+  onFileDropRejected,
+  onFileDropError,
   onRename,
   onMove,
   onDownload,
@@ -271,9 +283,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [dateFilter, setDateFilter] = useState<DateFilter>("all");
   const [sortConfig, setSortConfig] = useState<SortConfig>(initialSort);
-  const [isDraggingOver, setIsDraggingOver] = useState(false);
   const tableRef = useRef<HTMLDivElement>(null);
-  const dragCounter = useRef(0);
   // Glisser-déposer interne : lignes en cours de déplacement et cible survolée.
   const [isDraggingRows, setIsDraggingRows] = useState(false);
   const [dropTargetId, setDropTargetId] = useState<string | null>(null);
@@ -699,62 +709,19 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
     }
   };
 
-  // Gestionnaires drag & drop
-  // Import depuis le bureau. Chaque gestionnaire ne réagit qu'aux drags portant
-  // des fichiers : un déplacement de lignes déclenche les mêmes événements sur
-  // ce conteneur, et sans ce filtre il afficherait l'overlay d'import, forcerait
-  // le curseur en « copie » et remonterait un faux `onFileDrop`.
-  const handleDragEnter = useCallback((e: React.DragEvent) => {
-    if (!isExternalFileDrag(e.dataTransfer?.types)) return;
-
-    e.preventDefault();
-    e.stopPropagation();
-
-    dragCounter.current++;
-    if (dragCounter.current === 1) {
-      setIsDraggingOver(true);
-    }
-  }, []);
-
-  const handleDragLeave = useCallback((e: React.DragEvent) => {
-    // Le même filtre qu'à l'entrée : décrémenter sur un drag non compté
-    // rendrait le compteur négatif, et l'overlay ne s'afficherait plus ensuite.
-    if (!isExternalFileDrag(e.dataTransfer?.types)) return;
-
-    e.preventDefault();
-    e.stopPropagation();
-
-    dragCounter.current--;
-    if (dragCounter.current === 0) {
-      setIsDraggingOver(false);
-    }
-  }, []);
-
-  const handleDragOver = useCallback((e: React.DragEvent) => {
-    if (!isExternalFileDrag(e.dataTransfer?.types)) return;
-
-    e.preventDefault();
-    e.stopPropagation();
-
-    // Indiquer que le drop est autorisé
-    if (e.dataTransfer) {
-      e.dataTransfer.dropEffect = "copy";
-    }
-  }, []);
-
-  const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
-    if (!isExternalFileDrag(e.dataTransfer?.types)) return;
-
-    e.preventDefault();
-    e.stopPropagation();
-
-    dragCounter.current = 0;
-    setIsDraggingOver(false);
-
-    if (onFileDrop) {
-      onFileDrop(e);
-    }
-  }, [onFileDrop]);
+  const externalDrop = useFileDrop({
+    options: fileDropOptions,
+    disabled: !onFileDrop && !onFilesDrop,
+    resetKey: currentPath,
+    // Legacy event-based imports may handle directories themselves.
+    validateDrop: Boolean(fileDropOptions || onFilesDrop),
+    onFilesDrop: (droppedFiles, event) => {
+      if (onFilesDrop) return onFilesDrop(droppedFiles);
+      if (event) return onFileDrop?.(event);
+    },
+    onRejected: onFileDropRejected,
+    onError: onFileDropError,
+  });
 
   // --- Glisser-déposer interne : déplacement de lignes vers un sous-dossier ---
 
@@ -974,24 +941,16 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
     <TooltipProvider>
       <div
         className={containerClasses}
-        onDragEnter={handleDragEnter}
-        onDragLeave={handleDragLeave}
-        onDragOver={handleDragOver}
-        onDrop={handleDrop}
+        onDragOver={event => {
+          if (Array.from(event.dataTransfer.types).includes("Files") && !isInternalItemsDrag(event.dataTransfer.types)) {
+            event.preventDefault(); event.dataTransfer.dropEffect = "none";
+          }
+        }}
+        onDrop={event => {
+          // File drops outside the list must not open a file in the browser.
+          if (Array.from(event.dataTransfer.types).includes("Files") && !isInternalItemsDrag(event.dataTransfer.types)) event.preventDefault();
+        }}
       >
-        {/* Overlay drag & drop */}
-        {isDraggingOver && (
-          <div className="absolute inset-0 z-50 flex items-center justify-center bg-blue-primary/80 backdrop-blur-sm">
-            <div className="bg-black rounded-lg p-6 shadow-lg">
-              <div className="flex flex-col items-center space-y-3">
-                <IconProvider icon="Plus" size={48} className="text-white" />
-                <div className="text-base font-normal text-white text-center">
-                  {t('fileBrowser.dropToImport', { folder: getCurrentFolderName() })}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
       {/* Header avec breadcrumb et actions */}
       <BgProvider value="white">
         <div className="flex items-center justify-between py-3 px-4 bg-white border-b border-gray-200">
@@ -1129,7 +1088,8 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
 
       {/* Tableau */}
       <BgProvider value="grey">
-        <div className={tableWrapperClasses}>
+        <div className={cn("relative", tableWrapperClasses)} {...externalDrop.handlers} data-file-drop-target>
+          <FileDropFeedback preview={externalDrop.preview} options={fileDropOptions} destination={getCurrentFolderName()} language={language} translations={translations} />
           <div
             className={cn("border-t border-b border-gray-200 select-none outline-none", tableContainerClasses)}
             style={tableContainerStyle}
@@ -1263,6 +1223,8 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
           </div>
         </div>
       </BgProvider>
+
+      <FileDropResult {...externalDrop} options={fileDropOptions} language={language} translations={translations} />
 
       {/* Show more items button */}
       {hasMore && sortedFiles.length < maxFilesLimit && (

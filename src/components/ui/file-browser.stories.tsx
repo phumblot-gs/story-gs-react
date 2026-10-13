@@ -1,4 +1,5 @@
 import React from "react";
+import { DragDropScenarios } from "./file-drop-zone.stories";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { fn, userEvent, within } from "storybook/test";
 import { FileBrowser, type FileItem, type FileBrowserAction } from "./file-browser";
@@ -1141,4 +1142,15 @@ export const StickyHeader: Story = {
     showUploadButton: true,
     stickyHeaderOffset: 60,
   },
+};
+
+/** External imports use shared eligibility feedback; internal row moves remain independent. */
+export const ExternalFileDropFeedback: Story = {
+  render: () => <DragDropScenarios browser />,
+  parameters: { docs: { description: { story: 'Preview PNG, PDF, mixed or unknown-type batches. Feedback is confined to the list: the destination breadcrumb and toolbar remain visible. No partial batch is forwarded.' } } },
+};
+
+export const ExternalFileDropLongList: Story = {
+  render: () => <DragDropScenarios browser longList />,
+  parameters: { docs: { description: { story: "The feedback message stays in the visible portion of an auto-height list, even when the table spans several screens." } } },
 };
