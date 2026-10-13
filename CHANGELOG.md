@@ -5,6 +5,32 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.28.0] - 2026-10-13
+
+### Ajouté
+
+- `FileDropZone` : sélection de fichiers avec un `Button` GS et retour visuel
+  de dépôt compatible, refusé, inconnu ou mixte. Configuration des formats,
+  du nombre et de la taille des fichiers, validation personnalisée et gestion
+  des traitements asynchrones. Un lot invalide est refusé intégralement.
+- Mode `overlay` de `FileDropZone` pour envelopper un composant existant sans
+  modifier sa mise en page ni son contexte de fond. Retour visuel au survol,
+  messages de chargement et d’erreur, sans double traitement du dépôt.
+- Props `chooseButtonLabel`, `chooseButtonVariant` (défaut `normal`) et
+  `chooseButtonSize` (défaut `medium`) pour le bouton de sélection.
+- Stories interactives de dépôt, dont deux overlays avec les composants
+  `FileBrowser` et `DataTable`. Exemples de code publics dans la documentation.
+- Traductions FR/EN/ES/IT/DE, annonces accessibles et prise en compte des
+  préférences de réduction des animations.
+
+### Modifié
+
+- `FileBrowser` réutilise le retour visuel partagé dans la zone de liste,
+  en conservant visibles le breadcrumb et la barre d’outils. Nouvelles props
+  `fileDropOptions`, `onFilesDrop`, `onFileDropRejected` et `onFileDropError`.
+  Le callback historique `onFileDrop` reste disponible ; les déplacements
+  internes de lignes restent indépendants des imports externes.
+
 ## [1.27.1] - 2026-10-12
 
 ### Ajouté

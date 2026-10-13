@@ -1837,3 +1837,25 @@ html.gs-page-scrollbar-hidden::-webkit-scrollbar {
 .gs-scrollbar-hidden::-webkit-scrollbar {
   display: none;
 }
+
+/* External file deposits: overlay only, never shifts the target or hides its breadcrumb. */
+.gs-file-drop-zone { position: relative; border: 1px dashed var(--color-grey-strongest); border-radius: 4px; background: var(--color-white); color: var(--color-black); }
+.gs-file-drop-zone[data-disabled] { opacity: .5; }
+.gs-file-drop-feedback { position: absolute; inset: 0; z-index: 30; pointer-events: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 24px; text-align: center; background: var(--color-white); color: var(--color-black); box-shadow: inset 0 0 0 2px var(--color-black); transition: background-color 160ms ease, color 160ms ease, box-shadow 160ms ease; }
+.gs-file-drop-feedback[data-state="accepted"] { background: color-mix(in srgb, var(--color-green-primary) 20%, var(--color-white)); box-shadow: inset 0 0 0 2px var(--color-green); }
+.gs-file-drop-feedback[data-state="rejected"] { background: color-mix(in srgb, var(--color-red-strong) 8%, var(--color-white)); box-shadow: inset 0 0 0 2px var(--color-red-strong); }
+.gs-file-drop-feedback[data-state="unknown"] { background: var(--color-blue-primary); }
+.gs-file-drop-feedback[data-state="mixed"] { background: color-mix(in srgb, var(--color-orange) 12%, var(--color-white)); box-shadow: inset 0 0 0 2px var(--color-orange); }
+@media (prefers-reduced-motion: reduce) { .gs-file-drop-feedback { transition: none; } }
+[data-gs-reduced-motion] .gs-file-drop-feedback { transition: none; }
+@keyframes gs-file-drop-enter { from { opacity: 0; } to { opacity: 1; } }
+.gs-file-drop-feedback { animation: gs-file-drop-enter 160ms ease-out; }
+@media (prefers-reduced-motion: reduce) { .gs-file-drop-feedback { animation: none; } }
+[data-gs-reduced-motion] .gs-file-drop-feedback { animation: none; }
+.gs-file-drop-feedback { padding: 0; }
+.gs-file-drop-content { position: absolute; top: var(--gs-file-drop-content-top, 50%); transform: translateY(-50%); width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 24px; }
+
+/* An overlay inherits its host surface and never changes content geometry. */
+.gs-file-drop-zone[data-mode="overlay"] { border: 0; border-radius: 0; background: transparent; color: inherit; }
+.gs-file-drop-zone[data-mode="overlay"][data-disabled] { opacity: 1; }
+.gs-file-drop-overlay-result { position: absolute; inset-inline: 0; bottom: 0; z-index: 31; background: var(--color-white); color: var(--color-black); box-shadow: 0 -1px 0 var(--color-grey); }
