@@ -1,4 +1,4 @@
-import React, { useId, useRef } from 'react';
+import React, { useId, useMemo, useRef } from 'react';
 import { FileUp, Plus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button, type ButtonVariant, type ButtonSize } from './button';
@@ -14,6 +14,10 @@ export interface FileDropZoneProps extends Omit<React.HTMLAttributes<HTMLDivElem
   mode?: 'standalone' | 'overlay';
   options?: FileDropOptions;
   disabled?: boolean;
+  /** Clear transient drop state when the destination changes, without remounting children. */
+  resetKey?: unknown;
+  /** Defaults to true. Disable only for legacy event-based imports that handle directories themselves. */
+  validateDrop?: boolean;
   label?: string;
   description?: string;
   /** Label of the file-picker button and its accessible input. */
@@ -25,17 +29,18 @@ export interface FileDropZoneProps extends Omit<React.HTMLAttributes<HTMLDivElem
   destination?: string;
   language?: string;
   translations?: Partial<TranslationMap>;
-  /** Receives only complete, eligible batches. Content validation belongs to the application. */
-  onFilesDrop: (files: File[]) => void | Promise<void>;
+  /** Receives eligible batches by default. The optional event is available for native drops, not picker selection. */
+  onFilesDrop: (files: File[], event?: React.DragEvent<HTMLDivElement>) => void | Promise<void>;
   onDropRejected?: (validation: FileDropValidation) => void;
   onDropError?: (error: unknown) => void;
 }
-export function FileDropZone({ mode = 'standalone', options, disabled, label, description, chooseButtonLabel, chooseButtonVariant = 'normal', chooseButtonSize = 'medium', destination, language, translations,
+export function FileDropZone({ mode = 'standalone', options, disabled, resetKey, validateDrop = true, label, description, chooseButtonLabel, chooseButtonVariant = 'normal', chooseButtonSize = 'medium', destination, language, translations,
   onFilesDrop, onDropRejected, onDropError, children, className, ...props }: FileDropZoneProps) {
   const { t } = useTranslationSafe(translations, language);
   const id = useId();
   const input = useRef<HTMLInputElement>(null);
-  const drop = useFileDrop({ options, disabled, resetKey: mode, onFilesDrop, onRejected: onDropRejected, onError: onDropError });
+  const dropResetKey = useMemo(() => ({ mode, destinationKey: resetKey }), [mode, resetKey]);
+  const drop = useFileDrop({ options, disabled, validateDrop, resetKey: dropResetKey, onFilesDrop, onRejected: onDropRejected, onError: onDropError });
   const overlay = mode === 'overlay';
   // Capture gives the wrapper ownership of external files even when a child
   // has its own drop handlers. Internal row drags pass through unchanged.

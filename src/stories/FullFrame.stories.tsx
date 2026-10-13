@@ -3,7 +3,11 @@ import { Stepper } from "@/components/ui/stepper";
 import { PageFillLayout } from "@/components/layout/PageFillLayout";
 import { FileBrowser, type FileItem } from "@/components/ui/file-browser";
 import { useState } from "react";
-import { FullFrame } from "@/components/layout/FullFrame";
+import { Modal } from "@/components/layout/Modal";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
+import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
+import { FullFrame, type FullFrameProps } from "@/components/layout/FullFrame";
 import { Button } from "@/components/ui/button";
 import { VStack, HStack } from "@/components/layout";
 
@@ -21,8 +25,10 @@ const meta = {
 - Fixed header with customizable background (white, grey, black)
 - Customizable body background (white, grey, black)
 - Built-in close button (X icon) in the header
+- Escape calls the same onClose callback on the uppermost FullFrame only; closeOnEscape defaults to true
 - Custom header content support (add titles, buttons, etc.)
 - Scrollable body using VStack
+- Mouse wheel over the fixed header/footer scrolls the visible body, including nested panels
 - Automatic context-aware styling via \`data-bg\` mechanism
 - VStack props customization for body layout
 
@@ -173,6 +179,23 @@ mouse wheel, then the panel fills the body height and its content scrolls inside
 Known limits (same as PageFillLayout): touch scrolling scrolls the list first (the top part folds when swiping on
 it, or when the list reaches its end); keyboard scrolling is native (no page-first sequence).
 
+## Wheel over header and footer
+
+Vertical wheel gestures over the fixed header or footer are forwarded to the visible body. With PageFillLayout,
+the collapsible top part folds first, then the inner list scrolls. Upward gestures scroll the list back before
+revealing the top part. Zoom gestures, horizontal gestures and scrollable header/footer controls keep their
+native behavior. An explicit \`data-native-scroll\` region also keeps its native wheel behavior.
+
+## Escape key
+
+Escape calls the same onClose callback as the X button. FullFrame listens after Radix and React handlers,
+and ignores events already handled (defaultPrevented). A modal, menu, select or tooltip above the wizard
+therefore closes alone. Only the uppermost FullFrame reacts; a disabled or non-closable frame shields
+those beneath it. Auto-repeat is ignored so holding Escape does not dismiss the whole stack.
+
+Set \`closeOnEscape={false}\` to disable the shortcut. The X button still calls onClose. To request confirmation
+for both X and Escape, implement that confirmation in the shared onClose callback.
+
 ## Body Specifications
 
 - **Layout**: Uses VStack component (flex column)
@@ -194,6 +217,11 @@ This is handled automatically via the \`data-bg\` attribute system inherited fro
   },
   tags: ['autodocs'],
   argTypes: {
+    closeOnEscape: {
+      control: 'boolean',
+      description: 'Escape closes only the uppermost frame when the event was not already handled. X is unaffected.',
+      table: { defaultValue: { summary: 'true' } },
+    },
     onClose: {
       action: 'closed',
       description: 'Callback called when the close button (X) is clicked',
@@ -528,4 +556,46 @@ export const ProjectWizard: Story = {
       </>
     );
   },
+};
+
+
+/** Native wheel verification: point at either fixed bar, or at the body. */
+export const WheelOverHeaderAndFooter: Story = {
+  args: {
+    headerContent: <span>Survolez ce header avec la souris, puis faites défiler.</span>,
+    footer: <span>La molette fonctionne aussi au-dessus de ce footer.</span>,
+    headerBg: 'grey', bodyBg: 'white', footerBg: 'grey', padding: 6,
+    children: <div>{Array.from({ length: 50 }, (_, index) => <p key={index} className="py-3">Ligne {index + 1} — contenu du body</p>)}</div>,
+  },
+};
+
+
+function EscapeDemo(props: FullFrameProps) {
+  const [open, setOpen] = useState(true);
+  const [nested, setNested] = useState(false);
+  const [modal, setModal] = useState(false);
+  if (!open) return <div className="fixed inset-0 flex flex-col items-center justify-center gap-4 bg-grey"><p>FullFrame fermé.</p><Button onClick={() => setOpen(true)}>Rouvrir FullFrame</Button></div>;
+  return <TooltipProvider delayDuration={0}>
+    <FullFrame {...props} padding={6} headerBg="grey" headerContent={<span>Wizard · gestion d’Échap</span>} onClose={() => setOpen(false)}>
+      <h2 className="text-lg font-medium">Tester les fenêtres au-dessus du wizard</h2>
+      <p>Échap ferme la fenêtre du dessus. Un second Échap ferme le wizard.</p>
+      <div className="flex flex-wrap items-center gap-4">
+        <Button onClick={() => setModal(true)}>Remplacer les données</Button>
+        <DropdownMenu><DropdownMenuTrigger asChild><Button>Ouvrir le menu</Button></DropdownMenuTrigger><DropdownMenuContent><DropdownMenuItem>Une action</DropdownMenuItem></DropdownMenuContent></DropdownMenu>
+        <Select><SelectTrigger aria-label="Liste déroulante" className="w-[220px]"><SelectValue placeholder="Choisir une option" /></SelectTrigger><SelectContent><SelectItem value="one">Option 1</SelectItem><SelectItem value="two">Option 2</SelectItem></SelectContent></Select>
+        <Tooltip><TooltipTrigger asChild><Button>Afficher une aide</Button></TooltipTrigger><TooltipContent>Aide au-dessus du wizard</TooltipContent></Tooltip>
+        <Button onClick={() => setNested(true)}>Ouvrir un second FullFrame</Button>
+      </div>
+      {nested && <FullFrame padding={6} headerBg="grey" headerContent={<span>Second FullFrame</span>} onClose={() => setNested(false)}><p>Échap ferme uniquement ce FullFrame.</p></FullFrame>}
+      <Modal isOpen={modal} title="Remplacer les données" header={<span>Remplacer les données</span>} onClose={() => setModal(false)}><p>Échap ferme cette popup et conserve le wizard.</p></Modal>
+    </FullFrame>
+  </TooltipProvider>;
+}
+export const EscapeHandling: Story = {
+  args: { closeOnEscape: true, children: null },
+  render: args => <EscapeDemo {...args} />,
+};
+export const EscapeDisabled: Story = {
+  args: { closeOnEscape: false, children: null },
+  render: args => <EscapeDemo {...args} />,
 };
