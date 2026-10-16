@@ -5,6 +5,34 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.29.0] - 2026-10-16
+
+### Ajouté
+
+- `ClippingEditor` : éditeur de détourage inspiré de Clipping Magic. Outils
+  Garder, Retirer, Cheveux, Gomme, Scalpel et Déplacer, taille du pinceau,
+  annuler/rétablir, zoom molette et ajustement, vue simple ou partagée
+  « Original + traits » / « Aperçu » sur fond transparent, export PNG à la
+  taille source. Le composant ne détoure pas : `onSegment({ marks, width,
+  height, signal })` renvoie un masque alpha (`ClippingMask`) calculé par le
+  moteur de l'application. `createColorClippingSegmenter` fournit un moteur
+  de démonstration par couleur pour Storybook, les tests et le repli hors
+  ligne.
+- `ClippingEditor` : le scalpel trace une courbe éditable. Nœuds ronds
+  (courbe) ou carrés (angle vif), basculés par double-clic ou par le bouton
+  en haut à gauche du nœud ; bouton en haut à droite (ou Suppr) pour le
+  supprimer. Glisser un nœud déplace le chemin ; cliquer sur le chemin y crée
+  un nœud ; cliquer entre le nœud et le bord de son anneau relie le tracé à un
+  autre point, une extrémité sur une autre les soude ou referme le tracé
+  (Entrée ou Échap terminent). Le trait est plus épais. Chaque geste n'écrit
+  qu'une entrée d'historique. `ClippingMark` gagne `nodes` et `closed`
+  (les `points` restent la courbe échantillonnée lue par le moteur).
+- `ClippingEditor` : raccourcis alignés sur Clipping Magic. Flèches pour
+  déplacer la vue (50 px, Maj : 1 px), PageUp / PageDown pour zoomer, Q
+  maintenu pour voir l'original dans l'aperçu, `[` et `]` pour la taille du
+  pinceau, Maj + Z pour rétablir. Les autres : Espace, V, X, S, C ou Maj, Z,
+  Y, Accueil, 1, 2. Le zoom des boutons passe à ×1,2.
+
 ## [1.28.1] - 2026-10-13
 
 ### Corrigé

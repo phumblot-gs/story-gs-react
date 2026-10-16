@@ -7,6 +7,7 @@ import { it } from "date-fns/locale/it";
 import { de } from "date-fns/locale/de";
 import { componentTranslations } from './component-translations';
 import { fileDropTranslations } from './file-drop-translations';
+import { clippingTranslations } from './clipping-translations';
 
 // Type for translation entries
 export interface TranslationMap {
@@ -44,6 +45,7 @@ export const defaultTranslations: TranslationMap = {
   // Merge component translations
   ...componentTranslations,
   ...fileDropTranslations,
+  ...clippingTranslations,
 
   // ActivityPanel translations
   "notifications.upToDate": {
