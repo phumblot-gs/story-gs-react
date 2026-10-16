@@ -5,6 +5,18 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.29.1] - 2026-10-16
+
+### Ajouté
+
+- `ClippingEditor` : page « Guide » dans Storybook (en anglais) : démarrage
+  rapide, props, outils et raccourcis, gestes du scalpel, modèle de données,
+  contrat `onSegment`, fonctionnement côté serveur (requête, réponse, sens de
+  chaque outil, options de moteur, squelette de service) et rappel de
+  l'architecture observée de Clipping Magic.
+- Les types `ClippingNode`, `ClippingPoint` et `ClippingSegmentRequest` sont
+  exportés par le package.
+
 ## [1.29.0] - 2026-10-16
 
 ### Ajouté

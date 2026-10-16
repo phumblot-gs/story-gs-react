@@ -16,7 +16,7 @@ import {
   type ClippingMark, type ClippingMask, type ClippingPoint, type ClippingSegmenter, type ClippingTool, type ClippingViewport,
 } from '@/lib/clipping';
 
-export type { ClippingMark, ClippingMask, ClippingSegmenter, ClippingTool } from '@/lib/clipping';
+export type { ClippingMark, ClippingMask, ClippingNode, ClippingPoint, ClippingSegmentRequest, ClippingSegmenter, ClippingTool } from '@/lib/clipping';
 
 export interface ClippingEditorProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange' | 'children'> {
   /** Image à détourer. Une URL d'un autre domaine doit autoriser CORS (le détourage lit ses pixels). */
