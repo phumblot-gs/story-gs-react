@@ -17,7 +17,7 @@ COPY package.json package-lock.json* ./
 RUN --mount=type=secret,id=NPM_NEXUS_AUTH \
     printf 'registry=https://registry.npmjs.org/\n' > /tmp/npmrc && \
     if [ -s /run/secrets/NPM_NEXUS_AUTH ]; then \
-      printf '@gs:registry=https://nexus.grand-shooting.org/repository/npm-gs/\n//nexus.grand-shooting.org/repository/npm-gs/:_auth=%s\n' \
+      printf '@gs:registry=https://nexus.grand-shooting.org/repository/npm-gs/\n//nexus.grand-shooting.org/:_auth=%s\n' \
         "$(cat /run/secrets/NPM_NEXUS_AUTH)" >> /tmp/npmrc; \
     fi && \
     npm install --userconfig /tmp/npmrc --production=false --prefer-offline --no-audit; \
