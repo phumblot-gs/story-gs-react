@@ -58,6 +58,20 @@ describe("ClippingEditor", () => {
     expect(screen.getByRole("button", { name: "Actual size (100%) (0)" })).toHaveAttribute("aria-pressed", "true");
   });
 
+  it("sur un écran Retina, 100 % est un pixel image par pixel écran (et non par pixel CSS)", () => {
+    const original = window.devicePixelRatio;
+    Object.defineProperty(window, "devicePixelRatio", { value: 2, configurable: true });
+    try {
+      renderEditor();
+      fireEvent.click(screen.getByRole("button", { name: "Actual size (100%) (0)" }));
+      expect(screen.getByTestId("clipping-zoom")).toHaveTextContent("100%");
+      fireEvent.click(screen.getByRole("button", { name: "Zoom in" }));
+      expect(screen.getByTestId("clipping-zoom")).toHaveTextContent("120%"); // 1,2 × 100 % : l'échelle est en pixels écran
+    } finally {
+      Object.defineProperty(window, "devicePixelRatio", { value: original, configurable: true });
+    }
+  });
+
   it("annuler et rétablir sont désactivés sans historique", () => {
     renderEditor();
     expect(screen.getByRole("button", { name: "Undo (Z)" })).toBeDisabled();

@@ -50,6 +50,9 @@ type Source = { img: HTMLImageElement; pixels: ImageData };
 type PaneSize = { width: number; height: number };
 type PaneEvent = { x: number; y: number; size: PaneSize; event: React.PointerEvent<HTMLCanvasElement> };
 
+/** Pixels écran par pixel CSS (2 sur un écran Retina) : « 100 % » est un pixel image pour un pixel écran, comme dans Photoshop. */
+const devicePixelRatio = () => (typeof window !== 'undefined' && window.devicePixelRatio) || 1;
+
 /** Couleurs des traits : valeurs des tokens figma (green, red-strong, pastel-blue) ; un canvas ne lit pas les variables CSS. */
 const MARK_COLORS: Partial<Record<ClippingMark['tool'], string>> = { keep: '#89cc52', remove: '#dd3733', hair: '#f5c518', scalpel: '#74d4da', pencil: '#74d4da' };
 /** Couleur du tracé de sélection selon son mode : remplace (cyan), Pencil+ (vert), Pencil− (rouge). */
@@ -196,9 +199,9 @@ export function ClippingEditor({
   // --- Viewport -------------------------------------------------------------
   const imageSize = useMemo(() => (source ? { width: source.pixels.width, height: source.pixels.height } : null), [source]);
   const resolveViewport = useCallback((size: PaneSize): ClippingViewport => viewport ?? fitViewport(size, imageSize ?? { width: 1, height: 1 }), [viewport, imageSize]);
-  /** Zoom à une échelle donnée (1 = 100 % : un pixel image pour un pixel écran), centré sur le milieu de la vue actuelle. */
-  const zoomTo = (scale: number, size: PaneSize = paneSize.current) =>
-    setViewport({ scale: clampScale(scale), center: resolveViewport(size).center });
+  /** Zoom en pourcentage de pixels écran (100 % : un pixel image pour un pixel écran), centré sur le milieu de la vue actuelle. */
+  const zoomTo = (percent: number, size: PaneSize = paneSize.current) =>
+    setViewport({ scale: clampScale(percent / 100 / devicePixelRatio()), center: resolveViewport(size).center });
   const zoomBy = (factor: number, size: PaneSize = paneSize.current, x?: number, y?: number) =>
     setViewport(zoomViewport(resolveViewport(size), size, factor, x, y));
 
@@ -208,7 +211,7 @@ export function ClippingEditor({
     const vp = resolveViewport(size);
     ctx.save();
     ctx.translate(size.width / 2, size.height / 2); ctx.scale(vp.scale, vp.scale); ctx.translate(-vp.center.x, -vp.center.y);
-    ctx.imageSmoothingEnabled = vp.scale < 2;
+    ctx.imageSmoothingEnabled = vp.scale * devicePixelRatio() < 2; // net (pixels francs) dès 200 % de pixels écran, comme Photoshop
     ctx.drawImage(source.img, 0, 0);
     ctx.lineCap = 'round'; ctx.lineJoin = 'round';
     const paint = (points: ClippingPoint[], width: number, color: string, alpha: number, dash?: number[]) => {
@@ -294,7 +297,7 @@ export function ClippingEditor({
     const vp = resolveViewport(size);
     ctx.save();
     ctx.translate(size.width / 2, size.height / 2); ctx.scale(vp.scale, vp.scale); ctx.translate(-vp.center.x, -vp.center.y);
-    ctx.imageSmoothingEnabled = vp.scale < 2;
+    ctx.imageSmoothingEnabled = vp.scale * devicePixelRatio() < 2; // net (pixels francs) dès 200 % de pixels écran, comme Photoshop
     ctx.drawImage(peekOriginal && view === 'split' ? source.img : cutout, 0, 0);
     ctx.restore();
   };
@@ -390,7 +393,7 @@ export function ClippingEditor({
       case 'z': dispatch({ type: e.shiftKey ? 'redo' : 'undo' }); break;
       case 'y': dispatch({ type: 'redo' }); break;
       case 'q': setPeekOriginal(true); break;
-      case '0': zoomTo(1); break;
+      case '0': zoomTo(100); break;
       case '-': case '[': setBrush((b) => Math.max(BRUSH_MIN, Math.min(b - 1, Math.round(b / ZOOM_STEP)))); break;
       case '+': case '=': case ']': setBrush((b) => Math.min(BRUSH_MAX, Math.max(b + 1, Math.round(b * ZOOM_STEP)))); break;
       case '1': setView('single'); break;
@@ -427,7 +430,7 @@ export function ClippingEditor({
   /** Actions sur la sélection : marques sans trait, rejouées dans l'ordre par le moteur (Supprimer garde l'adoucissement choisi). */
   const addSelectionMark = (kind: 'invert' | 'deselect' | 'delete') =>
     dispatch({ type: 'add', mark: { id: newMarkId(), tool: kind, size: 1, points: [], ...(kind === 'delete' && feather > 0 ? { feather } : {}) } });
-  const zoomLevel = resolveViewport(paneSize.current).scale * 100;
+  const zoomLevel = resolveViewport(paneSize.current).scale * devicePixelRatio() * 100;
   const canUndo = history.past.length > 0;
   const canRedo = history.future.length > 0;
   // Vue simple : Q maintenu affiche l'autre image. Vue partagée : l'aperçu montre l'original (voir drawPreview).
@@ -472,7 +475,7 @@ export function ClippingEditor({
             {iconButton(t('clipping.zoomIn'), <ZoomIn size={14} aria-hidden="true" />, () => zoomBy(ZOOM_STEP))}
             {iconButton(t('clipping.zoomOut'), <ZoomOut size={14} aria-hidden="true" />, () => zoomBy(1 / ZOOM_STEP))}
             {iconButton(`${t('clipping.zoomFit')} (Home)`, <Maximize size={14} aria-hidden="true" />, () => setViewport(null))}
-            {iconButton(`${t('clipping.zoomActual')} (0)`, <span className="text-[10px] font-semibold leading-none">1:1</span>, () => zoomTo(1), { pressed: Math.abs(zoomLevel - 100) < 0.5 })}
+            {iconButton(`${t('clipping.zoomActual')} (0)`, <span className="text-[10px] font-semibold leading-none">1:1</span>, () => zoomTo(100), { pressed: Math.abs(zoomLevel - 100) < 0.5 })}
             <span className="w-11 shrink-0 text-center text-sm tabular-nums" role="status" aria-label={t('clipping.zoomLevel')} data-testid="clipping-zoom">{zoomLevel < 10 ? zoomLevel.toFixed(1) : Math.round(zoomLevel)}%</span>
             <span className="mx-1 h-5 w-px shrink-0 bg-grey" aria-hidden="true" />
             {iconButton(t('clipping.shortcut', { label: t('clipping.view.single'), key: '1' }), <Square size={14} aria-hidden="true" />, () => setView('single'), { pressed: view === 'single' })}
