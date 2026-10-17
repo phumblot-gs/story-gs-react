@@ -98,9 +98,9 @@ Le serveur MCP Storybook expose généralement les endpoints suivants :
    curl https://gs-components-library.grand-shooting.org/mcp
    ```
 
-3. Vérifiez les logs Fly.io :
+3. Vérifiez les logs (sur l'instance, voir [aws-deployment.md](./aws-deployment.md)) :
    ```bash
-   flyctl logs -a storybook-gs-components
+   cd /opt/gs-storybook && docker compose logs storybook mcp-auth-proxy
    ```
 
 ### Erreur de connexion

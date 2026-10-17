@@ -1,6 +1,6 @@
 # Vérification du serveur MCP
 
-Ce guide explique comment vérifier que le serveur MCP (Model Context Protocol) fonctionne correctement sur Storybook déployé sur Fly.io.
+Ce guide explique comment vérifier que le serveur MCP (Model Context Protocol) fonctionne correctement sur le Storybook déployé sur AWS.
 
 ## URL du serveur MCP
 
@@ -24,7 +24,7 @@ cd /Users/phf/story-gs-react
 Ou avec une URL personnalisée :
 
 ```bash
-./scripts/check-mcp-server.sh https://votre-url.fly.dev/mcp
+./scripts/check-mcp-server.sh https://gs-components-library.grand-shooting.org/mcp
 ```
 
 ### 2. Vérification manuelle avec curl
@@ -65,17 +65,21 @@ curl -X POST \
   https://gs-components-library.grand-shooting.org/mcp | jq .
 ```
 
-### 3. Vérification via les logs Fly.io
+> Le MCP est protégé par JumpCloud : sans jeton, `/mcp` répond `401` avec un en-tête
+> `WWW-Authenticate` qui indique aux clients MCP comment s'authentifier. Un `401`
+> signifie donc que le serveur répond correctement.
+
+### 3. Vérification via les logs
 
 ```bash
-# Voir les logs en temps réel
-fly logs -a storybook-gs-components
+# sur l'instance (aws ssm start-session, voir docs/aws-deployment.md)
+cd /opt/gs-storybook && docker compose logs -f storybook
 
 # Filtrer les logs MCP
-fly logs -a storybook-gs-components | grep -i mcp
+docker compose logs storybook mcp-auth-proxy | grep -i mcp
 
 # Vérifier les dernières erreurs
-fly logs -a storybook-gs-components | grep -i error
+docker compose logs --since 1h | grep -i error
 ```
 
 Dans les logs, vous devriez voir des messages indiquant que :
@@ -126,32 +130,34 @@ Puis redémarrez Claude Desktop et vérifiez que le serveur apparaît dans la li
 - Storybook est accessible
 - L'endpoint `/mcp` répond (même avec 405 pour GET)
 - Les requêtes POST vers `/mcp` retournent du JSON valide
-- Les logs Fly.io ne montrent pas d'erreurs MCP
+- Les logs ne montrent pas d'erreurs MCP
 - Les clients MCP peuvent se connecter
 
 ❌ **Problèmes possibles :**
 - Erreur `404 Not Found` sur `/mcp` → L'addon MCP n'est pas chargé
 - Erreur `502 Bad Gateway` → Le serveur Storybook n'est pas démarré
-- Timeout → Le serveur Fly.io est arrêté ou surchargé
+- Timeout → L'instance EC2 est arrêtée ou surchargée
 - Erreurs dans les logs → Vérifiez la configuration de l'addon MCP
 
 ## Dépannage
 
 ### Le serveur ne répond pas
 
-1. **Vérifier le statut Fly.io :**
+Sur l'instance (`aws ssm start-session`, voir [aws-deployment.md](./aws-deployment.md)) :
+
+1. **Vérifier l'état des conteneurs :**
    ```bash
-   fly status -a storybook-gs-components
+   cd /opt/gs-storybook && docker compose ps
    ```
 
 2. **Redémarrer le serveur :**
    ```bash
-   fly restart -a storybook-gs-components
+   docker compose restart storybook
    ```
 
 3. **Vérifier les logs pour les erreurs :**
    ```bash
-   fly logs -a storybook-gs-components --limit 100
+   docker compose logs --tail 100 storybook
    ```
 
 ### L'addon MCP n'est pas chargé
@@ -167,7 +173,7 @@ Puis redémarrez Claude Desktop et vérifiez que le serveur apparaît dans la li
 
 1. Vérifiez que l'URL est correcte (avec `/mcp` à la fin)
 2. Vérifiez que le transport est `http` (pas `stdio`)
-3. Vérifiez les logs Fly.io pour les erreurs CORS ou de requête
+3. Vérifiez les logs (`docker compose logs mcp-auth-proxy`) pour les erreurs d'authentification ou de requête
 4. Testez avec curl d'abord pour isoler le problème
 
 ## Commandes utiles
@@ -176,14 +182,14 @@ Puis redémarrez Claude Desktop et vérifiez que le serveur apparaît dans la li
 # Vérification complète
 ./scripts/check-mcp-server.sh
 
-# Voir les logs Fly.io
-fly logs -a storybook-gs-components
+# sur l'instance (aws ssm start-session, voir docs/aws-deployment.md)
+cd /opt/gs-storybook && docker compose logs -f storybook
 
 # Redémarrer le serveur
-fly restart -a storybook-gs-components
+docker compose restart storybook
 
 # Vérifier le statut
-fly status -a storybook-gs-components
+docker compose ps
 
 # Tester l'endpoint MCP directement
 curl -X POST \

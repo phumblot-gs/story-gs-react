@@ -20,7 +20,7 @@ Bienvenue dans la documentation de la librairie de composants GS.
 
 ### 🚢 Déploiement
 - [Guide de déploiement](./deployment-guide.md) - Mise en production
-- [Déploiement Fly.io](./fly-deployment.md) - Configuration et déploiement sur Fly.io
+- [Déploiement AWS](./aws-deployment.md) - Hébergement EC2, authentification JumpCloud et déploiement
 - [Workflow de publication](./publishing-workflow.md) - Process de release
 
 ### 🔌 Serveur MCP
@@ -93,7 +93,7 @@ function App() {
 **Version actuelle :** 1.5.12
 **Dernière mise à jour :** Novembre 2025
 **Statut :** En développement actif
-**Déploiement :** Fly.io (https://gs-components-library.grand-shooting.org)
+**Déploiement :** AWS EC2, accès JumpCloud (https://gs-components-library.grand-shooting.org)
 
 ## 🤝 Contribution
 

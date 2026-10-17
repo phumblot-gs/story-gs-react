@@ -14,7 +14,6 @@ COPY package.json package-lock.json* ./
 # passée en secret de build : montée le temps de cette commande seulement,
 # elle n'est écrite dans aucune couche de l'image.
 #   docker build --secret id=NPM_NEXUS_AUTH,env=NPM_NEXUS_AUTH .
-#   flyctl deploy --build-secret NPM_NEXUS_AUTH=…
 # --legacy-peer-deps : conflit de peer deps avec @storybook/addon-mcp.
 RUN --mount=type=secret,id=NPM_NEXUS_AUTH \
     printf 'registry=https://registry.npmjs.org/\n' > /tmp/npmrc && \
