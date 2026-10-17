@@ -237,7 +237,7 @@ export function ClippingEditor({
       if (!(mark.tool === 'scalpel' || liveIds.has(mark.id) || !history.present.some((m) => m.id === mark.id))) return;
       // Contour du tracé : courbe lissée, contour noir puis trait de couleur (cyan, vert pour Pencil+, rouge pour Pencil−).
       traceCut(ctx, markToCut(mark));
-      if (mark.closed) ctx.closePath();
+      if (mark.closed || (mark.tool === 'pencil' && mark.nodes.length >= 3)) ctx.closePath(); // la sélection se referme en ligne droite, comme dans le moteur
       ctx.globalAlpha = 1; ctx.setLineDash([]);
       ctx.lineWidth = CUT_OUTER / vp.scale; ctx.strokeStyle = '#000'; ctx.stroke();
       ctx.lineWidth = CUT_INNER / vp.scale; ctx.strokeStyle = mark.tool === 'pencil' ? PENCIL_COLORS[mark.mode ?? 'replace'] : scalpel.cutColor; ctx.stroke();
