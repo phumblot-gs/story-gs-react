@@ -67,7 +67,7 @@ services:
   # Accès MCP : serveur d'autorisation OAuth 2.1 (enregistrement dynamique
   # des clients MCP) qui délègue la connexion à JumpCloud.
   mcp-auth-proxy:
-    image: ghcr.io/babs/mcp-auth-proxy:v2.1.0
+    image: ghcr.io/babs/mcp-auth-proxy:2.1.0
     restart: unless-stopped
     environment:
       OIDC_ISSUER_URL: ${OIDC_ISSUER_URL}
