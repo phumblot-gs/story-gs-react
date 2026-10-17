@@ -1,0 +1,108 @@
+# Storybook + MCP sur l'instance EC2, derrière JumpCloud.
+#
+#   Internet → caddy (HTTPS) ─┬─ /mcp, OAuth MCP → mcp-auth-proxy → storybook:8080/mcp
+#                             └─ tout le reste   → oauth2-proxy   → storybook:8080
+#
+# Seul caddy publie des ports. Les variables ${…} viennent du fichier .env
+# écrit par deploy.sh à partir de SSM Parameter Store (jamais commité).
+name: gs-storybook
+
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+networks:
+  internal:
+    ipam:
+      config:
+        - subnet: 172.30.0.0/24
+
+volumes:
+  caddy_data:
+  caddy_config:
+
+services:
+  storybook:
+    image: ${STORYBOOK_IMAGE}
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+    networks: [internal]
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8080/index.json"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 180s
+    logging: *logging
+
+  # Accès navigateur : session JumpCloud (cookie).
+  oauth2-proxy:
+    image: quay.io/oauth2-proxy/oauth2-proxy:v7.15.5
+    restart: unless-stopped
+    environment:
+      OAUTH2_PROXY_PROVIDER: oidc
+      OAUTH2_PROXY_PROVIDER_DISPLAY_NAME: JumpCloud
+      OAUTH2_PROXY_OIDC_ISSUER_URL: ${OIDC_ISSUER_URL}
+      OAUTH2_PROXY_CLIENT_ID: ${JUMPCLOUD_CLIENT_ID}
+      OAUTH2_PROXY_CLIENT_SECRET: ${JUMPCLOUD_CLIENT_SECRET}
+      OAUTH2_PROXY_COOKIE_SECRET: ${OAUTH2_COOKIE_SECRET}
+      OAUTH2_PROXY_COOKIE_SECURE: "true"
+      OAUTH2_PROXY_COOKIE_NAME: _gs_storybook
+      OAUTH2_PROXY_CODE_CHALLENGE_METHOD: S256
+      OAUTH2_PROXY_SCOPE: openid email profile
+      OAUTH2_PROXY_EMAIL_DOMAINS: "*"
+      OAUTH2_PROXY_REDIRECT_URL: https://${DOMAIN}/oauth2/callback
+      OAUTH2_PROXY_HTTP_ADDRESS: 0.0.0.0:4180
+      OAUTH2_PROXY_UPSTREAMS: http://storybook:8080/
+      OAUTH2_PROXY_REVERSE_PROXY: "true"
+      OAUTH2_PROXY_SKIP_PROVIDER_BUTTON: "true"
+      OAUTH2_PROXY_SILENCE_PING_LOGGING: "true"
+    networks: [internal]
+    depends_on: [storybook]
+    logging: *logging
+
+  # Accès MCP : serveur d'autorisation OAuth 2.1 (enregistrement dynamique
+  # des clients MCP) qui délègue la connexion à JumpCloud.
+  mcp-auth-proxy:
+    image: ghcr.io/babs/mcp-auth-proxy:v2.1.0
+    restart: unless-stopped
+    environment:
+      OIDC_ISSUER_URL: ${OIDC_ISSUER_URL}
+      OIDC_CLIENT_ID: ${JUMPCLOUD_CLIENT_ID}
+      OIDC_CLIENT_SECRET: ${JUMPCLOUD_CLIENT_SECRET}
+      PROXY_BASE_URL: https://${DOMAIN}
+      UPSTREAM_MCP_URL: http://storybook:8080/mcp
+      TOKEN_SIGNING_SECRET: ${MCP_TOKEN_SIGNING_SECRET}
+      REDIS_URL: redis://redis:6379/0
+      TRUSTED_PROXY_CIDRS: 172.30.0.0/24
+      MCP_RESOURCE_NAME: GS Components Storybook
+    networks: [internal]
+    depends_on: [redis, storybook]
+    logging: *logging
+
+  redis:
+    image: redis:8-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--save", "", "--appendonly", "no", "--maxmemory", "64mb", "--maxmemory-policy", "noeviction"]
+    networks: [internal]
+    logging: *logging
+
+  caddy:
+    image: caddy:2.11-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      DOMAIN: ${DOMAIN}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks: [internal]
+    depends_on: [oauth2-proxy, mcp-auth-proxy]
+    logging: *logging

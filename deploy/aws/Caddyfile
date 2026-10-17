@@ -1,0 +1,22 @@
+# HTTPS automatique (Let's Encrypt) pour {$DOMAIN}.
+# Les routes OAuth/MCP vont au proxy MCP, tout le reste passe par la
+# session JumpCloud d'oauth2-proxy.
+{$DOMAIN} {
+	@mcp path /mcp /mcp/* /.well-known/* /register /authorize /consent /callback /token
+	handle @mcp {
+		# flush immédiat : réponses MCP en streaming (SSE).
+		reverse_proxy mcp-auth-proxy:8080 {
+			flush_interval -1
+		}
+	}
+
+	handle {
+		encode zstd gzip
+		reverse_proxy oauth2-proxy:4180
+	}
+
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		-Server
+	}
+}
