@@ -86,6 +86,7 @@ const segment = async (request: ClippingSegmentRequest) => (await engine)(reques
 | `defaultTool` | `ClippingTool` | `keep` (default), `remove`, `hair`, `eraser`, `scalpel` or `pan`. |
 | `defaultBrushSize` | `number` | Initial brush diameter in **source-image pixels** (default 20, range 2–200). |
 | `defaultView` | `'split' \| 'single'` | Split shows *Original + Marks* and *Preview* side by side (default). |
+| `autoSegment` | `boolean` | Also calls `onSegment` with an empty list of marks, so the engine's automatic cut-out appears when the image opens (and after every mark is undone). The user then corrects it with strokes. Default `false`. |
 | `language`, `translations` | | Standard GS i18n props (EN, FR, ES, IT, DE). |
 
 The component owns the marks and the undo history (it is uncontrolled). Everything the engine needs arrives through `onSegment`, and everything worth saving leaves through `onMarksChange`.
@@ -174,7 +175,7 @@ type ClippingSegmenter = (request: {
 
 The editor guarantees:
 
-- It calls `onSegment` **after every committed change** of the marks, debounced by about 120 ms. A first stroke is enough; with no marks the preview shows the untouched image and `onSegment` is not called.
+- It calls `onSegment` **after every committed change** of the marks, debounced by about 120 ms. A first stroke is enough. With no marks the preview shows the untouched image and `onSegment` is not called, unless `autoSegment` is set: then it is called with `marks: []` (when the image opens, and after every mark is undone) and must return the automatic cut-out.
 - Each call receives the **full list of marks**. Calls are independent: the function is stateless from the editor's point of view.
 - When the marks change again before the promise settles, the previous request's `signal` is aborted and its result is ignored. Reject with an `AbortError` (or just let `fetch` do it).
 - If the promise rejects, the editor shows an error in the status line and keeps the last good preview. The next change triggers a new attempt.

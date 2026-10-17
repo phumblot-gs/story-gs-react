@@ -59,6 +59,8 @@ function Demo({ latencyMs, ...args }: ClippingEditorProps & { latencyMs?: number
 }
 
 export const Default: Story = { render: (args) => <Demo {...args} /> };
+/** With `autoSegment`, the engine is asked for its automatic cut-out as soon as the image opens (here the demo engine treats the border as background). */
+export const AutoSegment: Story = { args: { autoSegment: true }, render: (args) => <Demo {...args} /> };
 export const SinglePane: Story = { args: { defaultView: 'single' }, render: (args) => <Demo {...args} /> };
 
 const PRESET: ClippingMark[] = [

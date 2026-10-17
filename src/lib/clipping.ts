@@ -206,3 +206,9 @@ export const newMarkId = (() => {
   let n = 0;
   return () => `mark-${Date.now().toString(36)}-${(n++).toString(36)}`;
 })();
+
+/**
+ * Whether the editor must ask the engine for a mask. With no marks there is nothing to compute, unless the
+ * engine can produce an automatic cut-out (`autoSegment`), which is then the starting point to correct.
+ */
+export const shouldSegment = (marks: ClippingMark[], autoSegment: boolean): boolean => marks.length > 0 || autoSegment;

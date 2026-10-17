@@ -11,7 +11,7 @@ import { traceCut, useClippingScalpel } from '@/hooks/use-clipping-scalpel';
 import { isScalpelMark, markToCut } from '@/lib/clipping-scalpel';
 import type { TranslationMap } from '@/utils/translations';
 import {
-  applyAlphaMask, clippingHistoryReducer, createClippingHistory, densifyPoints, fitViewport, isMarkTool, newMarkId, panViewport,
+  applyAlphaMask, clippingHistoryReducer, shouldSegment, createClippingHistory, densifyPoints, fitViewport, isMarkTool, newMarkId, panViewport,
   screenToImage, imageToScreen, zoomViewport,
   type ClippingMark, type ClippingMask, type ClippingPoint, type ClippingSegmenter, type ClippingTool, type ClippingViewport,
 } from '@/lib/clipping';
@@ -36,6 +36,11 @@ export interface ClippingEditorProps extends Omit<React.HTMLAttributes<HTMLDivEl
   /** Diamètre initial du pinceau, en pixels de l'image source. */
   defaultBrushSize?: number;
   defaultView?: 'single' | 'split';
+  /**
+   * Also calls `onSegment` with an empty list of marks, so the engine's automatic cut-out is shown as soon as the
+   * image opens (and after every mark is undone). The user then corrects it with strokes. Default false.
+   */
+  autoSegment?: boolean;
   language?: string;
   translations?: Partial<TranslationMap>;
 }
@@ -74,7 +79,7 @@ const TOOL_ORDER: ClippingTool[] = ['keep', 'remove', 'hair', 'eraser', 'scalpel
 
 export function ClippingEditor({
   src, fileName, onSegment, defaultMarks, onMarksChange, onDownload, onClose, defaultTool = 'keep', defaultBrushSize = 20,
-  defaultView = 'split', language, translations, className, onKeyDown, ...props
+  defaultView = 'split', autoSegment = false, language, translations, className, onKeyDown, ...props
 }: ClippingEditorProps) {
   const { t } = useTranslationSafe(translations, language);
   const [history, dispatch] = useReducer(clippingHistoryReducer, defaultMarks, createClippingHistory);
@@ -130,7 +135,7 @@ export function ClippingEditor({
   useEffect(() => {
     if (!source) return;
     const marks = history.present;
-    if (marks.length === 0) { setMask(null); setStatus('idle'); return; }
+    if (!shouldSegment(marks, autoSegment)) { setMask(null); setStatus('idle'); return; }
     const controller = new AbortController();
     setStatus('working');
     const timer = setTimeout(() => {
@@ -143,7 +148,7 @@ export function ClippingEditor({
         .catch(() => { if (!controller.signal.aborted) setStatus('error'); });
     }, 120);
     return () => { clearTimeout(timer); controller.abort(); };
-  }, [history.present, source]);
+  }, [history.present, source, autoSegment]);
 
   const firstMarks = useRef(true);
   useEffect(() => {

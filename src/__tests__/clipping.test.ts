@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
-  applyAlphaMask, clippingHistoryReducer, createClippingHistory, densifyPoints, fitViewport, imageToScreen, panViewport,
+  shouldSegment, applyAlphaMask, clippingHistoryReducer, createClippingHistory, densifyPoints, fitViewport, imageToScreen, panViewport,
   screenToImage, zoomViewport, CLIPPING_MAX_SCALE, type ClippingMark,
 } from "@/lib/clipping";
 import { createColorClippingSegmenter } from "@/lib/clipping-color-segmenter";
@@ -132,5 +132,16 @@ describe("createColorClippingSegmenter", () => {
     const controller = new AbortController();
     controller.abort();
     await expect(createColorClippingSegmenter({ width: w, height: h, data })({ marks: [], width: w, height: h, signal: controller.signal })).rejects.toThrow();
+  });
+});
+
+
+describe("shouldSegment", () => {
+  it("asks the engine for marks, and for the automatic cut-out only when autoSegment is on", () => {
+    const m = [mark("a", 0)];
+    expect(shouldSegment([], false)).toBe(false);
+    expect(shouldSegment([], true)).toBe(true);
+    expect(shouldSegment(m, false)).toBe(true);
+    expect(shouldSegment(m, true)).toBe(true);
   });
 });
