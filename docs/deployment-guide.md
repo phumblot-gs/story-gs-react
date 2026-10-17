@@ -9,13 +9,13 @@ Cette librairie a deux types de déploiements :
 
 ## 📚 Déploiement Storybook
 
-### Déploiement sur Fly.io
+### Déploiement sur AWS
 
-Storybook est déployé sur Fly.io avec support du serveur MCP. Le déploiement est automatique via GitHub Actions.
+Storybook est déployé sur une instance EC2 (Paris) avec le serveur MCP, derrière une authentification JumpCloud. Le déploiement est automatique via GitHub Actions à chaque push sur `latest`.
 
 **URL de production :** https://gs-components-library.grand-shooting.org
 
-Pour plus de détails, consultez le [guide de déploiement Fly.io](./fly-deployment.md).
+Pour plus de détails, consultez le [guide de déploiement AWS](./aws-deployment.md).
 
 ### Build de production
 

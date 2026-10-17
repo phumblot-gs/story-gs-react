@@ -5,6 +5,70 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.30.0] - 2026-10-17
+
+### Modifié
+
+- Storybook passe de 9.1.16 à 10.6.2. Le serveur MCP (`/mcp`) expose
+  désormais la documentation des composants : `docs-list`, `docs-show`,
+  `docs-show-story`, `stories-find-by-component`, `stories-preview`.
+- Node.js 22 requis pour le développement (Storybook 10 exige 20.19+) :
+  `.nvmrc`, image Docker et workflow de publication.
+- Le package ne déclare plus de script `postinstall` (correctif
+  `@tmcp/session-manager` devenu inutile), qui s'exécutait aussi chez les
+  projets consommateurs.
+
+### Corrigé
+
+- `ButtonPlus` : la pastille « + » est un `span` et non plus un second
+  `<button>` imbriqué (HTML invalide). Rendu identique.
+- `ButtonNotifications` : `addNotifications` exposé par ref suit les valeurs
+  à jour de `limit` et `debug` (il gardait celles du premier rendu).
+- `StyleProvider` : un changement de `rootClassName` ou `loadFonts` est
+  appliqué au `body`.
+- Storybook : plus aucune erreur console sur les 86 pages de documentation ni
+  sur les 697 stories, lint sans erreur ni avertissement.
+
+## [1.29.1] - 2026-10-16
+
+### Ajouté
+
+- `ClippingEditor` : page « Guide » dans Storybook (en anglais) : démarrage
+  rapide, props, outils et raccourcis, gestes du scalpel, modèle de données,
+  contrat `onSegment`, fonctionnement côté serveur (requête, réponse, sens de
+  chaque outil, options de moteur, squelette de service) et rappel de
+  l'architecture observée de Clipping Magic.
+- Les types `ClippingNode`, `ClippingPoint` et `ClippingSegmentRequest` sont
+  exportés par le package.
+
+## [1.29.0] - 2026-10-16
+
+### Ajouté
+
+- `ClippingEditor` : éditeur de détourage inspiré de Clipping Magic. Outils
+  Garder, Retirer, Cheveux, Gomme, Scalpel et Déplacer, taille du pinceau,
+  annuler/rétablir, zoom molette et ajustement, vue simple ou partagée
+  « Original + traits » / « Aperçu » sur fond transparent, export PNG à la
+  taille source. Le composant ne détoure pas : `onSegment({ marks, width,
+  height, signal })` renvoie un masque alpha (`ClippingMask`) calculé par le
+  moteur de l'application. `createColorClippingSegmenter` fournit un moteur
+  de démonstration par couleur pour Storybook, les tests et le repli hors
+  ligne.
+- `ClippingEditor` : le scalpel trace une courbe éditable. Nœuds ronds
+  (courbe) ou carrés (angle vif), basculés par double-clic ou par le bouton
+  en haut à gauche du nœud ; bouton en haut à droite (ou Suppr) pour le
+  supprimer. Glisser un nœud déplace le chemin ; cliquer sur le chemin y crée
+  un nœud ; cliquer entre le nœud et le bord de son anneau relie le tracé à un
+  autre point, une extrémité sur une autre les soude ou referme le tracé
+  (Entrée ou Échap terminent). Le trait est plus épais. Chaque geste n'écrit
+  qu'une entrée d'historique. `ClippingMark` gagne `nodes` et `closed`
+  (les `points` restent la courbe échantillonnée lue par le moteur).
+- `ClippingEditor` : raccourcis alignés sur Clipping Magic. Flèches pour
+  déplacer la vue (50 px, Maj : 1 px), PageUp / PageDown pour zoomer, Q
+  maintenu pour voir l'original dans l'aperçu, `[` et `]` pour la taille du
+  pinceau, Maj + Z pour rétablir. Les autres : Espace, V, X, S, C ou Maj, Z,
+  Y, Accueil, 1, 2. Le zoom des boutons passe à ×1,2.
+
 ## [1.28.1] - 2026-10-13
 
 ### Corrigé

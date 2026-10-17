@@ -2,38 +2,15 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import { componentTranslations } from './utils/component-translations';
 
-// Convert old format to i18next format with pluralization support
-const convertTranslations = (translations: Record<string, Record<string, string>>) => {
-  const result: Record<string, any> = {
-    translation: {}
-  };
-
-  Object.entries(translations).forEach(([key, langs]) => {
-    // Handle nested keys (e.g., "fileBrowser.dateFilter.all" -> nested object)
-    const parts = key.split('.');
-    let current = result.translation;
-
-    parts.forEach((part, index) => {
-      if (index === parts.length - 1) {
-        // Last part - set the value
-        current[part] = langs;
-      } else {
-        // Intermediate part - create nested object
-        if (!current[part]) {
-          current[part] = {};
-        }
-        current = current[part];
-      }
-    });
-  });
-
-  return result;
-};
+// Arbre de traductions i18next : "fileBrowser.dateFilter.all" → { fileBrowser: { dateFilter: { all } } }
+interface TranslationTree {
+  [key: string]: string | TranslationTree;
+}
 
 // Build translations for each language
 const buildLanguageResources = () => {
   const languages = ['EN', 'FR', 'ES', 'IT', 'DE'];
-  const resources: Record<string, any> = {};
+  const resources: Record<string, { translation: TranslationTree }> = {};
 
   languages.forEach(lang => {
     resources[lang.toLowerCase()] = {
@@ -107,13 +84,14 @@ const buildLanguageResources = () => {
       parts.forEach((part, index) => {
         if (index === parts.length - 1) {
           // Last part - set the translation value
-          current[part] = langs[lang] || langs['EN']; // Fallback to EN
+          const values: Record<string, string> = langs;
+          current[part] = values[lang] || values['EN']; // Fallback to EN
         } else {
           // Intermediate part - create nested object
           if (!current[part]) {
             current[part] = {};
           }
-          current = current[part];
+          current = current[part] as TranslationTree;
         }
       });
     });

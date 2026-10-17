@@ -1,9 +1,14 @@
-
 import type { StorybookConfig } from "@storybook/react-vite";
-import { join } from "path";
+import { fileURLToPath } from "node:url";
 
 const config: StorybookConfig = {
   stories: ["../src/**/*.mdx", "../src/**/*.stories.@(js|jsx|mjs|ts|tsx)"],
+  core: {
+    // Le serveur de dev tourne derrière Caddy, oauth2-proxy et mcp-auth-proxy
+    // (deploy/aws) : Storybook refuse par défaut les noms d'hôte autres que localhost.
+    allowedHosts: ["gs-components-library.grand-shooting.org", "storybook"],
+  },
+
   addons: ["@storybook/addon-links", "@storybook/addon-docs", "@storybook/addon-mcp"],
 
   framework: {
@@ -23,7 +28,7 @@ const config: StorybookConfig = {
     "../public"
   ],
 
-  // Configuration Vite pour les fonts et résolution des modules Storybook
+  // Configuration Vite : alias des fonts et runtime JSX de développement
   async viteFinal(config) {
     return {
       ...config,
@@ -31,22 +36,7 @@ const config: StorybookConfig = {
         ...config.resolve,
         alias: {
           ...config.resolve?.alias,
-          "@/fonts": join(__dirname, "../src/fonts"),
-          // @storybook/blocks reste nécessaire pour les fichiers .mdx
-          "@storybook/blocks": join(__dirname, "../node_modules/@storybook/addon-docs/dist/blocks.mjs"),
-          // Alias pour @storybook/addon-actions (utilisé par certaines dépendances)
-          // Dans Storybook 9.1.16, les actions sont exportées via storybook/actions
-          "@storybook/addon-actions": "storybook/actions",
-          // Alias pour storybook/test - dans Storybook 9.1.16, cela pointe vers le package storybook lui-même
-          // qui exporte les utilitaires de test via son système d'exports
-          // Utiliser le chemin complet pour garantir la résolution correcte
-          "storybook/test": join(__dirname, "../node_modules/storybook/dist/test/index.js"),
-          // Alias pour @storybook/test (utilisé par certaines dépendances)
-          "@storybook/test": join(__dirname, "../node_modules/storybook/dist/test/index.js"),
-          // Alias pour storybook/preview-api et @storybook/preview-api
-          // Dans Storybook 9.1.16, preview-api est exporté via storybook/preview-api
-          "storybook/preview-api": "storybook/preview-api",
-          "@storybook/preview-api": "storybook/preview-api",
+          "@/fonts": fileURLToPath(new URL("../src/fonts", import.meta.url)),
         },
       },
       // Forcer Storybook à utiliser le runtime JSX de développement même en production

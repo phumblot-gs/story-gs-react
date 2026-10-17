@@ -30,7 +30,7 @@ export const Default: Story = {
 export const WithValue: Story = {
   render: () => (
     <Layout bg="white" padding={4}>
-      <Input value="Texte pré-rempli" className="w-[300px]" />
+      <Input defaultValue="Texte pré-rempli" className="w-[300px]" />
     </Layout>
   ),
 };

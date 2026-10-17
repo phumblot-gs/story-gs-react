@@ -78,6 +78,42 @@ import { GSComponentsRoot } from "@gs/gs-components-library";
 
 ---
 
+## MCP server for AI assistants
+
+This Storybook exposes an [MCP](https://modelcontextprotocol.io) server so that coding assistants (Claude Code, Cursor, claude.ai…) can look up the components, their documentation and story URLs while writing code against the library.
+
+**URL:** `https://gs-components-library.grand-shooting.org/mcp` (HTTP transport)
+
+Access is protected by JumpCloud, like this site: the first time the assistant connects, a browser window opens to sign in with your Grand Shooting account. You need to be assigned to the Storybook application in JumpCloud.
+
+### Claude Code
+
+```bash
+claude mcp add --transport http gs-components https://gs-components-library.grand-shooting.org/mcp
+```
+
+Then, in Claude Code, run `/mcp`, select `gs-components` and choose **Authenticate**. After signing in, the Storybook tools are available in every session.
+
+Add `--scope project` to share the server with your team through the project's `.mcp.json` (committed with the repo), or `--scope user` to make it available in all your projects.
+
+### Other clients
+
+Most clients accept the same JSON configuration (e.g. `.cursor/mcp.json` for Cursor):
+
+```json
+{
+  "mcpServers": {
+    "gs-components": {
+      "url": "https://gs-components-library.grand-shooting.org/mcp"
+    }
+  }
+}
+```
+
+In claude.ai, add it under **Settings → Connectors → Add custom connector** with the same URL.
+
+---
+
 ## Tailwind preset (optional)
 
 If your own components are written with Tailwind utility classes and you want them to share the GS design tokens (colors, spacing, fonts, animations…), extend the GS Tailwind preset in your `tailwind.config.{js,cjs}`:

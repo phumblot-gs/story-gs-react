@@ -663,7 +663,6 @@ export const Default: Story = {
 };
 
 export const FontWeights: Story = {
-  name: 'Font Weights',
   render: () => (
     <div className="p-8 space-y-4">
       <div className="space-y-2">
@@ -680,7 +679,6 @@ export const FontWeights: Story = {
 };
 
 export const FontSizes: Story = {
-  name: 'Font Sizes',
   render: () => (
     <div className="p-8 space-y-2">
       <p className="text-xs">Extra Small (text-xs) - 9px</p>
@@ -696,7 +694,6 @@ export const FontSizes: Story = {
 };
 
 export const TextStyles: Story = {
-  name: 'Text Styles',
   render: () => (
     <div className="p-8 space-y-2">
       <p className="italic">Italic text</p>

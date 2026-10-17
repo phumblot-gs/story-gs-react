@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useState } from "react";
-import type { Meta, StoryObj } from "@storybook/react";
-import { fn } from "@storybook/test";
+import type { Meta, StoryObj } from "@storybook/react-vite";
+import { fn } from "storybook/test";
 import { Thumbnail } from "./Thumbnail";
 import { MediaStatus } from "@/utils/mediaStatus";
 import { Layout, HStack, VStack } from "@/components/layout";
@@ -144,6 +144,9 @@ unchanged when \`statusButtons\` is not set, but are superseded by \`statusButto
     onCommentAdd: fn(),
     onValidate: fn(),
     onReject: fn(),
+    // Appelés au chargement de l'image, donc pendant le rendu : espions explicites.
+    onImageLoad: fn(),
+    onImageError: fn(),
   },
 };
 

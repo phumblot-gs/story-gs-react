@@ -48,7 +48,7 @@ const StatusComponentsTestSection: React.FC = () => {
                 <Label htmlFor="status-size">Size</Label>
                 <Select 
                   value={statusSize} 
-                  onValueChange={(value) => setStatusSize(value as any)}>
+                  onValueChange={(value) => setStatusSize(value as typeof statusSize)}>
                   <SelectTrigger id="status-size">
                     <SelectValue placeholder="Select size" />
                   </SelectTrigger>
@@ -99,7 +99,7 @@ const StatusComponentsTestSection: React.FC = () => {
                 <Label htmlFor="button-icon">Icon</Label>
                 <Select 
                   value={buttonIcon} 
-                  onValueChange={(value) => setButtonIcon(value as any)}>
+                  onValueChange={(value) => setButtonIcon(value as typeof buttonIcon)}>
                   <SelectTrigger id="button-icon">
                     <SelectValue placeholder="Select icon" />
                   </SelectTrigger>
@@ -114,7 +114,7 @@ const StatusComponentsTestSection: React.FC = () => {
                 <Label htmlFor="button-status-size">Size</Label>
                 <Select 
                   value={buttonSize} 
-                  onValueChange={(value) => setButtonSize(value as any)}>
+                  onValueChange={(value) => setButtonSize(value as typeof buttonSize)}>
                   <SelectTrigger id="button-status-size">
                     <SelectValue placeholder="Select size" />
                   </SelectTrigger>

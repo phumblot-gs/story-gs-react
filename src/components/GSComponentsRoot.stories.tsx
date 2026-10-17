@@ -690,7 +690,6 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Documentation: Story = {
-  name: 'Documentation',
 };
 
 export const Demo: Story = {

@@ -636,7 +636,7 @@ export const FileBrowser: React.FC<FileBrowserProps> = ({
       document.addEventListener("keydown", handleKeyDown);
       return () => document.removeEventListener("keydown", handleKeyDown);
     }
-  }, [sortedFiles, activeIndex, handleItemDoubleClick]);
+  }, [sortedFiles, activeIndex, lastSelectedIndex, handleItemDoubleClick]);
 
   // Obtenez le label pour le filtre de date sélectionné avec années dynamiques
   const getDateFilterLabel = (filter: DateFilter): string => {

@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react"
+import type { Meta, StoryObj } from "@storybook/react-vite"
 import { Animated } from "./Animated"
 import { Layout } from "@/components/layout/Layout"
 import { useState } from "react"

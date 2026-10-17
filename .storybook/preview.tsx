@@ -1,4 +1,4 @@
-import type { Preview } from "@storybook/react";
+import type { Preview } from "@storybook/react-vite";
 import "../src/index.css";
 
 // Forcer NODE_ENV en développement pour le runtime JSX
@@ -12,7 +12,8 @@ const preview: Preview = {
     controls: {
       matchers: {
         color: /(background|color)$/i,
-        date: /Date$/i,
+        // Sensible à la casse : /Date$/i attrapait onValidate (« onVali-date »).
+        date: /(^date|Date)$/,
       },
     },
     options: {

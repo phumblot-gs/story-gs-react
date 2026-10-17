@@ -32,9 +32,10 @@ export const ColorInput = memo(({
   // Update local value when external value changes, but only if it's different
   useEffect(() => {
     // Only update if external value is significantly different
-    if (externalValue !== undefined && normalizeColorValue(externalValue) !== normalizeColorValue(localValue)) {
-      setLocalValue(externalValue);
-    }
+    if (externalValue === undefined) return;
+    setLocalValue(current =>
+      normalizeColorValue(externalValue) !== normalizeColorValue(current) ? externalValue : current
+    );
   }, [externalValue]);
 
   // Handle input change without notifying parent immediately

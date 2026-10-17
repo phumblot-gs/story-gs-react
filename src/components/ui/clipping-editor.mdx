@@ -1,0 +1,312 @@
+import { Meta, Canvas, Controls } from '@storybook/addon-docs/blocks';
+import * as Stories from './clipping-editor.stories';
+
+<Meta of={Stories} name="Guide" />
+
+# ClippingEditor
+
+An interactive background-removal editor, modeled on [Clipping Magic](https://clippingmagic.com). The user paints **Keep** and **Remove** strokes (plus **Hair** and **Scalpel**) on the original image; a segmentation engine computes an alpha mask; the right-hand pane shows the result on a transparent background and updates after every stroke.
+
+`ClippingEditor` is the **front end only**. It does not segment anything itself: it hands the user's marks to a function you provide (`onSegment`) and displays the alpha mask that function returns. The engine can be a backend service, a WASM model, or the bundled demo engine.
+
+<Canvas of={Stories.Default} />
+
+---
+
+## Quick start
+
+```tsx
+import { ClippingEditor } from '@gs/gs-components-library';
+import type { ClippingSegmenter } from '@gs/gs-components-library';
+
+// Called after every change to the marks. Must return one alpha byte per pixel of the source image.
+const segment: ClippingSegmenter = async ({ marks, width, height, signal }) => {
+  const response = await fetch(`/api/images/${imageId}/segment`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ marks }),
+    signal, // aborted when a newer stroke makes this request obsolete
+  });
+  if (!response.ok) throw new Error(`Segmentation failed (${response.status})`);
+  return { width, height, alpha: new Uint8ClampedArray(await response.arrayBuffer()) };
+};
+
+export function Page() {
+  return (
+    <div style={{ height: '100vh' }}>
+      <ClippingEditor src="/images/shoe.jpg" fileName="shoe.jpg" onSegment={segment} />
+    </div>
+  );
+}
+```
+
+That is all that is required: `src` and `onSegment`. The editor fills its container, so give the parent an explicit height.
+
+### Try it without a backend
+
+`createColorClippingSegmenter` is a small demo engine that classifies pixels by color similarity to the Keep / Remove strokes. It is enough to see the editor work end to end, but its quality is nowhere near a real segmentation model (no hair, no soft edges).
+
+```tsx
+import { ClippingEditor, createColorClippingSegmenter } from '@gs/gs-components-library';
+import type { ClippingSegmentRequest } from '@gs/gs-components-library';
+
+async function loadPixels(src: string): Promise<ImageData> {
+  const image = new Image();
+  image.src = src;
+  await image.decode();
+  const canvas = document.createElement('canvas');
+  canvas.width = image.naturalWidth;
+  canvas.height = image.naturalHeight;
+  const ctx = canvas.getContext('2d', { willReadFrequently: true })!;
+  ctx.drawImage(image, 0, 0);
+  return ctx.getImageData(0, 0, canvas.width, canvas.height);
+}
+
+const engine = loadPixels('/images/shoe.jpg').then(createColorClippingSegmenter);
+const segment = async (request: ClippingSegmentRequest) => (await engine)(request);
+
+<ClippingEditor src="/images/shoe.jpg" onSegment={segment} />
+```
+
+---
+
+## Props
+
+<Controls of={Stories.Default} />
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `src` | `string` | Image to cut out. A cross-origin URL must send CORS headers: the editor reads the pixels to build the preview and the export. |
+| `onSegment` | `ClippingSegmenter` | **Required.** The segmentation engine. See [The `onSegment` contract](#the-onsegment-contract). |
+| `fileName` | `string` | Shown under the image. The exported file is named `<fileName without extension>-clipped.png`. |
+| `defaultMarks` | `ClippingMark[]` | Initial marks, for example restored from a previous session. |
+| `onMarksChange` | `(marks) => void` | Called after every committed change (stroke, scalpel edit, erase, undo, redo). Persist this to resume later. |
+| `onDownload` | `(blob, fileName) => void \| Promise<void>` | Receives the cut-out PNG at the source resolution. Without it, the browser downloads the file. |
+| `onClose` | `() => void` | Shows the close button when provided. |
+| `defaultTool` | `ClippingTool` | `keep` (default), `remove`, `hair`, `eraser`, `scalpel` or `pan`. |
+| `defaultBrushSize` | `number` | Initial brush diameter in **source-image pixels** (default 20, range 2–200). |
+| `defaultView` | `'split' \| 'single'` | Split shows *Original + Marks* and *Preview* side by side (default). |
+| `language`, `translations` | | Standard GS i18n props (EN, FR, ES, IT, DE). |
+
+The component owns the marks and the undo history (it is uncontrolled). Everything the engine needs arrives through `onSegment`, and everything worth saving leaves through `onMarksChange`.
+
+---
+
+## Tools
+
+| Tool | Key | What it does |
+| --- | --- | --- |
+| **Keep** | `Space` (toggles with Remove) | Paint over what must stay in the result. Green. |
+| **Remove** | `Space` | Paint over what must disappear. Red. |
+| **Hair** | `V` | Paint over hair, fur or fine edges so they are kept with partial transparency. Yellow. |
+| **Eraser** | `X` | Removes marks (not pixels): any mark touched by the eraser is deleted. Never sent to the engine. |
+| **Scalpel** | `S` | Draws an editable curve along an edge that must stay sharp. See [Scalpel](#scalpel). |
+| **Pan** | `C`, or hold `Shift` | Moves the view. |
+
+### Keyboard and mouse
+
+| Shortcut | Action |
+| --- | --- |
+| `Space` | Switch between Keep and Remove |
+| `V`, `X`, `S`, `C` | Hair, Eraser, Scalpel, Pan |
+| `Shift` (held) | Temporary Pan |
+| `Z` / `Y` (or `Cmd/Ctrl+Z`, `Shift+Z`) | Undo / Redo |
+| `[` / `]` (or `-` / `+`) | Smaller / larger brush |
+| Arrow keys | Move the view by 50 px (`Shift`: 1 px) |
+| `PageUp` / `PageDown`, mouse wheel | Zoom in / out |
+| `Home` | Zoom to fit |
+| `1` / `2` | Single pane / Split view |
+| `Q` (held) | Show the other image: the original in the preview pane, or the preview in single view |
+| `Enter` / `Esc` | Finish a scalpel path |
+| `Delete` | Delete the selected scalpel point |
+
+Shortcuts work while the pointer is over the editor or when it has focus. Arrow keys keep controlling the brush-size slider when the slider is focused.
+
+### Scalpel
+
+The scalpel draws a Bézier path made of points:
+
+- **Click** on empty space to place the first point; keep clicking to extend the path. **Enter**, **Esc**, or a second click on the last point ends it.
+- **Drag a point** to move it; the path follows. **Click on the path** between two points to create a new point there (and drag it in the same gesture).
+- A **round** point makes a smooth curve; a **square** point makes a sharp corner. Switch with a **double-click** on the point or with the small button at its top left. The button at its top right (or `Delete`) removes the point.
+- A small circle appears around a point on hover. **Clicking between the point and the edge of that circle** starts a connection: the next clicks extend the path from that point. Clicking an end point of another path (or the other end of the same path) joins them or closes the loop.
+- Dragging an end point onto another end point welds them.
+
+Each gesture is a single undo step.
+
+---
+
+## Data model
+
+```ts
+interface ClippingMark {
+  id: string;
+  tool: 'keep' | 'remove' | 'hair' | 'scalpel';
+  size: number;               // brush diameter, in source-image pixels (2 for a scalpel)
+  points: { x: number; y: number }[]; // the stroke, in source-image pixels
+  nodes?: { x: number; y: number; corner?: boolean }[]; // scalpel only: editable path nodes
+  closed?: boolean;           // scalpel only: the path closes on its first node
+}
+
+interface ClippingMask {
+  width: number;              // must equal the source image width
+  height: number;             // must equal the source image height
+  alpha: Uint8ClampedArray;   // width × height bytes, row by row: 0 = background, 255 = subject
+}
+```
+
+All coordinates are in **pixels of the source image**, origin at the top-left, regardless of zoom. For a brush stroke, `points` are spaced at most half a brush diameter apart, so the stroke can be rebuilt as the union of discs of diameter `size` centered on the points. For a scalpel, `points` is the flattened curve (about 2 px apart) and `nodes` / `closed` are the editable definition; an engine can use either.
+
+Marks are in **chronological order**. The eraser never appears: it deletes marks.
+
+---
+
+## The `onSegment` contract
+
+```ts
+type ClippingSegmenter = (request: {
+  marks: ClippingMark[];   // the complete current state, not a delta
+  width: number;           // source image size
+  height: number;
+  signal: AbortSignal;     // aborted as soon as a newer state supersedes this one
+}) => Promise<ClippingMask>;
+```
+
+The editor guarantees:
+
+- It calls `onSegment` **after every committed change** of the marks, debounced by about 120 ms. A first stroke is enough; with no marks the preview shows the untouched image and `onSegment` is not called.
+- Each call receives the **full list of marks**. Calls are independent: the function is stateless from the editor's point of view.
+- When the marks change again before the promise settles, the previous request's `signal` is aborted and its result is ignored. Reject with an `AbortError` (or just let `fetch` do it).
+- If the promise rejects, the editor shows an error in the status line and keeps the last good preview. The next change triggers a new attempt.
+- The returned mask **must** have exactly the source image's width and height; otherwise the editor treats it as an error.
+
+Intermediate values between 0 and 255 are drawn as partial transparency, which is how soft edges and hair are rendered.
+
+---
+
+## Server side
+
+### What the server has to do
+
+A segmentation service for this editor is conceptually one function:
+
+```
+(image, marks) → alpha mask (same size as the image)
+```
+
+Everything else is performance and quality. A practical design is a small HTTP (or WebSocket) service in front of a GPU model:
+
+1. **Upload once.** The client uploads the source image once per editing session (or references it by id). The server keeps a decoded copy and any expensive per-image state (for example the image embedding of an interactive segmentation model) in a cache keyed by the image id.
+2. **Segment on every request.** Each request carries only the marks (a few kilobytes of JSON). The server turns them into constraints, runs the engine, and returns the mask. With a cached image embedding this takes milliseconds to a few hundred milliseconds, which is what makes the preview feel live.
+3. **Cancel stale work.** The editor aborts the HTTP request when a newer state supersedes it. Stop computing when the connection closes.
+4. **Return a mask at the source resolution.** If the engine works on a downscaled image, upscale the mask to `width × height` before replying.
+
+### Request
+
+```http
+POST /api/images/{imageId}/segment
+Content-Type: application/json
+
+{
+  "marks": [
+    { "id": "mark-1", "tool": "keep",   "size": 28, "points": [{ "x": 412, "y": 530 }, { "x": 418, "y": 541 }] },
+    { "id": "mark-2", "tool": "remove", "size": 28, "points": [{ "x": 40,  "y": 60 }] },
+    { "id": "mark-3", "tool": "hair",   "size": 16, "points": [{ "x": 300, "y": 120 }, { "x": 306, "y": 131 }] },
+    { "id": "mark-4", "tool": "scalpel", "size": 2,
+      "nodes": [{ "x": 120, "y": 120 }, { "x": 300, "y": 90, "corner": true }], "closed": false,
+      "points": [{ "x": 120, "y": 120 }, { "x": 122, "y": 119 }] }
+  ]
+}
+```
+
+Send the image dimensions as well if the server does not already know them (they are the `width` and `height` the editor passes to `onSegment`).
+
+### Response
+
+Return the mask as **8-bit grayscale**: `0` background, `255` subject, intermediate values for soft edges. Two practical encodings:
+
+- **Raw bytes** (`application/octet-stream`), exactly `width × height` bytes, with HTTP compression on. Zero decoding work on the client, as in the quick start above.
+- **8-bit grayscale PNG**, noticeably smaller on the wire for large images. Decode it before returning the mask:
+
+```ts
+async function decodeAlphaPng(blob: Blob, width: number, height: number): Promise<ClippingMask> {
+  const bitmap = await createImageBitmap(blob);
+  const canvas = new OffscreenCanvas(width, height);
+  const ctx = canvas.getContext('2d', { willReadFrequently: true })!;
+  ctx.drawImage(bitmap, 0, 0, width, height);
+  const { data } = ctx.getImageData(0, 0, width, height);
+  const alpha = new Uint8ClampedArray(width * height);
+  for (let i = 0; i < alpha.length; i++) alpha[i] = data[i * 4]; // the red channel carries the gray value
+  return { width, height, alpha };
+}
+```
+
+### How to interpret each tool
+
+| Mark | Meaning for the engine |
+| --- | --- |
+| `keep` | **Hard foreground constraint.** Every pixel within `size / 2` of the stroke must end up at alpha 255. |
+| `remove` | **Hard background constraint.** Every pixel within `size / 2` of the stroke must end up at alpha 0. |
+| `hair` | **Soft, foreground-leaning region.** The pixels under the stroke are *unknown*: they may be fully or partially opaque. This is a job for alpha matting rather than binary segmentation: keep fine strands and semi-transparent edges where the color matches the subject, and let the surrounding background fall away. |
+| `scalpel` | **Edge hint.** The subject's boundary must follow the curve; it is a boundary, not a side label. Treat the curve as a barrier that region growing must not cross, and keep the edge crisp (alpha 0 or 255) within a couple of pixels of it. Use `points` (already flattened) or rebuild the curve from `nodes` and `closed`. |
+
+When constraints conflict (a Keep stroke overlapping an earlier Remove stroke), **the later mark wins**; `marks` is in chronological order.
+
+With no `keep` stroke at all, a reasonable engine can start from an automatic foreground estimate (salient-object or background-removal model) and let the user correct it. With only `keep` strokes and no `remove`, treat the image border as likely background.
+
+### Engine options
+
+None of these ships with the library; they are what the contract is designed for.
+
+| Goal | Typical approach |
+| --- | --- |
+| Interactive Keep / Remove | An interactive segmentation model with point and box prompts (for example SAM 2 or MobileSAM). Keep strokes become positive prompts, Remove strokes negative ones. Encode the image once, then each stroke only runs the light decoder. |
+| Hair and soft edges | A matting model fed with a **trimap**: foreground = Keep, background = Remove, unknown = a band around the model's boundary plus the Hair strokes. |
+| First automatic guess | A background-removal model (for example BiRefNet or RMBG) to give the user a starting mask. |
+| Scalpel | Post-process the mask: snap or sharpen the boundary along the curve, forbid propagation across it. |
+| No GPU / prototype | Classical graph-cut or GrabCut on superpixels. Lower quality, no heavy dependencies. |
+
+### Minimal service skeleton
+
+Illustrative only: an HTTP endpoint around an interactive model, with a per-image cache.
+
+```python
+from fastapi import FastAPI, Request, Response
+
+app = FastAPI()
+sessions: dict[str, "ImageSession"] = {}      # image id -> decoded image + cached embedding
+
+@app.post("/api/images/{image_id}/segment")
+async def segment(image_id: str, request: Request) -> Response:
+    session = sessions[image_id]              # created at upload time; holds the embedding
+    marks = (await request.json())["marks"]
+
+    constraints = rasterize(marks, session.width, session.height)   # keep / remove / unknown / edge maps
+    mask = session.engine.run(constraints)    # uint8, height x width, 0..255
+
+    if await request.is_disconnected():       # the editor aborted: a newer request replaced this one
+        return Response(status_code=499)
+    return Response(mask.tobytes(), media_type="application/octet-stream")
+```
+
+### Latency tips
+
+- Cache the per-image work (decoded pixels, embeddings); only the marks change between requests.
+- Work at a reduced resolution for the preview, and refine at full resolution only for the export if your engine allows it. The editor itself does not distinguish them: it displays whatever mask the last request returned.
+- Answer fast to small changes: because each request carries the full list of marks, an engine can diff against the previous list of the same session and recompute only what changed.
+- Cap the work per request; the user will draw the next stroke before a 5-second result is useful.
+
+---
+
+## Reference: how Clipping Magic does it
+
+For context, this is what Clipping Magic's own web client does, read from its published script (static analysis, not validated against live traffic). It is background for the design above, not something the editor depends on.
+
+- **One WebSocket per image.** The client connects to `/api/websocket` with the image id, a secret, and flags to request automatic initial masks. It sends a `StatusCheck` heartbeat every 20 seconds.
+- **Stateful, command-based protocol.** Every message is JSON with an incrementing `index`. Commands include `SetTool` (which tool is active), `DrawSquare` and `DrawLine` (one brush segment each: `x0, y0, x1, y1` and the diameter `d`), `SetSwords` (the whole set of scalpel curves, as Bézier control points, resent on every edit), `SetGlobal` (edge smoothing / feathering / offset, auto-clip, auto-hair…), `SetUserMask` (the complete painted mask, used to restore a state such as after an undo) and `GenerateResult` (export).
+- **Per-category engines.** The server classifies the image (photo, scan, logo) and pushes an automatic starting mask (`SetEngineMask`) before the user draws anything.
+- **Incremental mask updates.** The server replies with `ServerMaskReset`, then `ServerMask` messages containing a compact, run-length-style binary diff of the alpha channel (changed pixels only), then `ServerMaskDone`. The client patches its preview buffer in place.
+- **Vector outline.** `BezierSet` carries the result's outline as quantized path deltas, used for clipping-path and SVG export, along with `BoundingRect`.
+- **Scalpel assistance.** The server answers with `SetSwordIntersections` and `SetDetectedCorners`, which the client uses to place and snap nodes.
+
+The `onSegment` contract trades this stateful stream for a stateless request/response pair, which is simpler to implement and to scale; a service that wants the incremental behavior can keep session state behind the same interface.

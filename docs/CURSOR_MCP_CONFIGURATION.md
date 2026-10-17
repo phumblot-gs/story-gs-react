@@ -1,6 +1,6 @@
 # Configuration Cursor pour le serveur MCP Storybook
 
-Ce guide explique comment configurer Cursor IDE pour utiliser le serveur MCP Storybook hébergé sur Fly.io.
+Ce guide explique comment configurer Cursor IDE pour utiliser le serveur MCP Storybook hébergé sur AWS (accès JumpCloud : Cursor ouvre la connexion au premier usage).
 
 ## URL du serveur MCP
 
@@ -109,9 +109,9 @@ Où :
    curl https://gs-components-library.grand-shooting.org/mcp
    ```
 
-2. **Vérifiez les logs Fly.io :**
+2. **Vérifiez les logs** (sur l'instance, voir [aws-deployment.md](./aws-deployment.md)) :
    ```bash
-   fly logs -a storybook-gs-components | grep -i mcp
+   cd /opt/gs-storybook && docker compose logs storybook mcp-auth-proxy | grep -i mcp
    ```
 
 3. **Vérifiez la configuration dans Cursor :**

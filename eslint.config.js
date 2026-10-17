@@ -7,7 +7,7 @@ import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
 import tseslint from "typescript-eslint";
 
-export default tseslint.config({ ignores: ["dist"] }, {
+export default tseslint.config({ ignores: ["dist", "storybook-static"] }, {
   extends: [js.configs.recommended, ...tseslint.configs.recommended],
   files: ["**/*.{ts,tsx}"],
   languageOptions: {
@@ -25,5 +25,14 @@ export default tseslint.config({ ignores: ["dist"] }, {
       { allowConstantExport: true },
     ],
     "@typescript-eslint/no-unused-vars": "off",
+  },
+}, {
+  // Code de librairie : variantes cva exportées avec leur composant
+  // (buttonVariants…) et hooks exportés avec leur provider (useBgContext…),
+  // selon les conventions shadcn/ui. La règle ne sert qu'au Fast Refresh d'une
+  // application ; elle reste active pour l'application de démo (src/pages).
+  files: ["src/components/**", "src/contexts/**", "src/stories/**", "src/test-integration.tsx", "examples/**"],
+  rules: {
+    "react-refresh/only-export-components": "off",
   },
 }, storybook.configs["flat/recommended"]);

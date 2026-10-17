@@ -804,6 +804,11 @@ export * from "./components/ui/sidebar";
 // File drop: shared feedback, eligibility and a standalone accessible picker/drop zone.
 export { FileDropZone } from "./components/ui/file-drop-zone";
 export type { FileDropZoneProps } from "./components/ui/file-drop-zone";
+export { ClippingEditor } from "./components/ui/clipping-editor";
+export type {
+  ClippingEditorProps, ClippingMark, ClippingMask, ClippingNode, ClippingPoint, ClippingSegmentRequest, ClippingSegmenter, ClippingTool,
+} from "./components/ui/clipping-editor";
+export { createColorClippingSegmenter } from "./lib/clipping-color-segmenter";
 export { FileDropFeedback } from "./components/ui/file-drop-feedback";
 export type { FileDropFeedbackProps } from "./components/ui/file-drop-feedback";
 export { previewFileDrag, validateDroppedFiles } from "./lib/file-drop";

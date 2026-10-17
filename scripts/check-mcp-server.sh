@@ -38,7 +38,7 @@ MCP_RESPONSE=$(curl -sf -w "\n%{http_code}" "$MCP_URL" 2>&1 || echo "")
 HTTP_CODE=$(echo "$MCP_RESPONSE" | tail -n1)
 BODY=$(echo "$MCP_RESPONSE" | sed '$d')
 
-if [ "$HTTP_CODE" = "200" ] || [ "$HTTP_CODE" = "405" ] || [ "$HTTP_CODE" = "404" ]; then
+if [ "$HTTP_CODE" = "200" ] || [ "$HTTP_CODE" = "401" ] || [ "$HTTP_CODE" = "405" ] || [ "$HTTP_CODE" = "404" ]; then
     echo -e "${GREEN}✅ Endpoint MCP répond (HTTP $HTTP_CODE)${NC}"
     if [ ! -z "$BODY" ]; then
         echo "   Réponse: $(echo "$BODY" | head -c 200)..."
@@ -97,7 +97,7 @@ echo ""
 echo "✅ Le serveur MCP semble être accessible"
 echo ""
 echo "Pour une vérification complète :"
-echo "  1. Vérifiez les logs Fly.io: fly logs -a storybook-gs-components"
+echo "  1. Vérifiez les logs sur l'instance : docker compose logs storybook (voir docs/aws-deployment.md)"
 echo "  2. Testez avec un client MCP (Cursor, Claude Desktop, etc.)"
 echo "  3. Vérifiez dans l'interface Storybook que l'addon MCP est chargé"
 echo ""

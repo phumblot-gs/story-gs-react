@@ -97,7 +97,8 @@ export const Fallback: Story = {
   },
   render: (args) => (
     <Avatar {...args}>
-      <AvatarImage src="/broken-image.jpg" alt="@user" />
+      {/* Image invalide sans requête réseau : le fallback s'affiche. */}
+      <AvatarImage src="data:image/png;base64," alt="@user" />
       <AvatarFallback size={args.size}>AB</AvatarFallback>
     </Avatar>
   ),

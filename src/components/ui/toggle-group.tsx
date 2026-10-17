@@ -23,9 +23,9 @@ const ToggleGroup = React.forwardRef<
 >(({ className, variant, size, children, type = "multiple", ...props }, ref) => (
   <ToggleGroupPrimitive.Root
     ref={ref}
-    type={type}
     className={cn("flex items-center justify-center gap-1", className)}
-    {...(props as any)}
+    // Radix type ses props en union single | multiple : on la reconstitue avec `type`.
+    {...({ ...props, type } as React.ComponentPropsWithoutRef<typeof ToggleGroupPrimitive.Root>)}
   >
     <ToggleGroupContext.Provider value={{ variant, size }}>
       {children}
