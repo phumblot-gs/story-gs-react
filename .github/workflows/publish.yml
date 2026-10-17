@@ -38,9 +38,6 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run postinstall (apply MCP patch)
-        run: npm run postinstall || true
-
       - name: Verify package.json version matches the ref
         run: |
           PKG_VERSION=$(node -p "require('./package.json').version")
