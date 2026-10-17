@@ -53,6 +53,22 @@ type PaneEvent = { x: number; y: number; size: PaneSize; event: React.PointerEve
 /** Pixels écran par pixel CSS (2 sur un écran Retina) : « 100 % » est un pixel image pour un pixel écran, comme dans Photoshop. */
 const devicePixelRatio = () => (typeof window !== 'undefined' && window.devicePixelRatio) || 1;
 
+/**
+ * Place le repère image dans le canvas. À un zoom entier en pixels écran (100 %, 200 %…), l'image est calée sur la grille de
+ * pixels écran et dessinée sans lissage : sinon un décalage d'un demi-pixel flouterait tout le bord (Photoshop cale aussi
+ * l'image sur les pixels à 100 %). Entre deux, le lissage reste actif.
+ */
+function applyViewTransform(ctx: CanvasRenderingContext2D, size: PaneSize, vp: ClippingViewport) {
+  const dpr = devicePixelRatio();
+  const device = vp.scale * dpr;
+  const whole = device >= 1 && Math.abs(device - Math.round(device)) < 1e-3;
+  let tx = size.width / 2 - vp.center.x * vp.scale;
+  let ty = size.height / 2 - vp.center.y * vp.scale;
+  if (whole) { tx = Math.round(tx * dpr) / dpr; ty = Math.round(ty * dpr) / dpr; }
+  ctx.translate(tx, ty); ctx.scale(vp.scale, vp.scale);
+  ctx.imageSmoothingEnabled = !whole && device < 2; // pixels francs aux zooms entiers (100 % inclus) et dès 200 %, lissé entre deux
+}
+
 /** Couleurs des traits : valeurs des tokens figma (green, red-strong, pastel-blue) ; un canvas ne lit pas les variables CSS. */
 const MARK_COLORS: Partial<Record<ClippingMark['tool'], string>> = { keep: '#89cc52', remove: '#dd3733', hair: '#f5c518', scalpel: '#74d4da', pencil: '#74d4da' };
 /** Couleur du tracé de sélection selon son mode : remplace (cyan), Pencil+ (vert), Pencil− (rouge). */
@@ -210,8 +226,7 @@ export function ClippingEditor({
     if (!source) return;
     const vp = resolveViewport(size);
     ctx.save();
-    ctx.translate(size.width / 2, size.height / 2); ctx.scale(vp.scale, vp.scale); ctx.translate(-vp.center.x, -vp.center.y);
-    ctx.imageSmoothingEnabled = vp.scale * devicePixelRatio() < 2; // net (pixels francs) dès 200 % de pixels écran, comme Photoshop
+    applyViewTransform(ctx, size, vp);
     ctx.drawImage(source.img, 0, 0);
     ctx.lineCap = 'round'; ctx.lineJoin = 'round';
     const paint = (points: ClippingPoint[], width: number, color: string, alpha: number, dash?: number[]) => {
@@ -296,8 +311,7 @@ export function ClippingEditor({
     if (!source || !cutout) return;
     const vp = resolveViewport(size);
     ctx.save();
-    ctx.translate(size.width / 2, size.height / 2); ctx.scale(vp.scale, vp.scale); ctx.translate(-vp.center.x, -vp.center.y);
-    ctx.imageSmoothingEnabled = vp.scale * devicePixelRatio() < 2; // net (pixels francs) dès 200 % de pixels écran, comme Photoshop
+    applyViewTransform(ctx, size, vp);
     ctx.drawImage(peekOriginal && view === 'split' ? source.img : cutout, 0, 0);
     ctx.restore();
   };
