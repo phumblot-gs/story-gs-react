@@ -400,7 +400,6 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Colors: Story = {
-  name: 'Colors',
   render: () => {
     // Base colors from figma-tokens.css
     const baseColors = [

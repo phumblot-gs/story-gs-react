@@ -63,9 +63,9 @@ const Search = React.forwardRef<HTMLInputElement | HTMLTextAreaElement, SearchPr
     // Exposer le ref approprié
     React.useImperativeHandle(ref, () => {
       if (hasNewlines && textareaRef.current) {
-        return textareaRef.current as any
+        return textareaRef.current
       }
-      return inputRef.current as any
+      return inputRef.current as HTMLInputElement
     }, [hasNewlines])
 
     // Raccourci de recherche : Cmd/Ctrl+F donne le focus au champ au lieu

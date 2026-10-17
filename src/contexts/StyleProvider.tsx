@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import '../styles/fonts.css';
 import '../styles/figma-tokens.css';
 import '../styles/theme-variables.css';
@@ -101,22 +101,7 @@ export const StyleProvider: React.FC<StyleProviderProps> = ({
     }
   }, [config.cssVariables]);
 
-  // Apply global styles if requested
-  useEffect(() => {
-    if (config.applyGlobalStyles) {
-      applyStyles(document.body);
-    } else {
-      removeStyles(document.body);
-    }
-
-    return () => {
-      if (config.applyGlobalStyles) {
-        removeStyles(document.body);
-      }
-    };
-  }, [config.applyGlobalStyles]);
-
-  const applyStyles = (element: HTMLElement = document.body) => {
+  const applyStyles = useCallback((element: HTMLElement = document.body) => {
     // Apply font styles
     if (config.loadFonts) {
       element.classList.add('gs-font-base');
@@ -131,14 +116,29 @@ export const StyleProvider: React.FC<StyleProviderProps> = ({
     if (config.rootClassName) {
       element.classList.add(config.rootClassName);
     }
-  };
+  }, [config.loadFonts, config.applyGlobalStyles, config.rootClassName]);
 
-  const removeStyles = (element: HTMLElement = document.body) => {
+  const removeStyles = useCallback((element: HTMLElement = document.body) => {
     element.classList.remove('gs-font-base', 'gs-global-styles');
     if (config.rootClassName) {
       element.classList.remove(config.rootClassName);
     }
-  };
+  }, [config.rootClassName]);
+
+  // Apply global styles if requested
+  useEffect(() => {
+    if (config.applyGlobalStyles) {
+      applyStyles(document.body);
+    } else {
+      removeStyles(document.body);
+    }
+
+    return () => {
+      if (config.applyGlobalStyles) {
+        removeStyles(document.body);
+      }
+    };
+  }, [config.applyGlobalStyles, applyStyles, removeStyles]);
 
   const updateConfig = (updates: Partial<StyleConfig>) => {
     setConfig(prev => ({ ...prev, ...updates }));

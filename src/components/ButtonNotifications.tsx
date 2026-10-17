@@ -77,23 +77,25 @@ const ButtonNotifications = forwardRef<ButtonNotificationsRef, ButtonNotificatio
    * Removes oldest read notifications first, then oldest unread if necessary
    * @param newNotifications Array of new notifications to add
    */
-  const addNotifications = (newNotifications: NotificationProps[]) => {
+  // Stable tant que `limit` et `debug` ne changent pas : le handle exposé
+  // par ref (plus bas) suit leurs valeurs à jour.
+  const addNotifications = React.useCallback((newNotifications: NotificationProps[]) => {
     if (newNotifications.length === 0) return;
     
-    if (debug) console.log("ButtonNotifications: Adding new notifications", { 
-      newCount: newNotifications.length, 
-      currentCount: localNotifications.length,
-      limit
-    });
-    
     setLocalNotifications(current => {
+      if (debug) console.log("ButtonNotifications: Adding new notifications", { 
+        newCount: newNotifications.length, 
+        currentCount: current.length,
+        limit
+      });
+
       // Combine current notifications with new ones
       const combinedNotifications = [...current, ...newNotifications];
       
       // Apply the limit using the utility function
       return enforceNotificationLimit(combinedNotifications, limit);
     });
-  };
+  }, [debug, limit]);
 
   // Debug logging for component mount and prop changes
   React.useEffect(() => {
@@ -110,7 +112,7 @@ const ButtonNotifications = forwardRef<ButtonNotificationsRef, ButtonNotificatio
   // Expose the addNotifications method to parent components via ref
   useImperativeHandle(ref, () => ({
     addNotifications,
-  }), []);
+  }), [addNotifications]);
 
   return (
     <>

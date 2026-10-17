@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { fn, expect, within } from 'storybook/test';
+import { fn, expect, waitFor, within } from 'storybook/test';
 import { FileDropZone, type FileDropZoneProps } from './file-drop-zone';
 import { FileDropFeedback } from './file-drop-feedback';
 import { FileBrowser, type FileItem } from './file-browser';
@@ -102,9 +102,9 @@ export const InteractiveScenarios: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await canvas.getByRole('button', { name: 'Survoler' }).click();
-    await expect(canvasElement.querySelector('[data-file-drop-feedback]')).toHaveAttribute('data-state', 'accepted');
+    await waitFor(() => expect(canvasElement.querySelector('[data-file-drop-feedback]')).toHaveAttribute('data-state', 'accepted'));
     await canvas.getByRole('button', { name: 'Quitter' }).click();
-    await expect(canvasElement.querySelector('[data-file-drop-feedback]')).toBeNull();
+    await waitFor(() => expect(canvasElement.querySelector('[data-file-drop-feedback]')).toBeNull());
   },
 };
 export const FileBrowserScenarios: Story = { render: () => <DragDropScenarios browser /> };
@@ -188,13 +188,14 @@ function OverlayDemo({ browser, ...props }: FileDropZoneProps & { browser: boole
     <p role="status" className="text-sm">{result}</p>
   </div></BgProvider>;
 }
+// waitFor : le retour visuel suit des événements DOM natifs, rendus par React un tick plus tard.
 const overlayPlay: Story['play'] = async ({ canvasElement }) => {
   const canvas = within(canvasElement);
-  await expect(canvasElement.querySelector('[data-file-drop-feedback]')).toBeNull();
+  await waitFor(() => expect(canvasElement.querySelector('[data-file-drop-feedback]')).toBeNull());
   await canvas.getByRole('button', { name: 'Survoler' }).click();
-  await expect(canvasElement.querySelector('[data-file-drop-feedback]')).toHaveAttribute('data-state', 'accepted');
+  await waitFor(() => expect(canvasElement.querySelector('[data-file-drop-feedback]')).toHaveAttribute('data-state', 'accepted'));
   await canvas.getByRole('button', { name: 'Quitter' }).click();
-  await expect(canvasElement.querySelector('[data-file-drop-feedback]')).toBeNull();
+  await waitFor(() => expect(canvasElement.querySelector('[data-file-drop-feedback]')).toBeNull());
 };
 // Show public library composition in Docs instead of the internal simulator.
 const overlayFileBrowserSource = `import { useState } from 'react';

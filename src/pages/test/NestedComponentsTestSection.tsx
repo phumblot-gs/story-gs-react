@@ -107,7 +107,7 @@ const NestedComponentsTestSection: React.FC = () => {
               <Label htmlFor="nested-button-variant">Button Variant</Label>
               <Select 
                 value={buttonVariant} 
-                onValueChange={(value) => setButtonVariant(value as any)}>
+                onValueChange={(value) => setButtonVariant(value as typeof buttonVariant)}>
                 <SelectTrigger id="nested-button-variant">
                   <SelectValue placeholder="Select variant" />
                 </SelectTrigger>

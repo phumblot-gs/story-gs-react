@@ -5,6 +5,30 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [Non publié]
+
+### Modifié
+
+- Storybook passe de 9.1.16 à 10.6.2. Le serveur MCP (`/mcp`) expose
+  désormais la documentation des composants : `docs-list`, `docs-show`,
+  `docs-show-story`, `stories-find-by-component`, `stories-preview`.
+- Node.js 22 requis pour le développement (Storybook 10 exige 20.19+) :
+  `.nvmrc`, image Docker et workflow de publication.
+- Le package ne déclare plus de script `postinstall` (correctif
+  `@tmcp/session-manager` devenu inutile), qui s'exécutait aussi chez les
+  projets consommateurs.
+
+### Corrigé
+
+- `ButtonPlus` : la pastille « + » est un `span` et non plus un second
+  `<button>` imbriqué (HTML invalide). Rendu identique.
+- `ButtonNotifications` : `addNotifications` exposé par ref suit les valeurs
+  à jour de `limit` et `debug` (il gardait celles du premier rendu).
+- `StyleProvider` : un changement de `rootClassName` ou `loadFonts` est
+  appliqué au `body`.
+- Storybook : plus aucune erreur console sur les 86 pages de documentation ni
+  sur les 697 stories, lint sans erreur ni avertissement.
+
 ## [1.29.1] - 2026-10-16
 
 ### Ajouté

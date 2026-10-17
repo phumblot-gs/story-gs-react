@@ -24,7 +24,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
           cache: "npm"
 
       - name: Configure npm for Nexus authentication
@@ -36,7 +36,7 @@ jobs:
           echo "//nexus.grand-shooting.org/repository/npm-gs/:_auth=${{ secrets.NPM_NEXUS_AUTH }}" >> ~/.npmrc
 
       - name: Install dependencies
-        run: npm install --legacy-peer-deps
+        run: npm install
 
       - name: Run postinstall (apply MCP patch)
         run: npm run postinstall || true

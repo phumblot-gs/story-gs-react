@@ -182,7 +182,7 @@ export const Default: Story = {
 
     // Synchroniser avec les args quand ils changent depuis les contrôles
     useEffect(() => {
-      if (args.selectedCount !== undefined && args.selectedCount !== selectedCount) {
+      if (args.selectedCount !== undefined) {
         setSelectedCount(args.selectedCount);
       }
     }, [args.selectedCount]);

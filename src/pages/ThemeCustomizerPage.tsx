@@ -130,7 +130,7 @@ const ThemeCustomizerPage: React.FC = () => {
   // Apply changes from state to theme context
   const applyChanges = () => {
     const updates = {
-      colors: {} as any,
+      colors: {} as Record<string, string>,
       text: {
         brandName: formValues.brandName !== 'GS Components' ? formValues.brandName : undefined,
       },

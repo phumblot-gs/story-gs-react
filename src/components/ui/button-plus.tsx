@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Button, ButtonProps } from "@/components/ui/button"
+import type { ButtonProps } from "@/components/ui/button"
 import { Icon } from "@/components/ui/icons"
 import { useBgContext } from "@/components/layout/BgContext"
 import { cn } from "@/lib/utils"
@@ -104,26 +104,21 @@ export const ButtonPlus = React.forwardRef<HTMLButtonElement, ButtonPlusProps>(
         onMouseLeave={() => setIsHovered(false)}
         {...props}
       >
-        {/* Inner button with Plus icon - always size medium */}
-        <div 
-          data-bg={innerButtonBg}
-          className="pointer-events-none"
-        >
-          <Button
-            variant="normal"
-            size="medium"
-            disabled={disabled}
+        {/* Pastille « + » (30 px) : simple span, un <button> ne pouvant pas en
+            contenir un autre. Couleurs : .btn-plus-icon dans custom-styles.css. */}
+        <span data-bg={innerButtonBg} className="pointer-events-none">
+          <span
+            aria-hidden="true"
             className={cn(
-              "relative rounded-full p-0 flex items-center justify-center pointer-events-none h-6 w-6",
+              "btn-plus-icon relative flex h-6 w-6 items-center justify-center rounded-full",
               // Icon rotation animation based on hover state
               "[&_svg]:transition-transform [&_svg]:duration-300",
               isHovered ? "[&_svg]:rotate-90" : "[&_svg]:rotate-0"
             )}
-            asChild={false}
           >
             <Icon name="Plus" size={12} />
-          </Button>
-        </div>
+          </span>
+        </span>
 
         {/* Label */}
         <span className="text-lg font-medium whitespace-nowrap">{label}</span>

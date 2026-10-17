@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react"
+import type { Meta, StoryObj } from "@storybook/react-vite"
 import { Stepper, type StepperStep } from "./stepper"
 import { Layout } from "@/components/layout/Layout"
 import { useState } from "react"

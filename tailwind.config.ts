@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import tailwindcssAnimate from "tailwindcss-animate";
 
 // The whole theme (colors, spacing, fontFamily, animations…) lives in
 // tailwind-preset.cjs so consumer projects can extend the same source of
@@ -286,5 +287,5 @@ export default {
 			}
 		}
 	},
-	plugins: [require("tailwindcss-animate")],
+	plugins: [tailwindcssAnimate],
 } satisfies Config;

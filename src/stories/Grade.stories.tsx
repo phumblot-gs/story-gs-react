@@ -173,23 +173,24 @@ export const DebugMode: Story = {
 };
 
 export const InText: Story = {
+  // div et non p : Grade rend un <div>, interdit dans un paragraphe.
   render: () => (
     <VStack gap={4} align="start">
-      <p className="text-base">
+      <div className="text-base">
         This image has a grade of <Grade value="A" /> which is excellent.
-      </p>
-      <p className="text-base">
+      </div>
+      <div className="text-base">
         This image has a grade of <Grade value="B" /> which is good.
-      </p>
-      <p className="text-base">
+      </div>
+      <div className="text-base">
         This image has a grade of <Grade value="C" /> which is average.
-      </p>
-      <p className="text-base">
+      </div>
+      <div className="text-base">
         This image has a grade of <Grade value="D" /> which needs improvement.
-      </p>
-      <p className="text-base">
+      </div>
+      <div className="text-base">
         This image has a grade of <Grade value="E" /> which is poor.
-      </p>
+      </div>
     </VStack>
   ),
 };

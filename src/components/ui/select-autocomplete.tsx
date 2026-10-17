@@ -516,9 +516,7 @@ const SelectAutocomplete = React.forwardRef<HTMLInputElement, SelectAutocomplete
     // Détermine si le popover a du contenu à afficher
     // Si noResultsText est vide, on ne montre pas le loader ni le message "aucun résultat"
     // La popup ne s'ouvre que quand il y a des résultats
-    const hasPopoverContent = !!noResultsText
-      ? (isSearching || filteredOptions.length > 0 || true)
-      : filteredOptions.length > 0;
+    const hasPopoverContent = Boolean(noResultsText) || filteredOptions.length > 0;
 
     // Réinitialiser le texte de recherche quand la value change (depuis l'extérieur)
     React.useEffect(() => {

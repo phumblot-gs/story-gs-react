@@ -79,7 +79,7 @@ const ToastTestSection: React.FC = () => {
               <Label htmlFor="toast-type">Type</Label>
               <Select 
                 value={toastType} 
-                onValueChange={(value) => setToastType(value as any)}>
+                onValueChange={(value) => setToastType(value as typeof toastType)}>
                 <SelectTrigger id="toast-type">
                   <SelectValue placeholder="Select type" />
                 </SelectTrigger>

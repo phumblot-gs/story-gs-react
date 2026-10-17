@@ -109,7 +109,7 @@ const PageHeaderConfigDemo: React.FC = () => {
             <Label htmlFor="title-button-icon">Title Button Icon</Label>
             <Select 
               value={titleButtonIcon} 
-              onValueChange={(value) => setTitleButtonIcon(value as any)}>
+              onValueChange={(value) => setTitleButtonIcon(value as typeof titleButtonIcon)}>
               <SelectTrigger id="title-button-icon">
                 <SelectValue placeholder="Select icon" />
               </SelectTrigger>

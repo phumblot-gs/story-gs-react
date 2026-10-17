@@ -33,7 +33,7 @@ import { TagGrade, Layout } from '@story-gs-react';
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| \`value\` | \`"A" \| "B" \| "C" \| "D" \| "E"\` | Required | Grade value to display |
+| \`value\` | \`"A" \\| "B" \\| "C" \\| "D" \\| "E"\` | Required | Grade value to display |
 | \`onRemove\` | \`(e: MouseEvent) => void\` | \`undefined\` | Callback called when TagCross is clicked |
 | \`disabled\` | \`boolean\` | \`false\` | Disables the tag and TagCross |
 | \`debug\` | \`boolean\` | \`false\` | Debug mode: displays a label and logs props to console |

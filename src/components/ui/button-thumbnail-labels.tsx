@@ -345,7 +345,7 @@ export const ButtonThumbnailLabels = React.forwardRef<HTMLButtonElement, ButtonT
           }}
         />
       )
-    }, [isNeutralButton, normalizedValue, colorSize, bg])
+    }, [isNeutralButton, normalizedValue, colorSize])
 
     React.useEffect(() => {
       if (debug) {

@@ -40,7 +40,7 @@ const ButtonTestSection: React.FC = () => {
                 <Label htmlFor="button-size">Size</Label>
                 <Select 
                   value={buttonSize} 
-                  onValueChange={(value) => setButtonSize(value as any)}>
+                  onValueChange={(value) => setButtonSize(value as typeof buttonSize)}>
                   <SelectTrigger id="button-size">
                     <SelectValue placeholder="Select size" />
                   </SelectTrigger>
@@ -97,7 +97,7 @@ const ButtonTestSection: React.FC = () => {
                 <Label htmlFor="circle-button-size">Size</Label>
                 <Select 
                   value={circleButtonSize} 
-                  onValueChange={(value) => setCircleButtonSize(value as any)}>
+                  onValueChange={(value) => setCircleButtonSize(value as typeof circleButtonSize)}>
                   <SelectTrigger id="circle-button-size">
                     <SelectValue placeholder="Select size" />
                   </SelectTrigger>

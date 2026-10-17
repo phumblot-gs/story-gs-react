@@ -29,6 +29,8 @@ async function loadPixels(src: string) {
 function useDemoSegmenter(src: string, latencyMs = 250): ClippingSegmenter {
   return useMemo(() => {
     const engine = loadPixels(src).then(createColorClippingSegmenter);
+    // Image illisible (story LoadFailure) : l'échec ressort à chaque appel, pas en rejet non géré.
+    engine.catch(() => {});
     return async (request) => {
       await new Promise((resolve) => setTimeout(resolve, latencyMs));
       if (request.signal.aborted) throw new DOMException('Aborted', 'AbortError');
@@ -78,7 +80,8 @@ export const EngineFailure: Story = {
   args: { defaultMarks: PRESET },
   render: (args) => <div className="h-[760px]"><ClippingEditor {...args} onSegment={async () => { throw new Error('Simulated backend failure'); }} /></div>,
 };
-export const LoadFailure: Story = { args: { src: 'missing-image.png' }, render: (args) => <Demo {...args} /> };
+// Image invalide sans requête réseau (une URL absente afficherait un 404 dans la console).
+export const LoadFailure: Story = { args: { src: 'data:image/png;base64,' }, render: (args) => <Demo {...args} /> };
 
 function Controlled(props: ClippingEditorProps) {
   const onSegment = useDemoSegmenter(props.src);

@@ -241,47 +241,47 @@
 
 /* Styles pour le bouton interne de ButtonPlus */
 /* White/Grey backgrounds: inner button uses data-bg="black" -> utilise button-b-normal */
-[data-bg="white"] .btn-plus [data-bg="black"] button,
-[data-bg="grey"] .btn-plus [data-bg="black"] button {
+[data-bg="white"] .btn-plus [data-bg="black"] .btn-plus-icon,
+[data-bg="grey"] .btn-plus [data-bg="black"] .btn-plus-icon {
   background: var(--button-b-normal-bg-default);
   color: var(--button-b-normal-fg-default);
 }
 
-[data-bg="white"] .btn-plus:hover:not(:disabled) [data-bg="black"] button,
-[data-bg="grey"] .btn-plus:hover:not(:disabled) [data-bg="black"] button {
+[data-bg="white"] .btn-plus:hover:not(:disabled) [data-bg="black"] .btn-plus-icon,
+[data-bg="grey"] .btn-plus:hover:not(:disabled) [data-bg="black"] .btn-plus-icon {
   background: var(--button-b-normal-bg-hover);
   color: var(--button-b-normal-fg-hover);
 }
 
-[data-bg="white"] .btn-plus:active:not(:disabled) [data-bg="black"] button,
-[data-bg="grey"] .btn-plus:active:not(:disabled) [data-bg="black"] button {
+[data-bg="white"] .btn-plus:active:not(:disabled) [data-bg="black"] .btn-plus-icon,
+[data-bg="grey"] .btn-plus:active:not(:disabled) [data-bg="black"] .btn-plus-icon {
   background: var(--button-b-normal-bg-pressed);
   color: var(--button-b-normal-fg-pressed);
 }
 
-[data-bg="white"] .btn-plus:disabled [data-bg="black"] button,
-[data-bg="grey"] .btn-plus:disabled [data-bg="black"] button {
+[data-bg="white"] .btn-plus:disabled [data-bg="black"] .btn-plus-icon,
+[data-bg="grey"] .btn-plus:disabled [data-bg="black"] .btn-plus-icon {
   background: var(--button-b-normal-bg-disabled);
   color: var(--button-b-normal-fg-disabled);
 }
 
 /* Black background: inner button uses data-bg="white" -> utilise button-w-normal */
-[data-bg="black"] .btn-plus [data-bg="white"] button {
+[data-bg="black"] .btn-plus [data-bg="white"] .btn-plus-icon {
   background: var(--button-w-normal-bg-default);
   color: var(--button-w-normal-fg-default);
 }
 
-[data-bg="black"] .btn-plus:hover:not(:disabled) [data-bg="white"] button {
+[data-bg="black"] .btn-plus:hover:not(:disabled) [data-bg="white"] .btn-plus-icon {
   background: var(--button-w-normal-bg-hover);
   color: var(--button-w-normal-fg-hover);
 }
 
-[data-bg="black"] .btn-plus:active:not(:disabled) [data-bg="white"] button {
+[data-bg="black"] .btn-plus:active:not(:disabled) [data-bg="white"] .btn-plus-icon {
   background: var(--button-w-normal-bg-pressed);
   color: var(--button-w-normal-fg-pressed);
 }
 
-[data-bg="black"] .btn-plus:disabled [data-bg="white"] button {
+[data-bg="black"] .btn-plus:disabled [data-bg="white"] .btn-plus-icon {
   background: var(--button-w-normal-bg-disabled);
   color: var(--button-w-normal-fg-disabled);
 }
@@ -289,41 +289,41 @@
 /* Styles pour l'icône Plus dans ButtonPlus */
 /* White/Grey backgrounds: inner button uses data-bg="black" */
 /* Icône black par défaut et hover, blue-primary au pressed */
-[data-bg="white"] .btn-plus [data-bg="black"] button svg,
-[data-bg="grey"] .btn-plus [data-bg="black"] button svg {
+[data-bg="white"] .btn-plus [data-bg="black"] .btn-plus-icon svg,
+[data-bg="grey"] .btn-plus [data-bg="black"] .btn-plus-icon svg {
   color: var(--color-black);
 }
 
-[data-bg="white"] .btn-plus:hover:not(:disabled) [data-bg="black"] button svg,
-[data-bg="grey"] .btn-plus:hover:not(:disabled) [data-bg="black"] button svg {
+[data-bg="white"] .btn-plus:hover:not(:disabled) [data-bg="black"] .btn-plus-icon svg,
+[data-bg="grey"] .btn-plus:hover:not(:disabled) [data-bg="black"] .btn-plus-icon svg {
   color: var(--color-black);
 }
 
-[data-bg="white"] .btn-plus:active:not(:disabled) [data-bg="black"] button svg,
-[data-bg="grey"] .btn-plus:active:not(:disabled) [data-bg="black"] button svg {
+[data-bg="white"] .btn-plus:active:not(:disabled) [data-bg="black"] .btn-plus-icon svg,
+[data-bg="grey"] .btn-plus:active:not(:disabled) [data-bg="black"] .btn-plus-icon svg {
   color: var(--color-blue-primary);
 }
 
-[data-bg="white"] .btn-plus:disabled [data-bg="black"] button svg,
-[data-bg="grey"] .btn-plus:disabled [data-bg="black"] button svg {
+[data-bg="white"] .btn-plus:disabled [data-bg="black"] .btn-plus-icon svg,
+[data-bg="grey"] .btn-plus:disabled [data-bg="black"] .btn-plus-icon svg {
   color: var(--button-action-plus-w-color-plus-disabled);
 }
 
 /* Black background: inner button uses data-bg="white" */
 /* Icône white par défaut et hover, blue-primary au pressed */
-[data-bg="black"] .btn-plus [data-bg="white"] button svg {
+[data-bg="black"] .btn-plus [data-bg="white"] .btn-plus-icon svg {
   color: var(--color-white);
 }
 
-[data-bg="black"] .btn-plus:hover:not(:disabled) [data-bg="white"] button svg {
+[data-bg="black"] .btn-plus:hover:not(:disabled) [data-bg="white"] .btn-plus-icon svg {
   color: var(--color-white);
 }
 
-[data-bg="black"] .btn-plus:active:not(:disabled) [data-bg="white"] button svg {
+[data-bg="black"] .btn-plus:active:not(:disabled) [data-bg="white"] .btn-plus-icon svg {
   color: var(--color-blue-primary);
 }
 
-[data-bg="black"] .btn-plus:disabled [data-bg="white"] button svg {
+[data-bg="black"] .btn-plus:disabled [data-bg="white"] .btn-plus-icon svg {
   color: var(--button-action-plus-b-color-plus-disabled);
 }
 
