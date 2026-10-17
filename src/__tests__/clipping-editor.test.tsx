@@ -46,6 +46,18 @@ describe("ClippingEditor", () => {
     expect(screen.getByRole("button", { name: "Delete selection" })).toBeDisabled();
   });
 
+  it("affiche le niveau de zoom, 1:1 et la touche 0 passent à 100 %", () => {
+    renderEditor();
+    const root = document.querySelector("[data-gs-clipping-editor]") as HTMLElement;
+    fireEvent.click(screen.getByRole("button", { name: "Actual size (100%) (0)" }));
+    expect(screen.getByTestId("clipping-zoom")).toHaveTextContent("100%");
+    fireEvent.click(screen.getByRole("button", { name: "Zoom in" }));
+    expect(screen.getByTestId("clipping-zoom")).not.toHaveTextContent(/^100%$/);
+    fireEvent.keyDown(root, { key: "0" });
+    expect(screen.getByTestId("clipping-zoom")).toHaveTextContent("100%");
+    expect(screen.getByRole("button", { name: "Actual size (100%) (0)" })).toHaveAttribute("aria-pressed", "true");
+  });
+
   it("annuler et rétablir sont désactivés sans historique", () => {
     renderEditor();
     expect(screen.getByRole("button", { name: "Undo (Z)" })).toBeDisabled();

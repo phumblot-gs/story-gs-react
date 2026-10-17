@@ -12,7 +12,7 @@ import { isScalpelMark, markToCut } from '@/lib/clipping-scalpel';
 import type { TranslationMap } from '@/utils/translations';
 import {
   applyAlphaMask, clippingHistoryReducer, shouldSegment, createClippingHistory, densifyPoints, fitViewport, isBrushTool, isPencilTool, newMarkId, panViewport,
-  pencilMode, selectionState, screenToImage, imageToScreen, zoomViewport,
+  pencilMode, selectionState, screenToImage, imageToScreen, zoomViewport, clampScale,
   type ClippingMark, type ClippingMask, type ClippingPoint, type ClippingSegmenter, type ClippingTool, type ClippingViewport,
 } from '@/lib/clipping';
 
@@ -123,6 +123,7 @@ export function ClippingEditor({
   });
 
   const paneSize = useRef<PaneSize>({ width: 1, height: 1 });
+  const [, setMeasured] = useState(''); // re-render once the panes are measured: the zoom readout depends on their size
   const drag = useRef<{ kind: 'pan'; x: number; y: number } | { kind: 'stroke'; tool: ClippingTool; points: ClippingPoint[] } | null>(null);
   const onSegmentRef = useRef(onSegment);
   onSegmentRef.current = onSegment;
@@ -195,6 +196,9 @@ export function ClippingEditor({
   // --- Viewport -------------------------------------------------------------
   const imageSize = useMemo(() => (source ? { width: source.pixels.width, height: source.pixels.height } : null), [source]);
   const resolveViewport = useCallback((size: PaneSize): ClippingViewport => viewport ?? fitViewport(size, imageSize ?? { width: 1, height: 1 }), [viewport, imageSize]);
+  /** Zoom à une échelle donnée (1 = 100 % : un pixel image pour un pixel écran), centré sur le milieu de la vue actuelle. */
+  const zoomTo = (scale: number, size: PaneSize = paneSize.current) =>
+    setViewport({ scale: clampScale(scale), center: resolveViewport(size).center });
   const zoomBy = (factor: number, size: PaneSize = paneSize.current, x?: number, y?: number) =>
     setViewport(zoomViewport(resolveViewport(size), size, factor, x, y));
 
@@ -386,6 +390,7 @@ export function ClippingEditor({
       case 'z': dispatch({ type: e.shiftKey ? 'redo' : 'undo' }); break;
       case 'y': dispatch({ type: 'redo' }); break;
       case 'q': setPeekOriginal(true); break;
+      case '0': zoomTo(1); break;
       case '-': case '[': setBrush((b) => Math.max(BRUSH_MIN, Math.min(b - 1, Math.round(b / ZOOM_STEP)))); break;
       case '+': case '=': case ']': setBrush((b) => Math.min(BRUSH_MAX, Math.max(b + 1, Math.round(b * ZOOM_STEP)))); break;
       case '1': setView('single'); break;
@@ -422,6 +427,7 @@ export function ClippingEditor({
   /** Actions sur la sélection : marques sans trait, rejouées dans l'ordre par le moteur (Supprimer garde l'adoucissement choisi). */
   const addSelectionMark = (kind: 'invert' | 'deselect' | 'delete') =>
     dispatch({ type: 'add', mark: { id: newMarkId(), tool: kind, size: 1, points: [], ...(kind === 'delete' && feather > 0 ? { feather } : {}) } });
+  const zoomLevel = resolveViewport(paneSize.current).scale * 100;
   const canUndo = history.past.length > 0;
   const canRedo = history.future.length > 0;
   // Vue simple : Q maintenu affiche l'autre image. Vue partagée : l'aperçu montre l'original (voir drawPreview).
@@ -466,6 +472,8 @@ export function ClippingEditor({
             {iconButton(t('clipping.zoomIn'), <ZoomIn size={14} aria-hidden="true" />, () => zoomBy(ZOOM_STEP))}
             {iconButton(t('clipping.zoomOut'), <ZoomOut size={14} aria-hidden="true" />, () => zoomBy(1 / ZOOM_STEP))}
             {iconButton(`${t('clipping.zoomFit')} (Home)`, <Maximize size={14} aria-hidden="true" />, () => setViewport(null))}
+            {iconButton(`${t('clipping.zoomActual')} (0)`, <span className="text-[10px] font-semibold leading-none">1:1</span>, () => zoomTo(1), { pressed: Math.abs(zoomLevel - 100) < 0.5 })}
+            <span className="w-11 shrink-0 text-center text-sm tabular-nums" role="status" aria-label={t('clipping.zoomLevel')} data-testid="clipping-zoom">{zoomLevel < 10 ? zoomLevel.toFixed(1) : Math.round(zoomLevel)}%</span>
             <span className="mx-1 h-5 w-px shrink-0 bg-grey" aria-hidden="true" />
             {iconButton(t('clipping.shortcut', { label: t('clipping.view.single'), key: '1' }), <Square size={14} aria-hidden="true" />, () => setView('single'), { pressed: view === 'single' })}
             {iconButton(t('clipping.shortcut', { label: t('clipping.view.split'), key: '2' }), <Columns2 size={14} aria-hidden="true" />, () => setView('split'), { pressed: view === 'split' })}
@@ -485,13 +493,13 @@ export function ClippingEditor({
           <div className="relative flex min-h-0 flex-1">
             {showMarksPane && (
               <Pane title={t('clipping.pane.marks')} ariaLabel={t('clipping.canvas.marks')} caption={fileName} cursor={cursor}
-                draw={drawMarks} sizeRef={paneSize} onPointerDown={onPointerDown('marks')} onPointerMove={onPointerMove('marks')}
+                draw={drawMarks} sizeRef={paneSize} onMeasure={(sz) => setMeasured(`${sz.width}x${sz.height}`)} onPointerDown={onPointerDown('marks')} onPointerMove={onPointerMove('marks')}
                 onPointerUp={endPointer} onPointerLeave={() => setHover(null)} onWheel={onWheel} />
             )}
             {view === 'split' && <div className="w-px bg-black" aria-hidden="true" />}
             {showPreviewPane && (
               <Pane title={t('clipping.pane.preview')} ariaLabel={t('clipping.canvas.preview')} caption={imageSize ? t('clipping.dimensions', imageSize) : undefined}
-                cursor={panning ? 'grabbing' : 'grab'} checker draw={drawPreview} sizeRef={paneSize}
+                cursor={panning ? 'grabbing' : 'grab'} checker draw={drawPreview} sizeRef={paneSize} onMeasure={(sz) => setMeasured(`${sz.width}x${sz.height}`)}
                 onPointerDown={onPointerDown('preview')} onPointerMove={onPointerMove('preview')} onPointerUp={endPointer} onWheel={onWheel} />
             )}
             {!source && (
@@ -534,6 +542,7 @@ interface PaneProps {
   checker?: boolean;
   draw: (ctx: CanvasRenderingContext2D, size: PaneSize) => void;
   sizeRef: React.MutableRefObject<PaneSize>;
+  onMeasure?: (size: PaneSize) => void;
   onPointerDown: (e: PaneEvent) => void;
   onPointerMove: (e: PaneEvent) => void;
   onPointerUp: (e: PaneEvent) => void;
@@ -542,7 +551,7 @@ interface PaneProps {
 }
 
 /** Volet à canvas : mesure son conteneur, redessine à chaque rendu et traduit les événements en pixels du volet. */
-function Pane({ title, ariaLabel, caption, cursor, checker, draw, sizeRef, onPointerDown, onPointerMove, onPointerUp, onPointerLeave, onWheel }: PaneProps) {
+function Pane({ title, ariaLabel, caption, cursor, checker, draw, sizeRef, onMeasure, onPointerDown, onPointerMove, onPointerUp, onPointerLeave, onWheel }: PaneProps) {
   const host = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
   const [size, setSize] = useState<PaneSize>({ width: 1, height: 1 });
@@ -566,6 +575,7 @@ function Pane({ title, ariaLabel, caption, cursor, checker, draw, sizeRef, onPoi
 
   useLayoutEffect(() => {
     sizeRef.current = size;
+    onMeasure?.(size);
     const el = canvas.current;
     const ctx = el?.getContext('2d');
     if (!el || !ctx) return;

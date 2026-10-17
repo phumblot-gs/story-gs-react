@@ -21,6 +21,8 @@ export const clippingTranslations: TranslationMap = {
   'clipping.zoomIn': { FR: 'Zoom avant', EN: 'Zoom in', ES: 'Acercar', IT: 'Ingrandisci', DE: 'Vergrößern' },
   'clipping.zoomOut': { FR: 'Zoom arrière', EN: 'Zoom out', ES: 'Alejar', IT: 'Riduci', DE: 'Verkleinern' },
   'clipping.zoomFit': { FR: 'Ajuster à la fenêtre', EN: 'Zoom to fit', ES: 'Ajustar a la ventana', IT: 'Adatta alla finestra', DE: 'An Fenster anpassen' },
+  'clipping.zoomActual': { FR: 'Taille réelle (100 %)', EN: 'Actual size (100%)', ES: 'Tamaño real (100 %)', IT: 'Dimensione reale (100%)', DE: 'Tatsächliche Größe (100 %)' },
+  'clipping.zoomLevel': { FR: 'Niveau de zoom', EN: 'Zoom level', ES: 'Nivel de zoom', IT: 'Livello di zoom', DE: 'Zoomstufe' },
   'clipping.view.single': { FR: 'Vue simple', EN: 'Single pane view', ES: 'Vista simple', IT: 'Vista singola', DE: 'Einzelansicht' },
   'clipping.view.split': { FR: 'Vue partagée', EN: 'Split view', ES: 'Vista dividida', IT: 'Vista divisa', DE: 'Geteilte Ansicht' },
   'clipping.pane.marks': { FR: 'Original + traits', EN: 'Original + Marks', ES: 'Original + marcas', IT: 'Originale + segni', DE: 'Original + Markierungen' },

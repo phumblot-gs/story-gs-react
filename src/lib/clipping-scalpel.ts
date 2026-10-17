@@ -73,7 +73,7 @@ export function sampleCut(cut: ScalpelCut, step = 2): ClippingPoint[] {
 
 /** Trait prêt pour l'historique et le moteur : `points` dérivés des nœuds. */
 export function cutToMark(id: string, cut: ScalpelCut, mode: ClippingSelectionMode = "replace", tool: "pencil" | "scalpel" = "pencil"): ClippingMark {
-  return { id, tool, size: SCALPEL_MARK_SIZE, nodes: cut.nodes, closed: cut.closed, points: sampleCut(cut), ...(tool === "pencil" ? { mode } : {}) };
+  return { id, tool, size: SCALPEL_MARK_SIZE, nodes: cut.nodes, closed: cut.closed, points: sampleCut(cut, tool === "pencil" ? 1 : 2), ...(tool === "pencil" ? { mode } : {}) };
 }
 
 // ---------------------------------------------------------------------------
