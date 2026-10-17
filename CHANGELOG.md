@@ -5,6 +5,24 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.31.0] - 2026-10-17
+
+### Ajouté
+
+- `ClippingEditor` : l'outil **Scalpel** devient le **Crayon** (`pencil`) et trace une sélection fermée au lieu de couper.
+  **Crayon +** et **Crayon −** ajoutent à la sélection ou en soustraient ; **Inverser**, **Supprimer** (avec un
+  adoucissement réglable) et **Désélectionner** agissent sur elle. **Garder**, **Retirer**, **Cheveux** et la **Gomme**
+  n'agissent qu'à l'intérieur de la sélection. Nouveaux outils de marque : `pencil`, `invert`, `deselect`, `delete`,
+  `erase` (champs `mode` et `feather`). Les anciennes marques `scalpel` restent lisibles.
+- `ClippingEditor` : prop `autoSegment` (affiche le détourage automatique à l'ouverture de l'image).
+- `ClippingEditor` : niveau de zoom affiché, bouton **1:1** et touche `0` (100 % = un pixel image par pixel écran, y compris sur
+  écran Retina). Pixels francs à partir de 200 %.
+
+### Corrigé
+
+- `ClippingEditor` : à 100 % l'image n'est plus floutée (calage sur la grille de pixels écran, canvas dimensionné en pixels
+  écran entiers).
+
 ## [1.30.0] - 2026-10-17
 
 ### Modifié
