@@ -24,10 +24,26 @@ describe("ClippingEditor", () => {
     expect(screen.getByRole("button", { name: "Remove (keyboard: Spacebar)" })).toHaveAttribute("aria-pressed", "true");
     fireEvent.keyDown(root, { key: " " });
     expect(screen.getByRole("button", { name: "Keep (keyboard: Spacebar)" })).toHaveAttribute("aria-pressed", "true");
-    for (const [key, name] of [["v", "Hair (keyboard: V)"], ["x", "Eraser (keyboard: X)"], ["s", "Scalpel (keyboard: S)"], ["c", "Pan (keyboard: C)"]]) {
+    for (const [key, name] of [["v", "Hair (keyboard: V)"], ["x", "Eraser (keyboard: X)"], ["s", "Pencil (selection) (keyboard: S)"], ["a", "Pencil + (add to selection) (keyboard: A)"], ["d", "Pencil − (subtract from selection) (keyboard: D)"], ["c", "Pan (keyboard: C)"]]) {
       fireEvent.keyDown(root, { key });
       expect(screen.getByRole("button", { name })).toHaveAttribute("aria-pressed", "true");
     }
+  });
+
+  it("inverser, supprimer et désélectionner n'agissent que sur une sélection", () => {
+    renderEditor();
+    for (const name of ["Invert selection", "Delete selection", "Deselect"]) expect(screen.getByRole("button", { name })).toBeDisabled();
+  });
+
+  it("une sélection active active les actions et envoie des marques sans trait", () => {
+    const onMarksChange = vi.fn();
+    const poly = { id: "p", tool: "pencil" as const, mode: "replace" as const, size: 2, closed: true, points: [{ x: 0, y: 0 }, { x: 40, y: 0 }, { x: 20, y: 30 }] };
+    renderEditor({ defaultMarks: [poly], onMarksChange });
+    fireEvent.click(screen.getByRole("button", { name: "Invert selection" }));
+    fireEvent.click(screen.getByRole("button", { name: "Delete selection" }));
+    expect(onMarksChange.mock.calls.at(-1)![0].map((m: { tool: string }) => m.tool)).toEqual(["pencil", "invert", "delete"]);
+    fireEvent.click(screen.getByRole("button", { name: "Deselect" }));
+    expect(screen.getByRole("button", { name: "Delete selection" })).toBeDisabled();
   });
 
   it("annuler et rétablir sont désactivés sans historique", () => {

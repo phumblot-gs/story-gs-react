@@ -5,7 +5,7 @@ import * as Stories from './clipping-editor.stories';
 
 # ClippingEditor
 
-An interactive background-removal editor, modeled on [Clipping Magic](https://clippingmagic.com). The user paints **Keep** and **Remove** strokes (plus **Hair** and **Scalpel**) on the original image; a segmentation engine computes an alpha mask; the right-hand pane shows the result on a transparent background and updates after every stroke.
+An interactive background-removal editor, modeled on [Clipping Magic](https://clippingmagic.com). The user paints **Keep** and **Remove** strokes (plus **Hair**) and draws **Pencil** selections to restrict what the other tools act on on the original image; a segmentation engine computes an alpha mask; the right-hand pane shows the result on a transparent background and updates after every stroke.
 
 `ClippingEditor` is the **front end only**. It does not segment anything itself: it hands the user's marks to a function you provide (`onSegment`) and displays the alpha mask that function returns. The engine can be a backend service, a WASM model, or the bundled demo engine.
 
@@ -80,10 +80,10 @@ const segment = async (request: ClippingSegmentRequest) => (await engine)(reques
 | `onSegment` | `ClippingSegmenter` | **Required.** The segmentation engine. See [The `onSegment` contract](#the-onsegment-contract). |
 | `fileName` | `string` | Shown under the image. The exported file is named `<fileName without extension>-clipped.png`. |
 | `defaultMarks` | `ClippingMark[]` | Initial marks, for example restored from a previous session. |
-| `onMarksChange` | `(marks) => void` | Called after every committed change (stroke, scalpel edit, erase, undo, redo). Persist this to resume later. |
+| `onMarksChange` | `(marks) => void` | Called after every committed change (stroke, selection edit, erase, undo, redo). Persist this to resume later. |
 | `onDownload` | `(blob, fileName) => void \| Promise<void>` | Receives the cut-out PNG at the source resolution. Without it, the browser downloads the file. |
 | `onClose` | `() => void` | Shows the close button when provided. |
-| `defaultTool` | `ClippingTool` | `keep` (default), `remove`, `hair`, `eraser`, `scalpel` or `pan`. |
+| `defaultTool` | `ClippingTool` | `keep` (default), `remove`, `hair`, `eraser`, `pencil`, `pencilAdd`, `pencilSub` or `pan` (`scalpel`, the former name of `pencil`, is still accepted). |
 | `defaultBrushSize` | `number` | Initial brush diameter in **source-image pixels** (default 20, range 2–200). |
 | `defaultView` | `'split' \| 'single'` | Split shows *Original + Marks* and *Preview* side by side (default). |
 | `autoSegment` | `boolean` | Also calls `onSegment` with an empty list of marks, so the engine's automatic cut-out appears when the image opens (and after every mark is undone). The user then corrects it with strokes. Default `false`. |
@@ -100,8 +100,10 @@ The component owns the marks and the undo history (it is uncontrolled). Everythi
 | **Keep** | `Space` (toggles with Remove) | Paint over what must stay in the result. Green. |
 | **Remove** | `Space` | Paint over what must disappear. Red. |
 | **Hair** | `V` | Paint over hair, fur or fine edges so they are kept with partial transparency. Yellow. |
-| **Eraser** | `X` | Removes marks (not pixels): any mark touched by the eraser is deleted. Never sent to the engine. |
-| **Scalpel** | `S` | Draws an editable curve along an edge that must stay sharp. See [Scalpel](#scalpel). |
+| **Eraser** | `X` | Without a selection, removes marks (not pixels): any mark touched by the eraser is deleted. Inside a selection, it only undoes what earlier marks decided under its stroke (an `erase` mark is sent to the engine). |
+| **Pencil** | `S` | Draws a closed outline that becomes the **selection** (it replaces the previous one). See [Pencil and selections](#pencil-and-selections). |
+| **Pencil +** | `A` | Same, added to the current selection (union). |
+| **Pencil −** | `D` | Same, subtracted from the current selection. |
 | **Pan** | `C`, or hold `Shift` | Moves the view. |
 
 ### Keyboard and mouse
@@ -109,7 +111,7 @@ The component owns the marks and the undo history (it is uncontrolled). Everythi
 | Shortcut | Action |
 | --- | --- |
 | `Space` | Switch between Keep and Remove |
-| `V`, `X`, `S`, `C` | Hair, Eraser, Scalpel, Pan |
+| `V`, `X`, `S`, `A`, `D`, `C` | Hair, Eraser, Pencil, Pencil +, Pencil −, Pan |
 | `Shift` (held) | Temporary Pan |
 | `Z` / `Y` (or `Cmd/Ctrl+Z`, `Shift+Z`) | Undo / Redo |
 | `[` / `]` (or `-` / `+`) | Smaller / larger brush |
@@ -118,14 +120,20 @@ The component owns the marks and the undo history (it is uncontrolled). Everythi
 | `Home` | Zoom to fit |
 | `1` / `2` | Single pane / Split view |
 | `Q` (held) | Show the other image: the original in the preview pane, or the preview in single view |
-| `Enter` / `Esc` | Finish a scalpel path |
-| `Delete` | Delete the selected scalpel point |
+| `Enter` / `Esc` | Finish a pencil path |
+| `Delete` | Delete the selected pencil point |
 
 Shortcuts work while the pointer is over the editor or when it has focus. Arrow keys keep controlling the brush-size slider when the slider is focused.
 
-### Scalpel
+### Pencil and selections
 
-The scalpel draws a Bézier path made of points:
+The Pencil draws an editable Bézier outline (the path closes on its first point when the engine reads it) that becomes the **selection**, as in Photoshop. The toolbar then offers three actions: **Invert selection**, **Delete selection** (with an optional **Feather**, the softness of the removed edge) and **Deselect**. Everything is a mark, so undo, autosave and replay work as for strokes.
+
+- **Pencil** replaces the selection, **Pencil +** adds to it, **Pencil −** subtracts from it. Outside the selection, the area is dimmed.
+- **Keep**, **Remove** and **Hair** strokes drawn while a selection exists only act inside it: the result is what the stroke would give on the original photo, restricted to the selection. The **Eraser** inside a selection only undoes what earlier marks decided there.
+- **Delete selection** removes the selected area (after **Invert**, everything outside: the former scalpel behaviour). A later Keep stroke can bring a deleted area back.
+
+The path itself is edited as before:
 
 - **Click** on empty space to place the first point; keep clicking to extend the path. **Enter**, **Esc**, or a second click on the last point ends it.
 - **Drag a point** to move it; the path follows. **Click on the path** between two points to create a new point there (and drag it in the same gesture).
@@ -142,11 +150,13 @@ Each gesture is a single undo step.
 ```ts
 interface ClippingMark {
   id: string;
-  tool: 'keep' | 'remove' | 'hair' | 'scalpel';
-  size: number;               // brush diameter, in source-image pixels (2 for a scalpel)
+  tool: 'keep' | 'remove' | 'hair' | 'pencil' | 'invert' | 'deselect' | 'delete' | 'erase' | 'scalpel';
+  size: number;               // brush diameter, in source-image pixels (2 for a pencil outline)
   points: { x: number; y: number }[]; // the stroke, in source-image pixels
-  nodes?: { x: number; y: number; corner?: boolean }[]; // scalpel only: editable path nodes
-  closed?: boolean;           // scalpel only: the path closes on its first node
+  nodes?: { x: number; y: number; corner?: boolean }[]; // pencil only: editable path nodes
+  closed?: boolean;           // pencil only: the path closes on its first node
+  mode?: 'replace' | 'add' | 'subtract'; // pencil only: Pencil, Pencil +, Pencil −
+  feather?: number;           // delete only: soft edge of the removed selection, in source-image pixels
 }
 
 interface ClippingMask {
@@ -156,7 +166,7 @@ interface ClippingMask {
 }
 ```
 
-All coordinates are in **pixels of the source image**, origin at the top-left, regardless of zoom. For a brush stroke, `points` are spaced at most half a brush diameter apart, so the stroke can be rebuilt as the union of discs of diameter `size` centered on the points. For a scalpel, `points` is the flattened curve (about 2 px apart) and `nodes` / `closed` are the editable definition; an engine can use either.
+All coordinates are in **pixels of the source image**, origin at the top-left, regardless of zoom. For a brush stroke, `points` are spaced at most half a brush diameter apart, so the stroke can be rebuilt as the union of discs of diameter `size` centered on the points. For a pencil outline, `points` is the flattened curve (about 2 px apart) and `nodes` / `closed` are the editable definition; an engine can use either.
 
 Marks are in **chronological order**. The eraser never appears: it deletes marks.
 
@@ -213,9 +223,11 @@ Content-Type: application/json
     { "id": "mark-1", "tool": "keep",   "size": 28, "points": [{ "x": 412, "y": 530 }, { "x": 418, "y": 541 }] },
     { "id": "mark-2", "tool": "remove", "size": 28, "points": [{ "x": 40,  "y": 60 }] },
     { "id": "mark-3", "tool": "hair",   "size": 16, "points": [{ "x": 300, "y": 120 }, { "x": 306, "y": 131 }] },
-    { "id": "mark-4", "tool": "scalpel", "size": 2,
-      "nodes": [{ "x": 120, "y": 120 }, { "x": 300, "y": 90, "corner": true }], "closed": false,
-      "points": [{ "x": 120, "y": 120 }, { "x": 122, "y": 119 }] }
+    { "id": "mark-4", "tool": "pencil", "mode": "replace", "size": 2,
+      "nodes": [{ "x": 120, "y": 120 }, { "x": 300, "y": 90, "corner": true }, { "x": 200, "y": 300 }], "closed": true,
+      "points": [{ "x": 120, "y": 120 }, { "x": 122, "y": 119 }, { "x": 200, "y": 300 }] },
+    { "id": "mark-5", "tool": "invert", "size": 1, "points": [] },
+    { "id": "mark-6", "tool": "delete", "size": 1, "points": [], "feather": 4 }
   ]
 }
 ```
@@ -249,7 +261,12 @@ async function decodeAlphaPng(blob: Blob, width: number, height: number): Promis
 | `keep` | **Hard foreground constraint.** Every pixel within `size / 2` of the stroke must end up at alpha 255. |
 | `remove` | **Hard background constraint.** Every pixel within `size / 2` of the stroke must end up at alpha 0. |
 | `hair` | **Soft, foreground-leaning region.** The pixels under the stroke are *unknown*: they may be fully or partially opaque. This is a job for alpha matting rather than binary segmentation: keep fine strands and semi-transparent edges where the color matches the subject, and let the surrounding background fall away. |
-| `scalpel` | **Edge hint.** The subject's boundary must follow the curve; it is a boundary, not a side label. Treat the curve as a barrier that region growing must not cross, and keep the edge crisp (alpha 0 or 255) within a couple of pixels of it. Use `points` (already flattened) or rebuild the curve from `nodes` and `closed`. |
+| `pencil` | **Selection outline** (closed polygon from `points`; `mode`: `replace`, `add` or `subtract`). Alone it changes nothing: it scopes the marks that follow. |
+| `invert` · `deselect` | Invert the selection · clear it. No selection means the whole image. |
+| `delete` | **Remove the selected area** (alpha 0 over the whole selection, softened by `feather`). A later `keep` can bring it back. |
+| `keep` / `remove` / `hair` under a selection | Act only inside it, as if applied to the original photo and then restricted to the selection. |
+| `erase` | Brush that undoes what earlier marks decided under it (inside the selection if there is one): the engine's automatic result comes back there. |
+| `scalpel` (legacy) | A closed path reads as `pencil` + `invert` + `delete`; an open path (the former "wall" mode) is dropped. |
 
 When constraints conflict (a Keep stroke overlapping an earlier Remove stroke), **the later mark wins**; `marks` is in chronological order.
 
@@ -264,7 +281,7 @@ None of these ships with the library; they are what the contract is designed for
 | Interactive Keep / Remove | An interactive segmentation model with point and box prompts (for example SAM 2 or MobileSAM). Keep strokes become positive prompts, Remove strokes negative ones. Encode the image once, then each stroke only runs the light decoder. |
 | Hair and soft edges | A matting model fed with a **trimap**: foreground = Keep, background = Remove, unknown = a band around the model's boundary plus the Hair strokes. |
 | First automatic guess | A background-removal model (for example BiRefNet or RMBG) to give the user a starting mask. |
-| Scalpel | Post-process the mask: snap or sharpen the boundary along the curve, forbid propagation across it. |
+| Selections | Rasterize the polygons, combine them in order (replace / add / subtract / invert), clip the strokes that follow to the result and paint `delete` marks as hard background. |
 | No GPU / prototype | Classical graph-cut or GrabCut on superpixels. Lower quality, no heavy dependencies. |
 
 ### Minimal service skeleton

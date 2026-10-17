@@ -4,7 +4,7 @@
  * de part et d'autre ; un nœud `corner` fait un angle vif. Tout est pur : les
  * fonctions renvoient de nouveaux tracés.
  */
-import type { ClippingMark, ClippingNode, ClippingPoint } from "./clipping";
+import type { ClippingMark, ClippingNode, ClippingPoint, ClippingSelectionMode } from "./clipping";
 
 export interface ScalpelCut {
   nodes: ClippingNode[];
@@ -17,7 +17,7 @@ export const SCALPEL_MARK_SIZE = 2;
 const dist = (a: ClippingPoint, b: ClippingPoint) => Math.hypot(a.x - b.x, a.y - b.y);
 
 export const isScalpelMark = (mark: ClippingMark): mark is ClippingMark & { nodes: ClippingNode[] } =>
-  mark.tool === "scalpel" && Array.isArray(mark.nodes);
+  (mark.tool === "pencil" || mark.tool === "scalpel") && Array.isArray(mark.nodes);
 
 export const markToCut = (mark: ClippingMark & { nodes: ClippingNode[] }): ScalpelCut => ({ nodes: mark.nodes, closed: !!mark.closed });
 
@@ -72,8 +72,8 @@ export function sampleCut(cut: ScalpelCut, step = 2): ClippingPoint[] {
 }
 
 /** Trait prêt pour l'historique et le moteur : `points` dérivés des nœuds. */
-export function cutToMark(id: string, cut: ScalpelCut): ClippingMark {
-  return { id, tool: "scalpel", size: SCALPEL_MARK_SIZE, nodes: cut.nodes, closed: cut.closed, points: sampleCut(cut) };
+export function cutToMark(id: string, cut: ScalpelCut, mode: ClippingSelectionMode = "replace", tool: "pencil" | "scalpel" = "pencil"): ClippingMark {
+  return { id, tool, size: SCALPEL_MARK_SIZE, nodes: cut.nodes, closed: cut.closed, points: sampleCut(cut), ...(tool === "pencil" ? { mode } : {}) };
 }
 
 // ---------------------------------------------------------------------------

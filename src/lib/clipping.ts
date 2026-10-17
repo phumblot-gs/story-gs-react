@@ -5,10 +5,18 @@
  * Toutes les coordonnées des marques sont en pixels de l'image source.
  */
 
-/** Outils de la barre. `pan` et `eraser` ne produisent pas de marque envoyée au moteur. */
-export type ClippingTool = "keep" | "remove" | "hair" | "eraser" | "scalpel" | "pan";
-/** Outils dont le trait est transmis au moteur de détourage. */
-export type ClippingMarkTool = "keep" | "remove" | "hair" | "scalpel";
+/**
+ * Outils de la barre. `pencil` trace une sélection (`pencilAdd` : union, `pencilSub` : soustraction) ; `scalpel` est l'ancien
+ * nom de `pencil`, accepté pour les anciennes sessions. `pan` ne produit pas de marque.
+ */
+export type ClippingTool = "keep" | "remove" | "hair" | "eraser" | "pencil" | "pencilAdd" | "pencilSub" | "scalpel" | "pan";
+/**
+ * Marques transmises au moteur de détourage. `pencil` construit la sélection, `invert` / `deselect` la modifient, `delete`
+ * supprime la zone sélectionnée, `erase` gomme l'effet des marques précédentes (dans la sélection). `scalpel` : ancien tracé.
+ */
+export type ClippingMarkTool = "keep" | "remove" | "hair" | "scalpel" | "pencil" | "invert" | "deselect" | "delete" | "erase";
+/** Mode d'un tracé de sélection : remplace la sélection, s'y ajoute (Pencil+) ou en soustrait (Pencil−). */
+export type ClippingSelectionMode = "replace" | "add" | "subtract";
 
 export interface ClippingPoint {
   x: number;
@@ -31,6 +39,10 @@ export interface ClippingMark {
   nodes?: ClippingNode[];
   /** Scalpel : le tracé se referme sur son premier nœud. */
   closed?: boolean;
+  /** Pencil : remplace la sélection (défaut), s'y ajoute ou en soustrait. */
+  mode?: ClippingSelectionMode;
+  /** Delete : adoucissement du bord de la zone supprimée, en pixels de l'image source. */
+  feather?: number;
 }
 
 /** Masque alpha d'une image : 1 octet par pixel (0 = fond, 255 = sujet), ligne par ligne. */
@@ -51,8 +63,28 @@ export interface ClippingSegmentRequest {
 /** Moteur de détourage fourni par l'application hôte (backend, WASM, simulateur…). */
 export type ClippingSegmenter = (request: ClippingSegmentRequest) => Promise<ClippingMask>;
 
-export const isMarkTool = (tool: ClippingTool): tool is ClippingMarkTool =>
-  tool === "keep" || tool === "remove" || tool === "hair" || tool === "scalpel";
+/** Outils au pinceau : leur trait devient une marque. */
+export type ClippingBrushTool = "keep" | "remove" | "hair";
+export const isBrushTool = (tool: ClippingTool): tool is ClippingBrushTool => tool === "keep" || tool === "remove" || tool === "hair";
+/** Outils qui tracent un contour de sélection (Pencil, Pencil+, Pencil−, et l'ancien scalpel). */
+export const isPencilTool = (tool: ClippingTool): boolean => tool === "pencil" || tool === "pencilAdd" || tool === "pencilSub" || tool === "scalpel";
+export const pencilMode = (tool: ClippingTool): ClippingSelectionMode => (tool === "pencilAdd" ? "add" : tool === "pencilSub" ? "subtract" : "replace");
+/** Marques sans trait au pinceau : elles agissent sur la sélection ou la zone sélectionnée, la gomme ne les efface pas. */
+const NON_ERASABLE: ClippingMarkTool[] = ["pencil", "invert", "deselect", "delete", "erase", "scalpel"];
+const HAS_NO_POINTS: ClippingMarkTool[] = ["invert", "deselect", "delete"];
+
+/**
+ * Marques de sélection en vigueur : celles qui suivent le dernier `deselect`. `active` est faux quand il n'y a pas de tracé
+ * (les marques `invert` et `delete` seules n'ont rien à agir). Un ancien scalpel n'est pas une sélection.
+ */
+export function selectionState(marks: ClippingMark[]): { ops: ClippingMark[]; active: boolean } {
+  let ops: ClippingMark[] = [];
+  for (const m of marks) {
+    if (m.tool === "deselect") ops = [];
+    else if (m.tool === "pencil" || m.tool === "invert") ops = [...ops, m];
+  }
+  return { ops, active: ops.some((m) => m.tool === "pencil" && m.points.length >= 3) };
+}
 
 // ---------------------------------------------------------------------------
 // Historique (annuler / rétablir)
@@ -88,9 +120,9 @@ const commit = (state: ClippingHistory, present: ClippingMark[]): ClippingHistor
 export function clippingHistoryReducer(state: ClippingHistory, action: ClippingHistoryAction): ClippingHistory {
   switch (action.type) {
     case "add":
-      return action.mark.points.length === 0 ? state : commit(state, [...state.present, action.mark]);
+      return action.mark.points.length === 0 && !HAS_NO_POINTS.includes(action.mark.tool) ? state : commit(state, [...state.present, action.mark]);
     case "erase": {
-      const kept = state.present.filter((mark) => !markTouched(mark, action.points, action.size / 2));
+      const kept = state.present.filter((mark) => NON_ERASABLE.includes(mark.tool) || !markTouched(mark, action.points, action.size / 2));
       // Rien d'effacé : pas d'entrée d'historique.
       return kept.length === state.present.length ? state : commit(state, kept);
     }

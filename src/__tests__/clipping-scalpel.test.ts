@@ -41,7 +41,8 @@ describe("courbes du scalpel", () => {
 
   it("cutToMark expose des points pour le moteur", () => {
     const mark = cutToMark("c", line(0, 50));
-    expect(mark.tool).toBe("scalpel"); expect(mark.points.length).toBeGreaterThan(2); expect(mark.nodes).toHaveLength(2);
+    expect(mark.tool).toBe("pencil"); expect(mark.mode).toBe("replace"); expect(cutToMark("c", line(0, 50), "add").mode).toBe("add");
+    expect(cutToMark("c", line(0, 50), "replace", "scalpel").mode).toBeUndefined(); expect(mark.points.length).toBeGreaterThan(2); expect(mark.nodes).toHaveLength(2);
   });
 });
 

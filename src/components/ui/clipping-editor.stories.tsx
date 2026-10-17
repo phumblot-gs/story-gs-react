@@ -41,9 +41,9 @@ function useDemoSegmenter(src: string, latencyMs = 250): ClippingSegmenter {
 
 const meta = {
   title: 'Components/ClippingEditor', component: ClippingEditor, tags: ['autodocs'],
-  parameters: { layout: 'fullscreen', docs: { description: { component: 'Éditeur de détourage : on trace des traits « Garder » / « Retirer » (et « Cheveux », « Scalpel ») sur l’image, un moteur fourni par l’application calcule le masque et l’aperçu sur fond transparent se met à jour. Le composant ne détoure pas lui-même : `onSegment` reçoit les traits et renvoie un masque alpha. Raccourcis : Espace Garder/Retirer, V Cheveux, X Gomme, S Scalpel, C ou Maj Déplacer, Z/Y Annuler/Rétablir, Accueil ajuster, 1/2 vues, molette zoom.' } } },
+  parameters: { layout: 'fullscreen', docs: { description: { component: 'Éditeur de détourage : on trace des traits « Garder » / « Retirer » (et « Cheveux ») et des sélections au « Crayon » sur l’image, un moteur fourni par l’application calcule le masque et l’aperçu sur fond transparent se met à jour. Le composant ne détoure pas lui-même : `onSegment` reçoit les traits et renvoie un masque alpha. Raccourcis : Espace Garder/Retirer, V Cheveux, X Gomme, S Crayon, A Crayon +, D Crayon −, C ou Maj Déplacer, Z/Y Annuler/Rétablir, Accueil ajuster, 1/2 vues, molette zoom.' } } },
   argTypes: {
-    defaultTool: { control: 'select', options: ['keep', 'remove', 'hair', 'eraser', 'scalpel', 'pan'] },
+    defaultTool: { control: 'select', options: ['keep', 'remove', 'hair', 'eraser', 'pencil', 'pencilAdd', 'pencilSub', 'pan'] },
     defaultView: { control: 'radio', options: ['split', 'single'] },
     language: { control: 'select', options: ['fr', 'en', 'es', 'it', 'de'] },
     defaultBrushSize: { control: { type: 'range', min: 2, max: 200, step: 1 } },
@@ -73,7 +73,9 @@ const CUTS: ClippingMark[] = [
   cutToMark('cut-open', { closed: false, nodes: [{ x: 120, y: 120 }, { x: 300, y: 90 }, { x: 500, y: 140, corner: true }, { x: 640, y: 300 }] }),
   cutToMark('cut-loop', { closed: true, nodes: [{ x: 200, y: 600 }, { x: 330, y: 540 }, { x: 460, y: 620 }, { x: 330, y: 720 }] }),
 ];
-export const Scalpel: Story = { args: { defaultTool: 'scalpel', defaultMarks: CUTS }, render: (args) => <Demo {...args} /> };
+export const Pencil: Story = { args: { defaultTool: 'pencil', defaultMarks: CUTS }, render: (args) => <Demo {...args} /> };
+/** Une sélection (tracé fermé) avec un trait Retirer à l'intérieur : seul l'intérieur est concerné. */
+export const WithSelection: Story = { args: { defaultMarks: [CUTS[1], { id: 'rm', tool: 'remove', size: 30, points: [{ x: 330, y: 600 }, { x: 340, y: 640 }] }] }, render: (args) => <Demo {...args} /> };
 export const English: Story = { args: { language: 'en' }, render: (args) => <Demo {...args} /> };
 export const Closable: Story = { args: { onClose: fn() }, render: (args) => <Demo {...args} /> };
 
