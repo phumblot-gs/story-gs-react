@@ -578,15 +578,21 @@ function Pane({ title, ariaLabel, caption, cursor, checker, draw, sizeRef, onMea
   useLayoutEffect(() => {
     const el = host.current;
     if (!el) return;
-    const measure = () => {
+    // Taille mesurée en pixels écran entiers : si le canvas avait un pixel de moins ou de plus que sa boîte CSS, le navigateur
+    // l'étirerait (rééchantillonnage) et flouterait toute l'image d'une fraction de pixel, surtout visible à 100 %.
+    const measure = (entry?: ResizeObserverEntry) => {
       const r = el.getBoundingClientRect();
-      const next = { width: Math.max(1, Math.round(r.width)), height: Math.max(1, Math.round(r.height)) };
+      const dpr = devicePixelRatio();
+      const box = entry?.devicePixelContentBoxSize?.[0];
+      const dw = Math.max(1, Math.round(box ? box.inlineSize : r.width * dpr));
+      const dh = Math.max(1, Math.round(box ? box.blockSize : r.height * dpr));
+      const next = { width: dw / dpr, height: dh / dpr };
       setSize((prev) => (prev.width === next.width && prev.height === next.height ? prev : next));
     };
     measure();
     if (typeof ResizeObserver === 'undefined') return;
-    const observer = new ResizeObserver(measure);
-    observer.observe(el);
+    const observer = new ResizeObserver((entries) => measure(entries[0]));
+    try { observer.observe(el, { box: 'device-pixel-content-box' }); } catch { observer.observe(el); }
     return () => observer.disconnect();
   }, []);
 
