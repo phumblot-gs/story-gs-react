@@ -584,8 +584,10 @@ function Pane({ title, ariaLabel, caption, cursor, checker, draw, sizeRef, onMea
       const r = el.getBoundingClientRect();
       const dpr = devicePixelRatio();
       const box = entry?.devicePixelContentBoxSize?.[0];
-      const dw = Math.max(1, Math.round(box ? box.inlineSize : r.width * dpr));
-      const dh = Math.max(1, Math.round(box ? box.blockSize : r.height * dpr));
+      // The exact device-pixel box when the browser reports one that agrees with the layout box (emulated densities may not).
+      const exact = (reported: number | undefined, css: number) => (reported !== undefined && Math.abs(reported - css * dpr) <= 2 ? reported : css * dpr);
+      const dw = Math.max(1, Math.round(exact(box?.inlineSize, r.width)));
+      const dh = Math.max(1, Math.round(exact(box?.blockSize, r.height)));
       const next = { width: dw / dpr, height: dh / dpr };
       setSize((prev) => (prev.width === next.width && prev.height === next.height ? prev : next));
     };
