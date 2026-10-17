@@ -24,9 +24,51 @@ describe("ClippingEditor", () => {
     expect(screen.getByRole("button", { name: "Remove (keyboard: Spacebar)" })).toHaveAttribute("aria-pressed", "true");
     fireEvent.keyDown(root, { key: " " });
     expect(screen.getByRole("button", { name: "Keep (keyboard: Spacebar)" })).toHaveAttribute("aria-pressed", "true");
-    for (const [key, name] of [["v", "Hair (keyboard: V)"], ["x", "Eraser (keyboard: X)"], ["s", "Scalpel (keyboard: S)"], ["c", "Pan (keyboard: C)"]]) {
+    for (const [key, name] of [["v", "Hair (keyboard: V)"], ["x", "Eraser (keyboard: X)"], ["s", "Pencil (selection) (keyboard: S)"], ["a", "Pencil + (add to selection) (keyboard: A)"], ["d", "Pencil − (subtract from selection) (keyboard: D)"], ["c", "Pan (keyboard: C)"]]) {
       fireEvent.keyDown(root, { key });
       expect(screen.getByRole("button", { name })).toHaveAttribute("aria-pressed", "true");
+    }
+  });
+
+  it("inverser, supprimer et désélectionner n'agissent que sur une sélection", () => {
+    renderEditor();
+    for (const name of ["Invert selection", "Delete selection", "Deselect"]) expect(screen.getByRole("button", { name })).toBeDisabled();
+  });
+
+  it("une sélection active active les actions et envoie des marques sans trait", () => {
+    const onMarksChange = vi.fn();
+    const poly = { id: "p", tool: "pencil" as const, mode: "replace" as const, size: 2, closed: true, points: [{ x: 0, y: 0 }, { x: 40, y: 0 }, { x: 20, y: 30 }] };
+    renderEditor({ defaultMarks: [poly], onMarksChange });
+    fireEvent.click(screen.getByRole("button", { name: "Invert selection" }));
+    fireEvent.click(screen.getByRole("button", { name: "Delete selection" }));
+    expect(onMarksChange.mock.calls.at(-1)![0].map((m: { tool: string }) => m.tool)).toEqual(["pencil", "invert", "delete"]);
+    fireEvent.click(screen.getByRole("button", { name: "Deselect" }));
+    expect(screen.getByRole("button", { name: "Delete selection" })).toBeDisabled();
+  });
+
+  it("affiche le niveau de zoom, 1:1 et la touche 0 passent à 100 %", () => {
+    renderEditor();
+    const root = document.querySelector("[data-gs-clipping-editor]") as HTMLElement;
+    fireEvent.click(screen.getByRole("button", { name: "Actual size (100%) (0)" }));
+    expect(screen.getByTestId("clipping-zoom")).toHaveTextContent("100%");
+    fireEvent.click(screen.getByRole("button", { name: "Zoom in" }));
+    expect(screen.getByTestId("clipping-zoom")).not.toHaveTextContent(/^100%$/);
+    fireEvent.keyDown(root, { key: "0" });
+    expect(screen.getByTestId("clipping-zoom")).toHaveTextContent("100%");
+    expect(screen.getByRole("button", { name: "Actual size (100%) (0)" })).toHaveAttribute("aria-pressed", "true");
+  });
+
+  it("sur un écran Retina, 100 % est un pixel image par pixel écran (et non par pixel CSS)", () => {
+    const original = window.devicePixelRatio;
+    Object.defineProperty(window, "devicePixelRatio", { value: 2, configurable: true });
+    try {
+      renderEditor();
+      fireEvent.click(screen.getByRole("button", { name: "Actual size (100%) (0)" }));
+      expect(screen.getByTestId("clipping-zoom")).toHaveTextContent("100%");
+      fireEvent.click(screen.getByRole("button", { name: "Zoom in" }));
+      expect(screen.getByTestId("clipping-zoom")).toHaveTextContent("120%"); // 1,2 × 100 % : l'échelle est en pixels écran
+    } finally {
+      Object.defineProperty(window, "devicePixelRatio", { value: original, configurable: true });
     }
   });
 

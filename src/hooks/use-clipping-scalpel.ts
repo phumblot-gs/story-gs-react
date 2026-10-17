@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  imageToScreen, newMarkId, type ClippingMark, type ClippingPoint, type ClippingViewport,
+  imageToScreen, newMarkId, type ClippingMark, type ClippingPoint, type ClippingSelectionMode, type ClippingViewport,
 } from '@/lib/clipping';
 import {
   SCALPEL_MARK_SIZE, canSnap, closeCut, cutToMark, deleteNode, extendCut, hitTestCuts, insertNode, isEndNode, isScalpelMark, joinCuts,
@@ -40,7 +40,13 @@ export function traceCut(ctx: CanvasRenderingContext2D, cut: ScalpelCut) {
  * supprimer. Les modifications intermédiaires vivent dans un brouillon ; une
  * seule entrée d'historique est écrite à la fin de chaque geste.
  */
-export function useClippingScalpel({ marks, commit }: { marks: ClippingMark[]; commit: (marks: ClippingMark[]) => void }) {
+export function useClippingScalpel({ marks, commit, mode = 'replace', visible }: {
+  marks: ClippingMark[]; commit: (marks: ClippingMark[]) => void;
+  /** Mode des nouveaux tracés (Pencil, Pencil+, Pencil−). */
+  mode?: ClippingSelectionMode;
+  /** Tracés montrés et modifiables (ceux de la sélection en vigueur) ; tous par défaut. */
+  visible?: (mark: ClippingMark) => boolean;
+}) {
   const [draft, setDraft] = useState<ClippingMark | null>(null);
   const [connecting, setConnecting] = useState<NodeRef | null>(null);
   const [selected, setSelected] = useState<NodeRef | null>(null);
@@ -55,8 +61,8 @@ export function useClippingScalpel({ marks, commit }: { marks: ClippingMark[]; c
     return marks.some((m) => m.id === draft.id) ? marks.map((m) => (m.id === draft.id ? draft : m)) : [...marks, draft];
   }, [marks, draft]);
 
-  const latest = useRef({ view, marks, connecting, hot, selected });
-  latest.current = { view, marks, connecting, hot, selected };
+  const latest = useRef({ view, marks, connecting, hot, selected, mode, visible });
+  latest.current = { view, marks, connecting, hot, selected, mode, visible };
 
   // Un annuler / rétablir peut supprimer le tracé en cours d'édition.
   useEffect(() => {
@@ -66,19 +72,27 @@ export function useClippingScalpel({ marks, commit }: { marks: ClippingMark[]; c
     if (!exists(hot)) setHot(null);
   }, [view, connecting, selected, hot]);
 
-  const targets = () => latest.current.view.filter(isScalpelMark).map((m) => ({ id: m.id, cut: markToCut(m) }));
+  const targets = () => latest.current.view.filter(isScalpelMark).filter((m) => latest.current.visible?.(m) ?? true).map((m) => ({ id: m.id, cut: markToCut(m) }));
   const cutOf = (id: string) => targets().find((t) => t.id === id)?.cut ?? null;
 
   /** Écrit un tracé (ou le supprime avec `null`). Un tracé d'un seul nœud reste brouillon : il n'entre dans l'historique qu'à son deuxième nœud. */
   const write = (id: string, cut: ScalpelCut | null, removeIds: string[] = []) => {
     const { marks: current } = latest.current;
     const old = current.find((m) => m.id === id);
-    if (cut && cut.nodes.length < 2) { setDraft(cutToMark(id, cut)); return; }
+    const tool = old?.tool === 'scalpel' ? 'scalpel' : 'pencil';
+    const make = (c: ScalpelCut) => cutToMark(id, c, old?.mode ?? latest.current.mode, tool);
+    if (cut && cut.nodes.length < 2) { setDraft(make(cut)); return; }
     setDraft(null);
     if (!cut && !old && removeIds.length === 0) return;
-    let next = cut ? (old ? current.map((m) => (m.id === id ? cutToMark(id, cut) : m)) : [...current, cutToMark(id, cut)]) : current.filter((m) => m.id !== id);
+    let next = cut ? (old ? current.map((m) => (m.id === id ? make(cut) : m)) : [...current, make(cut)]) : current.filter((m) => m.id !== id);
     if (removeIds.length) next = next.filter((m) => !removeIds.includes(m.id));
     commit(next);
+  };
+
+  /** Brouillon d'un tracé en cours de modification : garde l'outil et le mode de l'original. */
+  const draftOf = (id: string, cut: ScalpelCut): ClippingMark => {
+    const m = latest.current.view.find((x) => x.id === id);
+    return { id, tool: m?.tool === 'scalpel' ? 'scalpel' : 'pencil', size: SCALPEL_MARK_SIZE, nodes: cut.nodes, closed: cut.closed, points: [], ...(m?.mode ? { mode: m.mode } : {}) };
   };
 
   const finish = useCallback(() => {
@@ -172,7 +186,7 @@ export function useClippingScalpel({ marks, commit }: { marks: ClippingMark[]; c
       // Nœud intérieur : on démarre un nouveau tracé depuis ce point.
       const n = cut.nodes[hit.index];
       const newId = newMarkId();
-      setDraft(cutToMark(newId, { nodes: [{ x: n.x, y: n.y, corner: n.corner }], closed: false }));
+      setDraft(cutToMark(newId, { nodes: [{ x: n.x, y: n.y, corner: n.corner }], closed: false }, latest.current.mode));
       setConnecting({ id: newId, index: 0 }); setSelected(null);
       return;
     }
@@ -180,14 +194,14 @@ export function useClippingScalpel({ marks, commit }: { marks: ClippingMark[]; c
       const { id, hit } = found;
       const cut = all.find((t) => t.id === id)!.cut;
       const ins = insertNode(cut, hit.index, hit.point);
-      setDraft({ id, tool: 'scalpel', size: SCALPEL_MARK_SIZE, nodes: ins.cut.nodes, closed: ins.cut.closed, points: [] });
+      setDraft(draftOf(id, ins.cut));
       drag.current = { id, index: ins.index, origin: ins.cut, cut: ins.cut, offset: { x: 0, y: 0 }, start: s, moved: false, inserted: true };
       setSelected({ id, index: ins.index });
       return;
     }
     // Zone vide : premier nœud d'un nouveau tracé, que les clics suivants prolongent.
     const id = newMarkId();
-    setDraft(cutToMark(id, { nodes: [{ x: p.x, y: p.y }], closed: false }));
+    setDraft(cutToMark(id, { nodes: [{ x: p.x, y: p.y }], closed: false }, latest.current.mode));
     setConnecting({ id, index: 0 }); setSelected({ id, index: 0 });
   };
 
@@ -197,7 +211,7 @@ export function useClippingScalpel({ marks, commit }: { marks: ClippingMark[]; c
       if (!d.moved && Math.hypot(s.x - d.start.x, s.y - d.start.y) < PX.dragThreshold) return;
       d.moved = true;
       d.cut = moveNode(d.origin, d.index, { x: p.x + d.offset.x, y: p.y + d.offset.y });
-      setDraft({ id: d.id, tool: 'scalpel', size: SCALPEL_MARK_SIZE, nodes: d.cut.nodes, closed: d.cut.closed, points: [] });
+      setDraft(draftOf(d.id, d.cut));
       setCursor('move');
       return;
     }
@@ -255,7 +269,7 @@ export function useClippingScalpel({ marks, commit }: { marks: ClippingMark[]; c
     ctx.setLineDash([]); ctx.lineJoin = 'round';
     const active = hot ?? selected;
     for (const mark of view) {
-      if (!isScalpelMark(mark)) continue;
+      if (!isScalpelMark(mark) || !(visible?.(mark) ?? true)) continue;
       mark.nodes.forEach((n, i) => {
         const c = imageToScreen(vp, pane, n);
         const isSelected = selected?.id === mark.id && selected.index === i;

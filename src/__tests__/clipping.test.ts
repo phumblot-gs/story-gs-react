@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
-  applyAlphaMask, clippingHistoryReducer, createClippingHistory, densifyPoints, fitViewport, imageToScreen, panViewport,
-  screenToImage, zoomViewport, CLIPPING_MAX_SCALE, type ClippingMark,
+  shouldSegment, applyAlphaMask, clippingHistoryReducer, createClippingHistory, densifyPoints, fitViewport, imageToScreen, panViewport,
+  screenToImage, zoomViewport, CLIPPING_MAX_SCALE, isPencilTool, pencilMode, selectionState, type ClippingMark,
 } from "@/lib/clipping";
 import { createColorClippingSegmenter } from "@/lib/clipping-color-segmenter";
 
@@ -132,5 +132,40 @@ describe("createColorClippingSegmenter", () => {
     const controller = new AbortController();
     controller.abort();
     await expect(createColorClippingSegmenter({ width: w, height: h, data })({ marks: [], width: w, height: h, signal: controller.signal })).rejects.toThrow();
+  });
+});
+
+
+describe("shouldSegment", () => {
+  it("asks the engine for marks, and for the automatic cut-out only when autoSegment is on", () => {
+    const m = [mark("a", 0)];
+    expect(shouldSegment([], false)).toBe(false);
+    expect(shouldSegment([], true)).toBe(true);
+    expect(shouldSegment(m, false)).toBe(true);
+    expect(shouldSegment(m, true)).toBe(true);
+  });
+});
+
+describe("sélection (Pencil)", () => {
+  const m = (id: string, tool: ClippingMark["tool"], extra: Partial<ClippingMark> = {}): ClippingMark =>
+    ({ id, tool, size: 2, points: tool === "pencil" ? [{ x: 0, y: 0 }, { x: 9, y: 0 }, { x: 0, y: 9 }] : [], ...extra });
+  it("une sélection est active après un tracé, jusqu'à « désélectionner »", () => {
+    expect(selectionState([]).active).toBe(false);
+    expect(selectionState([m("a", "pencil")]).active).toBe(true);
+    expect(selectionState([m("a", "pencil"), m("b", "deselect")]).active).toBe(false);
+    expect(selectionState([m("a", "pencil"), m("b", "deselect"), m("c", "pencil", { mode: "add" })]).ops.map((o) => o.id)).toEqual(["c"]);
+    expect(selectionState([m("i", "invert")]).active).toBe(false);
+  });
+  it("les marques sans trait entrent dans l'historique et la gomme ne supprime pas les marques de sélection", () => {
+    let h = createClippingHistory([m("a", "pencil")]);
+    h = clippingHistoryReducer(h, { type: "add", mark: m("i", "invert") });
+    h = clippingHistoryReducer(h, { type: "add", mark: m("d", "delete", { feather: 4 }) });
+    expect(h.present.map((x) => x.tool)).toEqual(["pencil", "invert", "delete"]);
+    expect(clippingHistoryReducer(h, { type: "erase", points: [{ x: 0, y: 0 }], size: 50 })).toBe(h);
+    expect(clippingHistoryReducer(h, { type: "add", mark: { id: "k", tool: "keep", size: 5, points: [] } })).toBe(h);
+  });
+  it("pencilMode et isPencilTool", () => {
+    expect([pencilMode("pencil"), pencilMode("pencilAdd"), pencilMode("pencilSub")]).toEqual(["replace", "add", "subtract"]);
+    expect(isPencilTool("scalpel") && isPencilTool("pencilAdd") && !isPencilTool("keep")).toBe(true);
   });
 });

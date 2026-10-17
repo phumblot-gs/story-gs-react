@@ -31,7 +31,7 @@ export function createColorClippingSegmenter(image: { width: number; height: num
     const keep: Rgb[] = [];
     const remove: Rgb[] = [];
     for (const mark of marks) {
-      if (mark.tool === "scalpel") continue; // une coupe n'a pas de couleur propre
+      if (mark.tool !== "keep" && mark.tool !== "remove" && mark.tool !== "hair") continue; // sélection, gomme : pas de couleur propre
       const label = mark.tool === "remove" ? 2 : 1;
       const r = Math.max(1, (mark.size / 2) * scale);
       for (const p of mark.points) stamp(forced, w, h, p.x * scale, p.y * scale, r, label, label === 2 ? remove : keep, px);

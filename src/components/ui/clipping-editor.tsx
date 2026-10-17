@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useReducer, useRef, useState } from 'react';
-import { Brush, Columns2, Download, Eraser, Hand, Maximize, Minus, Plus, Redo2, Scissors, Square, Undo2, X, ZoomIn, ZoomOut } from 'lucide-react';
+import { Brush, Columns2, Contrast, Download, Eraser, Hand, Maximize, Minus, Pencil, Plus, Redo2, Square, SquareDashed, Trash2, Undo2, X, ZoomIn, ZoomOut } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from './button';
 import { Slider } from './slider';
@@ -11,12 +11,12 @@ import { traceCut, useClippingScalpel } from '@/hooks/use-clipping-scalpel';
 import { isScalpelMark, markToCut } from '@/lib/clipping-scalpel';
 import type { TranslationMap } from '@/utils/translations';
 import {
-  applyAlphaMask, clippingHistoryReducer, createClippingHistory, densifyPoints, fitViewport, isMarkTool, newMarkId, panViewport,
-  screenToImage, imageToScreen, zoomViewport,
+  applyAlphaMask, clippingHistoryReducer, shouldSegment, createClippingHistory, densifyPoints, fitViewport, isBrushTool, isPencilTool, newMarkId, panViewport,
+  pencilMode, selectionState, screenToImage, imageToScreen, zoomViewport, clampScale,
   type ClippingMark, type ClippingMask, type ClippingPoint, type ClippingSegmenter, type ClippingTool, type ClippingViewport,
 } from '@/lib/clipping';
 
-export type { ClippingMark, ClippingMask, ClippingNode, ClippingPoint, ClippingSegmentRequest, ClippingSegmenter, ClippingTool } from '@/lib/clipping';
+export type { ClippingMark, ClippingMask, ClippingNode, ClippingPoint, ClippingSegmentRequest, ClippingSegmenter, ClippingSelectionMode, ClippingTool } from '@/lib/clipping';
 
 export interface ClippingEditorProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange' | 'children'> {
   /** Image à détourer. Une URL d'un autre domaine doit autoriser CORS (le détourage lit ses pixels). */
@@ -36,6 +36,11 @@ export interface ClippingEditorProps extends Omit<React.HTMLAttributes<HTMLDivEl
   /** Diamètre initial du pinceau, en pixels de l'image source. */
   defaultBrushSize?: number;
   defaultView?: 'single' | 'split';
+  /**
+   * Also calls `onSegment` with an empty list of marks, so the engine's automatic cut-out is shown as soon as the
+   * image opens (and after every mark is undone). The user then corrects it with strokes. Default false.
+   */
+  autoSegment?: boolean;
   language?: string;
   translations?: Partial<TranslationMap>;
 }
@@ -45,8 +50,30 @@ type Source = { img: HTMLImageElement; pixels: ImageData };
 type PaneSize = { width: number; height: number };
 type PaneEvent = { x: number; y: number; size: PaneSize; event: React.PointerEvent<HTMLCanvasElement> };
 
+/** Pixels écran par pixel CSS (2 sur un écran Retina) : « 100 % » est un pixel image pour un pixel écran, comme dans Photoshop. */
+const devicePixelRatio = () => (typeof window !== 'undefined' && window.devicePixelRatio) || 1;
+
+/**
+ * Place le repère image dans le canvas. À un zoom entier en pixels écran (100 %, 200 %…), l'image est calée sur la grille de
+ * pixels écran et dessinée sans lissage : sinon un décalage d'un demi-pixel flouterait tout le bord (Photoshop cale aussi
+ * l'image sur les pixels à 100 %). Entre deux, le lissage reste actif.
+ */
+function applyViewTransform(ctx: CanvasRenderingContext2D, size: PaneSize, vp: ClippingViewport) {
+  const dpr = devicePixelRatio();
+  const device = vp.scale * dpr;
+  const whole = device >= 1 && Math.abs(device - Math.round(device)) < 1e-3;
+  let tx = size.width / 2 - vp.center.x * vp.scale;
+  let ty = size.height / 2 - vp.center.y * vp.scale;
+  if (whole) { tx = Math.round(tx * dpr) / dpr; ty = Math.round(ty * dpr) / dpr; }
+  ctx.translate(tx, ty); ctx.scale(vp.scale, vp.scale);
+  ctx.imageSmoothingEnabled = !whole && device < 2; // pixels francs aux zooms entiers (100 % inclus) et dès 200 %, lissé entre deux
+}
+
 /** Couleurs des traits : valeurs des tokens figma (green, red-strong, pastel-blue) ; un canvas ne lit pas les variables CSS. */
-const MARK_COLORS: Record<ClippingMark['tool'], string> = { keep: '#89cc52', remove: '#dd3733', hair: '#f5c518', scalpel: '#74d4da' };
+const MARK_COLORS: Partial<Record<ClippingMark['tool'], string>> = { keep: '#89cc52', remove: '#dd3733', hair: '#f5c518', scalpel: '#74d4da', pencil: '#74d4da' };
+/** Couleur du tracé de sélection selon son mode : remplace (cyan), Pencil+ (vert), Pencil− (rouge). */
+const PENCIL_COLORS = { replace: '#74d4da', add: '#89cc52', subtract: '#dd3733' } as const;
+const FEATHER_MAX = 60;
 const BRUSH_MIN = 2;
 const BRUSH_MAX = 200;
 /** Pas de zoom des boutons et de PageUp / PageDown, et déplacement d'une flèche (Maj : 1 px), en pixels écran. */
@@ -66,19 +93,32 @@ const TOOL_ICONS: Record<ClippingTool, React.ReactNode> = {
   remove: <Minus size={14} aria-hidden="true" />,
   hair: <Brush size={14} aria-hidden="true" />,
   eraser: <Eraser size={14} aria-hidden="true" />,
-  scalpel: <Scissors size={14} aria-hidden="true" />,
+  pencil: <Pencil size={14} aria-hidden="true" />,
+  pencilAdd: <PencilBadge sign="+" />,
+  pencilSub: <PencilBadge sign="−" />,
+  scalpel: <Pencil size={14} aria-hidden="true" />,
   pan: <Hand size={14} aria-hidden="true" />,
 };
-const TOOL_KEYS: Record<ClippingTool, string> = { keep: '␣', remove: '␣', hair: 'V', eraser: 'X', scalpel: 'S', pan: 'C' };
-const TOOL_ORDER: ClippingTool[] = ['keep', 'remove', 'hair', 'eraser', 'scalpel', 'pan'];
+const TOOL_KEYS: Record<ClippingTool, string> = { keep: '␣', remove: '␣', hair: 'V', eraser: 'X', pencil: 'S', pencilAdd: 'A', pencilSub: 'D', scalpel: 'S', pan: 'C' };
+const TOOL_ORDER: ClippingTool[] = ['keep', 'remove', 'hair', 'eraser', 'pencil', 'pencilAdd', 'pencilSub', 'pan'];
+
+function PencilBadge({ sign }: { sign: string }) {
+  return (
+    <span className="relative inline-flex" aria-hidden="true">
+      <Pencil size={14} />
+      <span className="absolute -right-1.5 -top-1.5 text-[11px] font-bold leading-none">{sign}</span>
+    </span>
+  );
+}
 
 export function ClippingEditor({
   src, fileName, onSegment, defaultMarks, onMarksChange, onDownload, onClose, defaultTool = 'keep', defaultBrushSize = 20,
-  defaultView = 'split', language, translations, className, onKeyDown, ...props
+  defaultView = 'split', autoSegment = false, language, translations, className, onKeyDown, ...props
 }: ClippingEditorProps) {
   const { t } = useTranslationSafe(translations, language);
   const [history, dispatch] = useReducer(clippingHistoryReducer, defaultMarks, createClippingHistory);
-  const [tool, setTool] = useState<ClippingTool>(defaultTool);
+  const [tool, setTool] = useState<ClippingTool>(defaultTool === 'scalpel' ? 'pencil' : defaultTool);
+  const [feather, setFeather] = useState(0);
   const [brush, setBrush] = useState(Math.min(BRUSH_MAX, Math.max(BRUSH_MIN, defaultBrushSize)));
   const [view, setView] = useState<'single' | 'split'>(defaultView);
   const [showPreview, setShowPreview] = useState(false);
@@ -93,9 +133,16 @@ export function ClippingEditor({
   const [panning, setPanning] = useState(false);
   const [shiftHeld, setShiftHeld] = useState(false);
   const [peekOriginal, setPeekOriginal] = useState(false);
-  const scalpel = useClippingScalpel({ marks: history.present, commit: (marks) => dispatch({ type: 'set', marks }) });
+  const selection = useMemo(() => selectionState(history.present), [history.present]);
+  const liveIds = useMemo(() => new Set(selection.ops.map((m) => m.id)), [selection]);
+  const scalpel = useClippingScalpel({
+    marks: history.present, commit: (marks) => dispatch({ type: 'set', marks }), mode: pencilMode(tool),
+    // Seuls les tracés de la sélection en vigueur (après le dernier « désélectionner ») sont montrés et modifiables ; l'ancien scalpel reste visible.
+    visible: (mark) => mark.tool === 'scalpel' || liveIds.has(mark.id) || !history.present.some((m) => m.id === mark.id),
+  });
 
   const paneSize = useRef<PaneSize>({ width: 1, height: 1 });
+  const [, setMeasured] = useState(''); // re-render once the panes are measured: the zoom readout depends on their size
   const drag = useRef<{ kind: 'pan'; x: number; y: number } | { kind: 'stroke'; tool: ClippingTool; points: ClippingPoint[] } | null>(null);
   const onSegmentRef = useRef(onSegment);
   onSegmentRef.current = onSegment;
@@ -130,7 +177,7 @@ export function ClippingEditor({
   useEffect(() => {
     if (!source) return;
     const marks = history.present;
-    if (marks.length === 0) { setMask(null); setStatus('idle'); return; }
+    if (!shouldSegment(marks, autoSegment)) { setMask(null); setStatus('idle'); return; }
     const controller = new AbortController();
     setStatus('working');
     const timer = setTimeout(() => {
@@ -143,7 +190,7 @@ export function ClippingEditor({
         .catch(() => { if (!controller.signal.aborted) setStatus('error'); });
     }, 120);
     return () => { clearTimeout(timer); controller.abort(); };
-  }, [history.present, source]);
+  }, [history.present, source, autoSegment]);
 
   const firstMarks = useRef(true);
   useEffect(() => {
@@ -163,11 +210,14 @@ export function ClippingEditor({
     return canvas;
   }, [source, mask]);
 
-  useEffect(() => { if (tool !== 'scalpel') scalpel.reset(); }, [tool]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { if (!isPencilTool(tool)) scalpel.reset(); }, [tool]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // --- Viewport -------------------------------------------------------------
   const imageSize = useMemo(() => (source ? { width: source.pixels.width, height: source.pixels.height } : null), [source]);
   const resolveViewport = useCallback((size: PaneSize): ClippingViewport => viewport ?? fitViewport(size, imageSize ?? { width: 1, height: 1 }), [viewport, imageSize]);
+  /** Zoom en pourcentage de pixels écran (100 % : un pixel image pour un pixel écran), centré sur le milieu de la vue actuelle. */
+  const zoomTo = (percent: number, size: PaneSize = paneSize.current) =>
+    setViewport({ scale: clampScale(percent / 100 / devicePixelRatio()), center: resolveViewport(size).center });
   const zoomBy = (factor: number, size: PaneSize = paneSize.current, x?: number, y?: number) =>
     setViewport(zoomViewport(resolveViewport(size), size, factor, x, y));
 
@@ -176,8 +226,7 @@ export function ClippingEditor({
     if (!source) return;
     const vp = resolveViewport(size);
     ctx.save();
-    ctx.translate(size.width / 2, size.height / 2); ctx.scale(vp.scale, vp.scale); ctx.translate(-vp.center.x, -vp.center.y);
-    ctx.imageSmoothingEnabled = vp.scale < 2;
+    applyViewTransform(ctx, size, vp);
     ctx.drawImage(source.img, 0, 0);
     ctx.lineCap = 'round'; ctx.lineJoin = 'round';
     const paint = (points: ClippingPoint[], width: number, color: string, alpha: number, dash?: number[]) => {
@@ -185,20 +234,73 @@ export function ClippingEditor({
       if (points.length === 1) { ctx.beginPath(); ctx.arc(points[0].x, points[0].y, width / 2, 0, Math.PI * 2); ctx.fill(); return; }
       ctx.beginPath(); points.forEach((p, i) => (i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y))); ctx.stroke();
     };
-    for (const mark of scalpel.view) {
-      if (isScalpelMark(mark)) {
-        // Tracé de scalpel : courbe lissée, contour noir puis trait de couleur.
-        traceCut(ctx, markToCut(mark));
-        ctx.globalAlpha = 1; ctx.setLineDash([]);
-        ctx.lineWidth = CUT_OUTER / vp.scale; ctx.strokeStyle = '#000'; ctx.stroke();
-        ctx.lineWidth = CUT_INNER / vp.scale; ctx.strokeStyle = scalpel.cutColor; ctx.stroke();
-      } else if (mark.tool === 'scalpel') paint(mark.points, CUT_INNER / vp.scale, MARK_COLORS.scalpel, 1);
-      else paint(mark.points, mark.size, MARK_COLORS[mark.tool], 0.55);
+    const view = scalpel.view;
+    const erases = view.some((m) => m.tool === 'erase');
+    // La gomme efface l'effet des traits précédents : on les compose sur un calque pour pouvoir les « percer ».
+    let layer: CanvasRenderingContext2D = ctx;
+    let off: HTMLCanvasElement | null = null;
+    if (erases) {
+      off = document.createElement('canvas'); off.width = ctx.canvas.width; off.height = ctx.canvas.height;
+      const octx = off.getContext('2d');
+      if (octx) { octx.setTransform(ctx.getTransform()); octx.lineCap = 'round'; octx.lineJoin = 'round'; layer = octx; }
     }
-    if (stroke && stroke.length > 0 && isMarkTool(tool) && tool !== 'scalpel') paint(stroke, brush, MARK_COLORS[tool], 0.55);
+    const paintOn = (target: CanvasRenderingContext2D, points: ClippingPoint[], width: number, color: string, alpha: number) => {
+      target.globalAlpha = alpha; target.strokeStyle = color; target.fillStyle = color; target.lineWidth = width; target.setLineDash([]);
+      if (points.length === 1) { target.beginPath(); target.arc(points[0].x, points[0].y, width / 2, 0, Math.PI * 2); target.fill(); return; }
+      target.beginPath(); points.forEach((p, i) => (i === 0 ? target.moveTo(p.x, p.y) : target.lineTo(p.x, p.y))); target.stroke();
+    };
+    for (const mark of view) {
+      if (mark.tool === 'erase') { layer.globalCompositeOperation = 'destination-out'; paintOn(layer, mark.points, mark.size, '#000', 1); layer.globalCompositeOperation = 'source-over'; continue; }
+      const color = MARK_COLORS[mark.tool];
+      if (color && (mark.tool === 'keep' || mark.tool === 'remove' || mark.tool === 'hair')) paintOn(layer, mark.points, mark.size, color, 0.55);
+    }
+    if (off) { ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1; ctx.drawImage(off, 0, 0); ctx.restore(); }
+    const selectionOutline = (mark: ClippingMark & { nodes: NonNullable<ClippingMark['nodes']> }) => {
+      if (!(mark.tool === 'scalpel' || liveIds.has(mark.id) || !history.present.some((m) => m.id === mark.id))) return;
+      // Contour du tracé : courbe lissée, contour noir puis trait de couleur (cyan, vert pour Pencil+, rouge pour Pencil−).
+      traceCut(ctx, markToCut(mark));
+      if (mark.closed || (mark.tool === 'pencil' && mark.nodes.length >= 3)) ctx.closePath(); // la sélection se referme en ligne droite, comme dans le moteur
+      ctx.globalAlpha = 1; ctx.setLineDash([]);
+      ctx.lineWidth = CUT_OUTER / vp.scale; ctx.strokeStyle = '#000'; ctx.stroke();
+      ctx.lineWidth = CUT_INNER / vp.scale; ctx.strokeStyle = mark.tool === 'pencil' ? PENCIL_COLORS[mark.mode ?? 'replace'] : scalpel.cutColor; ctx.stroke();
+    };
+    for (const mark of view) {
+      if (isScalpelMark(mark)) selectionOutline(mark);
+      else if (mark.tool === 'scalpel') paint(mark.points, CUT_INNER / vp.scale, MARK_COLORS.scalpel ?? '#74d4da', 1);
+    }
+    if (stroke && stroke.length > 0 && (isBrushTool(tool) || tool === 'eraser')) {
+      if (tool === 'eraser') paint(stroke, brush, 'rgba(255,255,255,0.8)', 0.5);
+      else paint(stroke, brush, MARK_COLORS[tool] ?? '#fff', 0.55);
+    }
+    const viewTransform = ctx.getTransform();
     ctx.restore();
-    if (effectiveTool === 'scalpel') scalpel.drawOverlay(ctx, vp, size, hover);
-    if (hover && !panning && !shiftHeld && tool !== 'pan' && tool !== 'scalpel') {
+    if (selection.active) {
+      // Hors de la sélection : voile sombre (le calque de sélection est recomposé à chaque rendu : union, soustraction, inversion).
+      const w = ctx.canvas.width, h = ctx.canvas.height;
+      const sel = document.createElement('canvas'); sel.width = w; sel.height = h;
+      const sctx = sel.getContext('2d');
+      if (sctx) {
+        const tf = viewTransform;
+        for (const op of selection.ops) {
+          if (op.tool === 'invert') { sctx.save(); sctx.setTransform(1, 0, 0, 1, 0, 0); sctx.globalCompositeOperation = 'xor'; sctx.fillStyle = '#000'; sctx.fillRect(0, 0, w, h); sctx.restore(); continue; }
+          const mode = op.mode ?? 'replace';
+          const live = view.find((m) => m.id === op.id) ?? op;
+          if (live.points.length < 3) continue;
+          if (mode === 'replace') { sctx.save(); sctx.setTransform(1, 0, 0, 1, 0, 0); sctx.clearRect(0, 0, w, h); sctx.restore(); }
+          sctx.setTransform(tf); sctx.globalCompositeOperation = mode === 'subtract' ? 'destination-out' : 'source-over'; sctx.fillStyle = '#000';
+          sctx.beginPath(); live.points.forEach((p, i) => (i === 0 ? sctx.moveTo(p.x, p.y) : sctx.lineTo(p.x, p.y))); sctx.closePath(); sctx.fill();
+        }
+        const dim = document.createElement('canvas'); dim.width = w; dim.height = h;
+        const dctx = dim.getContext('2d');
+        if (dctx) {
+          dctx.fillStyle = 'rgba(0,0,0,0.38)'; dctx.fillRect(0, 0, w, h);
+          dctx.globalCompositeOperation = 'destination-out'; dctx.drawImage(sel, 0, 0);
+          ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.drawImage(dim, 0, 0); ctx.restore();
+        }
+      }
+    }
+    if (isPencilTool(effectiveTool)) scalpel.drawOverlay(ctx, vp, size, hover);
+    if (hover && !panning && !shiftHeld && tool !== 'pan' && !isPencilTool(tool)) {
       const c = imageToScreen(vp, size, hover);
       ctx.beginPath(); ctx.arc(c.x, c.y, Math.max(2, (brush / 2) * vp.scale), 0, Math.PI * 2);
       ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(255,255,255,0.9)'; ctx.stroke();
@@ -209,8 +311,7 @@ export function ClippingEditor({
     if (!source || !cutout) return;
     const vp = resolveViewport(size);
     ctx.save();
-    ctx.translate(size.width / 2, size.height / 2); ctx.scale(vp.scale, vp.scale); ctx.translate(-vp.center.x, -vp.center.y);
-    ctx.imageSmoothingEnabled = vp.scale < 2;
+    applyViewTransform(ctx, size, vp);
     ctx.drawImage(peekOriginal && view === 'split' ? source.img : cutout, 0, 0);
     ctx.restore();
   };
@@ -229,7 +330,7 @@ export function ClippingEditor({
     }
     const vp = resolveViewport(size);
     const p = screenToImage(vp, size, x, y);
-    if (effectiveTool === 'scalpel') { scalpel.down(p, { x, y }, vp, size); return; }
+    if (isPencilTool(effectiveTool)) { scalpel.down(p, { x, y }, vp, size); return; }
     drag.current = { kind: 'stroke', tool: effectiveTool, points: [p] };
     setStroke([p]);
   };
@@ -244,19 +345,22 @@ export function ClippingEditor({
     const vp = resolveViewport(size);
     const p = screenToImage(vp, size, x, y);
     setHover(p);
-    if (effectiveTool === 'scalpel') { scalpel.move(p, { x, y }, vp, size); return; }
+    if (isPencilTool(effectiveTool)) { scalpel.move(p, { x, y }, vp, size); return; }
     if (d?.kind === 'stroke') { d.points.push(p); setStroke([...d.points]); }
   };
   const endPointer = ({ event, size }: PaneEvent) => {
     event.currentTarget.releasePointerCapture?.(event.pointerId);
     const d = drag.current;
     drag.current = null; setPanning(false);
-    if (effectiveTool === 'scalpel' && d?.kind !== 'pan') { scalpel.up(resolveViewport(size)); return; }
+    if (isPencilTool(effectiveTool) && d?.kind !== 'pan') { scalpel.up(resolveViewport(size)); return; }
     if (d?.kind !== 'stroke') return;
     setStroke(null);
     const points = densifyPoints(d.points, Math.max(1, brush / 2));
-    if (d.tool === 'eraser') dispatch({ type: 'erase', points, size: brush });
-    else if (isMarkTool(d.tool)) dispatch({ type: 'add', mark: { id: newMarkId(), tool: d.tool, size: brush, points } });
+    // Sans sélection, la gomme supprime les traits touchés ; dans une sélection, elle ne défait que ce qui s'y trouve (marque `erase`).
+    if (d.tool === 'eraser') {
+      if (selection.active) dispatch({ type: 'add', mark: { id: newMarkId(), tool: 'erase', size: brush, points } });
+      else dispatch({ type: 'erase', points, size: brush });
+    } else if (isBrushTool(d.tool)) dispatch({ type: 'add', mark: { id: newMarkId(), tool: d.tool, size: brush, points } });
   };
   const onWheel = ({ x, y, size, deltaY }: { x: number; y: number; size: PaneSize; deltaY: number }) =>
     zoomBy(Math.exp(-deltaY * 0.0015), size, x, y);
@@ -289,18 +393,21 @@ export function ClippingEditor({
       case 'PageDown': e.preventDefault(); return zoomBy(1 / ZOOM_STEP);
       case 'Home': e.preventDefault(); return setViewport(null);
       case 'Escape': case 'Enter': case 'Delete': case 'Backspace':
-        if (!onButton && effectiveTool === 'scalpel' && scalpel.key(e.key)) e.preventDefault();
+        if (!onButton && isPencilTool(effectiveTool) && scalpel.key(e.key)) e.preventDefault();
         return;
     }
     switch (key) {
       case ' ': if (onButton) return; e.preventDefault(); setTool((current) => (current === 'keep' ? 'remove' : 'keep')); break;
       case 'v': setTool('hair'); break;
       case 'x': setTool('eraser'); break;
-      case 's': setTool('scalpel'); break;
+      case 's': setTool('pencil'); break;
+      case 'a': setTool('pencilAdd'); break;
+      case 'd': setTool('pencilSub'); break;
       case 'c': setTool('pan'); break;
       case 'z': dispatch({ type: e.shiftKey ? 'redo' : 'undo' }); break;
       case 'y': dispatch({ type: 'redo' }); break;
       case 'q': setPeekOriginal(true); break;
+      case '0': zoomTo(100); break;
       case '-': case '[': setBrush((b) => Math.max(BRUSH_MIN, Math.min(b - 1, Math.round(b / ZOOM_STEP)))); break;
       case '+': case '=': case ']': setBrush((b) => Math.min(BRUSH_MAX, Math.max(b + 1, Math.round(b * ZOOM_STEP)))); break;
       case '1': setView('single'); break;
@@ -334,13 +441,17 @@ export function ClippingEditor({
     const key = tk === 'keep' || tk === 'remove' ? t('clipping.shortcut.space') : TOOL_KEYS[tk];
     return t('clipping.shortcut', { label: t(`clipping.tool.${tk}`), key });
   };
+  /** Actions sur la sélection : marques sans trait, rejouées dans l'ordre par le moteur (Supprimer garde l'adoucissement choisi). */
+  const addSelectionMark = (kind: 'invert' | 'deselect' | 'delete') =>
+    dispatch({ type: 'add', mark: { id: newMarkId(), tool: kind, size: 1, points: [], ...(kind === 'delete' && feather > 0 ? { feather } : {}) } });
+  const zoomLevel = resolveViewport(paneSize.current).scale * devicePixelRatio() * 100;
   const canUndo = history.past.length > 0;
   const canRedo = history.future.length > 0;
   // Vue simple : Q maintenu affiche l'autre image. Vue partagée : l'aperçu montre l'original (voir drawPreview).
   const previewShown = view === 'single' && peekOriginal ? !showPreview : showPreview;
   const showMarksPane = view === 'split' || !previewShown;
   const showPreviewPane = view === 'split' || previewShown;
-  const cursor = panning ? 'grabbing' : effectiveTool === 'pan' ? 'grab' : effectiveTool === 'scalpel' ? scalpel.cursor : 'none';
+  const cursor = panning ? 'grabbing' : effectiveTool === 'pan' ? 'grab' : isPencilTool(effectiveTool) ? scalpel.cursor : 'none';
   const statusText = loadFailed ? t('clipping.loadError') : !source ? t('clipping.loading')
     : downloadFailed ? t('clipping.downloadError')
       : status === 'working' ? t('clipping.working') : status === 'error' ? t('clipping.segmentError') : status === 'ready' ? t('clipping.ready') : '';
@@ -368,12 +479,18 @@ export function ClippingEditor({
           <div role="toolbar" aria-label={t('clipping.toolbar')} className="flex h-[50px] shrink-0 items-center gap-1 overflow-x-auto border-b border-grey px-3">
             {TOOL_ORDER.map((tk) => <React.Fragment key={tk}>{iconButton(withKey(tk), TOOL_ICONS[tk], () => setTool(tk), { pressed: effectiveTool === tk })}</React.Fragment>)}
             <span className="mx-1 h-5 w-px shrink-0 bg-grey" aria-hidden="true" />
+            {iconButton(t('clipping.selection.invert'), <Contrast size={14} aria-hidden="true" />, () => addSelectionMark('invert'), { disabled: !selection.active })}
+            {iconButton(t('clipping.selection.delete'), <Trash2 size={14} aria-hidden="true" />, () => addSelectionMark('delete'), { disabled: !selection.active })}
+            {iconButton(t('clipping.selection.deselect'), <SquareDashed size={14} aria-hidden="true" />, () => addSelectionMark('deselect'), { disabled: !selection.active })}
+            <span className="mx-1 h-5 w-px shrink-0 bg-grey" aria-hidden="true" />
             {iconButton(`${t('clipping.undo')} (Z)`, <Undo2 size={14} aria-hidden="true" />, () => dispatch({ type: 'undo' }), { disabled: !canUndo })}
             {iconButton(`${t('clipping.redo')} (Y)`, <Redo2 size={14} aria-hidden="true" />, () => dispatch({ type: 'redo' }), { disabled: !canRedo })}
             <span className="mx-1 h-5 w-px shrink-0 bg-grey" aria-hidden="true" />
             {iconButton(t('clipping.zoomIn'), <ZoomIn size={14} aria-hidden="true" />, () => zoomBy(ZOOM_STEP))}
             {iconButton(t('clipping.zoomOut'), <ZoomOut size={14} aria-hidden="true" />, () => zoomBy(1 / ZOOM_STEP))}
             {iconButton(`${t('clipping.zoomFit')} (Home)`, <Maximize size={14} aria-hidden="true" />, () => setViewport(null))}
+            {iconButton(`${t('clipping.zoomActual')} (0)`, <span className="text-[10px] font-semibold leading-none">1:1</span>, () => zoomTo(100), { pressed: Math.abs(zoomLevel - 100) < 0.5 })}
+            <span className="w-11 shrink-0 text-center text-sm tabular-nums" role="status" aria-label={t('clipping.zoomLevel')} data-testid="clipping-zoom">{zoomLevel < 10 ? zoomLevel.toFixed(1) : Math.round(zoomLevel)}%</span>
             <span className="mx-1 h-5 w-px shrink-0 bg-grey" aria-hidden="true" />
             {iconButton(t('clipping.shortcut', { label: t('clipping.view.single'), key: '1' }), <Square size={14} aria-hidden="true" />, () => setView('single'), { pressed: view === 'single' })}
             {iconButton(t('clipping.shortcut', { label: t('clipping.view.split'), key: '2' }), <Columns2 size={14} aria-hidden="true" />, () => setView('split'), { pressed: view === 'split' })}
@@ -393,13 +510,13 @@ export function ClippingEditor({
           <div className="relative flex min-h-0 flex-1">
             {showMarksPane && (
               <Pane title={t('clipping.pane.marks')} ariaLabel={t('clipping.canvas.marks')} caption={fileName} cursor={cursor}
-                draw={drawMarks} sizeRef={paneSize} onPointerDown={onPointerDown('marks')} onPointerMove={onPointerMove('marks')}
+                draw={drawMarks} sizeRef={paneSize} onMeasure={(sz) => setMeasured(`${sz.width}x${sz.height}`)} onPointerDown={onPointerDown('marks')} onPointerMove={onPointerMove('marks')}
                 onPointerUp={endPointer} onPointerLeave={() => setHover(null)} onWheel={onWheel} />
             )}
             {view === 'split' && <div className="w-px bg-black" aria-hidden="true" />}
             {showPreviewPane && (
               <Pane title={t('clipping.pane.preview')} ariaLabel={t('clipping.canvas.preview')} caption={imageSize ? t('clipping.dimensions', imageSize) : undefined}
-                cursor={panning ? 'grabbing' : 'grab'} checker draw={drawPreview} sizeRef={paneSize}
+                cursor={panning ? 'grabbing' : 'grab'} checker draw={drawPreview} sizeRef={paneSize} onMeasure={(sz) => setMeasured(`${sz.width}x${sz.height}`)}
                 onPointerDown={onPointerDown('preview')} onPointerMove={onPointerMove('preview')} onPointerUp={endPointer} onWheel={onWheel} />
             )}
             {!source && (
@@ -415,7 +532,14 @@ export function ClippingEditor({
               <Slider className="w-32" min={BRUSH_MIN} max={BRUSH_MAX} step={1} value={[brush]} aria-label={t('clipping.brushSize')} onValueChange={([v]) => setBrush(v)} />
               <span className="w-12 tabular-nums">{brush}px</span>
             </label>
-            {effectiveTool === 'scalpel' && <span className="text-grey-strongest">{t(scalpel.connecting ? 'clipping.scalpelHint.connecting' : 'clipping.scalpelHint')}</span>}
+            {selection.active && (
+              <label className="flex min-w-[200px] items-center gap-3">
+                <span>{t('clipping.selection.feather')}</span>
+                <Slider className="w-24" min={0} max={FEATHER_MAX} step={1} value={[feather]} aria-label={t('clipping.selection.feather')} onValueChange={([v]) => setFeather(v)} />
+                <span className="w-12 tabular-nums">{feather}px</span>
+              </label>
+            )}
+            {isPencilTool(effectiveTool) && <span className="text-grey-strongest">{t(scalpel.connecting ? 'clipping.scalpelHint.connecting' : 'clipping.scalpelHint')}</span>}
             <span role="status" aria-live="polite" className="ml-auto flex items-center gap-2 text-grey-strongest">
               {status === 'working' && <Spinner size={12} decorative />}
               {statusText}
@@ -435,6 +559,7 @@ interface PaneProps {
   checker?: boolean;
   draw: (ctx: CanvasRenderingContext2D, size: PaneSize) => void;
   sizeRef: React.MutableRefObject<PaneSize>;
+  onMeasure?: (size: PaneSize) => void;
   onPointerDown: (e: PaneEvent) => void;
   onPointerMove: (e: PaneEvent) => void;
   onPointerUp: (e: PaneEvent) => void;
@@ -443,7 +568,7 @@ interface PaneProps {
 }
 
 /** Volet à canvas : mesure son conteneur, redessine à chaque rendu et traduit les événements en pixels du volet. */
-function Pane({ title, ariaLabel, caption, cursor, checker, draw, sizeRef, onPointerDown, onPointerMove, onPointerUp, onPointerLeave, onWheel }: PaneProps) {
+function Pane({ title, ariaLabel, caption, cursor, checker, draw, sizeRef, onMeasure, onPointerDown, onPointerMove, onPointerUp, onPointerLeave, onWheel }: PaneProps) {
   const host = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
   const [size, setSize] = useState<PaneSize>({ width: 1, height: 1 });
@@ -453,20 +578,29 @@ function Pane({ title, ariaLabel, caption, cursor, checker, draw, sizeRef, onPoi
   useLayoutEffect(() => {
     const el = host.current;
     if (!el) return;
-    const measure = () => {
+    // Taille mesurée en pixels écran entiers : si le canvas avait un pixel de moins ou de plus que sa boîte CSS, le navigateur
+    // l'étirerait (rééchantillonnage) et flouterait toute l'image d'une fraction de pixel, surtout visible à 100 %.
+    const measure = (entry?: ResizeObserverEntry) => {
       const r = el.getBoundingClientRect();
-      const next = { width: Math.max(1, Math.round(r.width)), height: Math.max(1, Math.round(r.height)) };
+      const dpr = devicePixelRatio();
+      const box = entry?.devicePixelContentBoxSize?.[0];
+      // The exact device-pixel box when the browser reports one that agrees with the layout box (emulated densities may not).
+      const exact = (reported: number | undefined, css: number) => (reported !== undefined && Math.abs(reported - css * dpr) <= 2 ? reported : css * dpr);
+      const dw = Math.max(1, Math.round(exact(box?.inlineSize, r.width)));
+      const dh = Math.max(1, Math.round(exact(box?.blockSize, r.height)));
+      const next = { width: dw / dpr, height: dh / dpr };
       setSize((prev) => (prev.width === next.width && prev.height === next.height ? prev : next));
     };
     measure();
     if (typeof ResizeObserver === 'undefined') return;
-    const observer = new ResizeObserver(measure);
-    observer.observe(el);
+    const observer = new ResizeObserver((entries) => measure(entries[0]));
+    try { observer.observe(el, { box: 'device-pixel-content-box' }); } catch { observer.observe(el); }
     return () => observer.disconnect();
   }, []);
 
   useLayoutEffect(() => {
     sizeRef.current = size;
+    onMeasure?.(size);
     const el = canvas.current;
     const ctx = el?.getContext('2d');
     if (!el || !ctx) return;
