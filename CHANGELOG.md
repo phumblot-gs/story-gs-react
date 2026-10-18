@@ -5,6 +5,21 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.31.1] - 2026-10-19
+
+### Modifié
+
+- `ClippingEditor` : ergonomie harmonisée avec la charte GS, outils dans une colonne de 40 px,
+  actions de sélection contextuelles, téléchargement dans le bandeau Résultat et panneau de réglages repliable.
+- Taille du pinceau Cheveux et Gomme et adoucissement des sélections accessibles dans le bandeau Zone de travail,
+  sans modification du fonctionnement des outils ni du traitement alpha.
+- `IconProvider` : pictogrammes de sélection, surligneur (`Highlighter`) et gomme (`Eraser`) ;
+  `Minus` reprend la largeur et la finesse du trait horizontal de `Plus`.
+
+### Corrigé
+
+- `Slider` : transmission du nom accessible à la poignée du curseur.
+
 ## [1.31.0] - 2026-10-17
 
 ### Ajouté

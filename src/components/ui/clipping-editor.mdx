@@ -70,6 +70,14 @@ const segment = async (request: ClippingSegmentRequest) => (await engine)(reques
 
 ---
 
+## Layout
+
+The header contains the file name, zoom controls, single/split view switch, settings toggle and optional close button. The 40px left rail starts with Pan, followed by marking tools, selection tools and conditional selection actions. Undo and Redo stay at the bottom. Selection icons are 20px inside 40px square controls.
+
+The Workspace and Result headers align with the separator below Pan. Download belongs to the Result header and is only visible with that pane. No persistent footer or captions appear below the canvases. Loading and errors remain visible over the workspace.
+
+The Workspace header displays a contextual slider on its right: brush diameter for Hair and Eraser, feather for the three selection tools. These controls remain visible with the right panel closed and do not require opening a bubble. Values persist across tools. Keep / Remove retain their brush diameter control in the inline settings panel. The Hair brush itself is unchanged; no alpha-opacity control is added. File metadata is collapsed by default. At narrow container widths the panes stack and the settings appear below; the workspace scrolls within the editor's supplied height.
+
 ## Props
 
 <Controls of={Stories.Default} />
@@ -78,14 +86,15 @@ const segment = async (request: ClippingSegmentRequest) => (await engine)(reques
 | --- | --- | --- |
 | `src` | `string` | Image to cut out. A cross-origin URL must send CORS headers: the editor reads the pixels to build the preview and the export. |
 | `onSegment` | `ClippingSegmenter` | **Required.** The segmentation engine. See [The `onSegment` contract](#the-onsegment-contract). |
-| `fileName` | `string` | Shown under the image. The exported file is named `<fileName without extension>-clipped.png`. |
+| `fileName` | `string` | Shown in the header and in the file information panel. The exported file is named `<fileName without extension>-clipped.png`. |
 | `defaultMarks` | `ClippingMark[]` | Initial marks, for example restored from a previous session. |
 | `onMarksChange` | `(marks) => void` | Called after every committed change (stroke, selection edit, erase, undo, redo). Persist this to resume later. |
 | `onDownload` | `(blob, fileName) => void \| Promise<void>` | Receives the cut-out PNG at the source resolution. Without it, the browser downloads the file. |
 | `onClose` | `() => void` | Shows the close button when provided. |
 | `defaultTool` | `ClippingTool` | `keep` (default), `remove`, `hair`, `eraser`, `pencil`, `pencilAdd`, `pencilSub` or `pan` (`scalpel`, the former name of `pencil`, is still accepted). |
 | `defaultBrushSize` | `number` | Initial brush diameter in **source-image pixels** (default 20, range 2–200). |
-| `defaultView` | `'split' \| 'single'` | Split shows *Original + Marks* and *Preview* side by side (default). |
+| `defaultView` | `'split' \| 'single'` | Split shows *Workspace* and *Result* side by side (stacked in a narrow editor). |
+| `defaultSettingsOpen` | `boolean` | Opens the contextual settings and file information panel by default (`true`). The header button toggles it without resetting the tool or its settings. |
 | `autoSegment` | `boolean` | Also calls `onSegment` with an empty list of marks, so the engine's automatic cut-out appears when the image opens (and after every mark is undone). The user then corrects it with strokes. Default `false`. |
 | `language`, `translations` | | Standard GS i18n props (EN, FR, ES, IT, DE). |
 
@@ -128,7 +137,7 @@ Shortcuts work while the pointer is over the editor or when it has focus. Arrow 
 
 ### Pencil and selections
 
-The Pencil draws an editable Bézier outline (the path closes on its first point when the engine reads it) that becomes the **selection**, as in Photoshop. The toolbar then offers three actions: **Invert selection**, **Delete selection** (with an optional **Feather**, the softness of the removed edge) and **Deselect**. Everything is a mark, so undo, autosave and replay work as for strokes.
+The Pencil draws an editable Bézier outline (the path closes on its first point when the engine reads it) that becomes the **selection**, as in Photoshop. When a selection tool is active, the left toolbar offers three actions (disabled until a selection exists): **Invert selection**, **Delete selection** (with an optional **Feather**, the softness of the removed edge) and **Deselect**. Everything is a mark, so undo, autosave and replay work as for strokes.
 
 - **Pencil** replaces the selection, **Pencil +** adds to it, **Pencil −** subtracts from it. Outside the selection, the area is dimmed.
 - **Keep**, **Remove** and **Hair** strokes drawn while a selection exists only act inside it: the result is what the stroke would give on the original photo, restricted to the selection. The **Eraser** inside a selection only undoes what earlier marks decided there.
@@ -189,7 +198,7 @@ The editor guarantees:
 - It calls `onSegment` **after every committed change** of the marks, debounced by about 120 ms. A first stroke is enough. With no marks the preview shows the untouched image and `onSegment` is not called, unless `autoSegment` is set: then it is called with `marks: []` (when the image opens, and after every mark is undone) and must return the automatic cut-out.
 - Each call receives the **full list of marks**. Calls are independent: the function is stateless from the editor's point of view.
 - When the marks change again before the promise settles, the previous request's `signal` is aborted and its result is ignored. Reject with an `AbortError` (or just let `fetch` do it).
-- If the promise rejects, the editor shows an error in the status line and keeps the last good preview. The next change triggers a new attempt.
+- If the promise rejects, the editor shows an error over the workspace and keeps the last good preview. The next change triggers a new attempt.
 - The returned mask **must** have exactly the source image's width and height; otherwise the editor treats it as an error.
 
 Intermediate values between 0 and 255 are drawn as partial transparency, which is how soft edges and hair are rendered.
