@@ -10,6 +10,9 @@
 .gs-clipping-header-with-controls > .gs-clipping-control-group:last-child { margin-left:auto; justify-content:flex-end; }
 .gs-clipping-header-with-controls .gs-clipping-primary-action { min-width:0; max-width:100%; white-space:normal; overflow-wrap:anywhere; }
 .gs-clipping-control-group { display:flex; flex-wrap:wrap; align-items:center; gap:5px; }
+.gs-clipping-header-separator { height:24px; margin:0 10px; background:var(--color-grey); }
+/* Le groupe apporte déjà 5 px de gap : 45 + 5 = 50 px avant la fermeture. */
+.gs-clipping-close { margin-left:45px; }
 .gs-clipping-zoom { min-width:40px; text-align:center; }
 .gs-clipping-workspace { display:flex; flex:1; min-height:0; min-width:0; }
 .gs-clipping-stage { display:flex; flex:1; min-width:0; min-height:0; position:relative; }

@@ -5,6 +5,7 @@ import '@/styles/clipping-editor.css';
 import { Button } from './button';
 import { IconProvider } from './icon-provider';
 import { Slider } from './slider';
+import { Separator } from './separator';
 import { Spinner } from './spinner';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './tooltip';
 import { BgProvider } from '@/components/layout/BgContext';
@@ -500,9 +501,9 @@ export function ClippingEditor({
       <Slider min={selectionSetting ? 0 : BRUSH_MIN} max={selectionSetting ? FEATHER_MAX : BRUSH_MAX} step={1} value={[value]} aria-label={label} onValueChange={([v]) => selectionSetting ? setFeather(v) : setBrush(v)} />
     </label>;
   };
-  const iconButton = (label: string, icon: React.ReactNode, onClick: () => void, opts: { pressed?: boolean; disabled?: boolean; selectionIcon?: boolean; rail?: boolean } = {}) => <Tooltip>
+  const iconButton = (label: string, icon: React.ReactNode, onClick: () => void, opts: { pressed?: boolean; disabled?: boolean; selectionIcon?: boolean; rail?: boolean; className?: string } = {}) => <Tooltip>
     <TooltipTrigger asChild>
-      <Button type="button" variant={opts.pressed ? 'inverse' : opts.rail ? 'ghost' : 'secondary'} size="medium" className={cn('h-[40px] w-[40px] shrink-0 p-0 [&_svg]:!h-[20px] [&_svg]:!w-[20px]', opts.rail && 'rounded-none')} aria-label={label} aria-pressed={opts.pressed} disabled={opts.disabled} onClick={onClick}>{icon}</Button>
+      <Button type="button" variant={opts.pressed ? 'inverse' : opts.rail ? 'ghost' : 'secondary'} size="medium" className={cn('h-[40px] w-[40px] shrink-0 p-0 [&_svg]:!h-[20px] [&_svg]:!w-[20px]', opts.rail && 'rounded-none', opts.className)} aria-label={label} aria-pressed={opts.pressed} disabled={opts.disabled} onClick={onClick}>{icon}</Button>
     </TooltipTrigger>
     <TooltipContent>{label}</TooltipContent>
   </Tooltip>;
@@ -535,16 +536,18 @@ export function ClippingEditor({
               <Button type="button" variant={Math.abs(zoomLevel - 100) < 0.5 ? 'inverse' : 'secondary'} className="h-[40px] w-[40px] shrink-0 p-0" aria-label={`${t('clipping.zoomActual')} (0)`} aria-pressed={Math.abs(zoomLevel - 100) < 0.5} onClick={() => zoomTo(100)}>1:1</Button>
             </div>
             <div className="gs-clipping-control-group">
+              <Separator orientation="vertical" className="gs-clipping-header-separator" />
               {iconButton(t('clipping.shortcut', { label: t('clipping.view.single'), key: '1' }), <IconProvider icon="ViewSingle" size={20} />, () => setView('single'), { pressed: view === 'single' })}
               {iconButton(t('clipping.shortcut', { label: t('clipping.view.split'), key: '2' }), <IconProvider icon="ViewSplit" size={20} />, () => setView('split'), { pressed: view === 'split' })}
               {view === 'single' && <Button type="button" variant="secondary" onClick={() => setShowPreview(v => !v)}>{showPreview ? t('clipping.showOriginal') : t('clipping.showPreview')}</Button>}
+              <Separator orientation="vertical" className="gs-clipping-header-separator" />
               {iconButton(t('clipping.settings'), <IconProvider icon="Switch" size={20} />, () => setSettingsOpen(v => !v), { pressed: settingsOpen })}
               {primaryAction && <Button type="button" variant="normal" size="medium" className="gs-clipping-primary-action"
                 disabled={primaryAction.disabled} loading={primaryAction.loading || primaryActionPending} loadingLabel={primaryAction.loadingLabel}
                 data-testid={primaryAction['data-testid']} aria-keyshortcuts="Meta+Enter Control+Enter" onClick={() => void runPrimaryAction()}>
                 {primaryAction.label}
               </Button>}
-              {onClose && iconButton(t('clipping.close'), <IconProvider icon="X" size={20} />, onClose)}
+              {onClose && iconButton(t('clipping.close'), <IconProvider icon="X" size={20} />, onClose, { className: 'gs-clipping-close' })}
             </div>
           </div>
 
