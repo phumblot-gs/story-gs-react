@@ -1,13 +1,167 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { cleanup, render, screen, fireEvent } from "@testing-library/react";
+import { cleanup, render, screen, fireEvent, act, waitFor, within } from "@testing-library/react";
+import { useEffect, useState } from "react";
 import "@testing-library/jest-dom/vitest";
 import { ClippingEditor } from "@/components/ui/clipping-editor";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 afterEach(() => cleanup());
 
 const renderEditor = (props = {}) => render(<ClippingEditor src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" onSegment={vi.fn()} language="en" {...props} />);
 
+function StatefulAccessory({ onMount, onUnmount }: { onMount: () => void; onUnmount: () => void }) {
+  const [count, setCount] = useState(0);
+  useEffect(() => { onMount(); return onUnmount; }, [onMount, onUnmount]);
+  return <Button onClick={() => setCount(v => v + 1)}>Accessory {count}</Button>;
+}
+
+function deferred() {
+  let resolve!: () => void;
+  let reject!: (reason: Error) => void;
+  const promise = new Promise<void>((yes, no) => { resolve = yes; reject = no; });
+  return { promise, resolve, reject };
+}
+
 describe("ClippingEditor", () => {
+  it("conserve la structure du header sans les nouvelles props", () => {
+    renderEditor({ fileName: "photo.png", onClose: vi.fn() });
+    const header = screen.getByRole("toolbar", { name: "Clipping display" });
+    expect(header.className).toBe("gs-clipping-header");
+    expect([...header.children].map(node => node.className)).toEqual(["gs-clipping-heading", "gs-clipping-control-group", "gs-clipping-control-group"]);
+    expect([...header.children[0].children].map(node => node.tagName)).toEqual(["H2", "SPAN"]);
+    expect(header.querySelector(".gs-clipping-title-accessory, .gs-clipping-primary-action")).toBeNull();
+    expect(header.querySelector("[aria-keyshortcuts]")).toBeNull();
+    expect(header.querySelectorAll("button").item(7)).toBe(screen.getByRole("button", { name: "Close" }));
+  });
+
+  it("rend les emplacements dans l'ordre titre, accessoire, zoom, réglages, action, fermeture", () => {
+    const onClick = vi.fn();
+    renderEditor({ titleAccessory: <Button>Material</Button>, primaryAction: { label: <span>Validate next</span>, onClick, 'data-testid': 'validate' }, onClose: vi.fn() });
+    const header = screen.getByRole("toolbar", { name: "Clipping display" });
+    expect(header.querySelector(".gs-clipping-heading")).toContainElement(screen.getByRole("button", { name: "Material" }));
+    const buttons = within(header).getAllByRole("button");
+    expect(buttons.filter(button => button !== screen.getByTestId("validate")).map(button => button.textContent || button.getAttribute("aria-label"))).toEqual([
+      "Material", "Zoom out", "Zoom in", "Fit", "1:1", "Single pane view (keyboard: 1)", "Split view (keyboard: 2)", "Settings and information", "Close",
+    ]);
+    expect(buttons.at(-2)).toBe(screen.getByTestId("validate"));
+    expect(buttons.every(button => button.tabIndex === 0)).toBe(true);
+    expect(screen.getByTestId("validate")).toHaveAttribute("aria-keyshortcuts", "Meta+Enter Control+Enter");
+    expect(screen.getByTestId("validate")).toHaveClass("btn-normal");
+    fireEvent.click(screen.getByTestId("validate"));
+    expect(onClick).toHaveBeenCalledOnce();
+  });
+
+  it("garde l'accessoire monté et son état sans réinitialiser les marques ni l'historique", () => {
+    const onMount = vi.fn(), onUnmount = vi.fn(), onMarksChange = vi.fn();
+    const mark = { id: "selection", tool: "pencil" as const, mode: "replace" as const, closed: true, size: 2, points: [{ x: 0, y: 0 }, { x: 40, y: 0 }, { x: 20, y: 30 }] };
+    const props = { src: "same.png", onSegment: vi.fn(), language: "en", onMarksChange, defaultMarks: [mark], defaultTool: "pencil" as const };
+    const { rerender } = render(<ClippingEditor {...props} titleAccessory={<StatefulAccessory onMount={onMount} onUnmount={onUnmount} />} />);
+    const accessory = screen.getByRole("button", { name: "Accessory 0" });
+    fireEvent.click(accessory);
+    fireEvent.click(screen.getByRole("button", { name: "Zoom in" }));
+    fireEvent.click(screen.getByRole("button", { name: "Invert selection" }));
+    fireEvent.click(screen.getByRole("button", { name: "Undo (Z)" }));
+    expect(screen.getByRole("button", { name: "Redo (Y)" })).toBeEnabled();
+    const calls = onMarksChange.mock.calls.length;
+    rerender(<ClippingEditor {...props} titleAccessory={<StatefulAccessory onMount={onMount} onUnmount={onUnmount} />} primaryAction={{ label: "Next", onClick: vi.fn() }} />);
+    expect(screen.getByRole("button", { name: "Accessory 1" })).toBe(accessory);
+    expect(onMount).toHaveBeenCalledOnce();
+    expect(onUnmount).not.toHaveBeenCalled();
+    expect(onMarksChange).toHaveBeenCalledTimes(calls);
+    fireEvent.click(screen.getByRole("button", { name: "Redo (Y)" }));
+    expect(onMarksChange.mock.calls.at(-1)![0][0]).toEqual(mark);
+    expect(onMarksChange.mock.calls.at(-1)![0].map((item: { tool: string }) => item.tool)).toEqual(["pencil", "invert"]);
+  });
+
+  it("charge pendant la promesse, bloque les doubles déclenchements puis réactive le bouton", async () => {
+    const action = deferred();
+    const onClick = vi.fn(() => action.promise);
+    renderEditor({ primaryAction: { label: "Next", onClick, loadingLabel: "Saving", 'data-testid': 'next' } });
+    const button = screen.getByTestId("next");
+    fireEvent.click(button);
+    expect(button).toBeDisabled();
+    expect(button).toHaveAttribute("aria-busy", "true");
+    expect(button).toHaveTextContent("Saving");
+    fireEvent.click(button);
+    fireEvent.keyDown(button, { key: "Enter", ctrlKey: true });
+    expect(onClick).toHaveBeenCalledOnce();
+    await act(async () => action.resolve());
+    expect(button).toBeEnabled();
+    expect(button).not.toHaveAttribute("aria-busy");
+    expect(button).toHaveTextContent("Next");
+  });
+
+  it("absorbe un rejet, libère le chargement et permet de réessayer", async () => {
+    const action = deferred();
+    const onClick = vi.fn<() => void | Promise<void>>().mockReturnValueOnce(action.promise).mockReturnValue(undefined);
+    renderEditor({ primaryAction: { label: "Retry", onClick } });
+    const button = screen.getByRole("button", { name: "Retry" });
+    fireEvent.click(button);
+    await act(async () => action.reject(new Error("Host failure")));
+    await waitFor(() => expect(button).toBeEnabled());
+    expect(button).not.toHaveAttribute("aria-busy");
+    fireEvent.click(button);
+    expect(onClick).toHaveBeenCalledTimes(2);
+  });
+
+  it("absorbe aussi une exception synchrone sans bloquer l'action", () => {
+    renderEditor({ primaryAction: { label: "Next", onClick: () => { throw new Error("Host failure"); } } });
+    const button = screen.getByRole("button", { name: "Next" });
+    expect(() => fireEvent.click(button)).not.toThrow();
+    expect(button).toBeEnabled();
+  });
+
+  it.each(["ctrlKey", "metaKey"])("%s + Entrée déclenche l'action une fois sans répétition ni composition", (modifier) => {
+    const onClick = vi.fn();
+    renderEditor({ primaryAction: { label: "Next", onClick } });
+    const root = document.querySelector("[data-gs-clipping-editor]")!;
+    expect(fireEvent.keyDown(root, { key: "Enter", [modifier]: true })).toBe(false);
+    fireEvent.keyDown(root, { key: "Enter", [modifier]: true, repeat: true });
+    fireEvent.keyDown(root, { key: "Enter", [modifier]: true, isComposing: true });
+    fireEvent.keyDown(root, { key: "Enter" });
+    expect(onClick).toHaveBeenCalledOnce();
+  });
+
+  it("respecte disabled, loading contrôlé et les événements déjà traités", () => {
+    const onClick = vi.fn();
+    const { rerender } = renderEditor({ primaryAction: { label: "Next", onClick, disabled: true } });
+    const root = document.querySelector("[data-gs-clipping-editor]")!;
+    fireEvent.keyDown(root, { key: "Enter", ctrlKey: true });
+    expect(onClick).not.toHaveBeenCalled();
+    rerender(<ClippingEditor src="same.png" onSegment={vi.fn()} language="en" primaryAction={{ label: "Next", onClick, loading: true }} />);
+    expect(screen.getByRole("button", { name: "Next" })).toBeDisabled();
+    fireEvent.keyDown(root, { key: "Enter", metaKey: true });
+    expect(onClick).not.toHaveBeenCalled();
+    rerender(<ClippingEditor src="same.png" onSegment={vi.fn()} language="en" primaryAction={{ label: "Next", onClick }} onKeyDown={event => event.preventDefault()} />);
+    fireEvent.keyDown(root, { key: "Enter", ctrlKey: true });
+    expect(onClick).not.toHaveBeenCalled();
+  });
+
+  it("laisse les champs, le contenu éditable, les menus et les sliders gérer leurs touches", () => {
+    const onClick = vi.fn();
+    renderEditor({ primaryAction: { label: "Next", onClick }, titleAccessory: <>
+      <Input aria-label="Input" /><Textarea aria-label="Text" />
+      <div contentEditable role="textbox" aria-label="Editable" />
+      <Button role="combobox">Select</Button><div role="menu" tabIndex={0}>Menu</div>
+    </> });
+    for (const target of [screen.getByLabelText("Input"), screen.getByLabelText("Text"), screen.getByLabelText("Editable"), screen.getByRole("combobox"), screen.getByRole("menu"), screen.getByRole("slider")]) {
+      fireEvent.keyDown(target, { key: "Enter", ctrlKey: true });
+      fireEvent.keyDown(target, { key: "v" });
+    }
+    expect(onClick).not.toHaveBeenCalled();
+    expect(screen.getByRole("button", { name: "Keep (keyboard: Spacebar)" })).toHaveAttribute("aria-pressed", "true");
+  });
+
+  it("une promesse peut se terminer après démontage sans erreur", async () => {
+    const action = deferred();
+    const { unmount } = renderEditor({ primaryAction: { label: "Next", onClick: () => action.promise } });
+    fireEvent.click(screen.getByRole("button", { name: "Next" }));
+    unmount();
+    await act(async () => action.resolve());
+  });
+
   it("expose les outils avec leur raccourci et l'outil actif", () => {
     renderEditor();
     const bar = screen.getByRole("toolbar", { name: "Clipping tools" });

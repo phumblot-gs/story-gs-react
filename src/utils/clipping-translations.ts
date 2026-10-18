@@ -1,5 +1,10 @@
 import type { TranslationMap } from './translations';
 export const clippingTranslations: TranslationMap = {
+  'clipping.example.material': { FR: "Type de matière", EN: "Material type", ES: "Tipo de material", IT: "Tipo di materiale", DE: "Materialart" },
+  'clipping.example.opaque': { FR: "Opaque", EN: "Opaque", ES: "Opaco", IT: "Opaco", DE: "Undurchsichtig" },
+  'clipping.example.translucent': { FR: "Verre / translucide", EN: "Glass / translucent", ES: "Vidrio / translúcido", IT: "Vetro / traslucido", DE: "Glas / durchscheinend" },
+  'clipping.example.validateNext': { FR: "Valider et suivante", EN: "Validate and next", ES: "Validar y siguiente", IT: "Conferma e successiva", DE: "Bestätigen und weiter" },
+  'clipping.example.validating': { FR: "Validation…", EN: "Validating…", ES: "Validando…", IT: "Conferma…", DE: "Wird bestätigt…" },
   'clipping.title': { FR: "Détourage", EN: "Clipping", ES: "Recorte", IT: "Ritaglio", DE: "Freistellen" },
   'clipping.displayToolbar': { FR: "Affichage du détourage", EN: "Clipping display", ES: "Visualización del recorte", IT: "Visualizzazione ritaglio", DE: "Freistell-Ansicht" },
   'clipping.settings': { FR: "Réglages et informations", EN: "Settings and information", ES: "Ajustes e información", IT: "Impostazioni e informazioni", DE: "Einstellungen und Informationen" },

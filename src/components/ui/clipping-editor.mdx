@@ -87,6 +87,8 @@ The Workspace header displays a contextual slider on its right: brush diameter f
 | `src` | `string` | Image to cut out. A cross-origin URL must send CORS headers: the editor reads the pixels to build the preview and the export. |
 | `onSegment` | `ClippingSegmenter` | **Required.** The segmentation engine. See [The `onSegment` contract](#the-onsegment-contract). |
 | `fileName` | `string` | Shown in the header and in the file information panel. The exported file is named `<fileName without extension>-clipped.png`. |
+| `titleAccessory` | `React.ReactNode` | Host content next to the title/file name, below them on mobile. Remains mounted through editor renders; changing it does not reset marks or history. Keep its component type and key stable to preserve its own state. |
+| `primaryAction` | `{ label: React.ReactNode; onClick: () => void \| Promise<void>; disabled?: boolean; loading?: boolean; loadingLabel?: React.ReactNode; 'data-testid'?: string }` | GS Button (`normal`, `medium`) after view/settings controls and before Close. No default label. Promises automatically set loading; `loading` can also be supplied by the host. |
 | `defaultMarks` | `ClippingMark[]` | Initial marks, for example restored from a previous session. |
 | `onMarksChange` | `(marks) => void` | Called after every committed change (stroke, selection edit, erase, undo, redo). Persist this to resume later. |
 | `onDownload` | `(blob, fileName) => void \| Promise<void>` | Receives the cut-out PNG at the source resolution. Without it, the browser downloads the file. |
@@ -99,6 +101,18 @@ The Workspace header displays a contextual slider on its right: brush diameter f
 | `language`, `translations` | | Standard GS i18n props (EN, FR, ES, IT, DE). |
 
 The component owns the marks and the undo history (it is uncontrolled). Everything the engine needs arrives through `onSegment`, and everything worth saving leaves through `onMarksChange`.
+
+### Host controls in the header
+
+<Canvas of={Stories.WithHeaderControls} />
+
+The example uses the library Select for “Opaque” / “Glass / translucent” and a host action that simulates validation. The editor does not interpret the selected value or change the segmentation engine. Supply translated labels and accessible names for host content; the example provides FR/EN/ES/IT/DE translations.
+
+The header remains a toolbar. Tab follows the visual order: accessory, zoom, views/settings, primary action, Close. `Cmd/Ctrl+Enter` triggers the action when focus is inside the editor, except in inputs, editable content, sliders, selects and menus. Handled events, composition and key repeat are ignored. The shortcut is scoped to this editor, not a global listener.
+
+During a returned promise or host `loading`, the Button is disabled and exposes `aria-busy`. `loadingLabel` defaults to `label` through the existing Button behavior. A rejected promise (or synchronous exception) releases loading without an unhandled error; the host callback must handle any business error message. Replacing the action does not cancel an already running promise. The pending guard remains active until it settles, even if the action is hidden meanwhile. Closing or unmounting does not cancel host work.
+
+On narrow screens the accessory moves below the title, and action controls wrap without changing their tab order. With neither prop, no extra wrapper, button or header class is rendered.
 
 ---
 

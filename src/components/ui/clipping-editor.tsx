@@ -25,6 +25,17 @@ export interface ClippingEditorProps extends Omit<React.HTMLAttributes<HTMLDivEl
   src: string;
   /** Nom du fichier affiché dans le header et base du nom exporté. */
   fileName?: string;
+  /** Contenu hôte affiché à côté du titre, sans réinitialiser l'éditeur. */
+  titleAccessory?: React.ReactNode;
+  /** Action hôte dans le header, avant Fermer. Les promesses activent automatiquement le chargement. */
+  primaryAction?: {
+    label: React.ReactNode;
+    onClick: () => void | Promise<void>;
+    disabled?: boolean;
+    loading?: boolean;
+    loadingLabel?: React.ReactNode;
+    'data-testid'?: string;
+  };
   /** Moteur de détourage : reçoit les traits, renvoie le masque alpha. Appelé après chaque modification des traits. */
   onSegment: ClippingSegmenter;
   /** Traits initiaux (par exemple repris d'une session précédente). */
@@ -107,7 +118,7 @@ const TOOL_KEYS: Record<ClippingTool, string> = { keep: '␣', remove: '␣', ha
 
 export function ClippingEditor({
   src, fileName, onSegment, defaultMarks, onMarksChange, onDownload, onClose, defaultTool = 'keep', defaultBrushSize = 20,
-  defaultView = 'split', defaultSettingsOpen = true, autoSegment = false, language, translations, className, onKeyDown, ...props
+  defaultView = 'split', defaultSettingsOpen = true, autoSegment = false, titleAccessory, primaryAction, language, translations, className, onKeyDown, ...props
 }: ClippingEditorProps) {
   const { t } = useTranslationSafe(translations, language);
   const [history, dispatch] = useReducer(clippingHistoryReducer, defaultMarks, createClippingHistory);
@@ -128,6 +139,28 @@ export function ClippingEditor({
   const [panning, setPanning] = useState(false);
   const [shiftHeld, setShiftHeld] = useState(false);
   const [peekOriginal, setPeekOriginal] = useState(false);
+  const [primaryActionPending, setPrimaryActionPending] = useState(false);
+  const primaryActionInFlight = useRef(false);
+  const mounted = useRef(true);
+  useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
+
+  const runPrimaryAction = async () => {
+    if (!primaryAction || primaryAction.disabled || primaryAction.loading || primaryActionInFlight.current) return;
+    // Bloque aussi deux déclenchements dans le même rendu, avant la mise à jour du bouton.
+    primaryActionInFlight.current = true;
+    try {
+      const result = primaryAction.onClick();
+      if (result && typeof result.then === 'function') {
+        setPrimaryActionPending(true);
+        await result;
+      }
+    } catch {
+      // L'application hôte assure le retour métier ; le rejet ne doit pas devenir non géré.
+    } finally {
+      primaryActionInFlight.current = false;
+      if (mounted.current) setPrimaryActionPending(false);
+    }
+  };
   const selection = useMemo(() => selectionState(history.present), [history.present]);
   const liveIds = useMemo(() => new Set(selection.ops.map((m) => m.id)), [selection]);
   const scalpel = useClippingScalpel({
@@ -364,8 +397,15 @@ export function ClippingEditor({
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     onKeyDown?.(e);
     if (e.defaultPrevented) return;
-    if (e.key === 'Shift') { setShiftHeld(true); return; }
     const target = e.target as HTMLElement;
+    // Les champs et les menus du contenu hôte conservent leurs propres raccourcis.
+    if (target.closest('input, textarea, select, [contenteditable]:not([contenteditable="false"]), [role="textbox"], [role="combobox"], [role="listbox"], [role="option"], [role="menu"], [role="menuitem"], [role="slider"]')) return;
+    if (primaryAction && (e.metaKey || e.ctrlKey) && e.key === 'Enter' && !e.altKey && !e.nativeEvent.isComposing && e.currentTarget.contains(target)) {
+      e.preventDefault();
+      if (!e.repeat) void runPrimaryAction();
+      return;
+    }
+    if (e.key === 'Shift') { setShiftHeld(true); return; }
     // Le curseur du pinceau (role slider) garde ses flèches ; les boutons gardent Espace et Entrée.
     if (target.getAttribute('role') === 'slider') return;
     const onButton = target !== e.currentTarget && !(target instanceof HTMLCanvasElement);
@@ -485,8 +525,8 @@ export function ClippingEditor({
           onKeyDown={handleKeyDown} onKeyUp={handleKeyUp} onBlur={() => { setShiftHeld(false); setPeekOriginal(false); }}
           onPointerEnter={() => { if (!document.activeElement || document.activeElement === document.body) rootRef.current?.focus({ preventScroll: true }); }} {...props}
         >
-          <div className="gs-clipping-header" role="toolbar" aria-label={t('clipping.displayToolbar')}>
-            <div className="gs-clipping-heading"><h2 className="m-0 text-lg font-medium">{t('clipping.title')}</h2>{fileName && <span className="gs-clipping-file-name text-grey-strongest" title={fileName}>{fileName}</span>}</div>
+          <div className={cn('gs-clipping-header', (titleAccessory != null || primaryAction) && 'gs-clipping-header-with-controls')} role="toolbar" aria-label={t('clipping.displayToolbar')}>
+            <div className={cn('gs-clipping-heading', titleAccessory != null && 'gs-clipping-heading-with-accessory')}><h2 className="m-0 text-lg font-medium">{t('clipping.title')}</h2>{fileName && <span className="gs-clipping-file-name text-grey-strongest" title={fileName}>{fileName}</span>}{titleAccessory != null && <div key="title-accessory" className="gs-clipping-title-accessory">{titleAccessory}</div>}</div>
             <div className="gs-clipping-control-group">
               {iconButton(t('clipping.zoomOut'), <ZoomOut size={20} aria-hidden="true" />, () => zoomBy(1 / ZOOM_STEP))}
               <span className="gs-clipping-zoom tabular-nums" role="status" aria-label={t('clipping.zoomLevel')} data-testid="clipping-zoom">{zoomLevel < 10 ? zoomLevel.toFixed(1) : Math.round(zoomLevel)}%</span>
@@ -499,6 +539,11 @@ export function ClippingEditor({
               {iconButton(t('clipping.shortcut', { label: t('clipping.view.split'), key: '2' }), <Columns2 size={20} aria-hidden="true" />, () => setView('split'), { pressed: view === 'split' })}
               {view === 'single' && <Button type="button" variant="secondary" onClick={() => setShowPreview(v => !v)}>{showPreview ? t('clipping.showOriginal') : t('clipping.showPreview')}</Button>}
               {iconButton(t('clipping.settings'), <PanelRight size={20} aria-hidden="true" />, () => setSettingsOpen(v => !v), { pressed: settingsOpen })}
+              {primaryAction && <Button type="button" variant="normal" size="medium" className="gs-clipping-primary-action"
+                disabled={primaryAction.disabled} loading={primaryAction.loading || primaryActionPending} loadingLabel={primaryAction.loadingLabel}
+                data-testid={primaryAction['data-testid']} aria-keyshortcuts="Meta+Enter Control+Enter" onClick={() => void runPrimaryAction()}>
+                {primaryAction.label}
+              </Button>}
               {onClose && iconButton(t('clipping.close'), <X size={20} aria-hidden="true" />, onClose)}
             </div>
           </div>
