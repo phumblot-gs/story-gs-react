@@ -325,6 +325,40 @@ describe("ClippingEditor", () => {
     expect(screen.getByRole("slider", { name: "Feather" })).toHaveAttribute("aria-valuenow", "3");
   });
 
+  it("signale l'ouverture et la fermeture du panneau Réglages et informations, pas le montage, et repart de l'état fourni", () => {
+    const onSettingsOpenChange = vi.fn();
+    const first = renderEditor({ onSettingsOpenChange });
+    expect(onSettingsOpenChange).not.toHaveBeenCalled(); // not on mount
+    const toggle = screen.getByRole("button", { name: "Settings and information" });
+    fireEvent.click(toggle);
+    expect(onSettingsOpenChange).toHaveBeenLastCalledWith(false);
+    expect(screen.queryByLabelText("Settings and information", { selector: "aside" })).toBeNull();
+    fireEvent.click(toggle);
+    expect(onSettingsOpenChange).toHaveBeenLastCalledWith(true);
+    expect(onSettingsOpenChange).toHaveBeenCalledTimes(2);
+    first.unmount();
+    // reopened later with the remembered state: closed, and no callback at mount
+    const again = vi.fn();
+    renderEditor({ defaultSettingsOpen: false, onSettingsOpenChange: again });
+    expect(screen.queryByLabelText("Settings and information", { selector: "aside" })).toBeNull();
+    expect(again).not.toHaveBeenCalled();
+  });
+
+  it("mémorise aussi le bloc Informations du fichier (replié par défaut)", () => {
+    const onFileInfoOpenChange = vi.fn();
+    const first = renderEditor({ onFileInfoOpenChange });
+    let details = document.querySelector("details.gs-clipping-file-info") as HTMLDetailsElement;
+    expect(details.open).toBe(false);
+    details.open = true;
+    fireEvent(details, new Event("toggle"));
+    expect(onFileInfoOpenChange).toHaveBeenLastCalledWith(true);
+    first.unmount();
+    renderEditor({ defaultFileInfoOpen: true, onFileInfoOpenChange });
+    details = document.querySelector("details.gs-clipping-file-info") as HTMLDetailsElement;
+    expect(details.open).toBe(true);
+    expect(onFileInfoOpenChange).toHaveBeenCalledTimes(1); // the restored state is not reported again
+  });
+
   it("Q maintenu montre l'autre image en vue simple, même quand le focus est sur le bouton de bascule", () => {
     renderEditor();
     fireEvent.click(screen.getByRole("button", { name: "Single pane view (keyboard: 1)" }));

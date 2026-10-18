@@ -87,6 +87,8 @@ export const WithHeaderControls: Story = { args: { onClose: fn() }, render: (arg
 /** With `autoSegment`, the engine is asked for its automatic cut-out as soon as the image opens (here the demo engine treats the border as background). */
 export const AutoSegment: Story = { args: { autoSegment: true }, render: (args) => <Demo {...args} /> };
 export const SettingsCollapsed: Story = { args: { defaultSettingsOpen: false }, render: (args) => <Demo {...args} /> };
+/** The panel state is handed back through callbacks, so an application can restore it the next time the editor opens. */
+export const RememberedPanelState: Story = { args: { defaultSettingsOpen: true, defaultFileInfoOpen: true, onSettingsOpenChange: fn(), onFileInfoOpenChange: fn() }, render: (args) => <Demo {...args} /> };
 export const HairSettings: Story = { args: { defaultTool: "hair" }, render: (args) => <Demo {...args} /> };
 export const SinglePane: Story = { args: { defaultView: 'single' }, render: (args) => <Demo {...args} /> };
 

@@ -97,6 +97,8 @@ The Workspace header displays a contextual slider on its right: brush diameter f
 | `defaultBrushSize` | `number` | Initial brush diameter in **source-image pixels** (default 20, range 2–200). |
 | `defaultView` | `'split' \| 'single'` | Split shows *Workspace* and *Result* side by side (stacked in a narrow editor). |
 | `defaultSettingsOpen` | `boolean` | Opens the contextual settings and file information panel by default (`true`). The header button toggles it without resetting the tool or its settings. |
+| `onSettingsOpenChange` | `(open: boolean) => void` | Called when the operator opens or closes the settings and information panel (not on mount). Persist it and pass it back as `defaultSettingsOpen` to reopen the editor in the same state. |
+| `defaultFileInfoOpen`, `onFileInfoOpenChange` | `boolean`, `(open: boolean) => void` | Same for the « File information » block inside the panel (collapsed by default). |
 | `autoSegment` | `boolean` | Also calls `onSegment` with an empty list of marks, so the engine's automatic cut-out appears when the image opens (and after every mark is undone). The user then corrects it with strokes. Default `false`. |
 | `language`, `translations` | | Standard GS i18n props (EN, FR, ES, IT, DE). |
 
