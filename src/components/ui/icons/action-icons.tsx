@@ -16,6 +16,33 @@ export const CustomPlusIcon: React.FC<CustomIconProps> = ({ size = 12, strokeWid
   </svg>
 )
 
+/** Même géométrie horizontale et épaisseur que Plus, sans le trait vertical. */
+export const CustomMinusIcon: React.FC<CustomIconProps> = ({ size = 12, strokeWidth = 0.5 }) => (
+  <svg width={size} height={size} viewBox="0 0 12 12" fill="none" overflow="hidden" xmlns="http://www.w3.org/2000/svg">
+    <path d="M11.7692 6H0.230774" stroke="currentColor" strokeWidth={strokeWidth} strokeMiterlimit="10" strokeLinecap="round"/>
+  </svg>
+)
+
+/** Gomme inclinée, au même trait fin que les outils de détourage. */
+export const CustomEraserIcon: React.FC<CustomIconProps> = ({ size = 12, strokeWidth = 1 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <g stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+      <path d="m3 13 10-10a1.4 1.4 0 0 1 2 0l6 6a1.4 1.4 0 0 1 0 2l-9 9H8l-5-5a1.4 1.4 0 0 1 0-2Z" />
+      <path d="m7 9 8 8M12 20h9" />
+    </g>
+  </svg>
+)
+
+/** Surligneur à corps large et pointe biseautée. */
+export const CustomHighlighterIcon: React.FC<CustomIconProps> = ({ size = 12, strokeWidth = 1 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <g stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+      <path d="m8 13 9-9a1.4 1.4 0 0 1 2 0l3 3a1.4 1.4 0 0 1 0 2l-9 9-5-5Z" />
+      <path d="m8 13-2 4 3 3 4-2M6 17l-3 3v2h3l3-2M15 6l5 5" />
+    </g>
+  </svg>
+)
+
 export const CustomPencilIcon: React.FC<CustomIconProps> = ({ size = 12, strokeWidth = 0.5 }) => (
   <svg width={size} height={size} viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M10.7434 2.56069L2.61283 10.6444L1.18394 10.9946C1.07325 11.0246 0.982691 10.9245 1.00282 10.8145L1.35501 9.39384L9.49564 1.32012C9.83777 0.979963 10.4013 0.979963 10.7434 1.32012C11.0855 1.66028 11.0855 2.22053 10.7434 2.56069Z" stroke="currentColor" strokeWidth={strokeWidth} strokeMiterlimit="10"/>

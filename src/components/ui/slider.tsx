@@ -246,6 +246,8 @@ const Slider = React.forwardRef<
           />
         </SliderPrimitive.Track>
         <SliderPrimitive.Thumb
+          aria-label={props["aria-label"]}
+          aria-labelledby={props["aria-labelledby"]}
           className={cn(
             "block h-[10px] w-[10px] rounded-full border-0 transition-colors",
             "absolute top-1/2 -translate-x-1/2 -translate-y-1/2",

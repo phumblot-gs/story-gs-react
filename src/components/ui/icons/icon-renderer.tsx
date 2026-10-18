@@ -26,11 +26,29 @@ export const renderIcon = (
     case "Urgent":
       return <CustomIcons.CustomUrgentIcon size={size} strokeWidth={strokeWidth} />;
 
+    // Selection icons
+    case "Selection":
+      return <CustomIcons.CustomSelectionIcon size={size} strokeWidth={strokeWidth} />;
+    case "SelectionAdd":
+      return <CustomIcons.CustomSelectionAddIcon size={size} strokeWidth={strokeWidth} />;
+    case "SelectionSubtract":
+      return <CustomIcons.CustomSelectionSubtractIcon size={size} strokeWidth={strokeWidth} />;
+    case "SelectionInvert":
+      return <CustomIcons.CustomSelectionInvertIcon size={size} strokeWidth={strokeWidth} />;
+    case "SelectionDelete":
+      return <CustomIcons.CustomSelectionDeleteIcon size={size} strokeWidth={strokeWidth} />;
+    case "SelectionDeselect":
+      return <CustomIcons.CustomSelectionDeselectIcon size={size} strokeWidth={strokeWidth} />;
+
     // Action icons
     case "Plus":
       return <CustomIcons.CustomPlusIcon size={size} strokeWidth={strokeWidth} />;
     case "Pencil":
       return <CustomIcons.CustomPencilIcon size={size} strokeWidth={strokeWidth} />;
+    case "Highlighter":
+      return <CustomIcons.CustomHighlighterIcon size={size} strokeWidth={strokeWidth} />;
+    case "Eraser":
+      return <CustomIcons.CustomEraserIcon size={size} strokeWidth={strokeWidth} />;
     case "Sort":
       return <CustomIcons.CustomSortIcon size={size} strokeWidth={strokeWidth} />;
     case "Filter":
@@ -136,7 +154,7 @@ export const renderIcon = (
     case "Menu":
       return <LucideIcons.Menu size={size} strokeWidth={strokeWidth} className="max-w-[12px] max-h-[12px]" />;
     case "Minus":
-      return <LucideIcons.Minus size={size} strokeWidth={strokeWidth} className="max-w-[12px] max-h-[12px]" />;
+      return <CustomIcons.CustomMinusIcon size={size} strokeWidth={strokeWidth} />;
     case "MoreHorizontal":
       return <LucideIcons.MoreHorizontal size={size} strokeWidth={strokeWidth} className="max-w-[12px] max-h-[12px]" />;
     case "MoreVertical":

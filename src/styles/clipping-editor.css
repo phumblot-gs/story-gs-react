@@ -1,0 +1,56 @@
+/* Layout local to the editor: 40px rail, 56px pane headers and contextual settings. */
+.gs-clipping-editor { container-type: inline-size; container-name: gs-clipping; min-height: 680px; color: var(--color-black); }
+.gs-clipping-header { display:flex; flex-wrap:wrap; align-items:center; gap:15px; padding:15px; border-bottom:1px solid var(--color-grey); flex-shrink:0; }
+.gs-clipping-heading { min-width:130px; max-width:240px; margin-right:auto; }
+.gs-clipping-file-name { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.gs-clipping-control-group { display:flex; flex-wrap:wrap; align-items:center; gap:5px; }
+.gs-clipping-zoom { min-width:40px; text-align:center; }
+.gs-clipping-workspace { display:flex; flex:1; min-height:0; min-width:0; }
+.gs-clipping-stage { display:flex; flex:1; min-width:0; min-height:0; position:relative; }
+.gs-clipping-tools { width:40px; flex:0 0 40px; display:flex; flex-direction:column; position:relative; }
+.gs-clipping-tools::after { content:""; position:absolute; right:0; top:0; bottom:0; border-right:1px solid var(--color-grey); pointer-events:none; }
+.gs-clipping-main-tool { height:56px; flex-shrink:0; display:flex; align-items:center; border-bottom:1px solid var(--color-grey); }
+.gs-clipping-tool { position:relative; width:40px; height:40px; flex-shrink:0; }
+.gs-clipping-tool-dot { position:absolute; width:6px; height:6px; border-radius:50%; right:4px; bottom:4px; pointer-events:none; }
+.gs-clipping-tool-group { display:flex; flex-direction:column; flex-shrink:0; padding:8px 0; position:relative; }
+.gs-clipping-tool-group + .gs-clipping-tool-group::before { content:""; position:absolute; left:8px; right:8px; top:0; border-top:1px solid var(--color-grey); }
+.gs-clipping-selection-actions { display:flex; flex-direction:column; margin-top:8px; }
+.gs-clipping-history { display:flex; flex-direction:column; flex-shrink:0; margin-top:auto; padding-top:8px; }
+.gs-clipping-panes { flex:1; display:flex; min-width:0; min-height:0; background:var(--color-grey-light); }
+.gs-clipping-pane { display:flex; flex:1 1 0; flex-direction:column; min-width:0; min-height:0; }
+.gs-clipping-pane + .gs-clipping-pane { position:relative; }
+.gs-clipping-pane + .gs-clipping-pane::before { content:""; position:absolute; left:0; top:0; bottom:0; border-left:1px solid var(--color-grey); pointer-events:none; z-index:1; }
+.gs-clipping-pane-header { display:flex; align-items:center; justify-content:space-between; gap:10px; height:56px; flex:0 0 56px; padding:10px 15px; border-bottom:1px solid var(--color-grey); background:var(--color-white); }
+.gs-clipping-pane-canvas { position:relative; flex:1; min-height:0; }
+.gs-clipping-settings { display:flex; flex-direction:column; gap:25px; flex:0 0 246px; width:246px; padding:20px; border-left:1px solid var(--color-grey); overflow-y:auto; }
+.gs-clipping-tool-settings { display:flex; flex-direction:column; gap:15px; }
+.gs-clipping-setting { display:flex; flex-direction:column; gap:15px; }
+.gs-clipping-setting-label { display:flex; justify-content:space-between; gap:10px; }
+.gs-clipping-file-info { margin-top:auto; border-top:1px solid var(--color-grey); padding-top:15px; }
+.gs-clipping-file-info summary { font-weight:500; }
+.gs-clipping-file-info dl { display:flex; flex-direction:column; gap:10px; margin-top:15px; color:var(--color-grey-strongest); }
+.gs-clipping-file-info dl > div { display:flex; justify-content:space-between; gap:10px; }
+.gs-clipping-file-info dt { flex-shrink:0; }
+.gs-clipping-file-info dd { margin:0; text-align:right; }
+.gs-clipping-notice { position:absolute; top:66px; left:50px; right:10px; z-index:1; background:var(--color-white); padding:10px 15px; display:flex; align-items:center; gap:10px; border:1px solid var(--color-grey); border-radius:4px; pointer-events:none; }
+.gs-clipping-notice[role=alert] { color:var(--color-red-strong); pointer-events:auto; }
+@container gs-clipping (max-width: 900px) {
+  .gs-clipping-workspace { flex-wrap:wrap; overflow-y:auto; }
+  .gs-clipping-stage { flex-basis:100%; min-height:610px; }
+  .gs-clipping-settings { width:100%; flex-basis:100%; border-left:0; border-top:1px solid var(--color-grey); overflow:visible; flex-direction:row; flex-wrap:wrap; }
+  .gs-clipping-tool-settings { flex:1 1 180px; }
+  .gs-clipping-file-info { flex:1 1 180px; margin:0; border:0; padding:0; }
+}
+@container gs-clipping (max-width: 640px) {
+  .gs-clipping-heading { flex-basis:100%; max-width:100%; }
+  .gs-clipping-header { gap:10px; }
+  .gs-clipping-panes:not(.gs-clipping-panes-single) { flex-direction:column; }
+  .gs-clipping-panes:not(.gs-clipping-panes-single) .gs-clipping-pane { min-height:390px; }
+  .gs-clipping-pane + .gs-clipping-pane::before { bottom:auto; right:0; border-left:0; border-top:1px solid var(--color-grey); }
+  .gs-clipping-stage { min-height:800px; }
+  .gs-clipping-pane-header { padding:10px; }
+}
+
+.gs-clipping-pane-setting { width:210px; max-width:60%; min-width:0; margin-left:auto; }
+.gs-clipping-pane-setting .gs-clipping-setting { gap:7px; }
+.gs-clipping-pane-setting .gs-clipping-setting-label { white-space:nowrap; gap:5px; }

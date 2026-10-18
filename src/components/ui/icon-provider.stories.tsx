@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { IconProvider } from "./icon-provider";
+import { Button } from "./button";
+import { BgProvider } from "@/components/layout/BgContext";
 import { AVAILABLE_ICONS } from "./icons/constants";
 
 const meta: Meta<typeof IconProvider> = {
@@ -60,8 +62,20 @@ export const CustomIcons: Story = {
         <p className="text-xs mt-1">Plus</p>
       </div>
       <div className="text-center">
+        <IconProvider icon="Minus" size={24} />
+        <p className="text-xs mt-1">Minus</p>
+      </div>
+      <div className="text-center">
         <IconProvider icon="Pencil" size={24} />
         <p className="text-xs mt-1">Pencil</p>
+      </div>
+      <div className="text-center">
+        <IconProvider icon="Highlighter" size={24} />
+        <p className="text-xs mt-1">Highlighter</p>
+      </div>
+      <div className="text-center">
+        <IconProvider icon="Eraser" size={24} />
+        <p className="text-xs mt-1">Eraser</p>
       </div>
       <div className="text-center">
         <IconProvider icon="Refresh" size={24} />
@@ -235,4 +249,28 @@ export const WithColors: Story = {
       },
     },
   },
+};
+/** Approved selection family: 20px icons in 40px square controls, normal and active. */
+export const SelectionIcons: Story = {
+  render: () => (
+    <BgProvider value="white"><div className="grid grid-cols-3 gap-6 bg-white p-4 text-black" data-bg="white">
+      {([
+        ["Selection", "Sélectionner"],
+        ["SelectionAdd", "Ajouter à la sélection"],
+        ["SelectionSubtract", "Retirer de la sélection"],
+        ["SelectionInvert", "Inverser la sélection"],
+        ["SelectionDelete", "Supprimer le contenu"],
+        ["SelectionDeselect", "Désélectionner"],
+      ] as const).map(([icon, label]) => (
+        <div key={icon} className="flex flex-col items-center gap-2">
+          <span className="text-sm">{label}</span>
+          <div className="flex gap-2">
+            <Button variant="ghost" aria-label={label} aria-pressed={false} className="h-[40px] w-[40px] rounded-none p-0 [&_svg]:!h-[20px] [&_svg]:!w-[20px]"><IconProvider icon={icon} size={20} /></Button>
+            <Button variant="inverse" aria-label={`${label} (actif)`} aria-pressed={true} className="h-[40px] w-[40px] rounded-none p-0 [&_svg]:!h-[20px] [&_svg]:!w-[20px]"><IconProvider icon={icon} size={20} /></Button>
+          </div>
+          <code className="text-sm">{icon}</code>
+        </div>
+      ))}
+    </div></BgProvider>
+  ),
 };

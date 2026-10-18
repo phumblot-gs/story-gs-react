@@ -40,9 +40,10 @@ function useDemoSegmenter(src: string, latencyMs = 250): ClippingSegmenter {
 }
 
 const meta = {
-  title: 'Components/ClippingEditor', component: ClippingEditor, tags: ['autodocs'],
+  title: 'Components/ClippingEditor', component: ClippingEditor,
   parameters: { layout: 'fullscreen', docs: { description: { component: 'Éditeur de détourage : on trace des traits « Garder » / « Retirer » (et « Cheveux ») et des sélections au « Crayon » sur l’image, un moteur fourni par l’application calcule le masque et l’aperçu sur fond transparent se met à jour. Le composant ne détoure pas lui-même : `onSegment` reçoit les traits et renvoie un masque alpha. Raccourcis : Espace Garder/Retirer, V Cheveux, X Gomme, S Crayon, A Crayon +, D Crayon −, C ou Maj Déplacer, Z/Y Annuler/Rétablir, Accueil ajuster, 1/2 vues, molette zoom.' } } },
   argTypes: {
+    defaultSettingsOpen: { control: "boolean" },
     defaultTool: { control: 'select', options: ['keep', 'remove', 'hair', 'eraser', 'pencil', 'pencilAdd', 'pencilSub', 'pan'] },
     defaultView: { control: 'radio', options: ['split', 'single'] },
     language: { control: 'select', options: ['fr', 'en', 'es', 'it', 'de'] },
@@ -61,6 +62,8 @@ function Demo({ latencyMs, ...args }: ClippingEditorProps & { latencyMs?: number
 export const Default: Story = { render: (args) => <Demo {...args} /> };
 /** With `autoSegment`, the engine is asked for its automatic cut-out as soon as the image opens (here the demo engine treats the border as background). */
 export const AutoSegment: Story = { args: { autoSegment: true }, render: (args) => <Demo {...args} /> };
+export const SettingsCollapsed: Story = { args: { defaultSettingsOpen: false }, render: (args) => <Demo {...args} /> };
+export const HairSettings: Story = { args: { defaultTool: "hair" }, render: (args) => <Demo {...args} /> };
 export const SinglePane: Story = { args: { defaultView: 'single' }, render: (args) => <Demo {...args} /> };
 
 const PRESET: ClippingMark[] = [

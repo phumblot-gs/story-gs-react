@@ -1,7 +1,9 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useReducer, useRef, useState } from 'react';
-import { Brush, Columns2, Contrast, Download, Eraser, Hand, Maximize, Minus, Pencil, Plus, Redo2, Square, SquareDashed, Trash2, Undo2, X, ZoomIn, ZoomOut } from 'lucide-react';
+import { Columns2, Download, Hand, Maximize, PanelRight, Redo2, Square, Undo2, X, ZoomIn, ZoomOut } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import '@/styles/clipping-editor.css';
 import { Button } from './button';
+import { IconProvider } from './icon-provider';
 import { Slider } from './slider';
 import { Spinner } from './spinner';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './tooltip';
@@ -21,7 +23,7 @@ export type { ClippingMark, ClippingMask, ClippingNode, ClippingPoint, ClippingS
 export interface ClippingEditorProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange' | 'children'> {
   /** Image à détourer. Une URL d'un autre domaine doit autoriser CORS (le détourage lit ses pixels). */
   src: string;
-  /** Nom du fichier affiché sous l'image et base du nom exporté. */
+  /** Nom du fichier affiché dans le header et base du nom exporté. */
   fileName?: string;
   /** Moteur de détourage : reçoit les traits, renvoie le masque alpha. Appelé après chaque modification des traits. */
   onSegment: ClippingSegmenter;
@@ -36,6 +38,8 @@ export interface ClippingEditorProps extends Omit<React.HTMLAttributes<HTMLDivEl
   /** Diamètre initial du pinceau, en pixels de l'image source. */
   defaultBrushSize?: number;
   defaultView?: 'single' | 'split';
+  /** Affiche les réglages contextuels et les informations du fichier (défaut true). */
+  defaultSettingsOpen?: boolean;
   /**
    * Also calls `onSegment` with an empty list of marks, so the engine's automatic cut-out is shown as soon as the
    * image opens (and after every mark is undone). The user then corrects it with strokes. Default false.
@@ -89,36 +93,27 @@ const CHECKER: React.CSSProperties = {
 };
 
 const TOOL_ICONS: Record<ClippingTool, React.ReactNode> = {
-  keep: <Plus size={14} aria-hidden="true" />,
-  remove: <Minus size={14} aria-hidden="true" />,
-  hair: <Brush size={14} aria-hidden="true" />,
-  eraser: <Eraser size={14} aria-hidden="true" />,
-  pencil: <Pencil size={14} aria-hidden="true" />,
-  pencilAdd: <PencilBadge sign="+" />,
-  pencilSub: <PencilBadge sign="−" />,
-  scalpel: <Pencil size={14} aria-hidden="true" />,
+  keep: <IconProvider icon="Plus" size={20} />,
+  remove: <IconProvider icon="Minus" size={20} />,
+  hair: <IconProvider icon="Highlighter" size={20} />,
+  eraser: <IconProvider icon="Eraser" size={20} />,
+  pencil: <IconProvider icon="Selection" size={20} />,
+  pencilAdd: <IconProvider icon="SelectionAdd" size={20} />,
+  pencilSub: <IconProvider icon="SelectionSubtract" size={20} />,
+  scalpel: <IconProvider icon="Selection" size={20} />,
   pan: <Hand size={14} aria-hidden="true" />,
 };
 const TOOL_KEYS: Record<ClippingTool, string> = { keep: '␣', remove: '␣', hair: 'V', eraser: 'X', pencil: 'S', pencilAdd: 'A', pencilSub: 'D', scalpel: 'S', pan: 'C' };
-const TOOL_ORDER: ClippingTool[] = ['keep', 'remove', 'hair', 'eraser', 'pencil', 'pencilAdd', 'pencilSub', 'pan'];
-
-function PencilBadge({ sign }: { sign: string }) {
-  return (
-    <span className="relative inline-flex" aria-hidden="true">
-      <Pencil size={14} />
-      <span className="absolute -right-1.5 -top-1.5 text-[11px] font-bold leading-none">{sign}</span>
-    </span>
-  );
-}
 
 export function ClippingEditor({
   src, fileName, onSegment, defaultMarks, onMarksChange, onDownload, onClose, defaultTool = 'keep', defaultBrushSize = 20,
-  defaultView = 'split', autoSegment = false, language, translations, className, onKeyDown, ...props
+  defaultView = 'split', defaultSettingsOpen = true, autoSegment = false, language, translations, className, onKeyDown, ...props
 }: ClippingEditorProps) {
   const { t } = useTranslationSafe(translations, language);
   const [history, dispatch] = useReducer(clippingHistoryReducer, defaultMarks, createClippingHistory);
   const [tool, setTool] = useState<ClippingTool>(defaultTool === 'scalpel' ? 'pencil' : defaultTool);
   const [feather, setFeather] = useState(0);
+  const [settingsOpen, setSettingsOpen] = useState(defaultSettingsOpen);
   const [brush, setBrush] = useState(Math.min(BRUSH_MAX, Math.max(BRUSH_MIN, defaultBrushSize)));
   const [view, setView] = useState<'single' | 'split'>(defaultView);
   const [showPreview, setShowPreview] = useState(false);
@@ -456,95 +451,102 @@ export function ClippingEditor({
     : downloadFailed ? t('clipping.downloadError')
       : status === 'working' ? t('clipping.working') : status === 'error' ? t('clipping.segmentError') : status === 'ready' ? t('clipping.ready') : '';
 
-  const iconButton = (label: string, icon: React.ReactNode, onClick: () => void, opts: { pressed?: boolean; disabled?: boolean } = {}) => (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <Button type="button" variant={opts.pressed ? 'inverse' : 'secondary'} size="medium" className="h-6 w-6 p-0" aria-label={label} aria-pressed={opts.pressed} disabled={opts.disabled} onClick={onClick}>
-          {icon}
-        </Button>
-      </TooltipTrigger>
-      <TooltipContent>{label}</TooltipContent>
-    </Tooltip>
-  );
+  const toolSetting = (tk: ClippingTool) => {
+    const selectionSetting = isPencilTool(tk);
+    const label = t(selectionSetting ? 'clipping.selection.feather' : 'clipping.brushSize');
+    const value = selectionSetting ? feather : brush;
+    return <label className="gs-clipping-setting">
+      <span className="gs-clipping-setting-label"><span>{label}</span><output className="tabular-nums">{value}px</output></span>
+      <Slider min={selectionSetting ? 0 : BRUSH_MIN} max={selectionSetting ? FEATHER_MAX : BRUSH_MAX} step={1} value={[value]} aria-label={label} onValueChange={([v]) => selectionSetting ? setFeather(v) : setBrush(v)} />
+    </label>;
+  };
+  const iconButton = (label: string, icon: React.ReactNode, onClick: () => void, opts: { pressed?: boolean; disabled?: boolean; selectionIcon?: boolean; rail?: boolean } = {}) => <Tooltip>
+    <TooltipTrigger asChild>
+      <Button type="button" variant={opts.pressed ? 'inverse' : opts.rail ? 'ghost' : 'secondary'} size="medium" className={cn('h-[40px] w-[40px] shrink-0 p-0 [&_svg]:!h-[20px] [&_svg]:!w-[20px]', opts.rail && 'rounded-none')} aria-label={label} aria-pressed={opts.pressed} disabled={opts.disabled} onClick={onClick}>{icon}</Button>
+    </TooltipTrigger>
+    <TooltipContent>{label}</TooltipContent>
+  </Tooltip>;
+
+  const selectionToolActive = isPencilTool(effectiveTool);
+  const downloadButton = <Button type="button" size="medium" disabled={!cutout || status === 'working' || status === 'error' || loadFailed} onClick={() => void download()}>
+    <Download size={16} aria-hidden="true" />{t('clipping.download')}
+  </Button>;
+  const toolButton = (tk: ClippingTool) => <div key={tk} className="gs-clipping-tool">
+    {iconButton(withKey(tk), TOOL_ICONS[tk], () => setTool(tk), { pressed: effectiveTool === tk, selectionIcon: isPencilTool(tk), rail: true })}
+    {(tk === 'keep' || tk === 'remove') && <span className={cn('gs-clipping-tool-dot', tk === 'keep' ? 'bg-green' : 'bg-red-strong')} aria-hidden="true" />}
+  </div>;
 
   return (
     <TooltipProvider delayDuration={300}>
       <BgProvider value="white">
         <div
           ref={rootRef} tabIndex={0} data-bg="white" data-gs-clipping-editor
-          className={cn('relative flex h-full min-h-[420px] w-full flex-col bg-white outline-none focus-visible:ring-2 focus-visible:ring-ring', className)}
+          className={cn('gs-clipping-editor relative flex h-full w-full flex-col bg-white outline-none focus-visible:ring-2 focus-visible:ring-ring', className)}
           onKeyDown={handleKeyDown} onKeyUp={handleKeyUp} onBlur={() => { setShiftHeld(false); setPeekOriginal(false); }}
           onPointerEnter={() => { if (!document.activeElement || document.activeElement === document.body) rootRef.current?.focus({ preventScroll: true }); }} {...props}
         >
-          <div role="toolbar" aria-label={t('clipping.toolbar')} className="flex h-[50px] shrink-0 items-center gap-1 overflow-x-auto border-b border-grey px-3">
-            {TOOL_ORDER.map((tk) => <React.Fragment key={tk}>{iconButton(withKey(tk), TOOL_ICONS[tk], () => setTool(tk), { pressed: effectiveTool === tk })}</React.Fragment>)}
-            <span className="mx-1 h-5 w-px shrink-0 bg-grey" aria-hidden="true" />
-            {iconButton(t('clipping.selection.invert'), <Contrast size={14} aria-hidden="true" />, () => addSelectionMark('invert'), { disabled: !selection.active })}
-            {iconButton(t('clipping.selection.delete'), <Trash2 size={14} aria-hidden="true" />, () => addSelectionMark('delete'), { disabled: !selection.active })}
-            {iconButton(t('clipping.selection.deselect'), <SquareDashed size={14} aria-hidden="true" />, () => addSelectionMark('deselect'), { disabled: !selection.active })}
-            <span className="mx-1 h-5 w-px shrink-0 bg-grey" aria-hidden="true" />
-            {iconButton(`${t('clipping.undo')} (Z)`, <Undo2 size={14} aria-hidden="true" />, () => dispatch({ type: 'undo' }), { disabled: !canUndo })}
-            {iconButton(`${t('clipping.redo')} (Y)`, <Redo2 size={14} aria-hidden="true" />, () => dispatch({ type: 'redo' }), { disabled: !canRedo })}
-            <span className="mx-1 h-5 w-px shrink-0 bg-grey" aria-hidden="true" />
-            {iconButton(t('clipping.zoomIn'), <ZoomIn size={14} aria-hidden="true" />, () => zoomBy(ZOOM_STEP))}
-            {iconButton(t('clipping.zoomOut'), <ZoomOut size={14} aria-hidden="true" />, () => zoomBy(1 / ZOOM_STEP))}
-            {iconButton(`${t('clipping.zoomFit')} (Home)`, <Maximize size={14} aria-hidden="true" />, () => setViewport(null))}
-            {iconButton(`${t('clipping.zoomActual')} (0)`, <span className="text-[10px] font-semibold leading-none">1:1</span>, () => zoomTo(100), { pressed: Math.abs(zoomLevel - 100) < 0.5 })}
-            <span className="w-11 shrink-0 text-center text-sm tabular-nums" role="status" aria-label={t('clipping.zoomLevel')} data-testid="clipping-zoom">{zoomLevel < 10 ? zoomLevel.toFixed(1) : Math.round(zoomLevel)}%</span>
-            <span className="mx-1 h-5 w-px shrink-0 bg-grey" aria-hidden="true" />
-            {iconButton(t('clipping.shortcut', { label: t('clipping.view.single'), key: '1' }), <Square size={14} aria-hidden="true" />, () => setView('single'), { pressed: view === 'single' })}
-            {iconButton(t('clipping.shortcut', { label: t('clipping.view.split'), key: '2' }), <Columns2 size={14} aria-hidden="true" />, () => setView('split'), { pressed: view === 'split' })}
-            {view === 'single' && (
-              <Button type="button" variant="secondary" size="medium" className="shrink-0" onClick={() => setShowPreview((v) => !v)}>
-                {showPreview ? t('clipping.showOriginal') : t('clipping.showPreview')}
-              </Button>
-            )}
-            <div className="ml-auto flex shrink-0 items-center gap-1">
-              <Button type="button" size="medium" className="shrink-0" disabled={!cutout || status === 'working'} onClick={() => void download()}>
-                <Download size={14} aria-hidden="true" />{t('clipping.download')}
-              </Button>
-              {onClose && iconButton(t('clipping.close'), <X size={14} aria-hidden="true" />, onClose)}
+          <div className="gs-clipping-header" role="toolbar" aria-label={t('clipping.displayToolbar')}>
+            <div className="gs-clipping-heading"><h2 className="m-0 text-lg font-medium">{t('clipping.title')}</h2>{fileName && <span className="gs-clipping-file-name text-grey-strongest" title={fileName}>{fileName}</span>}</div>
+            <div className="gs-clipping-control-group">
+              {iconButton(t('clipping.zoomOut'), <ZoomOut size={20} aria-hidden="true" />, () => zoomBy(1 / ZOOM_STEP))}
+              <span className="gs-clipping-zoom tabular-nums" role="status" aria-label={t('clipping.zoomLevel')} data-testid="clipping-zoom">{zoomLevel < 10 ? zoomLevel.toFixed(1) : Math.round(zoomLevel)}%</span>
+              {iconButton(t('clipping.zoomIn'), <ZoomIn size={20} aria-hidden="true" />, () => zoomBy(ZOOM_STEP))}
+              <Button type="button" variant="secondary" aria-label={`${t('clipping.zoomFit')} (Home)`} onClick={() => setViewport(null)}><Maximize size={16} aria-hidden="true" />{t('clipping.fit')}</Button>
+              <Button type="button" variant={Math.abs(zoomLevel - 100) < 0.5 ? 'inverse' : 'secondary'} aria-label={`${t('clipping.zoomActual')} (0)`} aria-pressed={Math.abs(zoomLevel - 100) < 0.5} onClick={() => zoomTo(100)}>1:1</Button>
+            </div>
+            <div className="gs-clipping-control-group">
+              {iconButton(t('clipping.shortcut', { label: t('clipping.view.single'), key: '1' }), <Square size={20} aria-hidden="true" />, () => setView('single'), { pressed: view === 'single' })}
+              {iconButton(t('clipping.shortcut', { label: t('clipping.view.split'), key: '2' }), <Columns2 size={20} aria-hidden="true" />, () => setView('split'), { pressed: view === 'split' })}
+              {view === 'single' && <Button type="button" variant="secondary" onClick={() => setShowPreview(v => !v)}>{showPreview ? t('clipping.showOriginal') : t('clipping.showPreview')}</Button>}
+              {iconButton(t('clipping.settings'), <PanelRight size={20} aria-hidden="true" />, () => setSettingsOpen(v => !v), { pressed: settingsOpen })}
+              {onClose && iconButton(t('clipping.close'), <X size={20} aria-hidden="true" />, onClose)}
             </div>
           </div>
 
-          <div className="relative flex min-h-0 flex-1">
-            {showMarksPane && (
-              <Pane title={t('clipping.pane.marks')} ariaLabel={t('clipping.canvas.marks')} caption={fileName} cursor={cursor}
-                draw={drawMarks} sizeRef={paneSize} onMeasure={(sz) => setMeasured(`${sz.width}x${sz.height}`)} onPointerDown={onPointerDown('marks')} onPointerMove={onPointerMove('marks')}
-                onPointerUp={endPointer} onPointerLeave={() => setHover(null)} onWheel={onWheel} />
-            )}
-            {view === 'split' && <div className="w-px bg-black" aria-hidden="true" />}
-            {showPreviewPane && (
-              <Pane title={t('clipping.pane.preview')} ariaLabel={t('clipping.canvas.preview')} caption={imageSize ? t('clipping.dimensions', imageSize) : undefined}
-                cursor={panning ? 'grabbing' : 'grab'} checker draw={drawPreview} sizeRef={paneSize} onMeasure={(sz) => setMeasured(`${sz.width}x${sz.height}`)}
-                onPointerDown={onPointerDown('preview')} onPointerMove={onPointerMove('preview')} onPointerUp={endPointer} onWheel={onWheel} />
-            )}
-            {!source && (
-              <div className="absolute inset-0 flex items-center justify-center bg-white/70">
-                {!loadFailed && <Spinner size={24} decorative />}
+          <div className="gs-clipping-workspace">
+            <div className="gs-clipping-stage">
+              <div role="toolbar" aria-label={t('clipping.toolbar')} aria-orientation="vertical" className="gs-clipping-tools">
+                <div className="gs-clipping-main-tool">{toolButton('pan')}</div>
+                <div className="gs-clipping-tool-group">{(['keep', 'remove', 'hair', 'eraser'] as const).map(toolButton)}</div>
+                <div className="gs-clipping-tool-group">{(['pencil', 'pencilAdd', 'pencilSub'] as const).map(toolButton)}
+                  {selectionToolActive && <div className="gs-clipping-selection-actions" role="group" aria-label={t('clipping.selection.actions')}>
+                    {iconButton(t('clipping.selection.invert'), <IconProvider icon="SelectionInvert" size={20} />, () => addSelectionMark('invert'), { disabled: !selection.active, selectionIcon: true, rail: true })}
+                    {iconButton(t('clipping.selection.delete'), <IconProvider icon="SelectionDelete" size={20} />, () => addSelectionMark('delete'), { disabled: !selection.active, selectionIcon: true, rail: true })}
+                    {iconButton(t('clipping.selection.deselect'), <IconProvider icon="SelectionDeselect" size={20} />, () => addSelectionMark('deselect'), { disabled: !selection.active, selectionIcon: true, rail: true })}
+                  </div>}
+                </div>
+                <div className="gs-clipping-history">
+                  {iconButton(`${t('clipping.undo')} (Z)`, <Undo2 size={20} aria-hidden="true" />, () => dispatch({ type: 'undo' }), { disabled: !canUndo, rail: true })}
+                  {iconButton(`${t('clipping.redo')} (Y)`, <Redo2 size={20} aria-hidden="true" />, () => dispatch({ type: 'redo' }), { disabled: !canRedo, rail: true })}
+                </div>
               </div>
-            )}
+              <div className={cn('gs-clipping-panes', view === 'single' && 'gs-clipping-panes-single')}>
+                {showMarksPane && <Pane title={t('clipping.pane.marks')} ariaLabel={t('clipping.canvas.marks')} cursor={cursor}
+                  action={(effectiveTool === 'hair' || effectiveTool === 'eraser' || selectionToolActive) ? <div className="gs-clipping-pane-setting">{toolSetting(effectiveTool)}</div> : undefined}
+                  draw={drawMarks} sizeRef={paneSize} onMeasure={sz => setMeasured(`${sz.width}x${sz.height}`)} onPointerDown={onPointerDown('marks')} onPointerMove={onPointerMove('marks')}
+                  onPointerUp={endPointer} onPointerLeave={() => setHover(null)} onWheel={onWheel} />}
+                {showPreviewPane && <Pane title={t('clipping.pane.preview')} ariaLabel={t('clipping.canvas.preview')} action={downloadButton}
+                  cursor={panning ? 'grabbing' : 'grab'} checker draw={drawPreview} sizeRef={paneSize} onMeasure={sz => setMeasured(`${sz.width}x${sz.height}`)}
+                  onPointerDown={onPointerDown('preview')} onPointerMove={onPointerMove('preview')} onPointerUp={endPointer} onWheel={onWheel} />}
+              </div>
+              {(!source || status === 'working' || status === 'error' || downloadFailed) && <div className="gs-clipping-notice" role={loadFailed || status === 'error' || downloadFailed ? 'alert' : 'status'}>
+                {!loadFailed && status !== 'error' && !downloadFailed && <Spinner size={16} decorative />}{statusText}
+              </div>}
+            </div>
+            {settingsOpen && <aside className="gs-clipping-settings" aria-label={t('clipping.settings')}>
+              <div className="gs-clipping-tool-settings">
+                <h3 className="m-0 text-base font-medium">{t('clipping.activeTool')}</h3>
+                <span>{t(`clipping.tool.${effectiveTool}`)}</span>
+                {(effectiveTool === 'keep' || effectiveTool === 'remove') && toolSetting(effectiveTool)}
+              </div>
+              <details className="gs-clipping-file-info"><summary>{t('clipping.fileInfo')}</summary><dl>
+                {fileName && <div><dt>{t('clipping.fileName')}</dt><dd className="break-all">{fileName}</dd></div>}
+                {imageSize && <div><dt>{t('clipping.fileDimensions')}</dt><dd>{t('clipping.dimensions', imageSize)}</dd></div>}
+                <div><dt>{t('clipping.output')}</dt><dd>{t('clipping.outputFormat')}</dd></div>
+              </dl></details>
+            </aside>}
           </div>
-
-          <div className="flex flex-wrap items-center gap-4 border-t border-grey px-3 py-2 text-sm">
-            <label className="flex min-w-[220px] items-center gap-3">
-              <span title={t('clipping.brushShortcut')}>{t('clipping.brush')}</span>
-              <Slider className="w-32" min={BRUSH_MIN} max={BRUSH_MAX} step={1} value={[brush]} aria-label={t('clipping.brushSize')} onValueChange={([v]) => setBrush(v)} />
-              <span className="w-12 tabular-nums">{brush}px</span>
-            </label>
-            {selection.active && (
-              <label className="flex min-w-[200px] items-center gap-3">
-                <span>{t('clipping.selection.feather')}</span>
-                <Slider className="w-24" min={0} max={FEATHER_MAX} step={1} value={[feather]} aria-label={t('clipping.selection.feather')} onValueChange={([v]) => setFeather(v)} />
-                <span className="w-12 tabular-nums">{feather}px</span>
-              </label>
-            )}
-            {isPencilTool(effectiveTool) && <span className="text-grey-strongest">{t(scalpel.connecting ? 'clipping.scalpelHint.connecting' : 'clipping.scalpelHint')}</span>}
-            <span role="status" aria-live="polite" className="ml-auto flex items-center gap-2 text-grey-strongest">
-              {status === 'working' && <Spinner size={12} decorative />}
-              {statusText}
-            </span>
-          </div>
+          <span role="status" aria-live="polite" className="sr-only">{status === 'ready' ? statusText : ''}</span>
         </div>
       </BgProvider>
     </TooltipProvider>
@@ -554,7 +556,7 @@ export function ClippingEditor({
 interface PaneProps {
   title: string;
   ariaLabel: string;
-  caption?: string;
+  action?: React.ReactNode;
   cursor: string;
   checker?: boolean;
   draw: (ctx: CanvasRenderingContext2D, size: PaneSize) => void;
@@ -568,7 +570,7 @@ interface PaneProps {
 }
 
 /** Volet à canvas : mesure son conteneur, redessine à chaque rendu et traduit les événements en pixels du volet. */
-function Pane({ title, ariaLabel, caption, cursor, checker, draw, sizeRef, onMeasure, onPointerDown, onPointerMove, onPointerUp, onPointerLeave, onWheel }: PaneProps) {
+function Pane({ title, ariaLabel, action, cursor, checker, draw, sizeRef, onMeasure, onPointerDown, onPointerMove, onPointerUp, onPointerLeave, onWheel }: PaneProps) {
   const host = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
   const [size, setSize] = useState<PaneSize>({ width: 1, height: 1 });
@@ -632,16 +634,15 @@ function Pane({ title, ariaLabel, caption, cursor, checker, draw, sizeRef, onMea
   };
 
   return (
-    <div className="flex min-w-0 flex-1 flex-col">
-      <div className="py-2 text-center text-base">{title}</div>
-      <div ref={host} className="relative min-h-0 flex-1" style={checker ? CHECKER : undefined}>
+    <div className="gs-clipping-pane">
+      <div className="gs-clipping-pane-header"><span>{title}</span>{action}</div>
+      <div ref={host} className="gs-clipping-pane-canvas" style={checker ? CHECKER : undefined}>
         <canvas
           ref={canvas} role="img" aria-label={ariaLabel} className="absolute inset-0 h-full w-full touch-none" style={{ cursor }}
           onPointerDown={(e) => onPointerDown(local(e))} onPointerMove={(e) => onPointerMove(local(e))}
           onPointerUp={(e) => onPointerUp(local(e))} onPointerCancel={(e) => onPointerUp(local(e))} onPointerLeave={onPointerLeave}
         />
       </div>
-      <div className="min-h-[2.25rem] truncate py-2 text-center text-base">{caption}</div>
     </div>
   );
 }

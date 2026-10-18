@@ -32,13 +32,19 @@ describe("ClippingEditor", () => {
 
   it("inverser, supprimer et désélectionner n'agissent que sur une sélection", () => {
     renderEditor();
-    for (const name of ["Invert selection", "Delete selection", "Deselect"]) expect(screen.getByRole("button", { name })).toBeDisabled();
+    expect(screen.queryByRole("group", { name: "Selection actions" })).not.toBeInTheDocument();
+    for (const name of ["Pencil (selection) (keyboard: S)", "Pencil + (add to selection) (keyboard: A)", "Pencil − (subtract from selection) (keyboard: D)"]) {
+      fireEvent.click(screen.getByRole("button", { name }));
+      for (const action of ["Invert selection", "Delete selection", "Deselect"]) expect(screen.getByRole("button", { name: action })).toBeDisabled();
+    }
+    fireEvent.click(screen.getByRole("button", { name: "Pan (keyboard: C)" }));
+    expect(screen.queryByRole("group", { name: "Selection actions" })).not.toBeInTheDocument();
   });
 
   it("une sélection active active les actions et envoie des marques sans trait", () => {
     const onMarksChange = vi.fn();
     const poly = { id: "p", tool: "pencil" as const, mode: "replace" as const, size: 2, closed: true, points: [{ x: 0, y: 0 }, { x: 40, y: 0 }, { x: 20, y: 30 }] };
-    renderEditor({ defaultMarks: [poly], onMarksChange });
+    renderEditor({ defaultMarks: [poly], onMarksChange, defaultTool: "pencil" });
     fireEvent.click(screen.getByRole("button", { name: "Invert selection" }));
     fireEvent.click(screen.getByRole("button", { name: "Delete selection" }));
     expect(onMarksChange.mock.calls.at(-1)![0].map((m: { tool: string }) => m.tool)).toEqual(["pencil", "invert", "delete"]);
@@ -127,12 +133,32 @@ describe("ClippingEditor", () => {
     expect(screen.getByText("23px")).toBeInTheDocument(); // la flèche règle le curseur, elle ne déplace pas la vue
   });
 
-  it("Maj + Z rétablit, et l'aide du scalpel s'affiche avec l'outil", () => {
-    renderEditor();
-    const root = document.querySelector("[data-gs-clipping-editor]") as HTMLElement;
-    expect(screen.queryByText(/Click: place a point/)).not.toBeInTheDocument();
-    fireEvent.keyDown(root, { key: "s" });
-    expect(screen.getByText(/Click: place a point/)).toBeInTheDocument();
+  it("le bandeau de travail expose les réglages contextuels sans panneau et conserve leurs valeurs", () => {
+    const onMarksChange = vi.fn();
+    renderEditor({ defaultSettingsOpen: false, onMarksChange });
+    expect(screen.queryByRole("slider")).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Hair (keyboard: V)" }));
+    const brush = screen.getByRole("slider", { name: "Brush size" });
+    expect(brush.closest(".gs-clipping-pane-header")).toHaveTextContent("Workspace");
+    expect(brush).toHaveAttribute("aria-valuenow", "20");
+    fireEvent.keyDown(brush, { key: "ArrowRight" });
+    expect(brush).toHaveAttribute("aria-valuenow", "21");
+    expect(screen.queryByRole("slider", { name: "Alpha" })).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Eraser (keyboard: X)" }));
+    expect(screen.getByRole("slider", { name: "Brush size" })).toHaveAttribute("aria-valuenow", "21");
+    const names = ["Pencil (selection) (keyboard: S)", "Pencil + (add to selection) (keyboard: A)", "Pencil − (subtract from selection) (keyboard: D)"];
+    for (const [index, name] of names.entries()) {
+      fireEvent.click(screen.getByRole("button", { name }));
+      const feather = screen.getByRole("slider", { name: "Feather" });
+      expect(feather).toHaveAttribute("aria-valuenow", String(index));
+      fireEvent.keyDown(feather, { key: "ArrowRight" });
+    }
+    expect(onMarksChange).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole("button", { name: names[2] }));
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Settings and information" }));
+    expect(screen.getByRole("complementary", { name: "Settings and information" })).toBeInTheDocument();
+    expect(screen.getByRole("slider", { name: "Feather" })).toHaveAttribute("aria-valuenow", "3");
   });
 
   it("Q maintenu montre l'autre image en vue simple, même quand le focus est sur le bouton de bascule", () => {
@@ -166,12 +192,16 @@ describe("ClippingEditor", () => {
     expect(screen.getByText("17px")).toBeInTheDocument();
   });
 
-  it("respecte la charte : bandeau de 50 px, boutons d'action p-0 w-6 h-6 en variante secondaire", () => {
+  it("sépare les outils de l'affichage et réserve le téléchargement au résultat", () => {
     renderEditor();
-    expect(screen.getByRole("toolbar")).toHaveClass("h-[50px]");
-    for (const name of ["Hair (keyboard: V)", "Undo (Z)", "Zoom in", "Split view (keyboard: 2)"]) {
-      const button = screen.getByRole("button", { name });
-      expect(button, name).toHaveClass("h-6", "w-6", "p-0");
-    }
+    const tools = screen.getByRole("toolbar", { name: "Clipping tools" });
+    expect(tools).toHaveAttribute("aria-orientation", "vertical");
+    expect(tools.querySelector("button")).toBe(screen.getByRole("button", { name: "Pan (keyboard: C)" }));
+    const display = screen.getByRole("toolbar", { name: "Clipping display" });
+    expect(display).not.toContainElement(screen.getByRole("button", { name: "Download" }));
+    fireEvent.click(screen.getByRole("button", { name: "Single pane view (keyboard: 1)" }));
+    expect(screen.queryByRole("button", { name: "Download" })).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Preview" }));
+    expect(screen.getByRole("button", { name: "Download" })).toBeInTheDocument();
   });
 });
