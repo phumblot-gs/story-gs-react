@@ -23,6 +23,15 @@ export const CustomMinusIcon: React.FC<CustomIconProps> = ({ size = 12, strokeWi
   </svg>
 )
 
+/** Main ouverte, au même trait fin que les outils de détourage. */
+export const CustomHandIcon: React.FC<CustomIconProps> = ({ size = 12, strokeWidth = 1 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <g stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+      <path d="M8 12V5.5a1.5 1.5 0 0 1 3 0V10M11 5.5V3.5a1.5 1.5 0 0 1 3 0V10M14 5.5a1.5 1.5 0 0 1 3 0V11M17 8.5a1.5 1.5 0 0 1 3 0V15a7 7 0 0 1-12.5 4.3L3.2 14a1.5 1.5 0 0 1 2.2-2L8 14" />
+    </g>
+  </svg>
+)
+
 /** Gomme inclinée, au même trait fin que les outils de détourage. */
 export const CustomEraserIcon: React.FC<CustomIconProps> = ({ size = 12, strokeWidth = 1 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">

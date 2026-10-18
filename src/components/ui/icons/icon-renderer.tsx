@@ -49,6 +49,8 @@ export const renderIcon = (
       return <CustomIcons.CustomHighlighterIcon size={size} strokeWidth={strokeWidth} />;
     case "Eraser":
       return <CustomIcons.CustomEraserIcon size={size} strokeWidth={strokeWidth} />;
+    case "Hand":
+      return <CustomIcons.CustomHandIcon size={size} strokeWidth={strokeWidth} />;
     case "Sort":
       return <CustomIcons.CustomSortIcon size={size} strokeWidth={strokeWidth} />;
     case "Filter":

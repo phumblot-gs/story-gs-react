@@ -5,6 +5,13 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.31.2] - 2026-10-19
+
+### Modifié
+
+- `IconProvider` : ajout du pictogramme `Hand`, au trait fin harmonisé avec la Gomme et le surligneur.
+- `ClippingEditor` : l'outil Déplacer utilise ce pictogramme en 20 px dans un bouton de 40 px.
+
 ## [1.31.1] - 2026-10-19
 
 ### Modifié

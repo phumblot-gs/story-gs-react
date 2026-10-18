@@ -78,6 +78,10 @@ export const CustomIcons: Story = {
         <p className="text-xs mt-1">Eraser</p>
       </div>
       <div className="text-center">
+        <IconProvider icon="Hand" size={24} />
+        <p className="text-xs mt-1">Hand</p>
+      </div>
+      <div className="text-center">
         <IconProvider icon="Refresh" size={24} />
         <p className="text-xs mt-1">Refresh</p>
       </div>

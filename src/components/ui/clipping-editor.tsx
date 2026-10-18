@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useReducer, useRef, useState } from 'react';
-import { Columns2, Download, Hand, Maximize, PanelRight, Redo2, Square, Undo2, X, ZoomIn, ZoomOut } from 'lucide-react';
+import { Columns2, Download, Maximize, PanelRight, Redo2, Square, Undo2, X, ZoomIn, ZoomOut } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import '@/styles/clipping-editor.css';
 import { Button } from './button';
@@ -101,7 +101,7 @@ const TOOL_ICONS: Record<ClippingTool, React.ReactNode> = {
   pencilAdd: <IconProvider icon="SelectionAdd" size={20} />,
   pencilSub: <IconProvider icon="SelectionSubtract" size={20} />,
   scalpel: <IconProvider icon="Selection" size={20} />,
-  pan: <Hand size={14} aria-hidden="true" />,
+  pan: <IconProvider icon="Hand" size={20} />,
 };
 const TOOL_KEYS: Record<ClippingTool, string> = { keep: '␣', remove: '␣', hair: 'V', eraser: 'X', pencil: 'S', pencilAdd: 'A', pencilSub: 'D', scalpel: 'S', pan: 'C' };
 
