@@ -232,6 +232,16 @@ describe("ClippingEditor", () => {
     }
   });
 
+  it("le bouton d'action principale a la même hauteur (40 px) que les autres boutons de l'en-tête", () => {
+    renderEditor({ primaryAction: { label: "Next", onClick: vi.fn(), "data-testid": "next" } });
+    const fit = screen.getByRole("button", { name: /Ajuster|Zoom to fit/ });
+    const next = screen.getByTestId("next");
+    expect(next.className).toContain("gs-clipping-primary-action");
+    // same height classes as « Ajuster » (h-[40px])
+    const heightClasses = (el: HTMLElement) => el.className.split(" ").filter((c) => /^(h-|py-)/.test(c)).sort().join(" ");
+    expect(heightClasses(next)).toBe(heightClasses(fit));
+  });
+
   it("annuler et rétablir sont désactivés sans historique", () => {
     renderEditor();
     expect(screen.getByRole("button", { name: "Undo (Z)" })).toBeDisabled();

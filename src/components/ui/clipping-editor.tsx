@@ -542,7 +542,7 @@ export function ClippingEditor({
               {view === 'single' && <Button type="button" variant="secondary" className="h-[40px] shrink-0" onClick={() => setShowPreview(v => !v)}>{showPreview ? t('clipping.showOriginal') : t('clipping.showPreview')}</Button>}
               <Separator orientation="vertical" className="gs-clipping-header-separator" />
               {iconButton(t('clipping.settings'), <IconProvider icon="Switch" size={20} />, () => setSettingsOpen(v => !v), { pressed: settingsOpen })}
-              {primaryAction && <Button type="button" variant="normal" size="medium" className="gs-clipping-primary-action"
+              {primaryAction && <Button type="button" variant="normal" className="gs-clipping-primary-action h-[40px] shrink-0"
                 disabled={primaryAction.disabled} loading={primaryAction.loading || primaryActionPending} loadingLabel={primaryAction.loadingLabel}
                 data-testid={primaryAction['data-testid']} aria-keyshortcuts="Meta+Enter Control+Enter" onClick={() => void runPrimaryAction()}>
                 {primaryAction.label}
