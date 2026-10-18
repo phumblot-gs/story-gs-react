@@ -23,6 +23,19 @@ export const CustomMinusIcon: React.FC<CustomIconProps> = ({ size = 12, strokeWi
   </svg>
 )
 
+/** Cadres de vue assortis : même contour fin, avec ou sans séparation centrale. */
+const ViewFrame: React.FC<CustomIconProps & { split?: boolean }> = ({ size = 12, strokeWidth = 0.5, split }) => (
+  <svg width={size} height={size} viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <g stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+      <rect x="1" y="1" width="10" height="10" rx="0.6" />
+      {split && <path d="M6 1v10" />}
+    </g>
+  </svg>
+)
+
+export const CustomViewSingleIcon: React.FC<CustomIconProps> = props => <ViewFrame {...props} />;
+export const CustomViewSplitIcon: React.FC<CustomIconProps> = props => <ViewFrame {...props} split />;
+
 /** Main ouverte, au même trait fin que les outils de détourage. */
 export const CustomHandIcon: React.FC<CustomIconProps> = ({ size = 12, strokeWidth = 1 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">

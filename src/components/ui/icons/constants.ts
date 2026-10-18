@@ -9,5 +9,5 @@ export const AVAILABLE_ICONS = [
   "Selection", "SelectionAdd", "SelectionSubtract", "SelectionInvert", "SelectionDelete", "SelectionDeselect",
   "Plus", "Refresh", "Reports", "RotateCcw", "Scroll", "Search", "Settings", "Share", "Sort", "Star", "StarFilled", "Status",
   "Tag", "ToastErrorIcon", "ToastSuccessIcon", "Switch", "Trash", "Upload", "Urgent",
-  "User", "Users", "Vedette", "X", "ZoomIn", "ZoomOut"
+  "User", "Users", "Vedette", "ViewSingle", "ViewSplit", "X", "ZoomIn", "ZoomOut"
 ] as const;

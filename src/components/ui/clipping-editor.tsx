@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useReducer, useRef, useState } from 'react';
-import { Columns2, Download, Maximize, PanelRight, Redo2, Square, Undo2, X, ZoomIn, ZoomOut } from 'lucide-react';
+import { Download, Maximize, Redo2, Undo2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import '@/styles/clipping-editor.css';
 import { Button } from './button';
@@ -528,23 +528,23 @@ export function ClippingEditor({
           <div className={cn('gs-clipping-header', (titleAccessory != null || primaryAction) && 'gs-clipping-header-with-controls')} role="toolbar" aria-label={t('clipping.displayToolbar')}>
             <div className={cn('gs-clipping-heading', titleAccessory != null && 'gs-clipping-heading-with-accessory')}><h2 className="m-0 text-lg font-medium">{t('clipping.title')}</h2>{fileName && <span className="gs-clipping-file-name text-grey-strongest" title={fileName}>{fileName}</span>}{titleAccessory != null && <div key="title-accessory" className="gs-clipping-title-accessory">{titleAccessory}</div>}</div>
             <div className="gs-clipping-control-group">
-              {iconButton(t('clipping.zoomOut'), <ZoomOut size={20} aria-hidden="true" />, () => zoomBy(1 / ZOOM_STEP))}
+              {iconButton(t('clipping.zoomOut'), <IconProvider icon="ZoomOut" size={20} />, () => zoomBy(1 / ZOOM_STEP))}
               <span className="gs-clipping-zoom tabular-nums" role="status" aria-label={t('clipping.zoomLevel')} data-testid="clipping-zoom">{zoomLevel < 10 ? zoomLevel.toFixed(1) : Math.round(zoomLevel)}%</span>
-              {iconButton(t('clipping.zoomIn'), <ZoomIn size={20} aria-hidden="true" />, () => zoomBy(ZOOM_STEP))}
+              {iconButton(t('clipping.zoomIn'), <IconProvider icon="ZoomIn" size={20} />, () => zoomBy(ZOOM_STEP))}
               <Button type="button" variant="secondary" aria-label={`${t('clipping.zoomFit')} (Home)`} onClick={() => setViewport(null)}><Maximize size={16} aria-hidden="true" />{t('clipping.fit')}</Button>
               <Button type="button" variant={Math.abs(zoomLevel - 100) < 0.5 ? 'inverse' : 'secondary'} aria-label={`${t('clipping.zoomActual')} (0)`} aria-pressed={Math.abs(zoomLevel - 100) < 0.5} onClick={() => zoomTo(100)}>1:1</Button>
             </div>
             <div className="gs-clipping-control-group">
-              {iconButton(t('clipping.shortcut', { label: t('clipping.view.single'), key: '1' }), <Square size={20} aria-hidden="true" />, () => setView('single'), { pressed: view === 'single' })}
-              {iconButton(t('clipping.shortcut', { label: t('clipping.view.split'), key: '2' }), <Columns2 size={20} aria-hidden="true" />, () => setView('split'), { pressed: view === 'split' })}
+              {iconButton(t('clipping.shortcut', { label: t('clipping.view.single'), key: '1' }), <IconProvider icon="ViewSingle" size={20} />, () => setView('single'), { pressed: view === 'single' })}
+              {iconButton(t('clipping.shortcut', { label: t('clipping.view.split'), key: '2' }), <IconProvider icon="ViewSplit" size={20} />, () => setView('split'), { pressed: view === 'split' })}
               {view === 'single' && <Button type="button" variant="secondary" onClick={() => setShowPreview(v => !v)}>{showPreview ? t('clipping.showOriginal') : t('clipping.showPreview')}</Button>}
-              {iconButton(t('clipping.settings'), <PanelRight size={20} aria-hidden="true" />, () => setSettingsOpen(v => !v), { pressed: settingsOpen })}
+              {iconButton(t('clipping.settings'), <IconProvider icon="Switch" size={20} />, () => setSettingsOpen(v => !v), { pressed: settingsOpen })}
               {primaryAction && <Button type="button" variant="normal" size="medium" className="gs-clipping-primary-action"
                 disabled={primaryAction.disabled} loading={primaryAction.loading || primaryActionPending} loadingLabel={primaryAction.loadingLabel}
                 data-testid={primaryAction['data-testid']} aria-keyshortcuts="Meta+Enter Control+Enter" onClick={() => void runPrimaryAction()}>
                 {primaryAction.label}
               </Button>}
-              {onClose && iconButton(t('clipping.close'), <X size={20} aria-hidden="true" />, onClose)}
+              {onClose && iconButton(t('clipping.close'), <IconProvider icon="X" size={20} />, onClose)}
             </div>
           </div>
 
