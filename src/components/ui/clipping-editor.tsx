@@ -531,8 +531,8 @@ export function ClippingEditor({
               {iconButton(t('clipping.zoomOut'), <IconProvider icon="ZoomOut" size={20} />, () => zoomBy(1 / ZOOM_STEP))}
               <span className="gs-clipping-zoom tabular-nums" role="status" aria-label={t('clipping.zoomLevel')} data-testid="clipping-zoom">{zoomLevel < 10 ? zoomLevel.toFixed(1) : Math.round(zoomLevel)}%</span>
               {iconButton(t('clipping.zoomIn'), <IconProvider icon="ZoomIn" size={20} />, () => zoomBy(ZOOM_STEP))}
-              <Button type="button" variant="secondary" aria-label={`${t('clipping.zoomFit')} (Home)`} onClick={() => setViewport(null)}><Maximize size={16} aria-hidden="true" />{t('clipping.fit')}</Button>
-              <Button type="button" variant={Math.abs(zoomLevel - 100) < 0.5 ? 'inverse' : 'secondary'} aria-label={`${t('clipping.zoomActual')} (0)`} aria-pressed={Math.abs(zoomLevel - 100) < 0.5} onClick={() => zoomTo(100)}>1:1</Button>
+              <Button type="button" variant="secondary" className="h-[40px] shrink-0" aria-label={`${t('clipping.zoomFit')} (Home)`} onClick={() => setViewport(null)}><Maximize size={16} aria-hidden="true" />{t('clipping.fit')}</Button>
+              <Button type="button" variant={Math.abs(zoomLevel - 100) < 0.5 ? 'inverse' : 'secondary'} className="h-[40px] w-[40px] shrink-0 p-0" aria-label={`${t('clipping.zoomActual')} (0)`} aria-pressed={Math.abs(zoomLevel - 100) < 0.5} onClick={() => zoomTo(100)}>1:1</Button>
             </div>
             <div className="gs-clipping-control-group">
               {iconButton(t('clipping.shortcut', { label: t('clipping.view.single'), key: '1' }), <IconProvider icon="ViewSingle" size={20} />, () => setView('single'), { pressed: view === 'single' })}
