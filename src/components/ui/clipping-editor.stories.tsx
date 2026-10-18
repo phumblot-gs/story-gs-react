@@ -40,7 +40,7 @@ function useDemoSegmenter(src: string, latencyMs = 250): ClippingSegmenter {
 }
 
 const meta = {
-  title: 'Components/ClippingEditor', component: ClippingEditor, tags: ['autodocs'],
+  title: 'Components/ClippingEditor', component: ClippingEditor,
   parameters: { layout: 'fullscreen', docs: { description: { component: 'Éditeur de détourage : on trace des traits « Garder » / « Retirer » (et « Cheveux ») et des sélections au « Crayon » sur l’image, un moteur fourni par l’application calcule le masque et l’aperçu sur fond transparent se met à jour. Le composant ne détoure pas lui-même : `onSegment` reçoit les traits et renvoie un masque alpha. Raccourcis : Espace Garder/Retirer, V Cheveux, X Gomme, S Crayon, A Crayon +, D Crayon −, C ou Maj Déplacer, Z/Y Annuler/Rétablir, Accueil ajuster, 1/2 vues, molette zoom.' } } },
   argTypes: {
     defaultTool: { control: 'select', options: ['keep', 'remove', 'hair', 'eraser', 'pencil', 'pencilAdd', 'pencilSub', 'pan'] },
