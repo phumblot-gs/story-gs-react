@@ -5,6 +5,21 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.31.3] - 2026-10-19
+
+### Ajouté
+
+- `ClippingEditor` : `titleAccessory` pour insérer un contrôle hôte à côté du titre et `primaryAction`
+  pour afficher une action avant la fermeture. Gestion des promesses, chargement et raccourci Cmd/Ctrl+Entrée.
+- `IconProvider` : pictogrammes fins `ViewSingle` et `ViewSplit`.
+
+### Modifié
+
+- `ClippingEditor` : pictogrammes GS pour fermer, zoomer et afficher les réglages ; boutons de zoom et de bascule
+  original/résultat de 40 px de haut, séparateurs dans le header et espace de 50 px avant la fermeture.
+- « Ajuster » remplit la hauteur ou la largeur disponible sans marge ajoutée, en conservant les proportions.
+  Le zoom 1:1 est inchangé.
+
 ## [1.31.2] - 2026-10-19
 
 ### Modifié
