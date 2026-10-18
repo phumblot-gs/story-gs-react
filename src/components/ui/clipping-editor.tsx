@@ -539,7 +539,7 @@ export function ClippingEditor({
               <Separator orientation="vertical" className="gs-clipping-header-separator" />
               {iconButton(t('clipping.shortcut', { label: t('clipping.view.single'), key: '1' }), <IconProvider icon="ViewSingle" size={20} />, () => setView('single'), { pressed: view === 'single' })}
               {iconButton(t('clipping.shortcut', { label: t('clipping.view.split'), key: '2' }), <IconProvider icon="ViewSplit" size={20} />, () => setView('split'), { pressed: view === 'split' })}
-              {view === 'single' && <Button type="button" variant="secondary" onClick={() => setShowPreview(v => !v)}>{showPreview ? t('clipping.showOriginal') : t('clipping.showPreview')}</Button>}
+              {view === 'single' && <Button type="button" variant="secondary" className="h-[40px] shrink-0" onClick={() => setShowPreview(v => !v)}>{showPreview ? t('clipping.showOriginal') : t('clipping.showPreview')}</Button>}
               <Separator orientation="vertical" className="gs-clipping-header-separator" />
               {iconButton(t('clipping.settings'), <IconProvider icon="Switch" size={20} />, () => setSettingsOpen(v => !v), { pressed: settingsOpen })}
               {primaryAction && <Button type="button" variant="normal" size="medium" className="gs-clipping-primary-action"
