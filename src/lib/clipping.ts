@@ -186,7 +186,7 @@ export interface ClippingViewport {
 
 export const CLIPPING_MIN_SCALE = 0.05;
 export const CLIPPING_MAX_SCALE = 32;
-export const CLIPPING_FIT_MARGIN = 0.92;
+export const CLIPPING_FIT_MARGIN = 1;
 
 export const clampScale = (scale: number) => Math.min(CLIPPING_MAX_SCALE, Math.max(CLIPPING_MIN_SCALE, scale));
 

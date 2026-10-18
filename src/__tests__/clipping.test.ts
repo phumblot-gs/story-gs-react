@@ -70,10 +70,19 @@ describe("densifyPoints", () => {
 
 describe("viewport", () => {
   const pane = { width: 800, height: 600 };
-  it("ajuste l'image avec une marge et la centre", () => {
-    const vp = fitViewport(pane, { width: 1100, height: 1200 });
-    expect(vp.scale).toBeCloseTo((600 / 1200) * 0.92);
-    expect(vp.center).toEqual({ x: 550, y: 600 });
+  it.each([
+    { width: 1100, height: 1200 },
+    { width: 1600, height: 900 },
+    { width: 900, height: 800 },
+    { width: 1200, height: 1200 },
+  ])("ajuste et centre l'image $width × $height sans marge sur le bord limitant", image => {
+    const vp = fitViewport(pane, image);
+    const width = image.width * vp.scale;
+    const height = image.height * vp.scale;
+    expect(width).toBeLessThanOrEqual(pane.width);
+    expect(height).toBeLessThanOrEqual(pane.height);
+    expect(Math.min(pane.width - width, pane.height - height)).toBeCloseTo(0);
+    expect(vp.center).toEqual({ x: image.width / 2, y: image.height / 2 });
   });
   it("écran ↔ image sont réciproques", () => {
     const vp = { scale: 2.5, center: { x: 120, y: 80 } };
