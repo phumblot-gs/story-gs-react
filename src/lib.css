@@ -11,6 +11,7 @@
 
 /* 2.5. Styles personnalisés (doit être après figma-tokens pour utiliser les variables) */
 @import './styles/custom-styles.css';
+@import './styles/clipping-editor.css';
 
 /* 3. Variables shadcn/ui (dépend de figma-tokens) */
 @import './styles/shadcn-theme.css';
