@@ -117,6 +117,15 @@ During a returned promise or host `loading`, the Button is disabled and exposes 
 
 On narrow screens the accessory moves below the title, and action controls wrap without changing their tab order. With neither prop, no extra wrapper, button or header class is rendered.
 
+
+### Reopening finished work
+
+<Canvas of={Stories.WithInitialMask} />
+
+When the mask of the starting marks is already known (for example the validated result stored by your server), pass it as `initialMask` together with `defaultMarks`. The editor shows it immediately and does **not** call `onSegment` until a mark changes, so reopening a validated image costs nothing. The counter above the example counts the engine calls made by the editor: it stays at 0 until you draw. Undoing back to the starting marks shows the known mask again without a new call.
+
+`initialMask` must have the size of the image (otherwise it is ignored and the engine is asked as usual). It describes the *starting* marks only: if your application changes something that alters the result without changing the marks (a different material, for example), do not pass it.
+
 ---
 
 ## Tools
