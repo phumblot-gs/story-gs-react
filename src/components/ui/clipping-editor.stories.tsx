@@ -89,6 +89,8 @@ export const AutoSegment: Story = { args: { autoSegment: true }, render: (args) 
 export const SettingsCollapsed: Story = { args: { defaultSettingsOpen: false }, render: (args) => <Demo {...args} /> };
 /** The panel state is handed back through callbacks, so an application can restore it the next time the editor opens. */
 export const RememberedPanelState: Story = { args: { defaultSettingsOpen: true, defaultFileInfoOpen: true, onSettingsOpenChange: fn(), onFileInfoOpenChange: fn() }, render: (args) => <Demo {...args} /> };
+/** `initialMask`: the known mask of the starting marks is displayed immediately, the engine is not asked again until a mark changes. */
+export const WithInitialMask: Story = { args: { defaultMarks: [{ id: 'keep-1', tool: 'keep', size: 40, points: [{ x: 300, y: 500 }] }] }, render: (args) => <Demo {...args} /> };
 export const HairSettings: Story = { args: { defaultTool: "hair" }, render: (args) => <Demo {...args} /> };
 export const SinglePane: Story = { args: { defaultView: 'single' }, render: (args) => <Demo {...args} /> };
 

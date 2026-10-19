@@ -52,6 +52,12 @@ export interface ClippingEditorProps extends Omit<React.HTMLAttributes<HTMLDivEl
   defaultView?: 'single' | 'split';
   /** Affiche les réglages contextuels et les informations du fichier (défaut true). */
   defaultSettingsOpen?: boolean;
+  /**
+   * Masque déjà calculé pour `defaultMarks` (par exemple celui d'une image validée) : il est affiché tout de suite et `onSegment`
+   * n'est pas appelé tant que les traits restent ceux de départ. Dès qu'ils changent, le calcul reprend normalement. Ignoré si ses
+   * dimensions ne sont pas celles de l'image.
+   */
+  initialMask?: ClippingMask;
   /** Appelé quand l'opérateur ouvre ou ferme le panneau « Réglages et informations » (pas au montage) : permet de le retrouver dans le même état à la prochaine ouverture. */
   onSettingsOpenChange?: (open: boolean) => void;
   /** Le bloc « Informations du fichier » du panneau est déplié au départ (défaut false). */
@@ -125,7 +131,7 @@ const TOOL_KEYS: Record<ClippingTool, string> = { keep: '␣', remove: '␣', ha
 
 export function ClippingEditor({
   src, fileName, onSegment, defaultMarks, onMarksChange, onDownload, onClose, defaultTool = 'keep', defaultBrushSize = 20,
-  defaultView = 'split', defaultSettingsOpen = true, onSettingsOpenChange, defaultFileInfoOpen = false, onFileInfoOpenChange, autoSegment = false, titleAccessory, primaryAction, language, translations, className, onKeyDown, ...props
+  defaultView = 'split', defaultSettingsOpen = true, onSettingsOpenChange, defaultFileInfoOpen = false, onFileInfoOpenChange, autoSegment = false, initialMask, titleAccessory, primaryAction, language, translations, className, onKeyDown, ...props
 }: ClippingEditorProps) {
   const { t } = useTranslationSafe(translations, language);
   const [history, dispatch] = useReducer(clippingHistoryReducer, defaultMarks, createClippingHistory);
@@ -183,6 +189,8 @@ export function ClippingEditor({
   const paneSize = useRef<PaneSize>({ width: 1, height: 1 });
   const [, setMeasured] = useState(''); // re-render once the panes are measured: the zoom readout depends on their size
   const drag = useRef<{ kind: 'pan'; x: number; y: number } | { kind: 'stroke'; tool: ClippingTool; points: ClippingPoint[] } | null>(null);
+  const initialMaskRef = useRef(initialMask);
+  const startMarksRef = useRef(history.present);
   const onSegmentRef = useRef(onSegment);
   onSegmentRef.current = onSegment;
   const onMarksChangeRef = useRef(onMarksChange);
@@ -216,6 +224,9 @@ export function ClippingEditor({
   useEffect(() => {
     if (!source) return;
     const marks = history.present;
+    // The mask of the starting marks is already known: show it, compute nothing until the marks change (undoing back to them shows it again).
+    const start = initialMaskRef.current;
+    if (start && marks === startMarksRef.current && start.width === source.pixels.width && start.height === source.pixels.height) { setMask(start); setStatus('ready'); return; }
     if (!shouldSegment(marks, autoSegment)) { setMask(null); setStatus('idle'); return; }
     const controller = new AbortController();
     setStatus('working');

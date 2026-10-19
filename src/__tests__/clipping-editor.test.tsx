@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { cleanup, render, screen, fireEvent, act, waitFor, within } from "@testing-library/react";
 import { useEffect, useState } from "react";
 import "@testing-library/jest-dom/vitest";
@@ -357,6 +357,76 @@ describe("ClippingEditor", () => {
     details = document.querySelector("details.gs-clipping-file-info") as HTMLDetailsElement;
     expect(details.open).toBe(true);
     expect(onFileInfoOpenChange).toHaveBeenCalledTimes(1); // the restored state is not reported again
+  });
+
+  describe("initialMask", () => {
+    // jsdom has no canvas and never loads images: minimal stand-ins so that the editor reaches the segmentation step
+    const W = 2, H = 2;
+    const restore: Array<() => void> = [];
+    const stubCanvas = () => {
+      const original = (globalThis as { Image?: unknown }).Image;
+      class FakeImage { onload?: () => void; naturalWidth = W; naturalHeight = H; crossOrigin = ""; set src(_v: string) { setTimeout(() => this.onload?.(), 0); } }
+      (globalThis as { Image: unknown }).Image = FakeImage;
+      const hadImageData = "ImageData" in globalThis;
+      (globalThis as { ImageData?: unknown }).ImageData = class { constructor(public data: Uint8ClampedArray, public width: number, public height: number) {} };
+      const spy = vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockImplementation(function (this: HTMLCanvasElement) {
+        const noop = () => undefined;
+        const ctx: Record<string, unknown> = new Proxy({ canvas: this }, {
+          get: (t, k) => {
+            if (k in t) return (t as Record<string | symbol, unknown>)[k];
+            if (k === "getImageData") return () => ({ data: new Uint8ClampedArray(W * H * 4).fill(255), width: W, height: H });
+            if (k === "getTransform") return () => ({ a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 });
+            return noop;
+          },
+          set: () => true,
+        });
+        return ctx as unknown as CanvasRenderingContext2D;
+      });
+      restore.push(() => { (globalThis as { Image?: unknown }).Image = original; if (!hadImageData) delete (globalThis as { ImageData?: unknown }).ImageData; spy.mockRestore(); });
+    };
+    beforeEach(() => { vi.useFakeTimers(); });
+    afterEach(() => { vi.useRealTimers(); while (restore.length) restore.pop()!(); });
+    const keep = { id: "k", tool: "keep" as const, size: 10, points: [{ x: 1, y: 1 }] };
+    const known = { width: W, height: H, alpha: new Uint8ClampedArray([255, 255, 0, 0]) };
+    // two steps: the image « loads » first, React renders the loaded editor, then the debounce of the segmentation elapses
+    const wait = async (ms: number) => { await act(async () => { await vi.advanceTimersByTimeAsync(10); }); await act(async () => { await vi.advanceTimersByTimeAsync(ms); }); };
+
+    it("sans masque initial, l'éditeur demande le calcul à l'ouverture (autoSegment)", async () => {
+      stubCanvas();
+      const onSegment = vi.fn(() => new Promise<never>(() => undefined));
+      renderEditor({ onSegment, autoSegment: true, defaultMarks: [keep] });
+      await wait(400);
+      expect(onSegment).toHaveBeenCalledTimes(1);
+    });
+
+    it("affiche le masque initial tout de suite et n'appelle pas onSegment tant que les traits ne changent pas", async () => {
+      stubCanvas();
+      const onSegment = vi.fn(() => new Promise<never>(() => undefined));
+      renderEditor({ onSegment, autoSegment: true, defaultMarks: [keep], initialMask: known });
+      await wait(400);
+      expect(screen.getByText("Preview up to date")).toBeInTheDocument();
+      expect(onSegment).not.toHaveBeenCalled();
+    });
+
+    it("reprend le calcul normal dès qu'un trait est ajouté, et ignore un masque aux mauvaises dimensions", async () => {
+      stubCanvas();
+      const onSegment = vi.fn(() => new Promise<never>(() => undefined));
+      const first = renderEditor({ onSegment, autoSegment: true, defaultMarks: [keep], initialMask: known });
+      await wait(400);
+      expect(screen.getByText("Preview up to date")).toBeInTheDocument();
+      expect(onSegment).not.toHaveBeenCalled();
+      const canvas = screen.getAllByRole("img", { name: /Workspace|Original/ })[0];
+      fireEvent.pointerDown(canvas, { button: 0, pointerId: 1, clientX: 1, clientY: 1 });
+      fireEvent.pointerUp(canvas, { button: 0, pointerId: 1, clientX: 1, clientY: 1 });
+      await wait(400);
+      expect(onSegment).toHaveBeenCalledTimes(1); // the new stroke is computed
+      expect((onSegment.mock.calls[0] as unknown as [{ marks: unknown[] }])[0].marks).toHaveLength(2);
+      first.unmount();
+      const wrong = vi.fn(() => new Promise<never>(() => undefined));
+      renderEditor({ onSegment: wrong, autoSegment: true, defaultMarks: [keep], initialMask: { width: 9, height: 9, alpha: new Uint8ClampedArray(81) } });
+      await wait(400);
+      expect(wrong).toHaveBeenCalledTimes(1);
+    });
   });
 
   it("Q maintenu montre l'autre image en vue simple, même quand le focus est sur le bouton de bascule", () => {
