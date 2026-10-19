@@ -1,7 +1,7 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
-import { ClippingEditor, type ClippingEditorProps, type ClippingMark, type ClippingSegmenter } from './clipping-editor';
+import { ClippingEditor, type ClippingEditorProps, type ClippingMark, type ClippingMask, type ClippingSegmenter } from './clipping-editor';
 import { createColorClippingSegmenter } from '@/lib/clipping-color-segmenter';
 import { cutToMark } from '@/lib/clipping-scalpel';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select';
@@ -87,6 +87,37 @@ export const WithHeaderControls: Story = { args: { onClose: fn() }, render: (arg
 /** With `autoSegment`, the engine is asked for its automatic cut-out as soon as the image opens (here the demo engine treats the border as background). */
 export const AutoSegment: Story = { args: { autoSegment: true }, render: (args) => <Demo {...args} /> };
 export const SettingsCollapsed: Story = { args: { defaultSettingsOpen: false }, render: (args) => <Demo {...args} /> };
+/** The panel state is handed back through callbacks, so an application can restore it the next time the editor opens. */
+export const RememberedPanelState: Story = { args: { defaultSettingsOpen: true, defaultFileInfoOpen: true, onSettingsOpenChange: fn(), onFileInfoOpenChange: fn() }, render: (args) => <Demo {...args} /> };
+/**
+ * `initialMask` : the mask of the starting marks is known (here computed once by the demo engine, in an application it would be the
+ * validated result stored by the server). The editor shows it at once and the engine is not asked again until a mark changes:
+ * the counter below counts the engine calls made by the editor itself.
+ */
+function WithKnownMask(args: ClippingEditorProps) {
+  const engine = useDemoSegmenter(args.src, 0);
+  const marks = args.defaultMarks ?? [];
+  const [mask, setMask] = useState<ClippingMask | null>(null);
+  const [calls, setCalls] = useState(0);
+  useEffect(() => {
+    let alive = true;
+    const img = new Image();
+    img.onload = () => { void engine({ marks, width: img.naturalWidth, height: img.naturalHeight, signal: new AbortController().signal }).then((m) => { if (alive) setMask(m); }); };
+    img.src = args.src;
+    return () => { alive = false; };
+  }, [engine, args.src]); // eslint-disable-line react-hooks/exhaustive-deps
+  if (!mask) return <div className="h-[760px]" />;
+  return (
+    <div className="h-[760px]">
+      <div className="p-2 text-sm" data-testid="engine-calls">Appels au moteur depuis l'ouverture : {calls}</div>
+      <div className="h-[720px]"><ClippingEditor {...args} initialMask={mask} onSegment={(request) => { setCalls((n) => n + 1); return engine(request); }} /></div>
+    </div>
+  );
+}
+export const WithInitialMask: Story = {
+  args: { autoSegment: true, defaultMarks: [{ id: 'keep-1', tool: 'keep', size: 40, points: [{ x: 300, y: 500 }, { x: 300, y: 600 }] }] },
+  render: (args) => <WithKnownMask {...args} />,
+};
 export const HairSettings: Story = { args: { defaultTool: "hair" }, render: (args) => <Demo {...args} /> };
 export const SinglePane: Story = { args: { defaultView: 'single' }, render: (args) => <Demo {...args} /> };
 

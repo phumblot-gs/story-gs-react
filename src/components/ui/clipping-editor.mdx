@@ -97,6 +97,9 @@ The Workspace header displays a contextual slider on its right: brush diameter f
 | `defaultBrushSize` | `number` | Initial brush diameter in **source-image pixels** (default 20, range 2–200). |
 | `defaultView` | `'split' \| 'single'` | Split shows *Workspace* and *Result* side by side (stacked in a narrow editor). |
 | `defaultSettingsOpen` | `boolean` | Opens the contextual settings and file information panel by default (`true`). The header button toggles it without resetting the tool or its settings. |
+| `initialMask` | `ClippingMask` | The mask already computed for `defaultMarks` (for example the one of a validated image). It is shown at once and `onSegment` is not called until the marks change; undoing back to the starting marks shows it again. Ignored when its size is not the image's. |
+| `onSettingsOpenChange` | `(open: boolean) => void` | Called when the operator opens or closes the settings and information panel (not on mount). Persist it and pass it back as `defaultSettingsOpen` to reopen the editor in the same state. |
+| `defaultFileInfoOpen`, `onFileInfoOpenChange` | `boolean`, `(open: boolean) => void` | Same for the « File information » block inside the panel (collapsed by default). |
 | `autoSegment` | `boolean` | Also calls `onSegment` with an empty list of marks, so the engine's automatic cut-out appears when the image opens (and after every mark is undone). The user then corrects it with strokes. Default `false`. |
 | `language`, `translations` | | Standard GS i18n props (EN, FR, ES, IT, DE). |
 
@@ -113,6 +116,15 @@ The header remains a toolbar. Tab follows the visual order: accessory, zoom, vie
 During a returned promise or host `loading`, the Button is disabled and exposes `aria-busy`. `loadingLabel` defaults to `label` through the existing Button behavior. A rejected promise (or synchronous exception) releases loading without an unhandled error; the host callback must handle any business error message. Replacing the action does not cancel an already running promise. The pending guard remains active until it settles, even if the action is hidden meanwhile. Closing or unmounting does not cancel host work.
 
 On narrow screens the accessory moves below the title, and action controls wrap without changing their tab order. With neither prop, no extra wrapper, button or header class is rendered.
+
+
+### Reopening finished work
+
+<Canvas of={Stories.WithInitialMask} />
+
+When the mask of the starting marks is already known (for example the validated result stored by your server), pass it as `initialMask` together with `defaultMarks`. The editor shows it immediately and does **not** call `onSegment` until a mark changes, so reopening a validated image costs nothing. The counter above the example counts the engine calls made by the editor: it stays at 0 until you draw. Undoing back to the starting marks shows the known mask again without a new call.
+
+`initialMask` must have the size of the image (otherwise it is ignored and the engine is asked as usual). It describes the *starting* marks only: if your application changes something that alters the result without changing the marks (a different material, for example), do not pass it.
 
 ---
 

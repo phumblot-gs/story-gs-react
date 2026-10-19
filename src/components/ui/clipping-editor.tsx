@@ -53,6 +53,18 @@ export interface ClippingEditorProps extends Omit<React.HTMLAttributes<HTMLDivEl
   /** Affiche les réglages contextuels et les informations du fichier (défaut true). */
   defaultSettingsOpen?: boolean;
   /**
+   * Masque déjà calculé pour `defaultMarks` (par exemple celui d'une image validée) : il est affiché tout de suite et `onSegment`
+   * n'est pas appelé tant que les traits restent ceux de départ. Dès qu'ils changent, le calcul reprend normalement. Ignoré si ses
+   * dimensions ne sont pas celles de l'image.
+   */
+  initialMask?: ClippingMask;
+  /** Appelé quand l'opérateur ouvre ou ferme le panneau « Réglages et informations » (pas au montage) : permet de le retrouver dans le même état à la prochaine ouverture. */
+  onSettingsOpenChange?: (open: boolean) => void;
+  /** Le bloc « Informations du fichier » du panneau est déplié au départ (défaut false). */
+  defaultFileInfoOpen?: boolean;
+  /** Appelé quand l'opérateur déplie ou replie « Informations du fichier » (pas au montage). */
+  onFileInfoOpenChange?: (open: boolean) => void;
+  /**
    * Also calls `onSegment` with an empty list of marks, so the engine's automatic cut-out is shown as soon as the
    * image opens (and after every mark is undone). The user then corrects it with strokes. Default false.
    */
@@ -119,13 +131,17 @@ const TOOL_KEYS: Record<ClippingTool, string> = { keep: '␣', remove: '␣', ha
 
 export function ClippingEditor({
   src, fileName, onSegment, defaultMarks, onMarksChange, onDownload, onClose, defaultTool = 'keep', defaultBrushSize = 20,
-  defaultView = 'split', defaultSettingsOpen = true, autoSegment = false, titleAccessory, primaryAction, language, translations, className, onKeyDown, ...props
+  defaultView = 'split', defaultSettingsOpen = true, onSettingsOpenChange, defaultFileInfoOpen = false, onFileInfoOpenChange, autoSegment = false, initialMask, titleAccessory, primaryAction, language, translations, className, onKeyDown, ...props
 }: ClippingEditorProps) {
   const { t } = useTranslationSafe(translations, language);
   const [history, dispatch] = useReducer(clippingHistoryReducer, defaultMarks, createClippingHistory);
   const [tool, setTool] = useState<ClippingTool>(defaultTool === 'scalpel' ? 'pencil' : defaultTool);
   const [feather, setFeather] = useState(0);
   const [settingsOpen, setSettingsOpen] = useState(defaultSettingsOpen);
+  const [fileInfoOpen, setFileInfoOpen] = useState(defaultFileInfoOpen);
+  const toggleSettings = () => { const next = !settingsOpen; setSettingsOpen(next); onSettingsOpenChange?.(next); };
+  const fileInfoOpenRef = useRef(defaultFileInfoOpen); // the last value reported: a native `toggle` can fire twice for one change
+  const changeFileInfo = (open: boolean) => { if (open === fileInfoOpenRef.current) return; fileInfoOpenRef.current = open; setFileInfoOpen(open); onFileInfoOpenChange?.(open); };
   const [brush, setBrush] = useState(Math.min(BRUSH_MAX, Math.max(BRUSH_MIN, defaultBrushSize)));
   const [view, setView] = useState<'single' | 'split'>(defaultView);
   const [showPreview, setShowPreview] = useState(false);
@@ -173,6 +189,8 @@ export function ClippingEditor({
   const paneSize = useRef<PaneSize>({ width: 1, height: 1 });
   const [, setMeasured] = useState(''); // re-render once the panes are measured: the zoom readout depends on their size
   const drag = useRef<{ kind: 'pan'; x: number; y: number } | { kind: 'stroke'; tool: ClippingTool; points: ClippingPoint[] } | null>(null);
+  const initialMaskRef = useRef(initialMask);
+  const startMarksRef = useRef(history.present);
   const onSegmentRef = useRef(onSegment);
   onSegmentRef.current = onSegment;
   const onMarksChangeRef = useRef(onMarksChange);
@@ -206,6 +224,9 @@ export function ClippingEditor({
   useEffect(() => {
     if (!source) return;
     const marks = history.present;
+    // The mask of the starting marks is already known: show it, compute nothing until the marks change (undoing back to them shows it again).
+    const start = initialMaskRef.current;
+    if (start && marks === startMarksRef.current && start.width === source.pixels.width && start.height === source.pixels.height) { setMask(start); setStatus('ready'); return; }
     if (!shouldSegment(marks, autoSegment)) { setMask(null); setStatus('idle'); return; }
     const controller = new AbortController();
     setStatus('working');
@@ -541,8 +562,8 @@ export function ClippingEditor({
               {iconButton(t('clipping.shortcut', { label: t('clipping.view.split'), key: '2' }), <IconProvider icon="ViewSplit" size={20} />, () => setView('split'), { pressed: view === 'split' })}
               {view === 'single' && <Button type="button" variant="secondary" className="h-[40px] shrink-0" onClick={() => setShowPreview(v => !v)}>{showPreview ? t('clipping.showOriginal') : t('clipping.showPreview')}</Button>}
               <Separator orientation="vertical" className="gs-clipping-header-separator" />
-              {iconButton(t('clipping.settings'), <IconProvider icon="Switch" size={20} />, () => setSettingsOpen(v => !v), { pressed: settingsOpen })}
-              {primaryAction && <Button type="button" variant="normal" size="medium" className="gs-clipping-primary-action"
+              {iconButton(t('clipping.settings'), <IconProvider icon="Switch" size={20} />, toggleSettings, { pressed: settingsOpen })}
+              {primaryAction && <Button type="button" variant="normal" className="gs-clipping-primary-action h-[40px] shrink-0"
                 disabled={primaryAction.disabled} loading={primaryAction.loading || primaryActionPending} loadingLabel={primaryAction.loadingLabel}
                 data-testid={primaryAction['data-testid']} aria-keyshortcuts="Meta+Enter Control+Enter" onClick={() => void runPrimaryAction()}>
                 {primaryAction.label}
@@ -587,7 +608,7 @@ export function ClippingEditor({
                 <span>{t(`clipping.tool.${effectiveTool}`)}</span>
                 {(effectiveTool === 'keep' || effectiveTool === 'remove') && toolSetting(effectiveTool)}
               </div>
-              <details className="gs-clipping-file-info"><summary>{t('clipping.fileInfo')}</summary><dl>
+              <details className="gs-clipping-file-info" open={fileInfoOpen} onToggle={(e) => changeFileInfo(e.currentTarget.open)}><summary>{t('clipping.fileInfo')}</summary><dl>
                 {fileName && <div><dt>{t('clipping.fileName')}</dt><dd className="break-all">{fileName}</dd></div>}
                 {imageSize && <div><dt>{t('clipping.fileDimensions')}</dt><dd>{t('clipping.dimensions', imageSize)}</dd></div>}
                 <div><dt>{t('clipping.output')}</dt><dd>{t('clipping.outputFormat')}</dd></div>
