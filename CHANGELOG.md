@@ -5,6 +5,22 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.31.4] - 2026-10-19
+
+### Ajouté
+
+- `ClippingEditor` : `initialMask` affiche immédiatement un masque déjà calculé pour `defaultMarks` (par exemple le résultat
+  d'une image validée) et n'appelle pas `onSegment` tant que les traits ne changent pas ; revenir par annulation aux traits de
+  départ le réaffiche sans nouveau calcul. Ignoré si ses dimensions ne sont pas celles de l'image.
+- `ClippingEditor` : `onSettingsOpenChange`, `defaultFileInfoOpen` et `onFileInfoOpenChange` permettent de retrouver le panneau
+  « Réglages et informations » (et son bloc « Informations du fichier ») dans l'état où l'opérateur l'a laissé.
+- Storybook : story `WithInitialMask` (avec compteur d'appels au moteur) et `RememberedPanelState`, section « Reopening finished
+  work » de la page Docs.
+
+### Corrigé
+
+- `ClippingEditor` : le bouton `primaryAction` a la même hauteur (40 px) que les autres boutons du header.
+
 ## [1.31.3] - 2026-10-19
 
 ### Ajouté
