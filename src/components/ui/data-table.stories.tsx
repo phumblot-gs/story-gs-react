@@ -233,9 +233,17 @@ row clicks, custom cell buttons, controlled state, accordion mode, nested tables
 
 [Open the expansion documentation](?path=/docs/ui-datatable-expansion--docs).
 
+## Column sizing
+
+Columns can take fixed widths (\`column.width\`) and be resized by the user (\`resizableColumns\`), controlled or not.
+Both are opt-in: without them the table keeps its automatic layout.
+See **UI / DataTable / Column sizing** for the API reference, accessibility and aligned groups.
+
+[Open the column sizing documentation](?path=/docs/ui-datatable-column-sizing--docs).
+
 ## What's intentionally NOT included
 
-Inline editing, drag-and-drop reorder, virtualization, CSV export, sticky header, column resize. These belong in a follow-up or stay in the consumer.`,
+Inline editing, drag-and-drop reorder, virtualization, CSV export, sticky header. These belong in a follow-up or stay in the consumer.`,
       },
     },
   },
