@@ -10,9 +10,9 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 ### Ajouté
 
 - `DataTable` : largeur des colonnes et redimensionnement, sans changement pour les tables existantes.
-  `column.width` (px), `minWidth` / `maxWidth` et `resizable` ; `resizableColumns` ajoute une poignée au bord droit de
-  chaque en-tête (souris, stylet ou doigt ; flèches au clavier, Maj pour 50 px ; double-clic pour revenir à la largeur
-  déclarée). Largeurs contrôlées (`columnWidths` + `onColumnWidthsChange`) ou non (`defaultColumnWidths`).
+  `column.width` (px), `minWidth` / `maxWidth` et `resizable` ; `resizableColumns` ajoute une poignée entre les colonnes,
+  pas sur le bord droit de la table (souris, stylet ou doigt ; flèches au clavier, Maj pour 50 px ; double-clic pour
+  revenir à la largeur déclarée). Sur fond gris, les séparateurs prennent un gris plus clair. Largeurs contrôlées (`columnWidths` + `onColumnWidthsChange`) ou non (`defaultColumnWidths`).
   Quand toutes les colonnes ont une largeur, la table passe en mise en page fixe : plusieurs tables aux mêmes largeurs
   restent alignées.
 - Traduction `dataTable.resizeColumn` (EN, FR, ES, IT, DE).

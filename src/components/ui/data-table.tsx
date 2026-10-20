@@ -180,8 +180,9 @@ export interface DataTableProps<T> {
 
   // === Column sizing ===
   /**
-   * Adds a drag handle on the right edge of each header (mouse or touch; arrow keys when
-   * focused, Shift for larger steps; double-click resets the column). Default: false.
+   * Adds a drag handle between headers, on the right edge of every column but the last
+   * (mouse or touch; arrow keys when focused, Shift for larger steps; double-click resets
+   * the column). Default: false.
    */
   resizableColumns?: boolean;
   /** Controlled widths in px, keyed by column id. Takes precedence over `column.width`. */
@@ -625,7 +626,9 @@ function DataTableInner<T>(props: DataTableProps<T>): React.ReactElement {
         onClick={(event) => event.stopPropagation()}
         className={cn(
           "absolute right-0 top-0 z-10 h-full w-2 cursor-col-resize touch-none select-none outline-none",
-          "after:absolute after:right-0 after:top-1/4 after:h-1/2 after:w-px after:bg-grey-stronger after:transition-colors",
+          "after:absolute after:right-0 after:top-1/4 after:h-1/2 after:w-px after:transition-colors",
+          // On a grey parent the header is white: a lighter line keeps the separators discreet.
+          bg === "grey" ? "after:bg-grey" : "after:bg-grey-stronger",
           "hover:after:w-0.5 hover:after:bg-black focus-visible:after:w-0.5 focus-visible:after:bg-black",
           "data-[resizing]:after:w-0.5 data-[resizing]:after:bg-black",
         )}
@@ -697,10 +700,11 @@ function DataTableInner<T>(props: DataTableProps<T>): React.ReactElement {
       {hasExpansionColumn && <TableHead scope="col" className="w-10 px-2">
         <span className="sr-only">{t("dataTable.rowDetails")}</span>
       </TableHead>}
-      {columns.map((col) => {
+      {columns.map((col, index) => {
         const align = col.align ?? "left";
         const isSorted = sort?.columnId === col.id;
-        const resizable = isResizable(col);
+        // Only the boundaries between columns move: the table's right edge has no handle.
+        const resizable = isResizable(col) && index < columns.length - 1;
         return (
           <TableHead
             key={col.id}

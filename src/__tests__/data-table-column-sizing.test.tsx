@@ -39,10 +39,18 @@ describe("DataTable column sizing", () => {
     expect(colWidths()).toEqual(["200px", ""]);
   });
 
-  it("adds a handle per resizable column; column.resizable overrides the table setting", () => {
-    render(<DataTable {...base} columns={[sized[0]!, { ...sized[1]!, resizable: false }]} resizableColumns />);
+  it("adds a handle between columns only: none on the table's right edge", () => {
+    render(<DataTable {...base} columns={sized} resizableColumns />);
     expect(screen.getAllByRole("separator")).toHaveLength(1);
     expect(handle("Name").getAttribute("aria-valuenow")).toBe("200");
+    expect(screen.queryByRole("separator", { name: "Resize column City" })).toBeNull();
+  });
+
+  it("lets column.resizable override the table setting", () => {
+    const third: TableColumn<Row> = { id: "id", header: "Id", width: 60, cell: (row) => row.id };
+    render(<DataTable {...base} columns={[{ ...sized[0]!, resizable: false }, sized[1]!, third]} resizableColumns />);
+    expect(screen.getAllByRole("separator")).toHaveLength(1);
+    expect(handle("City")).toBeTruthy();
   });
 
   it("resizes with the keyboard, Shift for larger steps, within minWidth", () => {
@@ -82,12 +90,12 @@ describe("DataTable column sizing", () => {
     const change = vi.fn();
     const widths = { name: 150, city: 90 };
     const { rerender } = render(<DataTable {...base} columns={sized} resizableColumns columnWidths={widths} onColumnWidthsChange={change} />);
-    fireEvent.keyDown(handle("City"), { key: "ArrowRight" });
-    expect(change).toHaveBeenLastCalledWith({ name: 150, city: 100 });
+    fireEvent.keyDown(handle("Name"), { key: "ArrowRight" });
+    expect(change).toHaveBeenLastCalledWith({ name: 160, city: 90 });
     expect(widths).toEqual({ name: 150, city: 90 });
     expect(colWidths()).toEqual(["150px", "90px"]);
-    rerender(<DataTable {...base} columns={sized} resizableColumns columnWidths={{ name: 150, city: 100 }} onColumnWidthsChange={change} />);
-    expect(colWidths()).toEqual(["150px", "100px"]);
+    rerender(<DataTable {...base} columns={sized} resizableColumns columnWidths={{ name: 160, city: 90 }} onColumnWidthsChange={change} />);
+    expect(colWidths()).toEqual(["160px", "90px"]);
   });
 
   it("freezes auto-sized columns at their rendered width on the first resize", () => {

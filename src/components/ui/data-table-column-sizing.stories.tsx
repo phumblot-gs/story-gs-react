@@ -20,7 +20,7 @@ const meta: Meta<typeof DataTable> = {
 | \`column.width\` | Width in px. Default: automatic. |
 | \`column.minWidth\` / \`column.maxWidth\` | Bounds of a resize, in px. Default: 48 / none. |
 | \`column.resizable\` | Overrides \`resizableColumns\` for one column. |
-| \`resizableColumns\` | Adds a drag handle on the right edge of each header. Default: \`false\`. |
+| \`resizableColumns\` | Adds a drag handle between headers. Default: \`false\`. |
 | \`columnWidths\` | Controlled widths, keyed by column id. Takes precedence over \`column.width\`. |
 | \`defaultColumnWidths\` | Initial widths in uncontrolled mode; read only on mount. |
 | \`onColumnWidthsChange(widths)\` | Requests the next widths of all sized columns, on every step of a resize. |
@@ -32,6 +32,8 @@ const meta: Meta<typeof DataTable> = {
 - **First resize of an automatic table**: the columns are frozen at their rendered widths, then the dragged one changes. Double-click then restores that rendered width.
 
 ## Interaction and accessibility
+
+Handles sit on the boundaries between columns: the last column has none, so the table's right edge cannot be dragged. On a grey parent, where the header is white, the separators use a lighter grey.
 
 The handle is a focusable \`role="separator"\` with \`aria-valuenow\`, \`aria-valuemin\` and \`aria-valuemax\`, labelled "Resize column …" in the current language.
 
@@ -128,11 +130,11 @@ export const FixedWidths: Story = {
 };
 
 export const Constraints: Story = {
-  parameters: { docs: { description: { story: "Batch can shrink to 200 px and grow to 480 px, Images is not resizable (`resizable: false`), the others keep the 48 px minimum. Resize beyond the bounds to see the clamp." } } },
+  parameters: { docs: { description: { story: "Batch can shrink to 200 px and grow to 480 px, Status is not resizable (`resizable: false`), the others keep the 48 px minimum; Images, the last column, has no handle. Resize beyond the bounds to see the clamp." } } },
   render: function Example() {
     const [widths, setWidths] = React.useState<Record<string, number> | null>(null);
     const constrained = sizedColumns.map((col) =>
-      col.id === "name" ? { ...col, minWidth: 200, maxWidth: 480 } : col.id === "images" ? { ...col, resizable: false } : col,
+      col.id === "name" ? { ...col, minWidth: 200, maxWidth: 480 } : col.id === "status" ? { ...col, resizable: false } : col,
     );
     return (
       <Layout bg="white" padding={6}>
