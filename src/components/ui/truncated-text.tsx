@@ -8,14 +8,23 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-interface TruncatedTextProps {
+export interface TruncatedTextProps extends Omit<React.HTMLAttributes<HTMLElement>, "children"> {
+  /** The text, kept on one line and cut with "…" when it does not fit. */
   text: string;
   className?: string;
+  /** Element to render. Default: "span". */
   as?: React.ElementType;
   tooltipClassName?: string;
   tooltipSide?: "top" | "right" | "bottom" | "left";
+  /** Tailwind max-width class of the tooltip. Default: "max-w-[200px]". */
   tooltipMaxWidth?: string;
 }
+
+/**
+ * One line of text cut with "…". When it is actually cut (measured on mount and whenever the
+ * element or its parent is resized), hovering or focusing it shows the full text in a tooltip.
+ * Other HTML attributes (data-*, aria-*, style, handlers) go to the rendered element.
+ */
 
 const TruncatedText = ({
   text,
@@ -24,6 +33,7 @@ const TruncatedText = ({
   tooltipClassName,
   tooltipSide = "top",
   tooltipMaxWidth = "max-w-[200px]",
+  ...rest
 }: TruncatedTextProps) => {
   const textRef = useRef<HTMLElement>(null);
   const containerRef = useRef<HTMLElement | null>(null);
@@ -90,6 +100,7 @@ const TruncatedText = ({
   if (!isTruncated) {
     return (
       <Component
+        {...rest}
         ref={textRef}
         className={cn("block truncate w-full", className)}
       >
@@ -123,6 +134,7 @@ const TruncatedText = ({
       >
         <TooltipTrigger asChild>
           <Component
+            {...rest}
             ref={textRef}
             className={cn("block truncate w-full", className)}
             draggable={isTooltipOpen ? false : undefined}

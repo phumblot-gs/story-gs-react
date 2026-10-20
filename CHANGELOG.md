@@ -5,6 +5,19 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.33.0] - 2026-10-21
+
+### Ajouté
+
+- `TruncatedText` : les autres attributs HTML (`data-*`, `aria-*`, `style`, gestionnaires) sont transmis à l'élément
+  du texte ; type `TruncatedTextProps` exporté.
+- Storybook : page **UI / TruncatedText** rédigée en anglais (API, comportement), story `InTableCell` (colonne de
+  DataTable redimensionnable avec un pictogramme toujours visible à droite).
+
+### Corrigé
+
+- Stories `TruncatedText` sans `args` : erreurs de typage TypeScript.
+
 ## [1.32.0] - 2026-10-21
 
 ### Ajouté
