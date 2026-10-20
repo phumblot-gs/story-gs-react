@@ -1063,6 +1063,10 @@ export const componentTranslations: TranslationMap = {
     EN: "Show row details", FR: "Afficher les détails de la ligne", ES: "Mostrar detalles de la fila",
     IT: "Mostra dettagli della riga", DE: "Zeilendetails anzeigen"
   },
+  "dataTable.resizeColumn": {
+    EN: "Resize column {column}", FR: "Redimensionner la colonne {column}", ES: "Redimensionar la columna {column}",
+    IT: "Ridimensiona la colonna {column}", DE: "Spalte {column} anpassen"
+  },
   "dataTable.collapseRow": {
     EN: "Hide row details", FR: "Masquer les détails de la ligne", ES: "Ocultar detalles de la fila",
     IT: "Nascondi dettagli della riga", DE: "Zeilendetails ausblenden"

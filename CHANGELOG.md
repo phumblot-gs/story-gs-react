@@ -5,6 +5,20 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.32.0] - 2026-10-21
+
+### Ajouté
+
+- `DataTable` : largeur des colonnes et redimensionnement, sans changement pour les tables existantes.
+  `column.width` (px), `minWidth` / `maxWidth` et `resizable` ; `resizableColumns` ajoute une poignée au bord droit de
+  chaque en-tête (souris, stylet ou doigt ; flèches au clavier, Maj pour 50 px ; double-clic pour revenir à la largeur
+  déclarée). Largeurs contrôlées (`columnWidths` + `onColumnWidthsChange`) ou non (`defaultColumnWidths`).
+  Quand toutes les colonnes ont une largeur, la table passe en mise en page fixe : plusieurs tables aux mêmes largeurs
+  restent alignées.
+- Traduction `dataTable.resizeColumn` (EN, FR, ES, IT, DE).
+- Storybook : page **UI / DataTable / Column sizing** (Resizable, Fixed Widths, Constraints, Controlled Widths,
+  Aligned Groups).
+
 ## [1.31.4] - 2026-10-19
 
 ### Ajouté

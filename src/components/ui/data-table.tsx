@@ -82,6 +82,19 @@ export interface TableColumn<T> {
    * Checkbox other than the row selector, dropdown menus...). Default: false.
    */
   interactive?: boolean;
+  /**
+   * Width in px. Without it the column keeps the browser's automatic width, as before.
+   * When every column has a width (here, in `columnWidths` or `defaultColumnWidths`),
+   * the table switches to a fixed layout: each column is exactly that wide and several
+   * tables with the same widths line up.
+   */
+  width?: number;
+  /** Smallest width a resize can reach, in px. Default: 48. */
+  minWidth?: number;
+  /** Largest width a resize can reach, in px. Default: none. */
+  maxWidth?: number;
+  /** Overrides the table's `resizableColumns` for this column. */
+  resizable?: boolean;
 }
 
 export interface DataTableProps<T> {
@@ -165,6 +178,23 @@ export interface DataTableProps<T> {
   /** Sort change callback. */
   onSortChange?: (sort: DataTableSortState | null) => void;
 
+  // === Column sizing ===
+  /**
+   * Adds a drag handle on the right edge of each header (mouse or touch; arrow keys when
+   * focused, Shift for larger steps; double-click resets the column). Default: false.
+   */
+  resizableColumns?: boolean;
+  /** Controlled widths in px, keyed by column id. Takes precedence over `column.width`. */
+  columnWidths?: Record<string, number>;
+  /** Initial widths in uncontrolled mode. Read only on mount. */
+  defaultColumnWidths?: Record<string, number>;
+  /**
+   * Requested next widths (all sized columns, keyed by id), emitted on every step of a
+   * resize. Controlled parents must apply them. On the first resize, columns that had
+   * an automatic width are frozen at their rendered width.
+   */
+  onColumnWidthsChange?: (widths: Record<string, number>) => void;
+
   // === i18n ===
   /**
    * Translation key for the noun used in the footer counter
@@ -179,6 +209,10 @@ export interface DataTableProps<T> {
 }
 
 const DEFAULT_PAGE_SIZE = 50;
+const MIN_COLUMN_WIDTH = 48;
+/** Widths of the built-in selection and expansion columns (w-[56px], w-10). */
+const SELECTION_COLUMN_WIDTH = 56;
+const EXPANSION_COLUMN_WIDTH = 40;
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -268,6 +302,10 @@ function DataTableInner<T>(props: DataTableProps<T>): React.ReactElement {
     itemLabel = "dataTable.item",
     language,
     translations,
+    resizableColumns = false,
+    columnWidths: controlledColumnWidths,
+    defaultColumnWidths,
+    onColumnWidthsChange,
   } = props;
 
   const { t } = useTranslationSafe(translations, language);
@@ -492,6 +530,109 @@ function DataTableInner<T>(props: DataTableProps<T>): React.ReactElement {
     });
   }
 
+  // ---- Column sizing (controlled / uncontrolled)
+  const [internalColumnWidths, setInternalColumnWidths] = React.useState<Record<string, number>>(
+    () => ({ ...defaultColumnWidths }),
+  );
+  const widthState = controlledColumnWidths ?? internalColumnWidths;
+  const widthOf = (col: TableColumn<T>): number | undefined => widthState[col.id] ?? col.width;
+  const fixedLayout = columns.length > 0 && columns.every((col) => widthOf(col) !== undefined);
+  const hasSizedColumn = columns.some((col) => widthOf(col) !== undefined);
+  const tableWidth = fixedLayout
+    ? columns.reduce((sum, col) => sum + widthOf(col)!, 0) +
+      (selectable ? SELECTION_COLUMN_WIDTH : 0) +
+      (hasExpansionColumn ? EXPANSION_COLUMN_WIDTH : 0)
+    : undefined;
+  const headerCells = React.useRef(new Map<string, HTMLTableCellElement>());
+  // Widths before the first resize: the double-click target of auto-sized columns.
+  const initialWidths = React.useRef<Record<string, number> | null>(null);
+  const [resizingId, setResizingId] = React.useState<string | null>(null);
+
+  const isResizable = (col: TableColumn<T>) => col.resizable ?? resizableColumns;
+  const clampWidth = (col: TableColumn<T>, width: number) =>
+    Math.round(Math.min(Math.max(width, col.minWidth ?? MIN_COLUMN_WIDTH), col.maxWidth ?? Infinity));
+  const setColumnWidths = (next: Record<string, number>) => {
+    if (controlledColumnWidths === undefined) setInternalColumnWidths(next);
+    onColumnWidthsChange?.(next);
+  };
+  /** Current widths of every column, auto-sized ones measured as rendered. */
+  const currentWidths = (): Record<string, number> => {
+    const widths: Record<string, number> = {};
+    for (const col of columns) {
+      const width = widthOf(col) ?? headerCells.current.get(col.id)?.getBoundingClientRect().width;
+      if (width !== undefined) widths[col.id] = clampWidth(col, width);
+    }
+    initialWidths.current ??= widths;
+    return widths;
+  };
+  const resizeTo = (col: TableColumn<T>, width: number, base = currentWidths()) =>
+    setColumnWidths({ ...widthState, ...base, [col.id]: clampWidth(col, width) });
+
+  const startResize = (col: TableColumn<T>, event: React.PointerEvent<HTMLElement>) => {
+    if (event.button !== 0) return;
+    event.preventDefault();
+    event.stopPropagation();
+    const base = currentWidths();
+    const startX = event.clientX;
+    const startWidth = base[col.id] ?? MIN_COLUMN_WIDTH;
+    const { cursor, userSelect } = document.body.style;
+    document.body.style.cursor = "col-resize";
+    document.body.style.userSelect = "none";
+    setResizingId(col.id);
+    const move = (e: PointerEvent) => resizeTo(col, startWidth + e.clientX - startX, base);
+    const stop = () => {
+      window.removeEventListener("pointermove", move);
+      window.removeEventListener("pointerup", stop);
+      window.removeEventListener("pointercancel", stop);
+      document.body.style.cursor = cursor;
+      document.body.style.userSelect = userSelect;
+      setResizingId(null);
+    };
+    window.addEventListener("pointermove", move);
+    window.addEventListener("pointerup", stop);
+    window.addEventListener("pointercancel", stop);
+  };
+
+  const handleResizeKey = (col: TableColumn<T>, event: React.KeyboardEvent<HTMLElement>) => {
+    if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+    event.preventDefault();
+    const base = currentWidths();
+    const step = (event.shiftKey ? 50 : 10) * (event.key === "ArrowLeft" ? -1 : 1);
+    resizeTo(col, (base[col.id] ?? MIN_COLUMN_WIDTH) + step, base);
+  };
+
+  const resetWidth = (col: TableColumn<T>) => {
+    const base = currentWidths();
+    const target = col.width ?? defaultColumnWidths?.[col.id] ?? initialWidths.current?.[col.id];
+    if (target !== undefined) resizeTo(col, target, base);
+  };
+
+  const renderResizeHandle = (col: TableColumn<T>) => {
+    const width = widthOf(col);
+    return (
+      <div
+        role="separator"
+        aria-orientation="vertical"
+        aria-label={t("dataTable.resizeColumn", { column: typeof col.header === "string" ? col.header : col.id })}
+        aria-valuenow={width}
+        aria-valuemin={col.minWidth ?? MIN_COLUMN_WIDTH}
+        aria-valuemax={col.maxWidth}
+        tabIndex={0}
+        data-resizing={resizingId === col.id || undefined}
+        onPointerDown={(event) => startResize(col, event)}
+        onKeyDown={(event) => handleResizeKey(col, event)}
+        onDoubleClick={(event) => { event.stopPropagation(); resetWidth(col); }}
+        onClick={(event) => event.stopPropagation()}
+        className={cn(
+          "absolute right-0 top-0 z-10 h-full w-2 cursor-col-resize touch-none select-none outline-none",
+          "after:absolute after:right-0 after:top-1/4 after:h-1/2 after:w-px after:bg-grey-stronger after:transition-colors",
+          "hover:after:w-0.5 hover:after:bg-black focus-visible:after:w-0.5 focus-visible:after:bg-black",
+          "data-[resizing]:after:w-0.5 data-[resizing]:after:bg-black",
+        )}
+      />
+    );
+  };
+
   // ---- Header / sort indicator
   const renderSortIcon = (col: TableColumn<T>) => {
     if (!col.sortable) return null;
@@ -559,9 +700,14 @@ function DataTableInner<T>(props: DataTableProps<T>): React.ReactElement {
       {columns.map((col) => {
         const align = col.align ?? "left";
         const isSorted = sort?.columnId === col.id;
+        const resizable = isResizable(col);
         return (
           <TableHead
             key={col.id}
+            ref={(cell) => {
+              if (cell) headerCells.current.set(col.id, cell);
+              else headerCells.current.delete(col.id);
+            }}
             scope="col"
             aria-sort={
               isSorted
@@ -575,6 +721,8 @@ function DataTableInner<T>(props: DataTableProps<T>): React.ReactElement {
             className={cn(
               "text-xs font-semibold uppercase tracking-wider text-grey-strongest",
               alignToClass[align],
+              resizable && "relative",
+              fixedLayout && "overflow-hidden",
               col.headerClassName,
             )}
           >
@@ -596,6 +744,7 @@ function DataTableInner<T>(props: DataTableProps<T>): React.ReactElement {
             ) : (
               col.header
             )}
+            {resizable && renderResizeHandle(col)}
           </TableHead>
         );
       })}
@@ -685,7 +834,7 @@ function DataTableInner<T>(props: DataTableProps<T>): React.ReactElement {
                 // Body cell padding: 10px vertical (the user's request) +
                 // 16px horizontal (kept matching the primitive's `px-4` so columns
                 // align with the header).
-                className={cn("py-2.5 px-4", alignToClass[align], col.className)}
+                className={cn("py-2.5 px-4", alignToClass[align], fixedLayout && "overflow-hidden", col.className)}
                 onClick={stopProp}
               >
                 {col.cell(row, expansion)}
@@ -753,13 +902,21 @@ function DataTableInner<T>(props: DataTableProps<T>): React.ReactElement {
     <BgProvider value={innerBg}>
       <div
         className={cn(
-          "w-full overflow-hidden",
+          // A fixed layout table is exactly as wide as its columns: the card follows it.
+          fixedLayout ? "w-fit max-w-full overflow-hidden" : "w-full overflow-hidden",
           wrapperSurface && "rounded-md",
           wrapperSurface,
           className,
         )}
       >
-      <Table>
+      <Table style={fixedLayout ? { tableLayout: "fixed", width: tableWidth } : undefined}>
+        {hasSizedColumn && (
+          <colgroup>
+            {selectable && <col style={{ width: SELECTION_COLUMN_WIDTH }} />}
+            {hasExpansionColumn && <col style={{ width: EXPANSION_COLUMN_WIDTH }} />}
+            {columns.map((col) => <col key={col.id} style={{ width: widthOf(col) }} />)}
+          </colgroup>
+        )}
         <TableHeader className={headerSurface}>{headRow}</TableHeader>
         <TableBody>
           {pageData.length === 0 ? renderEmptyRow() : pageData.map(renderRow)}
