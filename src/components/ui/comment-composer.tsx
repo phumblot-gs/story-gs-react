@@ -59,6 +59,14 @@ const normalize = (text: string) => text.normalize("NFD").replace(/[\u0300-\u036
 
 type MentionState = { props: SuggestionProps<CommentMention>; index: number; x: number; y: number };
 
+/**
+ * Where the suggestions list is rendered: inside the dialog that holds the editor (a modal dialog — SidePanel, Sheet, Dialog —
+ * blocks the pointer outside itself and would close on a click there), else at the end of the page.
+ */
+function suggestionsHost(editorDom: HTMLElement | undefined): HTMLElement {
+  return editorDom?.closest<HTMLElement>('[role="dialog"], [role="alertdialog"]') ?? document.body;
+}
+
 /** A small rich-text field. Submission, notifications and persistence belong to its parent. */
 export function CommentComposer(props: CommentComposerProps) {
   const { value, defaultValue, disabled = false, mentions = [], locale = "en", className, id, "aria-describedby": describedBy, "aria-invalid": invalid } = props;
@@ -253,7 +261,7 @@ export function CommentComposer(props: CommentComposerProps) {
               </div>
             ))}
           </div>
-        </div>, document.body
+        </div>, suggestionsHost(editor?.view.dom)
       )}
     </div>
   );

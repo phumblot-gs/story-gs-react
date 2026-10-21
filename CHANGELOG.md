@@ -5,6 +5,14 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.34.1] - 2026-10-22
+
+### Corrigé
+
+- `CommentComposer` dans une fenêtre modale (`SidePanel`, `Sheet`, `Dialog`) : la liste des personnes à mentionner est rendue
+  dans la fenêtre qui contient le champ, et non plus en fin de page où la fenêtre bloquait la souris ; on peut à nouveau
+  choisir une personne au clic (le clavier fonctionnait déjà). Hors d'une fenêtre, rien ne change.
+
 ## [1.34.0] - 2026-10-22
 
 ### Ajouté

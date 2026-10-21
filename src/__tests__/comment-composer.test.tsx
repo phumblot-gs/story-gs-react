@@ -55,6 +55,20 @@ describe("CommentComposer", () => {
     expect(screen.queryByRole("listbox")).toBeNull();
   });
 
+  it("renders the suggestions inside the dialog that holds it, where a click selects a person", async () => {
+    // a modal dialog (SidePanel, Sheet, Dialog) blocks the pointer outside itself: the list must not be rendered at the end of the page
+    const onChange = vi.fn();
+    render(<div role="dialog"><CommentComposer mentions={people} onChange={onChange} /></div>);
+    const { editor, field } = await getEditor();
+    act(() => { editor.commands.insertContent("@chl"); });
+    const option = await screen.findByRole("option", { name: "Chloé Bernard" });
+    expect(option.closest('[role="dialog"]')).toBe(field.closest('[role="dialog"]'));
+    fireEvent.mouseDown(option);
+    fireEvent.click(option);
+    await waitFor(() => expect(field.textContent).toContain("@Chloé Bernard"));
+    expect(onChange.mock.calls.at(-1)![1].mentionedIds).toEqual(["c"]);
+  });
+
   it("navigates suggestions with arrows and dismisses with Escape", async () => {
     render(<CommentComposer mentions={people} />);
     const { editor, field } = await getEditor();
