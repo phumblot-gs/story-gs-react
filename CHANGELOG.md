@@ -5,6 +5,13 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.33.2] - 2026-10-22
+
+### Corrigé
+
+- `SelectAutocomplete` sur fond noir : le menu des options prend la couleur de ses lignes (`black-secondary`) ; il gardait
+  un cadre blanc qui laissait une bande blanche au-dessus et au-dessous de la liste. Fonds blanc et gris inchangés.
+
 ## [1.33.1] - 2026-10-21
 
 ### Corrigé
