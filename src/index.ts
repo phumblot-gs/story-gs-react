@@ -814,3 +814,6 @@ export { FileDropFeedback } from "./components/ui/file-drop-feedback";
 export type { FileDropFeedbackProps } from "./components/ui/file-drop-feedback";
 export { previewFileDrag, validateDroppedFiles } from "./lib/file-drop";
 export type { FileDropOptions, FileDropState, FileDropRejection, FileDropRejectionCode, FileDropValidation, FileDragPreview } from "./lib/file-drop";
+
+export { CommentComposer } from "./components/ui/comment-composer";
+export type { CommentComposerProps, CommentComposerValue, CommentComposerChange, CommentMention } from "./components/ui/comment-composer";
