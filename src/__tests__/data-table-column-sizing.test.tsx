@@ -107,3 +107,29 @@ describe("DataTable column sizing", () => {
     expect(table().style.tableLayout).toBe("fixed");
   });
 });
+
+describe("DataTable surfaces and narrow headers", () => {
+  it("hovers rows with grey-lighter on a grey parent, grey-light elsewhere", async () => {
+    const { BgProvider } = await import("@/components/layout/BgContext");
+    const { container, unmount } = render(<BgProvider value="grey"><DataTable {...base} /></BgProvider>);
+    expect(container.querySelector("tbody tr")!.className).toContain("hover:bg-grey-lighter");
+    unmount();
+    render(<DataTable {...base} />);
+    expect(document.querySelector("tbody tr")!.className).toContain("hover:bg-grey-light");
+    expect(document.querySelector("tbody tr")!.className).not.toContain("hover:bg-grey-lighter");
+  });
+
+  it("keeps the sort indicator and the alignment of a narrowed header; the full header is in the title", () => {
+    render(<DataTable {...base} columns={[{ ...sized[0]!, width: 48, align: "center" }, sized[1]!]} />);
+    const button = screen.getByRole("button", { name: /Name/ });
+    expect(button.className).toContain("max-w-full");
+    expect(button.className).toContain("mx-auto");
+    expect(button.getAttribute("title")).toBe("Name");
+    expect(button.querySelector("span")!.className).toContain("text-ellipsis");
+    expect(button.querySelector("svg, [class*='shrink-0']")).not.toBeNull();
+    // a narrow column keeps 8 px side padding instead of 16, the others keep theirs
+    const [narrow, wide] = screen.getAllByRole("columnheader");
+    expect(narrow!.className).toContain("px-2");
+    expect(wide!.className).not.toMatch(/\bpx-2\b/);
+  });
+});

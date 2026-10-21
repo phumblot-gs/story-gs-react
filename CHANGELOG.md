@@ -5,6 +5,15 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.33.1] - 2026-10-21
+
+### Corrigé
+
+- `DataTable` sur fond gris : le survol des lignes passe en `grey-lighter` (le `grey-light` habituel se confondait avec le fond).
+- `DataTable`, colonnes rétrécies : l'en-tête ne dépasse plus de sa colonne et reste centré ou aligné à droite selon `align` ;
+  l'indicateur de tri reste visible, le libellé se coupe avec « … » (titre complet au survol) ; sous 80 px, la colonne passe
+  à 8 px de marge latérale au lieu de 16.
+
 ## [1.33.0] - 2026-10-21
 
 ### Ajouté

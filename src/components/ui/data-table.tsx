@@ -210,6 +210,14 @@ export interface DataTableProps<T> {
 }
 
 const DEFAULT_PAGE_SIZE = 50;
+/**
+ * Header label: wraps between words as before; a word longer than a narrowed column ends with "…" (the
+ * full header is in the title), so the label never pushes the sort indicator out nor breaks the alignment.
+ */
+const HEADER_LABEL = "block min-w-0 overflow-hidden text-ellipsis";
+const headerTitle = (col: { header: React.ReactNode }) => (typeof col.header === "string" ? col.header : undefined);
+/** Below this width a column's 16 px side padding would leave no room for its header: it gets 8 px. */
+const NARROW_COLUMN = 80;
 const MIN_COLUMN_WIDTH = 48;
 /** Widths of the built-in selection and expansion columns (w-[56px], w-10). */
 const SELECTION_COLUMN_WIDTH = 56;
@@ -640,14 +648,15 @@ function DataTableInner<T>(props: DataTableProps<T>): React.ReactElement {
   const renderSortIcon = (col: TableColumn<T>) => {
     if (!col.sortable) return null;
     const active = sort?.columnId === col.id;
+    // shrink-0: a narrow column cuts its label, never the sort indicator
     if (!active) {
-      return <Icon name="ArrowDown" size={10} className="ml-1 inline-block opacity-30" />;
+      return <Icon name="ArrowDown" size={10} className="ml-1 inline-block shrink-0 opacity-30" />;
     }
     return (
       <Icon
         name={sort.direction === "asc" ? "ArrowUp" : "ArrowDown"}
         size={10}
-        className="ml-1 inline-block"
+        className="ml-1 inline-block shrink-0"
       />
     );
   };
@@ -727,6 +736,7 @@ function DataTableInner<T>(props: DataTableProps<T>): React.ReactElement {
               alignToClass[align],
               resizable && "relative",
               fixedLayout && "overflow-hidden",
+              (widthOf(col) ?? Infinity) < NARROW_COLUMN && "px-2",
               col.headerClassName,
             )}
           >
@@ -734,19 +744,21 @@ function DataTableInner<T>(props: DataTableProps<T>): React.ReactElement {
               <button
                 type="button"
                 onClick={() => handleHeaderSortClick(col)}
+                title={headerTitle(col)}
                 className={cn(
                   // Browsers reset `text-transform` on <button>, so we re-apply it
                   // here even though the parent <th> already has `uppercase`.
-                  "inline-flex items-center gap-1 cursor-pointer uppercase tracking-wider hover:text-black transition-colors",
+                  // max-w-full: never wider than the column, so a narrowed header stays centred / right-aligned.
+                  "inline-flex max-w-full items-center gap-1 cursor-pointer uppercase tracking-wider hover:text-black transition-colors",
                   align === "right" && "ml-auto",
                   align === "center" && "mx-auto",
                 )}
               >
-                <span>{col.header}</span>
+                <span className={HEADER_LABEL}>{col.header}</span>
                 {renderSortIcon(col)}
               </button>
             ) : (
-              col.header
+              <span className={HEADER_LABEL} title={headerTitle(col)}>{col.header}</span>
             )}
             {resizable && renderResizeHandle(col)}
           </TableHead>
@@ -779,8 +791,10 @@ function DataTableInner<T>(props: DataTableProps<T>): React.ReactElement {
           data-selected={isSelected || undefined}
           className={cn(
             // Stronger hover than the primitive's default `hover:bg-muted/50`.
-            // Always applied, regardless of `onRowClick`.
-            "hover:bg-grey-light transition-colors",
+            // Always applied, regardless of `onRowClick`. On a grey parent the
+            // table is a white card next to grey: a lighter hover keeps it apart.
+            bg === "grey" ? "hover:bg-grey-lighter" : "hover:bg-grey-light",
+            "transition-colors",
             isClickable && "cursor-pointer",
             extraRowClass,
           )}
@@ -838,7 +852,7 @@ function DataTableInner<T>(props: DataTableProps<T>): React.ReactElement {
                 // Body cell padding: 10px vertical (the user's request) +
                 // 16px horizontal (kept matching the primitive's `px-4` so columns
                 // align with the header).
-                className={cn("py-2.5 px-4", alignToClass[align], fixedLayout && "overflow-hidden", col.className)}
+                className={cn("py-2.5 px-4", alignToClass[align], fixedLayout && "overflow-hidden", (widthOf(col) ?? Infinity) < NARROW_COLUMN && "px-2", col.className)}
                 onClick={stopProp}
               >
                 {col.cell(row, expansion)}
