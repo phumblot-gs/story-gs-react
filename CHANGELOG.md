@@ -5,6 +5,20 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.34.0] - 2026-10-22
+
+### Ajouté
+
+- `CommentComposer` : champ de commentaire enrichi avec mentions `@` et autocomplétion locale ou asynchrone,
+  sélecteur d’emojis chargé à la demande, gras et italique avec raccourcis clavier et conventions Markdown.
+- Contenu JSON contrôlé ou non, texte brut et identifiants uniques des personnes mentionnées dans `onChange` ;
+  bouton de publication et validation gérés par le formulaire parent, avec rappel `onSubmitShortcut` optionnel.
+- Libellés anglais et français, navigation clavier des suggestions, états de recherche vide ou en erreur et
+  adaptation aux fonds blanc, gris et noir. Export dédié `@gs/gs-components-library/comment-composer`.
+- Storybook : dix stories en anglais sous **UI / CommentComposer**, dont l’intégration dans un formulaire.
+- Dix tests couvrant le contenu, les mentions, les recherches asynchrones, le formatage, les emojis,
+  la remise à zéro, le raccourci de soumission et l’état désactivé.
+
 ## [1.33.2] - 2026-10-22
 
 ### Corrigé

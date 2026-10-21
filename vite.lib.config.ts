@@ -60,6 +60,7 @@ const getEntryPoints = () => {
     'switch',
     'table',
     'textarea',
+    'comment-composer',
     'toast',
     'toaster',
     'toggle',
@@ -152,6 +153,9 @@ export default defineConfig({
         'react/jsx-runtime',
         // Externaliser toutes les dépendances lourdes
         /^@radix-ui/,
+        /^@tiptap\//,
+        /^@emoji-mart\//,
+        'emoji-mart',
         /^@tanstack/,
         /^@hookform/,
         'next-themes',
