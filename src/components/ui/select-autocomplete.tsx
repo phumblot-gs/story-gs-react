@@ -570,7 +570,8 @@ const SelectAutocomplete = React.forwardRef<HTMLInputElement, SelectAutocomplete
         case "grey":
           return "bg-black text-white border-grey-strongest";
         case "black":
-          return "bg-white text-black border-grey-lighter";
+          // the menu takes the colour of its items (black-secondary): a white frame left white bands around the list
+          return "bg-black-secondary text-white border-black-secondary";
         default:
           return "bg-white text-black border-grey-lighter";
       }
@@ -742,8 +743,9 @@ const SelectAutocomplete = React.forwardRef<HTMLInputElement, SelectAutocomplete
             >
               <div
                 ref={listRef}
+                // no `popup-action` here: on a black background its rule paints the list white inside the menu
                 className={cn(
-                  "popup-action overflow-y-auto py-2",
+                  "overflow-y-auto py-2",
                   menuMaxHeight,
                   listClassName
                 )}
