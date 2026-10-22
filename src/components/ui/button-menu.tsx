@@ -209,8 +209,10 @@ export const ButtonMenu = React.forwardRef<HTMLButtonElement, ButtonMenuProps>(
     )
 
     // Couleur de fond du menu selon data-bg
-    // Si dans ActionBar, traiter comme bg="white" pour les styles de menu
-    const effectiveBg = isInActionBar ? "white" : bg
+    // Dans une ActionBar (barre noire), le menu suit le fond de la barre : rendu « fond noir » (menu clair). Le traiter
+    // comme bg="white" donnait un menu sombre dont les actions, restées dans le contexte noir de la barre, devenaient
+    // illisibles (texte foncé sur gris foncé).
+    const effectiveBg = isInActionBar ? "black" : bg
     const getMenuBackgroundClass = () => {
       switch (effectiveBg) {
         case "white":
