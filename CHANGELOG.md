@@ -5,6 +5,14 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.36.0] - 2026-10-22
+
+### Ajouté
+
+- `ButtonMenu` et `ButtonMenuSmall` : prop `menuBgContext` (`"white"` | `"grey"` | `"black"`), comme `ButtonMenuStatus` et les
+  `ButtonThumbnail*` : le menu et ses actions sont dessinés pour ce fond, le bouton garde celui de son parent (ex. un menu
+  ouvert depuis une ActionBar noire au-dessus d'une page grise). Sans la prop, rien ne change. Stories `MenuBgContext`.
+
 ## [1.35.0] - 2026-10-22
 
 ### Ajouté

@@ -5,7 +5,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { useBgContext } from "@/components/layout/BgContext"
+import { useBgContext, BgProvider } from "@/components/layout/BgContext"
 import { useIsInActionBar } from "@/components/layout/ActionBar"
 import { ButtonMenuItems } from "./button-menu-items"
 import { getSelectedMenuValues } from "@/lib/menu-selection"
@@ -130,6 +130,11 @@ export interface ButtonMenuProps extends Omit<ToggleProps, "onClick" | "isActive
    */
   menuAlign?: "start" | "center" | "end"
   /**
+   * Background context forced for the menu only: the menu takes the colours it has on that background (e.g. a menu
+   * that opens over a grey page from a black ActionBar). The button keeps its parent's background context.
+   */
+  menuBgContext?: "white" | "grey" | "black"
+  /**
    * Enable multi-selection mode.
    *
    * When enabled:
@@ -184,6 +189,7 @@ export const ButtonMenu = React.forwardRef<HTMLButtonElement, ButtonMenuProps>(
       menuMaxHeight = "max-h-[calc(100vh-2rem)]",
       menuSide = "bottom",
       menuAlign = "start",
+      menuBgContext,
       multiSelect = false,
       onSelectionChange,
       ...buttonProps
@@ -213,8 +219,10 @@ export const ButtonMenu = React.forwardRef<HTMLButtonElement, ButtonMenuProps>(
     // comme bg="white" donnait un menu sombre dont les actions, restées dans le contexte noir de la barre, devenaient
     // illisibles (texte foncé sur gris foncé).
     const effectiveBg = isInActionBar ? "black" : bg
+    // menuBgContext: the menu takes the colours of that background (the button keeps its own)
+    const menuEffectiveBg = menuBgContext ?? effectiveBg
     const getMenuBackgroundClass = () => {
-      switch (effectiveBg) {
+      switch (menuEffectiveBg) {
         case "white":
         case "grey":
           return "bg-black"
@@ -246,6 +254,9 @@ export const ButtonMenu = React.forwardRef<HTMLButtonElement, ButtonMenuProps>(
         })
       }
     }, [debug, isOpen, bg, actions.length])
+
+    // the actions follow the forced background too (without it they would keep the parent's context)
+    const withMenuBg = (items: React.ReactNode) => (menuBgContext ? <BgProvider value={menuBgContext}>{items}</BgProvider> : items)
 
     return (
       <DropdownMenu open={isOpen} onOpenChange={handleOpenChange}>
@@ -281,12 +292,12 @@ export const ButtonMenu = React.forwardRef<HTMLButtonElement, ButtonMenuProps>(
           side={effectiveMenuSide}
           sideOffset={getSideOffset()}
           collisionPadding={8}
-          data-bg={effectiveBg || undefined}
+          data-bg={menuEffectiveBg || undefined}
         >
-          <ButtonMenuItems
+          {withMenuBg(<ButtonMenuItems
             actions={actions}
             disabled={disabled}
-            bg={effectiveBg}
+            bg={menuEffectiveBg}
             menuClassName={cn("rounded-sm border-0 popup-action overflow-y-auto", menuMaxHeight, getMenuBackgroundClass())}
             onAction={(action, event) => {
               if (multiSelect) event.preventDefault()
@@ -300,7 +311,7 @@ export const ButtonMenu = React.forwardRef<HTMLButtonElement, ButtonMenuProps>(
                 action.onClick?.()
               }
             }}
-          />
+          />)}
         </DropdownMenuContent>
       </DropdownMenu>
     )
