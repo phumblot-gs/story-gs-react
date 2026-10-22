@@ -5,6 +5,19 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.35.0] - 2026-10-22
+
+### Ajouté
+
+- `ButtonMenuStatus` : options aux couleurs propres, pour des statuts qui ne sont pas des statuts de média (lots, tâches…) :
+  `color` (toute couleur CSS, dessinée à la place de la couleur du statut média) et `value` (identifiant), rendus par le
+  nouveau callback `onOptionSelect(option)`. `status` et `currentStatus` deviennent facultatifs (une barre d'actions sur
+  une sélection n'a pas de statut courant). Story `CustomStatuses`.
+
+### Corrigé
+
+- Stories `ButtonMenuStatus` sans `args` : erreurs de typage TypeScript.
+
 ## [1.34.2] - 2026-10-22
 
 ### Corrigé

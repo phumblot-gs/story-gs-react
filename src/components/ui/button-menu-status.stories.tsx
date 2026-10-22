@@ -170,6 +170,10 @@ Controls the alignment of the menu relative to the button:
       description: "Preferred alignment of the menu relative to the button. The menu will automatically adjust if there's not enough space. Default: 'start'",
     },
   },
+  // the stories that render their own buttons still need the required props for typing
+  args: {
+    statusOptions: [],
+  },
 } satisfies Meta<typeof ButtonMenuStatus>
 
 export default meta
@@ -498,3 +502,38 @@ export const MenuPositioning: Story = {
   },
 }
 
+/**
+ * Statuses that are not media statuses (batches, tasks…): each option brings its own `color` and `value`, and
+ * `onOptionSelect` gives the chosen option back. Without `currentStatus`, as in an action bar acting on a selection.
+ */
+export const CustomStatuses: Story = {
+  render: () => {
+    const [picked, setPicked] = useState<string>("none yet")
+    const batchStatuses: ButtonMenuStatusOption[] = [
+      { value: "very_urgent", label: "Very urgent", color: "var(--color-red-strong)" },
+      { value: "urgent", label: "Urgent", color: "var(--color-orange)" },
+      { value: "important", label: "Important", color: "var(--color-blue)" },
+      { value: "stuck", label: "Stuck", color: "var(--color-purple)" },
+      { value: "waiting", label: "Waiting", color: "var(--color-pastel-yellow)" },
+      { value: "started", label: "Started", color: "var(--color-yellow)" },
+      { value: "review", label: "Review", color: "var(--color-khaki)" },
+      { value: "test", label: "Test", color: "var(--color-pink)" },
+      { value: "done", label: "Done", color: "var(--color-green)" },
+    ]
+    return (
+      <Layout bg="white" padding={6}>
+        <VStack gap={4}>
+          <p className="text-sm text-grey-stronger">Picked: {picked}</p>
+          <ButtonMenuStatus statusOptions={batchStatuses} onOptionSelect={(option) => setPicked(option.value ?? option.label)} />
+        </VStack>
+      </Layout>
+    )
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: "Options with their own `color` (any CSS colour) and `value`, read back with `onOptionSelect`. `currentStatus` is optional.",
+      },
+    },
+  },
+}
