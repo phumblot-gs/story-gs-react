@@ -15,18 +15,29 @@ import { MediaStatus as MediaStatusEnum } from "@/utils/mediaStatus"
 import { cn } from "@/lib/utils"
 
 export interface ButtonMenuStatusOption {
-  status: MediaStatusEnum
+  /** Media status of the option: its colour, and the value given to `onStatusChange`. */
+  status?: MediaStatusEnum
   label: string
   disabled?: boolean
+  /**
+   * Own colour of the option (any CSS colour), for statuses that are not media statuses (batches, tasks…): drawn instead of
+   * the media status colour.
+   */
+  color?: string
+  /** Own identifier of the option (statuses that are not media statuses), given back by `onOptionSelect`. */
+  value?: string
 }
 
 export interface ButtonMenuStatusProps extends Omit<ToggleProps, "onClick" | "isActive" | "children"> {
-  currentStatus: MediaStatusEnum
+  /** Current media status (optional: an action bar acting on a selection has none). */
+  currentStatus?: MediaStatusEnum
   statusOptions: ButtonMenuStatusOption[]
   /** Callback called when the button is clicked */
   onClick?: React.MouseEventHandler<HTMLButtonElement>
   /** Callback called when a status is selected from the menu */
   onStatusChange?: (status: MediaStatusEnum) => void
+  /** Callback called with the whole option selected from the menu (for options with an own `value` / `color`) */
+  onOptionSelect?: (option: ButtonMenuStatusOption) => void
   /** Callback called when the button receives focus */
   onFocus?: React.FocusEventHandler<HTMLButtonElement>
   /** Callback called when the button loses focus */
@@ -142,6 +153,7 @@ export const ButtonMenuStatus = React.forwardRef<HTMLButtonElement, ButtonMenuSt
       disabled,
       onClick,
       onStatusChange,
+      onOptionSelect,
       onFocus,
       onBlur,
       open: openProp,
@@ -296,11 +308,14 @@ export const ButtonMenuStatus = React.forwardRef<HTMLButtonElement, ButtonMenuSt
                   if (debug) {
                     console.log("[ButtonMenuStatus] Status clicked:", option.status, option.label)
                   }
-                  onStatusChange?.(option.status)
+                  if (option.status !== undefined) onStatusChange?.(option.status)
+                  onOptionSelect?.(option)
                   handleOpenChange(false)
                 }}
               >
-                <MediaStatus status={option.status} width={12} height={3} />
+                {option.color !== undefined || option.status === undefined
+                  ? <span aria-hidden="true" className="inline-block flex-none" style={{ width: 12, height: 3, background: option.color }} />
+                  : <MediaStatus status={option.status} width={12} height={3} />}
                 <span className="whitespace-nowrap overflow-hidden text-ellipsis flex-1 min-w-0 label-menu-text">{option.label}</span>
               </DropdownMenuItem>
             ))}
