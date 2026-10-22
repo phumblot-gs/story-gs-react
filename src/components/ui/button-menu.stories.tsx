@@ -3,6 +3,7 @@ import { ButtonMenu, ButtonMenuAction } from "@/components/ui/button-menu"
 import { Layout, VStack, HStack } from "@/components/layout"
 import { Icon } from "@/components/ui/icons"
 import { useState } from "react"
+import { expect, userEvent, within } from "storybook/test"
 
 const meta = {
   title: "UI/ButtonMenu",
@@ -828,4 +829,37 @@ export const SubmenusOnBlack: Story = {
   name: "Sous-menus — fond noir",
   parameters: { layout: "fullscreen" },
   render: () => <SubmenuExample bg="black" />,
+}
+
+/**
+ * `menuBgContext` forces the background the menu is drawn for, the button keeping its own. Typical case: a button in a
+ * black bar whose menu opens over a grey page.
+ */
+export const MenuBgContext: Story = {
+  render: () => (
+    <VStack gap={6} padding={6}>
+      <VStack as={Layout} bg="black" padding={6} gap={4} className="border border-grey rounded">
+        <h3 className="gs-typo-h3 text-white">Black background — menu drawn for a grey background (menuBgContext="grey")</h3>
+        <p className="text-sm text-white/80 mb-2">The button follows the black background; the menu shows as on a grey one.</p>
+        <ButtonMenu variant="secondary" actions={defaultActions} menuBgContext="grey">Grey menu</ButtonMenu>
+      </VStack>
+      <VStack as={Layout} bg="black" padding={6} gap={4} className="border border-grey rounded">
+        <h3 className="gs-typo-h3 text-white">Black background — menu drawn for a white background (menuBgContext="white")</h3>
+        <ButtonMenu variant="secondary" actions={defaultActions} menuBgContext="white">White menu</ButtonMenu>
+      </VStack>
+      <VStack as={Layout} bg="white" padding={6} gap={4} className="border border-grey rounded">
+        <h3 className="gs-typo-h3">White background — menu drawn for a black background (menuBgContext="black")</h3>
+        <ButtonMenu variant="normal" actions={defaultActions} menuBgContext="black">Black menu</ButtonMenu>
+      </VStack>
+    </VStack>
+  ),
+  args: { actions: defaultActions },
+  parameters: { layout: "fullscreen" },
+  play: async ({ canvas, canvasElement }) => {
+    await userEvent.click(canvas.getByRole("button", { name: "Grey menu" }))
+    // the menu is rendered in a portal, outside the story canvas
+    const page = within(canvasElement.ownerDocument.body)
+    const item = await page.findByRole("menuitem", { name: /./ })
+    await expect(item.closest("[data-radix-menu-content]")?.getAttribute("data-bg")).toBe("grey")
+  },
 }
