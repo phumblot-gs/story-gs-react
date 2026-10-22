@@ -5,6 +5,15 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.34.2] - 2026-10-22
+
+### Corrigé
+
+- `ButtonMenu` dans une `ActionBar` : le menu suit le fond noir de la barre et prend le rendu « fond noir » de la charte
+  (menu clair, actions grises au texte foncé, action survolée en noir). Il était traité comme sur fond blanc alors que ses
+  actions restaient dans le contexte noir de la barre : texte foncé sur gris foncé, illisible (visible dans la story
+  « ActionBar with Menu Components »).
+
 ## [1.34.1] - 2026-10-22
 
 ### Corrigé
