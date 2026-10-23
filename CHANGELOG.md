@@ -27,6 +27,9 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
   d'erreur « Référence manquante » (`contactSheet.missingReference`, EN/FR/ES/IT/DE) ; ni urgence, ni bouton Modifier, ni
   attributs (`openEdit` ne fait rien). Vignettes, sélection et exports fonctionnent comme d'habitude ; la case est nommée
   `contactSheet.selectMissingReference`. `title` remplace le badge si fourni. Story `MissingReference`.
+- `ContactSheetReference` : prop `titleContent`, rendue juste après le titre et avant le grade et les actions (ex. un
+  `VedetteIndicator` avec aperçu au survol dans un `HoverCard`), sur le modèle de `PageHeader.titleContent`. Sans la
+  prop, rien ne change. Story `TitleContent`.
 
 ## [1.39.2] - 2026-10-30
 

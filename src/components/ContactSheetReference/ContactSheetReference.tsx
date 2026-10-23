@@ -52,6 +52,11 @@ export interface ContactSheetReferenceProps {
    */
   titleText?: string;
   /**
+   * Rendered right after the title, before the grade and the actions (e.g. a
+   * VedetteIndicator with a HoverCard preview).
+   */
+  titleContent?: React.ReactNode;
+  /**
    * Attributes displayed under the title, in this order. Independent from the
    * data: an attribute missing from `reference` is rendered empty. No attribute
    * → no grid.
@@ -153,6 +158,7 @@ export const ContactSheetReference: React.FC<ContactSheetReferenceProps> = ({
   reference,
   title,
   titleText,
+  titleContent,
   attributes = [],
   exports = [],
   thumbnailsPerRow = 6,
@@ -315,6 +321,11 @@ export const ContactSheetReference: React.FC<ContactSheetReferenceProps> = ({
               {title ?? getReferenceDisplayName(reference)}
             </h3>
           )}
+          {titleContent ? (
+            <div className="flex items-center shrink-0" data-title-content="">
+              {titleContent}
+            </div>
+          ) : null}
           {grade && <Grade value={grade} size="medium" />}
           {((editable && showEditButton) || actions) && (
             <div className="flex items-center gap-1 shrink-0">

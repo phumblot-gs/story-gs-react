@@ -5,6 +5,8 @@ import { Layout } from "@/components/layout";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icons";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
+import { VedetteIndicator } from "@/components/Thumbnail/VedetteIndicator";
 import { MediaStatus } from "@/utils/mediaStatus";
 import { ContactSheetReference, type ContactSheetReferenceProps } from "./ContactSheetReference";
 import type { ThumbnailStatusButton } from "@/components/Thumbnail/Thumbnail";
@@ -701,6 +703,57 @@ export const MissingReference: Story = {
     await expect(canvas.getAllByRole("button", { name: /Edit/ })).toHaveLength(1);
     await userEvent.click(canvas.getByRole("checkbox", { name: "Select pictures without reference" }));
     await expect(args.onSelectionChange).toHaveBeenCalledWith(true, [1, 2, 3, 4]);
+  },
+};
+
+/**
+ * `titleContent` is rendered right after the title, before the grade and the actions. Here, the
+ * featured ("vedette") indicator: hover or focus it to preview the featured picture.
+ */
+export const TitleContent: Story = {
+  render: () => {
+    const TitleContentStory = () => {
+      const props = useReferenceState({
+        reference: makeReference("7e0125de91", 31),
+        exports: [{ id: "e", name: "Place des tendances", thumbnails: makeThumbnails("7e0125de91", 6) }],
+      });
+      return (
+        <Layout bg="grey" className="min-h-screen">
+          <ContactSheetReference
+            {...props}
+            reference={props.reference!}
+            attributes={ATTRIBUTES}
+            grade="B"
+            titleContent={
+              <HoverCard openDelay={150}>
+                <HoverCardTrigger asChild>
+                  <button type="button" aria-label="Featured picture" className="flex rounded-sm">
+                    <VedetteIndicator />
+                  </button>
+                </HoverCardTrigger>
+                <HoverCardContent side="bottom" align="start" className="w-auto p-2">
+                  <img
+                    src="https://picsum.photos/seed/7e0125de91-0/600/750"
+                    alt="Featured picture of 7e0125de91"
+                    className="block w-40 h-auto rounded-sm"
+                  />
+                </HoverCardContent>
+              </HoverCard>
+            }
+          />
+        </Layout>
+      );
+    };
+    return <TitleContentStory />;
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const title = canvas.getByRole("heading", { level: 3 });
+    const vedette = canvas.getByRole("button", { name: "Featured picture" });
+    await expect(title.compareDocumentPosition(vedette) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    await userEvent.hover(vedette);
+    // HoverCard content is portalled outside the story canvas.
+    await expect(await within(document.body).findByAltText("Featured picture of 7e0125de91")).toBeInTheDocument();
   },
 };
 
