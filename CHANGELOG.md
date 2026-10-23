@@ -45,6 +45,10 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ### Corrigé
 
+- Documentation de `ReorderDetails.viewChanges` (`ContactSheetReference`, `onReorder`) : elle ne liste que les médias
+  dont le code de vue a changé, et non tous ceux qui ont changé de position (un média déplacé entre deux emplacements de
+  même vue n'y figure pas). Pour les simples changements de position, utiliser `slots` (ou `pictureIds`) et
+  `movedPictureIds`. Comportement inchangé.
 - `ButtonThumbnailComments` (menu commentaires de `Thumbnail`) : si `onAddComment` renvoie une promesse, le champ et le
   bouton restent désactivés jusqu'à son issue. Résolue : le champ est vidé et le menu se ferme, comme avant. Rejetée : le
   texte saisi et le menu restent, avec un message d'erreur (`thumbnail.commentError`) ; la rejection n'est plus perdue

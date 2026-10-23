@@ -182,8 +182,9 @@ view code of the position it lands on — the sequence of view codes of the expo
 - \`slots\` — complete final state of the export (\`{ picture_id?, view }\` per slot, empty slots
   included): the source of truth to rebuild \`exports\`;
 - \`details.movedPictureIds\` — the group that was moved;
-- \`details.viewChanges\` — \`{ picture_id, previousView, view }\` for each media whose view changed,
-  i.e. every image that changed position.
+- \`details.viewChanges\` — \`{ picture_id, previousView, view }\` for each media whose view code
+  changed, only: a media moved between two slots with the same view code is not listed. Use \`slots\`
+  (or \`pictureIds\`) and \`movedPictureIds\` to detect pure position changes.
 
 \`\`\`tsx
 const handleReorder: ReorderHandler = async (exportId, pictureIds, slots, details) => {

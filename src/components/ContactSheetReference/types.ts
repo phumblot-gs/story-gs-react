@@ -83,7 +83,11 @@ export interface ReorderViewChange {
 export interface ReorderDetails {
   /** Media moved by the user (the grabbed group), in display order. */
   movedPictureIds: number[];
-  /** Media whose view changed, i.e. every media that changed position. */
+  /**
+   * Media whose view code changed, only. A media moved between two slots carrying the
+   * same view code is not listed: to detect pure position changes, compare `slots` (or
+   * `pictureIds`) with the previous order, or use `movedPictureIds`.
+   */
   viewChanges: ReorderViewChange[];
 }
 
