@@ -10,6 +10,8 @@ import type { LabelColor } from "@/components/ui/button-thumbnail-labels";
 export interface ReferenceData {
   reference_id: number;
   ref: string;
+  /** Short label of the reference; when not blank, it is the displayed title (see `getReferenceDisplayName`). */
+  smalltext?: string | null;
   tags?: string[];
   [key: string]: unknown;
 }

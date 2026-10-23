@@ -11,6 +11,7 @@ import { useTranslationSafe, type TranslationMap } from "@/contexts/TranslationC
 import { ReferenceAttributes } from "./ReferenceAttributes";
 import { ReferenceEditModal } from "./ReferenceEditModal";
 import { ContactSheetThumbnailGrid } from "./ContactSheetThumbnailGrid";
+import { getReferenceDisplayName, getReferenceTooltip } from "./reference-name";
 import type {
   ContactSheetExport,
   ReferenceAttributeConfig,
@@ -35,6 +36,16 @@ export interface ContactSheetReferenceProps {
   virtualized?: boolean | "auto";
   /** Reference data (`/reference` endpoint). */
   reference: ReferenceData;
+  /**
+   * Replaces the title. By default the title is `getReferenceDisplayName(reference)`:
+   * `smalltext` when not blank, otherwise `ref`.
+   */
+  title?: React.ReactNode;
+  /**
+   * Text version of the title, for its tooltip, the checkbox label and the Edit
+   * form title. Needed when `title` is not a string.
+   */
+  titleText?: string;
   /**
    * Attributes displayed under the title, in this order. Independent from the
    * data: an attribute missing from `reference` is rendered empty. No attribute
@@ -135,6 +146,8 @@ export interface ContactSheetReferenceProps {
  */
 export const ContactSheetReference: React.FC<ContactSheetReferenceProps> = ({
   reference,
+  title,
+  titleText,
   attributes = [],
   exports = [],
   thumbnailsPerRow = 6,
@@ -169,6 +182,9 @@ export const ContactSheetReference: React.FC<ContactSheetReferenceProps> = ({
     if (onReferenceUpdate) setEditing(true);
   }, [onReferenceUpdate]);
   const actions = typeof headerActions === "function" ? headerActions({ openEdit }) : headerActions;
+  const titleString = titleText ?? (typeof title === "string" ? title : undefined);
+  const displayName = titleString ?? getReferenceDisplayName(reference);
+  const titleTooltip = titleString ?? getReferenceTooltip(reference);
 
   // Seuls les médias comptent : les emplacements vides ne se sélectionnent pas.
   const media = exports.flatMap((e) => e.thumbnails.filter((th) => !isEmptySlot(th)));
@@ -245,7 +261,7 @@ export const ContactSheetReference: React.FC<ContactSheetReferenceProps> = ({
             <Checkbox
               checked={checkState}
               onCheckedChange={(checked) => onSelectionChange(checked === true, pictureIds)}
-              aria-label={t("contactSheet.selectReference", { ref: reference.ref })}
+              aria-label={t("contactSheet.selectReference", { ref: displayName })}
             />
           </div>
         )}
@@ -279,8 +295,8 @@ export const ContactSheetReference: React.FC<ContactSheetReferenceProps> = ({
               <Icon name="Urgent" size={10} />
             </Toggle>
           )}
-          <h3 className="m-0 text-base font-bold uppercase truncate" title={reference.ref}>
-            {reference.ref}
+          <h3 className="m-0 text-base font-bold uppercase truncate" title={titleTooltip}>
+            {title ?? getReferenceDisplayName(reference)}
           </h3>
           {grade && <Grade value={grade} size="medium" />}
           {((onReferenceUpdate && showEditButton) || actions) && (
@@ -318,6 +334,7 @@ export const ContactSheetReference: React.FC<ContactSheetReferenceProps> = ({
           isOpen={editing}
           onClose={() => setEditing(false)}
           reference={reference}
+          displayName={displayName}
           attributes={editableAttributes}
           editableTags={editableTags}
           onSubmit={onReferenceUpdate}

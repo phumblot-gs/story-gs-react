@@ -5,6 +5,25 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [Unreleased]
+
+### Modifié
+
+- **Impact consommateurs** — `ContactSheetReference` : le titre de la référence est désormais son `smalltext` s'il est
+  renseigné (espaces retirés), sinon son `ref`, règle de gs_node et gs_w. Quiconque passe déjà `smalltext` dans
+  `reference` voit ce libellé en titre au lieu du `ref` ; le `ref` reste visible comme attribut s'il est configuré dans
+  `attributes`. La même valeur sert à l'infobulle du titre (`« smalltext — ref »` quand les deux diffèrent), au libellé
+  accessible de la case de sélection (`contactSheet.selectReference`) et au titre du formulaire Modifier. Sans
+  `smalltext`, rien ne change. `ReferenceEditModal` utilisé seul suit la même règle (nouvelle prop `displayName` pour la
+  surcharger).
+
+### Ajouté
+
+- `getReferenceDisplayName(reference)`, exporté : `smalltext` s'il est renseigné, sinon `ref`. `ReferenceData` déclare
+  `smalltext?: string | null`.
+- `ContactSheetReference` : props `title` (remplace le titre, tout `ReactNode`) et `titleText` (son texte, pour
+  l'infobulle, la case et le formulaire quand `title` n'est pas une chaîne). Story `ReferenceDisplayName`.
+
 ## [1.39.2] - 2026-10-30
 
 ### Corrigé

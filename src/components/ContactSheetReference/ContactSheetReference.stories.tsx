@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect, fn, userEvent, within } from "storybook/test";
 import { Layout } from "@/components/layout";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
@@ -616,6 +617,58 @@ export const Minimal: Story = {
       );
     };
     return <Minimal />;
+  },
+};
+
+/**
+ * Reference title: `smalltext` when not blank, otherwise `ref` (`getReferenceDisplayName`, same
+ * rule as gs_node and gs_w). Hover the title for "smalltext — ref". `ref` stays visible as an
+ * attribute. `title` replaces the title with any node; `titleText` then gives its text for the
+ * tooltip, the checkbox label and the Edit form title.
+ */
+export const ReferenceDisplayName: Story = {
+  args: { onSelectionChange: fn() },
+  render: (args) => {
+    const thumbnails = (ref: string) => [{ id: "e", thumbnails: makeThumbnails(ref, 3) }];
+    return (
+      <Layout bg="grey" className="min-h-screen">
+        <ContactSheetReference
+          reference={{ reference_id: 11, ref: "5238694", smalltext: "Hydration heroes set" }}
+          attributes={[{ key: "ref", label: "Reference" }]}
+          exports={thumbnails("5238694")}
+          onSelectionChange={args.onSelectionChange}
+        />
+        <ContactSheetReference
+          reference={{ reference_id: 12, ref: "7e0125de91", smalltext: "  " }}
+          attributes={[{ key: "ref", label: "Reference" }]}
+          exports={thumbnails("7e0125de91")}
+          onSelectionChange={args.onSelectionChange}
+        />
+        <ContactSheetReference
+          reference={{ reference_id: 13, ref: "7e0127dr0x", smalltext: "Repair shampoo" }}
+          title={
+            <>
+              Repair shampoo <span className="font-normal normal-case">(200 ml)</span>
+            </>
+          }
+          titleText="Repair shampoo (200 ml)"
+          attributes={[{ key: "ref", label: "Reference" }]}
+          exports={thumbnails("7e0127dr0x")}
+          onSelectionChange={args.onSelectionChange}
+        />
+      </Layout>
+    );
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const [withSmalltext, withoutSmalltext, custom] = canvas.getAllByRole("heading", { level: 3 });
+    await expect(withSmalltext).toHaveTextContent("Hydration heroes set");
+    await expect(withSmalltext).toHaveAttribute("title", "Hydration heroes set — 5238694");
+    await expect(withoutSmalltext).toHaveTextContent("7e0125de91");
+    await expect(withoutSmalltext).toHaveAttribute("title", "7e0125de91");
+    await expect(custom).toHaveAttribute("title", "Repair shampoo (200 ml)");
+    await userEvent.click(canvas.getByRole("checkbox", { name: /Hydration heroes set/ }));
+    await expect(args.onSelectionChange).toHaveBeenCalledWith(true, [1, 2, 3]);
   },
 };
 

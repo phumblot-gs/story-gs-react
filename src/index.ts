@@ -763,6 +763,7 @@ export {
   ContactSheetThumbnailGrid,
   ReferenceAttributes,
   ReferenceEditModal,
+  getReferenceDisplayName,
 } from "./components/ContactSheetReference";
 export type {
   ContactSheetReferenceProps,
