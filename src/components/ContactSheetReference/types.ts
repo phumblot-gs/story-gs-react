@@ -36,6 +36,8 @@ export interface ReferenceAttributeConfig {
  * Thumbnail data: the Thumbnail display props, without its callbacks (replaced by
  * `onThumbnailChange`) nor the props driven by the contact sheet (size, drag).
  *
+ * `imagePending` / `imageFadeIn` are driven by the grid (`imageLoading="grouped"`).
+ *
  * `statusButtons` (the ✗ / ✓ buttons under the thumbnail) is passed per thumbnail:
  * 0, 1 or 2 buttons depending on the image state, decided by the application. A
  * click is reported as a `statusButton` change. As soon as one thumbnail of the
@@ -49,6 +51,8 @@ export type ContactSheetThumbnail = Omit<
   | "draggable"
   | "isDragged"
   | "isDragOver"
+  | "imagePending"
+  | "imageFadeIn"
   | `on${string}`
 > & {
   /**

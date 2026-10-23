@@ -1,6 +1,6 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
-import { Thumbnail, type ThumbnailBench } from "@/components/Thumbnail/Thumbnail";
+import { Thumbnail, type ThumbnailAction, type ThumbnailBench, type ThumbnailProps } from "@/components/Thumbnail/Thumbnail";
 import type { TranslationMap } from "@/contexts/TranslationContext";
 import {
   computeDropTarget,
@@ -17,6 +17,8 @@ import type {
   ThumbnailFeatures,
 } from "./types";
 import { isEmptySlot } from "./types";
+import { useGroupedImageLoading } from "./useGroupedImageLoading";
+import type { GroupedImageItem } from "@/lib/grouped-image-loading";
 
 /**
  * Clé d'une cellule : l'id du média, ou la position pour un emplacement vide
@@ -52,9 +54,42 @@ export interface ContactSheetThumbnailGridProps {
   /** Survol d'une vignette : export concerné, ou `null` en sortie. */
   onExportHover?: (exportId: string | number | null) => void;
   bench?: ThumbnailBench;
+  /**
+   * Chargement des images :
+   * - "native" (défaut) : chaque `<img>` se charge seule, comme avant ;
+   * - "grouped" : rien n'est demandé avant que les vignettes approchent de
+   *   l'écran (300px) ; les images sont préchargées et décodées, puis
+   *   apparaissent ensemble (fondu court) quand tout le bloc est prêt — 2 s
+   *   au plus, ensuite chacune apparaît à son arrivée. Un bloc = la référence,
+   *   ou `max(colonnes × 4, 24)` images pour les très grandes. Une image en
+   *   erreur (404, indécodable) ne retarde pas les autres et affiche l'icône
+   *   de fichier cassé.
+   */
+  imageLoading?: "native" | "grouped";
   language?: string;
   translations?: Partial<TranslationMap>;
 }
+
+/** Callbacks d'une vignette, stables d'un rendu à l'autre. */
+type ThumbnailHandlers = Required<
+  Pick<
+    ThumbnailProps,
+    | "onSelectionChange"
+    | "onRatingChange"
+    | "onLabelChange"
+    | "onTagAdd"
+    | "onTagRemove"
+    | "onCommentAdd"
+    | "onStatusButtonClick"
+    | "onValidate"
+    | "onReject"
+    | "onImageClick"
+  >
+>;
+
+/** Signature du contenu des actions : clés, libellés, désactivation. */
+const actionsSignature = (actions: readonly ThumbnailAction[]) =>
+  actions.map((a) => `${a.key}\u0000${a.label}\u0000${a.disabled ? 1 : 0}`).join("\u0001");
 
 interface DragState {
   exportId: string | number;
@@ -187,6 +222,7 @@ export const ContactSheetThumbnailGrid: React.FC<ContactSheetThumbnailGridProps>
   exportsLayout = "grouped",
   renderExportHeader,
   bench,
+  imageLoading = "native",
   language,
   translations,
 }) => {
@@ -389,20 +425,110 @@ export const ContactSheetThumbnailGrid: React.FC<ContactSheetThumbnailGridProps>
     e.thumbnails.filter((t) => !isEmptySlot(t)).map((t) => t.picture_id as number),
   );
 
-  // --- Rendu -----------------------------------------------------------------
-  const emit = (thumb: ContactSheetThumbnail, exportId: string | number) =>
-    (change: DistributiveOmit<ThumbnailChange, "pictureId" | "exportId">) =>
-      onThumbnailChange?.({ ...change, pictureId: thumb.picture_id as number, exportId } as ThumbnailChange);
+  // --- Callbacks stables ------------------------------------------------------
+  // Une vignette ne se redessine que si ses props changent (Thumbnail est
+  // mémoïsé) : ses callbacks doivent donc garder leur identité d'un rendu à
+  // l'autre. Ils sont créés une fois par (export, média) et lisent les
+  // dernières props au moment de l'appel.
+  const latestRef = React.useRef({ onThumbnailChange, displayOrder });
+  latestRef.current = { onThumbnailChange, displayOrder };
+  const thumbsRef = React.useRef(new Map<string, ContactSheetThumbnail>());
+  const handlersRef = React.useRef(new Map<string, ThumbnailHandlers>());
+  const actionsRef = React.useRef(new Map<string, { signature: string; actions: ThumbnailAction[] }>());
+  const thumbId = (exportId: string | number, pictureId: number) => `${exportId}\u0000${pictureId}`;
 
+  // Dernières données de chaque vignette, et ménage des vignettes disparues.
+  const thumbs = new Map<string, ContactSheetThumbnail>();
+  exports.forEach((group) =>
+    group.thumbnails.forEach((thumb) => {
+      if (!isEmptySlot(thumb)) thumbs.set(thumbId(group.id, thumb.picture_id as number), thumb);
+    }),
+  );
+  thumbsRef.current = thumbs;
+  React.useEffect(() => {
+    [handlersRef.current, actionsRef.current].forEach((cache) =>
+      cache.forEach((_, id) => {
+        if (!thumbsRef.current.has(id)) cache.delete(id);
+      }),
+    );
+  });
+
+  const handlersFor = (exportId: string | number, pictureId: number): ThumbnailHandlers => {
+    const id = thumbId(exportId, pictureId);
+    const cached = handlersRef.current.get(id);
+    if (cached) return cached;
+    const send = (change: DistributiveOmit<ThumbnailChange, "pictureId" | "exportId">) =>
+      latestRef.current.onThumbnailChange?.({ ...change, pictureId, exportId } as ThumbnailChange);
+    const handlers: ThumbnailHandlers = {
+      onSelectionChange: (selected, modifiers) => {
+        const pictureIds = modifiers.shiftKey
+          ? getSelectionRange(latestRef.current.displayOrder, anchorRef.current, pictureId)
+          : [pictureId];
+        anchorRef.current = pictureId;
+        send({ type: "selection", selected, modifiers, pictureIds });
+      },
+      onRatingChange: (rating) => send({ type: "rating", rating }),
+      onLabelChange: (label) => send({ type: "label", label }),
+      onTagAdd: (tag) => send({ type: "tagAdd", tag }),
+      onTagRemove: (tag) => send({ type: "tagRemove", tag }),
+      onCommentAdd: async (comment) => {
+        await send({ type: "comment", comment });
+      },
+      onStatusButtonClick: (key, reason) => send({ type: "statusButton", key, reason }),
+      onValidate: () => send({ type: "validate" }),
+      onReject: (reason) => send({ type: "reject", reason }),
+      onImageClick: () => send({ type: "open" }),
+    };
+    handlersRef.current.set(id, handlers);
+    return handlers;
+  };
+
+  // Actions du menu « … » : reconstruites par l'application à chaque rendu.
+  // Même contenu (clés, libellés, désactivation) → même tableau ; chaque
+  // action appelle la dernière version reçue.
+  const actionsFor = (exportId: string | number, pictureId: number, actions?: ThumbnailAction[]) => {
+    if (!actions) return undefined;
+    const id = thumbId(exportId, pictureId);
+    const signature = actionsSignature(actions);
+    const cached = actionsRef.current.get(id);
+    if (cached?.signature === signature) return cached.actions;
+    const stable = actions.map((action, index) => ({
+      ...action,
+      action: () => thumbsRef.current.get(id)?.actions?.[index]?.action(),
+    }));
+    actionsRef.current.set(id, { signature, actions: stable });
+    return stable;
+  };
+
+  // --- Chargement groupé des images --------------------------------------------
+  const loadingItems: GroupedImageItem[] = [];
+  if (imageLoading === "grouped") {
+    exports.forEach((group) =>
+      group.thumbnails.forEach((thumb) => {
+        if (!isEmptySlot(thumb) && thumb.src) loadingItems.push({ key: thumb.picture_id as number, src: thumb.src });
+      }),
+    );
+  }
+  const getImageState = useGroupedImageLoading({
+    enabled: imageLoading === "grouped",
+    items: loadingItems,
+    columns,
+    containerRef: gridRef,
+    getNode: (key) => cellRefs.current.get(key),
+  });
+
+  // --- Rendu -----------------------------------------------------------------
   // Alignement : dès qu'une vignette a des boutons de statut (données), la
   // ligne de boutons est réservée (vide) pour celles qui n'en ont pas — sauf si
   // l'ancien mode (onValidate / onReject) leur en donne déjà une.
   const hasStatusButtons = exports.some((group) => group.thumbnails.some((t) => t.statusButtons !== undefined));
 
   const renderThumbnail = (thumb: ContactSheetThumbnail, exportId: string | number) => {
-    const send = emit(thumb, exportId);
     const statusButtons =
       thumb.statusButtons ?? (hasStatusButtons && !enabled?.validation ? [] : undefined);
+    const media = !isEmptySlot(thumb);
+    const handlers = media ? handlersFor(exportId, thumb.picture_id as number) : undefined;
+    const image = media && thumb.src ? getImageState(thumb.picture_id as number, thumb.src) : undefined;
     return (
       <Thumbnail
         filenameTruncation="middle"
@@ -410,30 +536,25 @@ export const ContactSheetThumbnailGrid: React.FC<ContactSheetThumbnailGridProps>
         language={language}
         translations={translations}
         {...thumb}
+        actions={media ? actionsFor(exportId, thumb.picture_id as number, thumb.actions) : thumb.actions}
         statusButtons={statusButtons}
         size={thumbnailSize}
-        onSelectionChange={
-          enabled?.selection
-            ? (selected, modifiers) => {
-                const pictureIds = modifiers.shiftKey
-                  ? getSelectionRange(displayOrder, anchorRef.current, thumb.picture_id as number)
-                  : [thumb.picture_id as number];
-                anchorRef.current = thumb.picture_id as number;
-                send({ type: "selection", selected, modifiers, pictureIds });
-              }
-            : undefined
-        }
-        onRatingChange={enabled?.rating ? (rating) => send({ type: "rating", rating }) : undefined}
-        onLabelChange={enabled?.label ? (label) => send({ type: "label", label }) : undefined}
-        onTagAdd={enabled?.tags ? (tag) => send({ type: "tagAdd", tag }) : undefined}
-        onTagRemove={enabled?.tags ? (tag) => send({ type: "tagRemove", tag }) : undefined}
-        onCommentAdd={enabled?.comments ? async (comment) => { await send({ type: "comment", comment }); } : undefined}
-        onStatusButtonClick={
-          onThumbnailChange ? (key, reason) => send({ type: "statusButton", key, reason }) : undefined
-        }
-        onValidate={enabled?.validation ? () => send({ type: "validate" }) : undefined}
-        onReject={enabled?.validation ? (reason) => send({ type: "reject", reason }) : undefined}
-        onImageClick={enabled?.open ? () => send({ type: "open" }) : undefined}
+        {...(image && {
+          src: image.src,
+          imagePending: image.pending,
+          imageFadeIn: true,
+          hasError: thumb.hasError || image.error,
+        })}
+        onSelectionChange={enabled?.selection ? handlers?.onSelectionChange : undefined}
+        onRatingChange={enabled?.rating ? handlers?.onRatingChange : undefined}
+        onLabelChange={enabled?.label ? handlers?.onLabelChange : undefined}
+        onTagAdd={enabled?.tags ? handlers?.onTagAdd : undefined}
+        onTagRemove={enabled?.tags ? handlers?.onTagRemove : undefined}
+        onCommentAdd={enabled?.comments ? handlers?.onCommentAdd : undefined}
+        onStatusButtonClick={onThumbnailChange ? handlers?.onStatusButtonClick : undefined}
+        onValidate={enabled?.validation ? handlers?.onValidate : undefined}
+        onReject={enabled?.validation ? handlers?.onReject : undefined}
+        onImageClick={enabled?.open ? handlers?.onImageClick : undefined}
       />
     );
   };

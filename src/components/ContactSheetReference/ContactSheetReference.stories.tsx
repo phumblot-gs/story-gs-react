@@ -121,6 +121,20 @@ Interactions are opt-in: each one appears when its callback is provided — \`on
 \`onThumbnailChange\` (thumbnail selection, rating, label, tags, comments, validation),
 \`onReorder\` (drag & drop).
 
+### Image loading
+
+On a contact sheet with many references, pass \`imageLoading="grouped"\` (default \`"native"\`: each
+\`<img>\` loads on its own). Nothing is requested until a reference comes within 300px of the viewport
+(or of the scrolling container), visible references first; its images are preloaded and decoded, then
+the whole reference appears at once with a short fade. After 2s, what is ready appears and the rest
+follows one by one. References of more than \`max(thumbnailsPerRow × 4, 24)\` images are split by rows.
+A 404 or undecodable image shows the broken file icon without holding the others back. See the
+**Grouped Image Loading** story.
+
+\`\`\`tsx
+<ContactSheetReference reference={reference} exports={exports} imageLoading="grouped" />
+\`\`\`
+
 ### Reordering (drag & drop)
 
 Drag & drop is enabled as soon as \`onReorder\` is provided. A drop never leaves its export.
@@ -752,6 +766,109 @@ export const ContactSheet: Story = {
           reference={props.reference!}
           attributes={ATTRIBUTES}
           thumbnailsPerRow={perRow}
+        />
+      );
+    };
+    return <Sheet />;
+  },
+};
+
+// --- Chargement groupé des images ---------------------------------------------
+
+/** Images de démonstration : quelques URLs cassées (404, image corrompue) et une image lente. */
+const BROKEN_404 = "/missing/contact-sheet-404.jpg";
+const BROKEN_CORRUPT = "data:image/jpeg;base64,AAAAAAAAAAAA";
+// Très grande image (plusieurs Mo) : arrive après les autres.
+const SLOW_IMAGE = "https://picsum.photos/seed/slow-image/5000/6250";
+
+const loadingThumbnails = (ref: string, count: number, index: number): ContactSheetThumbnail[] =>
+  makeThumbnails(ref, count).map((thumb, i) => {
+    if (index === 1 && i === 2) return { ...thumb, src: BROKEN_404, filename: `${ref.toUpperCase()}_404.tif` };
+    if (index === 1 && i === 4) return { ...thumb, src: BROKEN_CORRUPT, filename: `${ref.toUpperCase()}_corrupt.tif` };
+    if (index === 2 && i === 1) return { ...thumb, src: SLOW_IMAGE, filename: `${ref.toUpperCase()}_slow.tif` };
+    return thumb;
+  });
+
+/**
+ * `imageLoading="grouped"`: nothing is requested until a reference comes within 300px of the viewport;
+ * each reference then appears at once (short fade) when all its images are loaded and decoded. Scroll
+ * down: references load as they approach, visible ones first.
+ *
+ * - Reference 2 has a 404 and a corrupt image: they show the broken file icon without holding the
+ *   others back.
+ * - Reference 3 has a very large (slow) image: after 2s the rest of the reference appears, the slow
+ *   image follows on its own.
+ * - The last reference has 100 thumbnails: it is split by rows (`max(columns × 4, 24)` per block), so
+ *   its first rows do not wait for the 100 images.
+ *
+ * Switch to "native" to compare with the default behaviour; "Reload" replays the loading.
+ */
+export const GroupedImageLoading: Story = {
+  render: () => {
+    const Sheet = () => {
+      const [mode, setMode] = useState<"native" | "grouped">("grouped");
+      const [run, setRun] = useState(0);
+      const [perRow, setPerRow] = useState(6);
+      const refs = Array.from({ length: 10 }, (_, i) => `loading-${run}-${i}`);
+      return (
+        <Layout bg="grey" className="min-h-screen">
+          <div className="sticky top-0 z-20 flex flex-wrap items-center gap-6 px-6 py-3 border-b border-grey-strong text-sm bg-grey-lighter">
+            <label className="flex items-center gap-2">
+              imageLoading
+              <select
+                value={mode}
+                onChange={(e) => setMode(e.target.value as "native" | "grouped")}
+                className="border border-grey-strong rounded-sm px-1"
+              >
+                <option value="grouped">grouped</option>
+                <option value="native">native</option>
+              </select>
+            </label>
+            <label className="flex items-center gap-3 w-72">
+              <span className="whitespace-nowrap">{perRow} per row</span>
+              <Slider min={4} max={10} step={1} value={[perRow]} onValueChange={([v]) => setPerRow(v)} />
+            </label>
+            <Button variant="secondary" size="small" onClick={() => setRun((r) => r + 1)}>
+              Reload
+            </Button>
+          </div>
+          {refs.map((ref, i) => (
+            <LoadingRow
+              key={`${mode}-${ref}`}
+              refName={ref}
+              index={i}
+              count={i === refs.length - 1 ? 100 : 6 + (i % 3) * 3}
+              perRow={perRow}
+              mode={mode}
+            />
+          ))}
+        </Layout>
+      );
+    };
+    const LoadingRow = ({
+      refName,
+      index,
+      count,
+      perRow,
+      mode,
+    }: {
+      refName: string;
+      index: number;
+      count: number;
+      perRow: number;
+      mode: "native" | "grouped";
+    }) => {
+      const props = useReferenceState({
+        reference: makeReference(`REF ${index + 1}`, index),
+        exports: [{ id: "e", name: "Place des tendances", thumbnails: loadingThumbnails(refName, count, index) }],
+      });
+      return (
+        <ContactSheetReference
+          {...props}
+          reference={props.reference!}
+          attributes={ATTRIBUTES.slice(0, 2)}
+          thumbnailsPerRow={perRow}
+          imageLoading={mode}
         />
       );
     };
