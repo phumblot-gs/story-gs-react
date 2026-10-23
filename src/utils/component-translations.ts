@@ -1166,6 +1166,12 @@ export const componentTranslations: TranslationMap = {
   "contactSheet.selectReference": {
     EN: "Select reference {ref}", FR: "Sélectionner la référence {ref}", ES: "Seleccionar la referencia {ref}", IT: "Seleziona il riferimento {ref}", DE: "Referenz {ref} auswählen"
   },
+  "contactSheet.missingReference": {
+    EN: "Missing reference", FR: "Référence manquante", ES: "Referencia ausente", IT: "Riferimento mancante", DE: "Referenz fehlt"
+  },
+  "contactSheet.selectMissingReference": {
+    EN: "Select pictures without reference", FR: "Sélectionner les images sans référence", ES: "Seleccionar las imágenes sin referencia", IT: "Seleziona le immagini senza riferimento", DE: "Bilder ohne Referenz auswählen"
+  },
   "contactSheet.markUrgent": {
     EN: "Mark as urgent", FR: "Marquer comme urgente", ES: "Marcar como urgente", IT: "Segna come urgente", DE: "Als dringend markieren"
   },

@@ -4,6 +4,7 @@ import { Layout } from "@/components/layout";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Toggle } from "@/components/ui/toggle";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Icon } from "@/components/ui/icons";
 import { Grade, type GradeValue } from "@/components/ui/grade";
 import type { ThumbnailBench } from "@/components/Thumbnail/Thumbnail";
@@ -34,8 +35,12 @@ export interface ContactSheetReferenceProps {
    * mounts everything (browser find, printing, scrolling to a picture's DOM node,
    * tests without layout). */
   virtualized?: boolean | "auto";
-  /** Reference data (`/reference` endpoint). */
-  reference: ReferenceData;
+  /**
+   * Reference data (`/reference` endpoint). `null` renders the block of pictures
+   * without a reference: a "Missing reference" badge as title, no attributes, no
+   * urgent toggle nor Edit form. Thumbnails, selection and exports work as usual.
+   */
+  reference: ReferenceData | null;
   /**
    * Replaces the title. By default the title is `getReferenceDisplayName(reference)`:
    * `smalltext` when not blank, otherwise `ref`.
@@ -182,9 +187,11 @@ export const ContactSheetReference: React.FC<ContactSheetReferenceProps> = ({
     if (onReferenceUpdate) setEditing(true);
   }, [onReferenceUpdate]);
   const actions = typeof headerActions === "function" ? headerActions({ openEdit }) : headerActions;
+  const missing = reference === null;
   const titleString = titleText ?? (typeof title === "string" ? title : undefined);
-  const displayName = titleString ?? getReferenceDisplayName(reference);
-  const titleTooltip = titleString ?? getReferenceTooltip(reference);
+  const displayName = titleString ?? (missing ? t("contactSheet.missingReference") : getReferenceDisplayName(reference));
+  const titleTooltip = titleString ?? (missing ? displayName : getReferenceTooltip(reference));
+  const editable = !missing && !!onReferenceUpdate;
 
   // Seuls les médias comptent : les emplacements vides ne se sélectionnent pas.
   const media = exports.flatMap((e) => e.thumbnails.filter((th) => !isEmptySlot(th)));
@@ -261,7 +268,11 @@ export const ContactSheetReference: React.FC<ContactSheetReferenceProps> = ({
             <Checkbox
               checked={checkState}
               onCheckedChange={(checked) => onSelectionChange(checked === true, pictureIds)}
-              aria-label={t("contactSheet.selectReference", { ref: displayName })}
+              aria-label={
+                missing && titleString === undefined
+                  ? t("contactSheet.selectMissingReference")
+                  : t("contactSheet.selectReference", { ref: displayName })
+              }
             />
           </div>
         )}
@@ -277,7 +288,7 @@ export const ContactSheetReference: React.FC<ContactSheetReferenceProps> = ({
         data-testid="reference-content"
       >
         <div className="flex items-center gap-2 min-w-0 h-6">
-          {onUrgentChange && (
+          {onUrgentChange && !missing && (
             <Toggle
               variant="secondary"
               size="small"
@@ -295,13 +306,19 @@ export const ContactSheetReference: React.FC<ContactSheetReferenceProps> = ({
               <Icon name="Urgent" size={10} />
             </Toggle>
           )}
-          <h3 className="m-0 text-base font-bold uppercase truncate" title={titleTooltip}>
-            {title ?? getReferenceDisplayName(reference)}
-          </h3>
+          {missing && title === undefined ? (
+            <h3 className="flex m-0 min-w-0 text-base" title={titleTooltip} data-missing-reference="">
+              <Badge variant="destructive">{displayName}</Badge>
+            </h3>
+          ) : (
+            <h3 className="m-0 text-base font-bold uppercase truncate" title={titleTooltip}>
+              {title ?? getReferenceDisplayName(reference)}
+            </h3>
+          )}
           {grade && <Grade value={grade} size="medium" />}
-          {((onReferenceUpdate && showEditButton) || actions) && (
+          {((editable && showEditButton) || actions) && (
             <div className="flex items-center gap-1 shrink-0">
-              {onReferenceUpdate && showEditButton && (
+              {editable && showEditButton && (
                 <Button variant="ghost" size="small" onClick={openEdit}>
                   <Icon name="Pencil" size={12} />
                   {t("contactSheet.edit")}
@@ -312,7 +329,7 @@ export const ContactSheetReference: React.FC<ContactSheetReferenceProps> = ({
           )}
         </div>
 
-        <ReferenceAttributes reference={reference} attributes={attributes} className="mt-4" />
+        {reference && <ReferenceAttributes reference={reference} attributes={attributes} className="mt-4" />}
 
         {separated ? (
           // Exports séparés : chaque section porte son badge (rendu par la grille).
@@ -329,7 +346,7 @@ export const ContactSheetReference: React.FC<ContactSheetReferenceProps> = ({
         )}
       </div>
 
-      {onReferenceUpdate && (
+      {editable && reference && (
         <ReferenceEditModal
           isOpen={editing}
           onClose={() => setEditing(false)}

@@ -23,6 +23,10 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
   `smalltext?: string | null`.
 - `ContactSheetReference` : props `title` (remplace le titre, tout `ReactNode`) et `titleText` (son texte, pour
   l'infobulle, la case et le formulaire quand `title` n'est pas une chaîne). Story `ReferenceDisplayName`.
+- `ContactSheetReference` : `reference={null}` affiche le bloc des images sans référence. Le titre devient un badge
+  d'erreur « Référence manquante » (`contactSheet.missingReference`, EN/FR/ES/IT/DE) ; ni urgence, ni bouton Modifier, ni
+  attributs (`openEdit` ne fait rien). Vignettes, sélection et exports fonctionnent comme d'habitude ; la case est nommée
+  `contactSheet.selectMissingReference`. `title` remplace le badge si fourni. Story `MissingReference`.
 
 ## [1.39.2] - 2026-10-30
 

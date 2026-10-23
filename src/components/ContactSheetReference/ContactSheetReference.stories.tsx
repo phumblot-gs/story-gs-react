@@ -673,6 +673,38 @@ export const ReferenceDisplayName: Story = {
 };
 
 /**
+ * Pictures without a reference: pass `reference={null}`. The title becomes a "Missing reference"
+ * error badge; there is no urgent toggle, Edit button nor attribute grid, since they all need a
+ * reference. Thumbnails, selection and exports work as usual.
+ */
+export const MissingReference: Story = {
+  args: { onSelectionChange: fn(), onUrgentChange: fn(), onReferenceUpdate: fn(), onThumbnailChange: fn() },
+  render: (args) => (
+    <Layout bg="grey" className="min-h-screen">
+      <ContactSheetReference
+        {...args}
+        reference={null}
+        attributes={ATTRIBUTES}
+        exports={[{ id: "e", name: "Place des tendances", thumbnails: makeThumbnails("orphan", 4) }]}
+      />
+      <ContactSheetReference
+        {...args}
+        reference={makeReference("7e0125de91", 21)}
+        attributes={ATTRIBUTES}
+        exports={[{ id: "e", name: "Place des tendances", thumbnails: makeThumbnails("7e0125de91", 4, 10) }]}
+      />
+    </Layout>
+  ),
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByRole("heading", { level: 3, name: "Missing reference" })).toBeInTheDocument();
+    await expect(canvas.getAllByRole("button", { name: /Edit/ })).toHaveLength(1);
+    await userEvent.click(canvas.getByRole("checkbox", { name: "Select pictures without reference" }));
+    await expect(args.onSelectionChange).toHaveBeenCalledWith(true, [1, 2, 3, 4]);
+  },
+};
+
+/**
  * Reference without attributes, with an unnamed export: no attribute grid nor badge, the
  * thumbnails follow the title. Thumbnails mix media and empty slots ("Empty with view": an
  * expected view with no media yet). An empty slot can be neither selected nor dragged, but
