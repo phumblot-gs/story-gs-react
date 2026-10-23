@@ -40,8 +40,8 @@ export interface ReferenceAttributeConfig {
  *
  * `imagePending` / `imageFadeIn` are driven by the grid (`imageLoading="grouped"`).
  *
- * `statusButtons` (the ✗ / ✓ buttons under the thumbnail) is passed per thumbnail:
- * 0, 1 or 2 buttons depending on the image state, decided by the application. A
+ * `statusButtons` (the buttons under the thumbnail: ✗ / ✓, broadcast, restore…) is
+ * passed per thumbnail, usually 0 to 2 (3 still fit), decided by the application. A
  * click is reported as a `statusButton` change. As soon as one thumbnail of the
  * reference has `statusButtons`, the button row is reserved for all of them so
  * that the rows stay aligned.

@@ -105,7 +105,7 @@ export const AllIcons: Story = {
     const utilityIcons: IconName[] = ["Help", "Settings", "User"];
     const customIcons: IconName[] = ["ToastSuccessIcon", "ToastErrorIcon"];
     const lucideIcons: IconName[] = [
-      "AlertTriangle", "Loader", "ChevronDown", "ChevronLeft", "ChevronRight", "ChevronUp",
+      "AlertTriangle", "Loader", "ChevronDown", "ChevronLeft", "ChevronRight", "ChevronUp", "Cloud",
       "Download", "File", "Folder", "Globe", "Grip", "Mail", "Menu", "Minus",
       "MoreHorizontal", "MoreVertical", "Move", "RotateCcw", "Share",
       "StarFilled", "Trash", "Upload", "Users"

@@ -22,7 +22,8 @@ const sizeVariants = cva('', {
 
 export interface ButtonStatusProps {
   status: MediaStatus;
-  icon: "Check" | "X"; // Using capitalized names to match IconName type
+  /** Any library icon; "Check" and "X" get the approve / reject accessible label. */
+  icon: IconName;
   isActive?: boolean;
   disabled?: boolean;
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
@@ -31,7 +32,10 @@ export interface ButtonStatusProps {
   className?: string;
   size?: "small" | "medium" | "large";
   debug?: boolean;
-  /** Libellé accessible ; remplace le libellé calculé (« Approve - Validated »…). */
+  /**
+   * Libellé accessible ; remplace le libellé calculé (« Approve - Validated »…).
+   * Recommended for icons other than "Check" / "X", whose fallback is the status name only.
+   */
   "aria-label"?: string;
 }
 
@@ -54,6 +58,12 @@ export const ButtonStatus: React.FC<ButtonStatusProps> = ({
   const statusColorClass = getMediaStatusColorClass(status);
   const statusName = mediaStatusNames[status];
   const useWhiteIcon = shouldUseWhiteIcon(status);
+  const fallbackLabel =
+    icon === "Check"
+      ? `${t("buttonStatus.approve")} - ${statusName}`
+      : icon === "X"
+        ? `${t("buttonStatus.reject")} - ${statusName}`
+        : t("mediaStatus.label", { status: statusName });
   
   // Handle events with debug mode
   const handleClick: React.MouseEventHandler<HTMLButtonElement> = (e) => {
@@ -111,7 +121,7 @@ export const ButtonStatus: React.FC<ButtonStatusProps> = ({
         onClick={handleClick}
         onFocus={handleFocus}
         onBlur={handleBlur}
-        aria-label={ariaLabel ?? `${icon === "Check" ? t("buttonStatus.approve") : t("buttonStatus.reject")} - ${statusName}`}
+        aria-label={ariaLabel ?? fallbackLabel}
         // Bouton du statut courant : il se comporte comme un interrupteur enfoncé.
         aria-pressed={isActive}
         style={{
@@ -119,7 +129,7 @@ export const ButtonStatus: React.FC<ButtonStatusProps> = ({
           "--status-bg-color": `var(--${statusColorClass == "status-refused" ? "status-refused-button" : statusColorClass}-color)`,
         } as React.CSSProperties}
       >
-        <IconProvider icon={icon as IconName} size={iconSize} />
+        <IconProvider icon={icon} size={iconSize} />
       </Button>
     </div>
   );

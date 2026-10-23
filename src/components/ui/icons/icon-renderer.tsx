@@ -135,6 +135,8 @@ export const renderIcon = (
       return <LucideIcons.ChevronRight size={size} strokeWidth={strokeWidth} className="max-w-[12px] max-h-[12px]" />;
     case "ChevronUp":
       return <LucideIcons.ChevronUp size={size} strokeWidth={strokeWidth} className="max-w-[12px] max-h-[12px]" />;
+    case "Cloud":
+      return <LucideIcons.Cloud size={size} strokeWidth={strokeWidth} className="max-w-[12px] max-h-[12px]" />;
     case "Download":
       return <LucideIcons.Download size={size} strokeWidth={strokeWidth} className="max-w-[12px] max-h-[12px]" />;
     case "EmptyElement":

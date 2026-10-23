@@ -14,6 +14,7 @@ import { ButtonThumbnailComments } from "@/components/ui/button-thumbnail-commen
 import { ButtonStatus } from "@/components/ButtonStatus";
 import MediaStatus from "@/components/MediaStatus";
 import { MediaStatus as MediaStatusEnum } from "@/utils/mediaStatus";
+import type { IconName } from "@/components/ui/icons/types";
 import type { TagsData } from "@/components/ui/button-thumbnail-tags";
 import type { CommentData } from "@/components/ui/button-thumbnail-comments";
 import {
@@ -68,7 +69,11 @@ export type ThumbnailSize = ThumbnailPresetSize | (string & {});
 export interface ThumbnailStatusButton {
   /** Identifiant renvoyé au clic ("select", "validate", "refuse"…). Unique dans la vignette. */
   key: string;
-  icon: "Check" | "X";
+  /**
+   * Any library icon: "Check" / "X" for select, validate, refuse; e.g. "Cloud" to
+   * broadcast, "RotateCcw" to restore. Give a `label` for icons other than Check / X.
+   */
+  icon: IconName;
   /** Statut dont le bouton prend la couleur (MediaStatus : 30, 31, 50…). */
   status: MediaStatusEnum;
   /** Bouton du statut courant (fond plein). Peut rester cliquable. */
@@ -84,7 +89,7 @@ export interface ThumbnailStatusButton {
 /** Bouton de statut prêt à rendre : nouveau mode ou ancien mode (onValidate / onReject). */
 interface ResolvedStatusButton {
   key: string;
-  icon: "Check" | "X";
+  icon: IconName;
   status: MediaStatusEnum;
   isActive: boolean;
   disabled: boolean;
@@ -256,7 +261,9 @@ export interface ThumbnailProps {
    */
   onCommentAdd?: (comment: string) => void | Promise<void>;
   /**
-   * Boutons de statut sous la vignette, dans l'ordre d'affichage (0, 1 ou 2).
+   * Boutons de statut sous la vignette, dans l'ordre d'affichage. Every button is
+   * rendered on one centred line, without wrapping: 2 is the usual case, 3 still fits
+   * a 100px thumbnail; more is the application's responsibility.
    * Défini (même `[]`), il remplace entièrement onValidate / onReject /
    * validateDisabled / rejectDisabled. Avec `[]`, la ligne est vide mais garde
    * sa hauteur (alignement de grille). Aucune règle de statut n'est appliquée :

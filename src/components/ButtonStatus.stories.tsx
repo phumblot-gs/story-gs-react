@@ -191,6 +191,21 @@ export const LargeSize: Story = {
   },
 };
 
+/**
+ * `icon` accepts any library icon. Pass `aria-label` for icons other than "Check" / "X": their
+ * fallback label is only the status name.
+ */
+export const OtherIcons: Story = {
+  render: () => (
+    <div className="flex gap-4 items-center">
+      <ButtonStatus icon="Cloud" status={MediaStatus.READY_TO_BROADCAST} aria-label="Broadcast" />
+      <ButtonStatus icon="Cloud" status={MediaStatus.BROADCAST} isActive disabled aria-label="Broadcasted" />
+      <ButtonStatus icon="AlertTriangle" status={MediaStatus.ERROR_DURING_BROADCAST} isActive disabled aria-label="Broadcast error" />
+      <ButtonStatus icon="RotateCcw" status={MediaStatus.NOT_SELECTED} aria-label="Restore" />
+    </div>
+  ),
+};
+
 // Show currentStatus matching behavior
 export const CurrentStatusMatching: Story = {
   render: () => (

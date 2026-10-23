@@ -3,7 +3,7 @@
 export const AVAILABLE_ICONS = [
   "Alert", "AlertTriangle", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowUp",
   "Bell", "BrokenFile", "Check", "ChevronDown", "ChevronLeft", "ChevronRight", "ChevronUp",
-  "Comment", "Download", "EmptyElement", "EmptyFile", "EmptySearch", "Eraser", "Eye", "File", "FileImage", "Filter", "Flag", "FlagEmpty", "Folder",
+  "Cloud", "Comment", "Download", "EmptyElement", "EmptyFile", "EmptySearch", "Eraser", "Eye", "File", "FileImage", "Filter", "Flag", "FlagEmpty", "Folder",
   "FolderOpened", "FolderMoved", "Globe", "Grip",
   "Hand", "Help", "Highlighter", "Loader", "Logout", "Mail", "Menu", "Minus", "MoreHorizontal", "MoreVertical", "Move", "Pencil",
   "Selection", "SelectionAdd", "SelectionSubtract", "SelectionInvert", "SelectionDelete", "SelectionDeselect",

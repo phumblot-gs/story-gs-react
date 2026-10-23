@@ -758,6 +758,56 @@ export const TitleContent: Story = {
 };
 
 /**
+ * Broadcast and restore buttons in a contact sheet: `statusButtons` take any library icon. "Cloud"
+ * (status 51 colour) broadcasts a validated image, an active + disabled button shows the broadcast
+ * state (51, 55, 52 with "AlertTriangle"), "RotateCcw" restores an ignored image. A click arrives as
+ * a `statusButton` change with the button key.
+ */
+export const BroadcastStatusButtons: Story = {
+  args: { onThumbnailChange: fn() },
+  render: (args) => {
+    const state = (status: MediaStatus, label: string): ThumbnailStatusButton => ({
+      key: "broadcast-state",
+      icon: status === MediaStatus.ERROR_DURING_BROADCAST ? "AlertTriangle" : "Cloud",
+      status,
+      label,
+      isActive: true,
+      disabled: true,
+    });
+    const rows: [MediaStatus, ThumbnailStatusButton[]][] = [
+      [MediaStatus.VALIDATED, [{ key: "broadcast", icon: "Cloud", status: MediaStatus.READY_TO_BROADCAST, label: "Broadcast" }]],
+      [MediaStatus.READY_TO_BROADCAST, [state(MediaStatus.READY_TO_BROADCAST, "To broadcast")]],
+      [MediaStatus.BROADCAST, [state(MediaStatus.BROADCAST, "Broadcasted")]],
+      [MediaStatus.ERROR_DURING_BROADCAST, [state(MediaStatus.ERROR_DURING_BROADCAST, "Broadcast error")]],
+      [MediaStatus.IGNORED, [{ key: "restore", icon: "RotateCcw", status: MediaStatus.NOT_SELECTED, label: "Restore" }]],
+    ];
+    const thumbnails = makeThumbnails("7e0125de91", rows.length).map((t, i) => ({
+      ...t,
+      status: rows[i][0],
+      statusButtons: rows[i][1],
+    }));
+    return (
+      <Layout bg="grey" className="min-h-screen">
+        <ContactSheetReference
+          reference={makeReference("7e0125de91", 41)}
+          exports={[{ id: "e", name: "Place des tendances", thumbnails }]}
+          thumbnailsPerRow={5}
+          onThumbnailChange={args.onThumbnailChange}
+        />
+      </Layout>
+    );
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole("button", { name: "Broadcast" }));
+    await expect(args.onThumbnailChange).toHaveBeenCalledWith(
+      expect.objectContaining({ type: "statusButton", key: "broadcast", pictureId: 1, exportId: "e" }),
+    );
+    await expect(canvas.getByRole("button", { name: "To broadcast" })).toBeDisabled();
+  },
+};
+
+/**
  * Reference without attributes, with an unnamed export: no attribute grid nor badge, the
  * thumbnails follow the title. Thumbnails mix media and empty slots ("Empty with view": an
  * expected view with no media yet). An empty slot can be neither selected nor dragged, but
