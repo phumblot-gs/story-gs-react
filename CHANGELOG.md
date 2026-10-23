@@ -5,6 +5,14 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.36.1] - 2026-10-23
+
+### Ajouté
+
+- `PageHeader` : prop `titleContent`, rendue juste après le titre et avant le bouton du titre (ex. un Badge de statut), et
+  prop `titleButtonTooltip`, infobulle et libellé accessible du bouton du titre. Sans ces props, rien ne change. Story
+  `TitleContentAndTooltip`.
+
 ## [1.36.0] - 2026-10-22
 
 ### Ajouté

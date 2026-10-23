@@ -20,6 +20,10 @@ export interface PageHeaderProps {
   showTitleButton?: boolean;
   titleButtonIcon?: IconName;
   onTitleButtonClick?: () => void;
+  /** Rendered right after the title, before the title button (e.g. a status Badge). */
+  titleContent?: React.ReactNode;
+  /** Tooltip and accessible label of the title button. Without it, the button has no tooltip. */
+  titleButtonTooltip?: string;
   /** Navigation controls displayed before the logo, such as SidebarTrigger. */
   leftContent?: React.ReactNode;
   centerContent?: React.ReactNode;
@@ -42,6 +46,8 @@ const PageHeader = React.forwardRef<HTMLDivElement, PageHeaderProps>(({
   showTitleButton = true,
   titleButtonIcon = "Pencil",
   onTitleButtonClick,
+  titleContent,
+  titleButtonTooltip,
   leftContent,
   centerContent,
   rightContent,
@@ -100,6 +106,8 @@ const PageHeader = React.forwardRef<HTMLDivElement, PageHeaderProps>(({
             className="flex-shrink min-w-0"
             showBackButton={showBackButton}
             onBackButtonClick={onBackButtonClick}
+            titleContent={titleContent}
+            buttonTooltip={titleButtonTooltip}
           />
         </HStack>
 
