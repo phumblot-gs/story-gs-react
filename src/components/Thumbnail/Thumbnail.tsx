@@ -250,8 +250,11 @@ export interface ThumbnailProps {
   onTagAdd?: (tag: string) => void;
   /** Callback de suppression de tag */
   onTagRemove?: (tag: string) => void;
-  /** Callback d'ajout de commentaire */
-  onCommentAdd?: (comment: string) => Promise<void>;
+  /**
+   * Callback d'ajout de commentaire. While the returned promise is pending the field
+   * is disabled; if it rejects, the typed text and the menu stay open with an error.
+   */
+  onCommentAdd?: (comment: string) => void | Promise<void>;
   /**
    * Boutons de statut sous la vignette, dans l'ordre d'affichage (0, 1 ou 2).
    * Défini (même `[]`), il remplace entièrement onValidate / onReject /

@@ -174,6 +174,11 @@ export type ThumbnailChange = { pictureId: number; exportId: string | number } &
   | { type: "label"; label: LabelColor }
   | { type: "tagAdd"; tag: string }
   | { type: "tagRemove"; tag: string }
+  /**
+   * Comment typed in the thumbnail's comment menu. Return a promise from
+   * `onThumbnailChange` to keep the field disabled until it settles: if it
+   * rejects, the text and the menu stay open with an error message.
+   */
   | { type: "comment"; comment: string }
   /** Click on a status button (`statusButtons`); `reason` = rejection reason picked in the menu. */
   | { type: "statusButton"; key: string; reason?: string }

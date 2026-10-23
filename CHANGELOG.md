@@ -31,6 +31,15 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
   `VedetteIndicator` avec aperçu au survol dans un `HoverCard`), sur le modèle de `PageHeader.titleContent`. Sans la
   prop, rien ne change. Story `TitleContent`.
 
+### Corrigé
+
+- `ButtonThumbnailComments` (menu commentaires de `Thumbnail`) : si `onAddComment` renvoie une promesse, le champ et le
+  bouton restent désactivés jusqu'à son issue. Résolue : le champ est vidé et le menu se ferme, comme avant. Rejetée : le
+  texte saisi et le menu restent, avec un message d'erreur (`thumbnail.commentError`) ; la rejection n'est plus perdue
+  (plus d'« unhandled rejection »). Un callback synchrone se comporte exactement comme avant. Dans
+  `ContactSheetReference`, la promesse renvoyée par `onThumbnailChange` pour un changement `comment` remonte jusqu'au
+  champ. `Thumbnail.onCommentAdd` est typé `(comment) => void | Promise<void>`. Story `AsyncSaveFailure`.
+
 ## [1.39.2] - 2026-10-30
 
 ### Corrigé

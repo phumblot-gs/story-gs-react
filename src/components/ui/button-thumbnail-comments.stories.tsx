@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 import { ButtonThumbnailComments, CommentData } from "@/components/ui/button-thumbnail-comments"
 import { Layout, VStack, HStack } from "@/components/layout"
 import { useState } from "react"
+import { expect, fn, userEvent, waitFor, within } from "storybook/test"
 
 const meta = {
   title: "UI/ButtonThumbnailComments",
@@ -240,6 +241,49 @@ export const WithTitle: Story = {
         />
       </Layout>
     )
+  },
+}
+
+/**
+ * `onAddComment` returning a promise: the field stays disabled while it is pending. The first save
+ * fails after 600ms — the text and the menu stay, with an error; submit again and it succeeds.
+ */
+export const AsyncSaveFailure: Story = {
+  args: { onAddComment: fn() },
+  render: (args) => {
+    const AsyncSave = () => {
+      const [comments, setComments] = useState<CommentData[]>([])
+      const [attempts, setAttempts] = useState(0)
+      return (
+        <Layout bg="white" padding={6}>
+          <ButtonThumbnailComments
+            value={comments}
+            defaultOpen
+            onAddComment={async (comment) => {
+              args.onAddComment?.(comment)
+              setAttempts((n) => n + 1)
+              await new Promise((resolve) => setTimeout(resolve, 600))
+              if (attempts === 0) throw new Error("Network error")
+              setComments((all) => [...all, createComment("Comment", comment)])
+            }}
+          />
+        </Layout>
+      )
+    }
+    return <AsyncSave />
+  },
+  play: async ({ args }) => {
+    // The menu is portalled outside the story canvas.
+    const body = within(document.body)
+    const field = await body.findByPlaceholderText("Add a comment")
+    await userEvent.type(field, "Retouch the collar")
+    await userEvent.click(body.getByRole("button", { name: "Submit" }))
+    await expect(field).toBeDisabled()
+    await expect(await body.findByRole("alert", {}, { timeout: 2000 })).toBeInTheDocument()
+    await expect(field).toHaveValue("Retouch the collar")
+    await userEvent.click(body.getByRole("button", { name: "Submit" }))
+    await waitFor(() => expect(body.queryByPlaceholderText("Add a comment")).not.toBeInTheDocument(), { timeout: 2000 })
+    await expect(args.onAddComment).toHaveBeenCalledTimes(2)
   },
 }
 

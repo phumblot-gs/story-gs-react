@@ -1235,6 +1235,13 @@ export const componentTranslations: TranslationMap = {
     IT: "Altro motivo",
     DE: "Anderer Grund"
   },
+  "thumbnail.commentError": {
+    EN: "The comment could not be saved",
+    FR: "Le commentaire n'a pas pu être enregistré",
+    ES: "No se pudo guardar el comentario",
+    IT: "Impossibile salvare il commento",
+    DE: "Der Kommentar konnte nicht gespeichert werden"
+  },
   "thumbnail.addComment": {
     EN: "Add a comment",
     FR: "Ajouter un commentaire",

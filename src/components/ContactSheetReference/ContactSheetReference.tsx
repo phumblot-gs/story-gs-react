@@ -112,7 +112,11 @@ export interface ContactSheetReferenceProps {
   headerActions?: React.ReactNode | ((helpers: { openEdit: () => void }) => React.ReactNode);
 
   // Vignettes
-  /** Any change requested on a thumbnail (selection, rating, status…). */
+  /**
+   * Any change requested on a thumbnail (selection, rating, status…). For a
+   * `comment` change, a returned promise is awaited by the comment menu (see
+   * `ThumbnailChange`).
+   */
   onThumbnailChange?: (change: ThumbnailChange) => void | Promise<void>;
   /** Interactions enabled on the thumbnails (all by default). */
   thumbnailFeatures?: ThumbnailFeatures;
