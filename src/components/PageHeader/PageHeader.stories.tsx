@@ -13,6 +13,8 @@ import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import ButtonNotifications from "@/components/ButtonNotifications";
 import { ButtonMenuSmall, ButtonMenuAction } from "@/components/ui/button-menu-small";
 import { Icon } from "@/components/ui/icons";
+import { Badge } from "@/components/ui/badge";
+import { expect, fn, userEvent } from "storybook/test";
 
 const meta: Meta<typeof PageHeader> = {
   title: "Components/PageHeader",
@@ -30,6 +32,7 @@ A header component for application pages with customizable sections for logo, ti
 - Activity state animation with gradient border indicator
 - Flexible content areas (left, center, right sections)
 - Back button and title button support
+- Content right after the title (\`titleContent\`, e.g. a status Badge) and a tooltip on the title button (\`titleButtonTooltip\`)
 - Workflow integration in center section
 - Button integration in right section
 - Context-aware styling via Layout component
@@ -525,6 +528,37 @@ export const CustomTitleButton: Story = {
       rightContent={<RightSideButtons />}
     />
   )
+};
+
+/**
+ * `titleContent` sits between the title and the title button (here a status Badge); `titleButtonTooltip`
+ * gives the title button its tooltip and accessible label (here, a button opening the item in another app).
+ */
+export const TitleContentAndTooltip: Story = {
+  args: {
+    title: "Galeries Lafayette Picking Warsaw APL01",
+    showTitleButton: true,
+    showBackButton: true,
+    titleButtonIcon: "Share",
+    titleButtonTooltip: "Open in GS",
+    onTitleButtonClick: fn(),
+  },
+  render: (args) => (
+    <PageHeader
+      {...args}
+      logo={<GsLogo />}
+      titleContent={<Badge variant="destructive">Very urgent</Badge>}
+      rightContent={<RightSideButtons />}
+    />
+  ),
+  play: async ({ canvas, args }) => {
+    // the badge comes right after the title, before the title button
+    const badge = canvas.getByText("Very urgent");
+    const button = canvas.getByRole("button", { name: "Open in GS" });
+    await expect(badge.compareDocumentPosition(button) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    await userEvent.click(button);
+    await expect(args.onTitleButtonClick).toHaveBeenCalledTimes(1);
+  },
 };
 
 // Add a story with workflow (same as Workflow Default story)

@@ -6,6 +6,7 @@ import { IconName } from "@/components/ui/icons/types";
 import { cn } from "@/lib/utils";
 import { TruncatedText } from "@/components/ui/truncated-text";
 import { HStack } from "@/components/layout";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export interface PageTitleProps {
   title: string;
@@ -16,6 +17,10 @@ export interface PageTitleProps {
   featured?: boolean;
   showBackButton?: boolean;
   onBackButtonClick?: () => void;
+  /** Rendu après le titre, avant le bouton du titre (ex. un Badge de statut). */
+  titleContent?: React.ReactNode;
+  /** Infobulle et libellé accessible du bouton du titre. Sans elle, le bouton reste sans infobulle. */
+  buttonTooltip?: string;
 }
 
 const PageTitle: React.FC<PageTitleProps> = ({
@@ -26,7 +31,9 @@ const PageTitle: React.FC<PageTitleProps> = ({
   className,
   featured = false,
   showBackButton = false,
-  onBackButtonClick
+  onBackButtonClick,
+  titleContent,
+  buttonTooltip,
 }) => {
   const handleBackButtonClick = () => {
     if (onBackButtonClick) {
@@ -57,18 +64,31 @@ const PageTitle: React.FC<PageTitleProps> = ({
       <div className="flex-1 min-w-0 overflow-hidden flex items-center">
         <TruncatedText text={title} as="h2" className="gs-typo-h2 whitespace-nowrap" tooltipSide="bottom" />
       </div>
-      {showButton && (
+      {titleContent && <HStack gap={2} align="center" className="flex-shrink-0">{titleContent}</HStack>}
+      {showButton && (() => {
         // Avec le bouton retour, deux boutons secondary encadrant le titre
         // alourdissent l'en-tête : le bouton du titre passe alors en ghost.
-        <Button
-          variant={showBackButton ? "ghost" : "secondary"}
-          className="p-0 w-6 h-6"
-          onClick={onButtonClick}
-          data-testid="page-title-button"
-        >
-          <IconProvider icon={buttonIcon} size={14} />
-        </Button>
-      )}
+        const button = (
+          <Button
+            variant={showBackButton ? "ghost" : "secondary"}
+            className="p-0 w-6 h-6"
+            onClick={onButtonClick}
+            aria-label={buttonTooltip}
+            data-testid="page-title-button"
+          >
+            <IconProvider icon={buttonIcon} size={14} />
+          </Button>
+        );
+        if (!buttonTooltip) return button;
+        return (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>{button}</TooltipTrigger>
+              <TooltipContent side="bottom">{buttonTooltip}</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        );
+      })()}
     </HStack>
   );
 };
