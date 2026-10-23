@@ -24,6 +24,8 @@ import {
 import { useTranslationSafe, type TranslationMap } from "@/contexts/TranslationContext";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Spinner } from "@/components/ui/spinner";
+import { DeferredOverlaysProvider, useDeferredOverlayScope } from "@/components/ui/deferred-overlays";
+import { areThumbnailPropsEqual } from "./thumbnail-props-equal";
 
 /** Configuration de rejet du bench */
 export interface BenchRejectionOptions {
@@ -215,6 +217,18 @@ export interface ThumbnailProps {
   isLoading?: boolean;
   /** Erreur de chargement de l'image */
   hasError?: boolean;
+  /**
+   * Image en attente, pilotée par le parent (chargement groupé de la planche
+   * contact) : le cadre est rendu à sa taille, sans `<img>` — donc sans
+   * requête — ni spinner. Le nom de fichier et les boutons restent affichés.
+   */
+  imagePending?: boolean;
+  /**
+   * Fondu court (150 ms) à l'apparition de l'image, typiquement quand
+   * `imagePending` repasse à `false`. Sans effet si l'utilisateur a demandé
+   * moins d'animations (`prefers-reduced-motion`).
+   */
+  imageFadeIn?: boolean;
 
   // Callbacks
   /** Callback appelé lors du clic sur l'image (zoom) */
@@ -367,7 +381,7 @@ export interface ThumbnailProps {
  *   onRatingChange={(rating) => updateRating(rating)}
  * />
  */
-export const Thumbnail: React.FC<ThumbnailProps> = ({
+const ThumbnailBase: React.FC<ThumbnailProps> = ({
   // Image data
   picture_id,
   src,
@@ -417,6 +431,8 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
   // Loading states
   isLoading = false,
   hasError = false,
+  imagePending = false,
+  imageFadeIn = false,
 
   // Callbacks
   onImageClick,
@@ -450,6 +466,10 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
   translations,
 }) => {
   const { t } = useTranslationSafe(translations, language);
+
+  // Menus, popovers et infobulles montés au premier survol ou focus clavier :
+  // une grille de 100 vignettes ne monte pas 500 menus Radix d'avance.
+  const overlays = useDeferredOverlayScope<HTMLDivElement>();
 
   // Ref pour capturer l'événement de clic (pour shiftKey, etc.)
   const clickEventRef = useRef<React.PointerEvent | null>(null);
@@ -887,7 +907,10 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
   );
 
   return (
+    <DeferredOverlaysProvider value={overlays.value}>
     <div
+      ref={overlays.ref}
+      {...overlays.handlers}
       className={wrapperClasses}
       draggable={draggable}
       onDragStart={handleDragStart}
@@ -904,11 +927,12 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
         {/* Image container */}
         <div
           className={containerClasses}
-          aria-busy={picture_id && isLoading && !hasError ? true : undefined}
+          aria-busy={picture_id && (isLoading || imagePending) && !hasError ? true : undefined}
+          data-image-pending={imagePending && !hasError ? "" : undefined}
           style={{
             minHeight: isEmptyView
               ? "100%"
-              : isLoading
+              : isLoading || (imagePending && !hasError)
               ? placeholderMinHeight
               : config.imageMinHeight,
             ...(config.isAuto ? { height: "stretch" } : {}),
@@ -991,7 +1015,8 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
           )}
 
           {/* Main image */}
-          {!hasError && src && (
+          {/* En attente (chargement groupé) : pas d'<img>, le cadre garde sa taille. */}
+          {!hasError && src && !imagePending && (
             <img
               src={src}
               alt={alt}
@@ -999,7 +1024,8 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
               onLoad={onImageLoad}
               className={cn(
                 "object-contain block mx-auto max-w-full border-[0.25px] border-grey-light",
-                config.isAuto && "w-full"
+                config.isAuto && "w-full",
+                imageFadeIn && "animate-in fade-in-0 duration-150 motion-reduce:animate-none"
               )}
               style={{
                 maxHeight: config.imageMaxHeight,
@@ -1011,6 +1037,7 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
             <div
               className="w-full flex items-center justify-center bg-grey-middle"
               style={{ minHeight: placeholderMinHeight }}
+              data-image-error=""
             >
               <Icon name="BrokenFile" size={20} className="text-white" />
             </div>
@@ -1222,7 +1249,17 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
         </div>
       )}
     </div>
+    </DeferredOverlaysProvider>
   );
 };
+
+ThumbnailBase.displayName = "Thumbnail";
+
+/**
+ * Mémoïsé : une vignette dont les props n'ont pas changé (par contenu pour les
+ * tableaux et objets, par identité pour les callbacks) ne se redessine pas
+ * quand sa voisine change. Voir `areThumbnailPropsEqual`.
+ */
+export const Thumbnail = React.memo(ThumbnailBase, areThumbnailPropsEqual);
 
 Thumbnail.displayName = "Thumbnail";

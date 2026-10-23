@@ -5,6 +5,34 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.37.0] - 2026-10-23
+
+### Ajouté
+
+- `ContactSheetReference` et `ContactSheetThumbnailGrid` : prop `imageLoading` (`"native"` | `"grouped"`). Avec
+  `"grouped"`, rien n'est demandé avant que les vignettes approchent de l'écran (300px, ou du conteneur qui défile) ; les
+  références visibles passent d'abord, une file partagée limite les images en vol, et un bloc sorti de la zone avant
+  d'avoir démarré ne démarre pas. Les images sont préchargées et décodées en JS (`fetchPriority="high"` si visibles), puis
+  toute la référence apparaît d'un coup avec un fondu de 150 ms (sans fondu si `prefers-reduced-motion`). Au bout de 2 s,
+  ce qui est prêt apparaît et le reste suit image par image. Les très grandes références sont découpées par lignes
+  (`max(colonnes × 4, 24)` images par bloc). Une 404 ou une image indécodable ne retarde pas les autres et affiche l'icône
+  de fichier cassé, nom de fichier visible. Une `src` changée se charge comme une nouvelle image, l'ancienne restant
+  affichée jusqu'à ce qu'elle soit prête. Sans la prop (`"native"`), rien ne change. Story `GroupedImageLoading`.
+- `Thumbnail` : props `imagePending` (cadre à sa taille, sans `<img>` ni requête) et `imageFadeIn` (fondu à l'apparition
+  de l'image), pilotées par la grille en chargement groupé.
+
+### Performances
+
+- `Thumbnail` est mémoïsé : une vignette ne se redessine que si ses props changent. Les tableaux et objets reconstruits à
+  chaque rendu (`actions`, `statusButtons`, `tags`, `comments`, `bench`, `translations`) sont comparés par contenu, les
+  callbacks par identité. La grille de la planche contact passe des callbacks stables par vignette et des actions stables
+  à contenu égal (chaque action appelle sa dernière version) : sélectionner une vignette ne redessine plus ses voisines.
+- `Thumbnail` : les menus (étoiles, couleurs, tags, commentaires, actions, motifs de refus) et les infobulles des boutons de
+  statut ne montent leur machinerie Radix qu'au premier survol de la vignette ou au premier focus clavier (le focus est
+  conservé). Les boutons restent dans le DOM, identiques, avec leurs libellés accessibles ; un appui direct sur un bouton
+  ouvre son menu. Mécanisme générique dans `DropdownMenu`, `Popover` et `Tooltip` (zone `DeferredOverlaysProvider`) :
+  hors d'une telle zone, rien ne change.
+
 ## [1.36.1] - 2026-10-23
 
 ### Ajouté

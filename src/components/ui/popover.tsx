@@ -3,15 +3,41 @@ import * as React from "react"
 import * as PopoverPrimitive from "@radix-ui/react-popover"
 
 import { cn } from "@/lib/utils"
+import { DeferredTrigger, useDeferredRoot, type DeferredRootValue } from "@/components/ui/deferred-overlays"
 
-const Popover = PopoverPrimitive.Root
+// Racine différée (voir deferred-overlays) : lue par le déclencheur et le contenu.
+const DeferredPopoverContext = React.createContext<DeferredRootValue | null>(null)
 
-const PopoverTrigger = PopoverPrimitive.Trigger
+/** Racine Radix ; dans une zone différée, seuls les enfants (le déclencheur) sont rendus jusqu'à l'activation. */
+const Popover = ({ children, ...props }: React.ComponentProps<typeof PopoverPrimitive.Root>) => {
+  const { deferredRoot, requested } = useDeferredRoot(props)
+  if (deferredRoot) {
+    return <DeferredPopoverContext.Provider value={deferredRoot}>{children}</DeferredPopoverContext.Provider>
+  }
+  return (
+    <PopoverPrimitive.Root {...props} defaultOpen={props.defaultOpen ?? (requested || undefined)}>
+      <DeferredPopoverContext.Provider value={null}>{children}</DeferredPopoverContext.Provider>
+    </PopoverPrimitive.Root>
+  )
+}
+Popover.displayName = "Popover"
+
+const PopoverTrigger = React.forwardRef<
+  React.ElementRef<typeof PopoverPrimitive.Trigger>,
+  React.ComponentPropsWithoutRef<typeof PopoverPrimitive.Trigger>
+>((props, ref) => {
+  const deferredRoot = React.useContext(DeferredPopoverContext)
+  if (deferredRoot) return <DeferredTrigger ref={ref} kind="dialog" root={deferredRoot} {...props} />
+  return <PopoverPrimitive.Trigger ref={ref} {...props} />
+})
+PopoverTrigger.displayName = PopoverPrimitive.Trigger.displayName
 
 const PopoverContent = React.forwardRef<
   React.ElementRef<typeof PopoverPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof PopoverPrimitive.Content>
->(({ className, align = "center", sideOffset = 4, ...props }, ref) => (
+>(({ className, align = "center", sideOffset = 4, ...props }, ref) =>
+  // Racine différée : popover fermé, rien à rendre.
+  React.useContext(DeferredPopoverContext) ? null : (
   <PopoverPrimitive.Portal>
     <PopoverPrimitive.Content
       ref={ref}
@@ -24,7 +50,8 @@ const PopoverContent = React.forwardRef<
       {...props}
     />
   </PopoverPrimitive.Portal>
-))
+  )
+)
 PopoverContent.displayName = PopoverPrimitive.Content.displayName
 
 export { Popover, PopoverTrigger, PopoverContent }

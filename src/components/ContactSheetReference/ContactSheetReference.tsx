@@ -87,6 +87,20 @@ export interface ContactSheetReferenceProps {
   thumbnailFeatures?: ThumbnailFeatures;
   /** Bench data passed to the thumbnails (rejection reasons). */
   bench?: ThumbnailBench;
+  /**
+   * How thumbnail images load:
+   * - "native" (default): each `<img>` loads on its own, as before;
+   * - "grouped": nothing is requested until the thumbnails come within 300px of
+   *   the viewport (or of the scrolling container); visible references first.
+   *   Images are preloaded and decoded, then the whole reference appears at once
+   *   with a short fade (no fade with `prefers-reduced-motion`). After 2s, what
+   *   is ready appears and the rest follows one by one. Very large references
+   *   are split by rows (`max(thumbnailsPerRow × 4, 24)` images per block). A 404
+   *   or undecodable image does not hold the others back and shows the broken
+   *   file icon. A changed `src` loads like a new image; the previous one stays
+   *   on screen until it is ready.
+   */
+  imageLoading?: "native" | "grouped";
 
   // Réordonnancement
   /**
@@ -127,6 +141,7 @@ export const ContactSheetReference: React.FC<ContactSheetReferenceProps> = ({
   onThumbnailChange,
   thumbnailFeatures,
   bench,
+  imageLoading,
   onReorder,
   className,
   language,
@@ -193,6 +208,7 @@ export const ContactSheetReference: React.FC<ContactSheetReferenceProps> = ({
       onReorder={onReorder}
       onExportHover={setHoveredExportId}
       bench={bench}
+      imageLoading={imageLoading}
       language={language}
       translations={translations}
     />

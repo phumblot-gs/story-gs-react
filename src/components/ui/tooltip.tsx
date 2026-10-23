@@ -4,12 +4,37 @@ import { cva } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
 import { BgProvider, useBgContext } from "@/components/layout/BgContext"
+import { DeferredTrigger, useDeferredRoot, type DeferredRootValue } from "@/components/ui/deferred-overlays"
 
+// Racine différée (voir deferred-overlays) : lue par le déclencheur et le contenu.
+const DeferredTooltipContext = React.createContext<DeferredRootValue | null>(null)
+
+// Le Provider n'est jamais différé : une infobulle ouverte (open) doit le trouver.
 const TooltipProvider = TooltipPrimitive.Provider
 
-const Tooltip = TooltipPrimitive.Root
+/** Racine Radix ; dans une zone différée, seuls les enfants (le déclencheur) sont rendus jusqu'à l'activation. */
+const Tooltip = ({ children, ...props }: React.ComponentProps<typeof TooltipPrimitive.Root>) => {
+  const { deferredRoot } = useDeferredRoot(props)
+  if (deferredRoot) {
+    return <DeferredTooltipContext.Provider value={deferredRoot}>{children}</DeferredTooltipContext.Provider>
+  }
+  return (
+    <TooltipPrimitive.Root {...props}>
+      <DeferredTooltipContext.Provider value={null}>{children}</DeferredTooltipContext.Provider>
+    </TooltipPrimitive.Root>
+  )
+}
+Tooltip.displayName = "Tooltip"
 
-const TooltipTrigger = TooltipPrimitive.Trigger
+const TooltipTrigger = React.forwardRef<
+  React.ElementRef<typeof TooltipPrimitive.Trigger>,
+  React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Trigger>
+>((props, ref) => {
+  const deferredRoot = React.useContext(DeferredTooltipContext)
+  if (deferredRoot) return <DeferredTrigger ref={ref} kind="tooltip" root={deferredRoot} {...props} />
+  return <TooltipPrimitive.Trigger ref={ref} {...props} />
+})
+TooltipTrigger.displayName = TooltipPrimitive.Trigger.displayName
 
 type TooltipBg = "white" | "grey" | "black"
 
@@ -48,11 +73,15 @@ const TooltipContent = React.forwardRef<
   React.ElementRef<typeof TooltipPrimitive.Content>,
   TooltipContentProps
 >(({ className, sideOffset = 4, bg, children, ...props }, ref) => {
+  const deferredRoot = React.useContext(DeferredTooltipContext)
   const contextBg = useBgContext()
   const surface = (bg ?? contextBg) === "black" ? "light" : "dark"
   // Fond propre du tooltip, transmis à son contenu (icônes, boutons…) pour
   // qu'il s'affiche comme sur une surface de cette couleur.
   const surfaceBg: TooltipBg = surface === "light" ? "white" : "black"
+
+  // Racine différée : infobulle fermée, rien à rendre.
+  if (deferredRoot) return null
 
   return (
     <TooltipPrimitive.Content

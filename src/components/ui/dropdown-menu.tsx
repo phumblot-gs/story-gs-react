@@ -3,10 +3,38 @@ import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu"
 import { Check, ChevronRight, Circle } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import { DeferredTrigger, useDeferredRoot, type DeferredRootValue } from "@/components/ui/deferred-overlays"
 
-const DropdownMenu = DropdownMenuPrimitive.Root
+// Racine différée (voir deferred-overlays) : lue par le déclencheur et le contenu.
+const DeferredMenuContext = React.createContext<DeferredRootValue | null>(null)
 
-const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger
+/**
+ * Racine Radix ; dans une zone différée (vignette pas encore survolée), seuls
+ * les enfants sont rendus — le déclencheur à l'identique, sans contenu —
+ * jusqu'au premier survol, focus ou appui.
+ */
+const DropdownMenu = ({ children, ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.Root>) => {
+  const { deferredRoot, requested } = useDeferredRoot(props)
+  if (deferredRoot) {
+    return <DeferredMenuContext.Provider value={deferredRoot}>{children}</DeferredMenuContext.Provider>
+  }
+  return (
+    <DropdownMenuPrimitive.Root {...props} defaultOpen={props.defaultOpen ?? (requested || undefined)}>
+      <DeferredMenuContext.Provider value={null}>{children}</DeferredMenuContext.Provider>
+    </DropdownMenuPrimitive.Root>
+  )
+}
+DropdownMenu.displayName = "DropdownMenu"
+
+const DropdownMenuTrigger = React.forwardRef<
+  React.ElementRef<typeof DropdownMenuPrimitive.Trigger>,
+  React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Trigger>
+>((props, ref) => {
+  const deferredRoot = React.useContext(DeferredMenuContext)
+  if (deferredRoot) return <DeferredTrigger ref={ref} kind="menu" root={deferredRoot} {...props} />
+  return <DropdownMenuPrimitive.Trigger ref={ref} {...props} />
+})
+DropdownMenuTrigger.displayName = DropdownMenuPrimitive.Trigger.displayName
 
 const DropdownMenuGroup = DropdownMenuPrimitive.Group
 
@@ -57,7 +85,9 @@ DropdownMenuSubContent.displayName =
 const DropdownMenuContent = React.forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Content>
->(({ className, sideOffset = 4, ...props }, ref) => (
+>(({ className, sideOffset = 4, ...props }, ref) =>
+  // Racine différée : menu fermé, rien à rendre.
+  React.useContext(DeferredMenuContext) ? null : (
   <DropdownMenuPrimitive.Portal>
     <DropdownMenuPrimitive.Content
       ref={ref}
@@ -69,7 +99,8 @@ const DropdownMenuContent = React.forwardRef<
       {...props}
     />
   </DropdownMenuPrimitive.Portal>
-))
+  )
+)
 DropdownMenuContent.displayName = DropdownMenuPrimitive.Content.displayName
 
 const DropdownMenuItem = React.forwardRef<
