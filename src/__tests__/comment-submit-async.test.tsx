@@ -65,6 +65,15 @@ describe("ButtonThumbnailComments — envoi du commentaire", () => {
     await waitFor(() => expect(screen.queryByPlaceholderText("Add a comment")).not.toBeInTheDocument());
   });
 
+  // The field is disabled while pending, which drops focus to <body>; it must come back on failure.
+  it("rend le focus au champ après un échec", async () => {
+    render(<ButtonThumbnailComments defaultOpen onAddComment={() => Promise.reject(new Error("500"))} />);
+    await userEvent.type(field(), "Retouch");
+    await userEvent.click(submit());
+    await screen.findByRole("alert");
+    expect(field()).toHaveFocus();
+  });
+
   it("l'erreur disparaît dès que le texte change", async () => {
     render(<ButtonThumbnailComments defaultOpen onAddComment={() => Promise.reject(new Error("500"))} />);
     await userEvent.type(field(), "A");

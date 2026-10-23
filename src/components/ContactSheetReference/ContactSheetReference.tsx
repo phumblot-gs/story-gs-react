@@ -194,8 +194,8 @@ export const ContactSheetReference: React.FC<ContactSheetReferenceProps> = ({
   const [hoveredExportId, setHoveredExportId] = React.useState<string | number | null>(null);
   // Sans onReferenceUpdate il n'y a pas de formulaire : openEdit ne fait rien.
   const openEdit = React.useCallback(() => {
-    if (onReferenceUpdate) setEditing(true);
-  }, [onReferenceUpdate]);
+    if (reference !== null && onReferenceUpdate) setEditing(true);
+  }, [reference, onReferenceUpdate]);
   const actions = typeof headerActions === "function" ? headerActions({ openEdit }) : headerActions;
   const missing = reference === null;
   const titleString = titleText ?? (typeof title === "string" ? title : undefined);

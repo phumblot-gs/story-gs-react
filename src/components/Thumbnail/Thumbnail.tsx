@@ -256,18 +256,18 @@ export interface ThumbnailProps {
   /** Callback de suppression de tag */
   onTagRemove?: (tag: string) => void;
   /**
-   * Callback d'ajout de commentaire. While the returned promise is pending the field
-   * is disabled; if it rejects, the typed text and the menu stay open with an error.
+   * Comment submitted from the comment menu. While the returned promise is pending the
+   * field is disabled; if it rejects, the typed text and the menu stay open with an error.
    */
   onCommentAdd?: (comment: string) => void | Promise<void>;
   /**
-   * Boutons de statut sous la vignette, dans l'ordre d'affichage. Every button is
-   * rendered on one centred line, without wrapping: 2 is the usual case, 3 still fits
-   * a 100px thumbnail; more is the application's responsibility.
-   * Défini (même `[]`), il remplace entièrement onValidate / onReject /
-   * validateDisabled / rejectDisabled. Avec `[]`, la ligne est vide mais garde
-   * sa hauteur (alignement de grille). Aucune règle de statut n'est appliquée :
-   * `isActive` et `disabled` viennent de l'application.
+   * Status buttons under the thumbnail, in display order. Every button is rendered
+   * on one centred line, without wrapping: 2 is the usual case, 3 still fit a 100px
+   * thumbnail; more is the application's responsibility.
+   * When defined (even `[]`), it fully replaces onValidate / onReject /
+   * validateDisabled / rejectDisabled. With `[]`, the row is empty but keeps its
+   * height (grid alignment). No status rule is applied: `isActive` and `disabled`
+   * come from the application.
    */
   statusButtons?: ThumbnailStatusButton[];
   /** Clic sur un bouton de statut ; `reason` = motif choisi dans le menu des motifs de refus. */

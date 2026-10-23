@@ -623,8 +623,8 @@ export const Minimal: Story = {
 };
 
 /**
- * Reference title: `smalltext` when not blank, otherwise `ref` (`getReferenceDisplayName`, same
- * rule as gs_node and gs_w). Hover the title for "smalltext — ref". `ref` stays visible as an
+ * Reference title: trimmed `smalltext` when non-empty, otherwise `ref` (`getReferenceDisplayName`).
+ * Hover the title for "smalltext — ref". `ref` stays visible as an
  * attribute. `title` replaces the title with any node; `titleText` then gives its text for the
  * tooltip, the checkbox label and the Edit form title.
  */

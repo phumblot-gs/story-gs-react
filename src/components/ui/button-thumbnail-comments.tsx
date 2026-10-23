@@ -33,7 +33,7 @@ export interface ButtonThumbnailCommentsProps extends Omit<ToggleProps, "onClick
   /** Tableau des commentaires */
   value?: CommentData[]
   /**
-   * Callback appelé lorsqu'un commentaire est ajouté.
+   * Called when a comment is submitted.
    * Returning a promise keeps the field disabled until it settles: resolved, the
    * field is cleared and the menu closes; rejected, the text and the menu stay and
    * an error is shown. A synchronous callback clears and closes right away.
@@ -143,6 +143,12 @@ export const ButtonThumbnailComments = React.forwardRef<HTMLButtonElement, Butto
     const [newComment, setNewComment] = React.useState("")
     const [pending, setPending] = React.useState(false)
     const [failed, setFailed] = React.useState(false)
+    const textareaRef = React.useRef<HTMLTextAreaElement>(null)
+
+    // Disabled while pending, the field lost focus: give it back so the user can fix and resend.
+    React.useEffect(() => {
+      if (failed) textareaRef.current?.focus()
+    }, [failed])
     
     // Extraire size de buttonProps
     const size = buttonProps.size || "medium"
@@ -313,6 +319,7 @@ export const ButtonThumbnailComments = React.forwardRef<HTMLButtonElement, Butto
               >
                 <VStack gap={2} align="end">
                   <Textarea
+                    ref={textareaRef}
                     value={newComment}
                     onChange={(e) => {
                       setNewComment(e.target.value)

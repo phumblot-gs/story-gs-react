@@ -9,17 +9,20 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ### Modifié
 
-- **Impact consommateurs** — `ContactSheetReference` : le titre de la référence est désormais son `smalltext` s'il est
-  renseigné (espaces retirés), sinon son `ref`, règle de gs_node et gs_w. Quiconque passe déjà `smalltext` dans
+- **Impact consommateurs** — `ContactSheetReference` : le titre de la référence est désormais son `smalltext` sans
+  les espaces de début et de fin s'il n'est pas vide, sinon son `ref` (gs_w appliquait `smalltext || ref`, sans retirer
+  les espaces). Quiconque passe déjà `smalltext` dans
   `reference` voit ce libellé en titre au lieu du `ref` ; le `ref` reste visible comme attribut s'il est configuré dans
   `attributes`. La même valeur sert à l'infobulle du titre (`« smalltext — ref »` quand les deux diffèrent), au libellé
   accessible de la case de sélection (`contactSheet.selectReference`) et au titre du formulaire Modifier. Sans
   `smalltext`, rien ne change. `ReferenceEditModal` utilisé seul suit la même règle (nouvelle prop `displayName` pour la
   surcharger).
+- **Impact TypeScript** — `ContactSheetReferenceProps["reference"]` devient `ReferenceData | null` : un code TS qui lit
+  `props.reference.ref` sur ce type obtient TS18047 et doit tester `null`.
 
 ### Ajouté
 
-- `getReferenceDisplayName(reference)`, exporté : `smalltext` s'il est renseigné, sinon `ref`. `ReferenceData` déclare
+- `getReferenceDisplayName(reference)`, exporté : `smalltext` sans espaces de bord s'il n'est pas vide, sinon `ref`. `ReferenceData` déclare
   `smalltext?: string | null`.
 - `ContactSheetReference` : props `title` (remplace le titre, tout `ReactNode`) et `titleText` (son texte, pour
   l'infobulle, la case et le formulaire quand `title` n'est pas une chaîne). Story `ReferenceDisplayName`.
@@ -45,7 +48,11 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 - `ButtonThumbnailComments` (menu commentaires de `Thumbnail`) : si `onAddComment` renvoie une promesse, le champ et le
   bouton restent désactivés jusqu'à son issue. Résolue : le champ est vidé et le menu se ferme, comme avant. Rejetée : le
   texte saisi et le menu restent, avec un message d'erreur (`thumbnail.commentError`) ; la rejection n'est plus perdue
-  (plus d'« unhandled rejection »). Un callback synchrone se comporte exactement comme avant. Dans
+  (plus d'« unhandled rejection ») et le focus revient dans le champ. **Impact consommateurs** : `Thumbnail.onCommentAdd`
+  était déjà typé `=> Promise<void>`, donc tout consommateur qui renvoie une promesse passe dans ce mode : le champ est
+  verrouillé jusqu'à son issue, et une application qui affiche déjà un toast en cas d'erreur API affichera aussi l'erreur
+  dans le menu (faire résoudre la promesse pour l'éviter). Seul un callback qui ne renvoie rien garde exactement
+  l'ancien comportement (vidé et fermé tout de suite). Dans
   `ContactSheetReference`, la promesse renvoyée par `onThumbnailChange` pour un changement `comment` remonte jusqu'au
   champ. `Thumbnail.onCommentAdd` est typé `(comment) => void | Promise<void>`. Story `AsyncSaveFailure`.
 

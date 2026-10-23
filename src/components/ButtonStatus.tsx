@@ -33,7 +33,7 @@ export interface ButtonStatusProps {
   size?: "small" | "medium" | "large";
   debug?: boolean;
   /**
-   * Libellé accessible ; remplace le libellé calculé (« Approve - Validated »…).
+   * Accessible label; replaces the computed one ("Approve - Validated"…).
    * Recommended for icons other than "Check" / "X", whose fallback is the status name only.
    */
   "aria-label"?: string;

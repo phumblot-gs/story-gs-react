@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, expectTypeOf, it, vi } from "vitest";
 import { cleanup, render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
 import userEvent from "@testing-library/user-event";
@@ -9,7 +9,7 @@ import {
   type ReferenceData,
 } from "@/components/ContactSheetReference";
 
-/** Reference title: `smalltext` when not blank, otherwise `ref` (rule shared with gs_node and gs_w). */
+/** Reference title: trimmed `smalltext` when non-empty, otherwise `ref`. */
 
 afterEach(() => cleanup());
 
@@ -18,10 +18,24 @@ const withSmalltext: ReferenceData = { reference_id: 1, ref: "5238694", smalltex
 describe("getReferenceDisplayName", () => {
   it("prend smalltext s'il est renseigné (espaces retirés), sinon ref", () => {
     expect(getReferenceDisplayName(withSmalltext)).toBe("Hydration heroes set");
-    expect(getReferenceDisplayName({ reference_id: 1, ref: "R1", smalltext: "  Set  " })).toBe("Set");
-    expect(getReferenceDisplayName({ reference_id: 1, ref: "R1", smalltext: "   " })).toBe("R1");
-    expect(getReferenceDisplayName({ reference_id: 1, ref: "R1", smalltext: null })).toBe("R1");
-    expect(getReferenceDisplayName({ reference_id: 1, ref: "R1" })).toBe("R1");
+    expect(getReferenceDisplayName({ ref: "R1", smalltext: "  Set  " })).toBe("Set");
+    expect(getReferenceDisplayName({ ref: "R1", smalltext: "   " })).toBe("R1");
+    expect(getReferenceDisplayName({ ref: "R1", smalltext: null })).toBe("R1");
+    expect(getReferenceDisplayName({ ref: "R1" })).toBe("R1");
+  });
+
+  // Checked by tsc: an `interface` has no implicit index signature, it must still be accepted.
+  it("accepte ReferenceData et une interface applicative", () => {
+    interface AppReference {
+      reference_id: number;
+      ref: string;
+      smalltext: string | null;
+      brand: string;
+    }
+    const app: AppReference = { reference_id: 2, ref: "R2", smalltext: null, brand: "B" };
+    expectTypeOf(getReferenceDisplayName).toBeCallableWith(withSmalltext);
+    expectTypeOf(getReferenceDisplayName).toBeCallableWith(app);
+    expect(getReferenceDisplayName(app)).toBe("R2");
   });
 
   it("rend une chaîne vide sans référence", () => {

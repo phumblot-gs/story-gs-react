@@ -1,10 +1,10 @@
-type NamedReference = { ref?: string | null; smalltext?: string | null; [key: string]: unknown };
+type NamedReference = { ref?: string | null; smalltext?: string | null };
 
 const trimmed = (value: unknown): string => (typeof value === "string" ? value.trim() : "");
 
 /**
- * Display name of a reference: its `smalltext` when not blank, otherwise its `ref`
- * (same rule as gs_node and gs_w). Empty string for a missing reference.
+ * Display name of a reference: its trimmed `smalltext` when non-empty, otherwise its
+ * `ref`. Empty string for a missing reference.
  */
 export function getReferenceDisplayName(reference: NamedReference | null | undefined): string {
   if (!reference) return "";

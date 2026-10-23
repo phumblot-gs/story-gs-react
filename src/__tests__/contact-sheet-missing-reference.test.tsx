@@ -66,6 +66,21 @@ describe("ContactSheetReference — référence manquante", () => {
     expect(onThumbnailChange).toHaveBeenCalledWith({ type: "validate", pictureId: 2, exportId: "e1" });
   });
 
+  // Review regression: openEdit called while missing must not open the form once a reference arrives.
+  it("openEdit pendant l'état manquant n'ouvre pas le formulaire à l'arrivée de la référence", async () => {
+    const props = {
+      onReferenceUpdate: vi.fn(),
+      headerActions: ({ openEdit }: { openEdit: () => void }) => <button onClick={openEdit}>Open form</button>,
+    };
+    const { rerender } = render(<ContactSheetReference reference={null} {...props} />);
+    await userEvent.click(screen.getByRole("button", { name: "Open form" }));
+    rerender(<ContactSheetReference reference={{ reference_id: 1, ref: "R1" }} {...props} />);
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole("button", { name: "Open form" }));
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+  });
+
   it("title remplace le badge si l'application le fournit", () => {
     renderMissing({ title: "Unsorted pictures" });
     expect(screen.getByRole("heading", { level: 3 })).toHaveTextContent("Unsorted pictures");
