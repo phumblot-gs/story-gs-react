@@ -41,11 +41,8 @@ function hexToHslTriplet(hex) {
   return `${Math.round(hue)} ${Math.round(sat * 100)}% ${Math.round(l * 100)}%`;
 }
 
-// Tokens shadcn dont la valeur DOIT être un triplet HSL (consommés via hsl(var(--x))).
-// Les tokens "de surface" (--background, --primary, ...) ne sont pas inclus ici car ils sont
-// actuellement en hex et non consommés via hsl() en pratique côté consommateurs — les corriger
-// casserait les rares usages directs qui attendent du hex. border/input sont la source
-// avérée du bug (règle universelle `* { border-color: hsl(var(--border)) }`).
+// Tokens consumed through hsl(var(--x)) by Tailwind (border, input, popover): must be HSL triplets.
+// The other surface tokens (--background, --primary…) stay hex for now: direct hex uses may rely on them.
 const SHADCN_TOKENS_FORCE_HSL = new Set(['Border', 'Input', 'Popover', 'PopoverForeground']);
 
 /**

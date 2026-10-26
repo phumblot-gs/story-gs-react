@@ -44,8 +44,8 @@ describe("ButtonStatus — icône et libellé accessible", () => {
         <ButtonStatus icon="Restore" status={MediaStatus.NOT_SELECTED} aria-label="Restore" />
       </>,
     );
-    const cloud = screen.getByRole("button", { name: "Media status: Ready to Broadcast" });
-    expect(cloud.querySelector("svg")).toBeInTheDocument();
+    const broadcastButton = screen.getByRole("button", { name: "Media status: Ready to Broadcast" });
+    expect(broadcastButton.querySelector("svg")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Restore" })).toBeInTheDocument();
   });
 });
