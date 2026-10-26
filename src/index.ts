@@ -571,6 +571,7 @@ export {
   FormField,
 };
 export { HoverCard, HoverCardTrigger, HoverCardContent };
+export type { HoverCardContentProps } from "./components/ui/hover-card";
 export { Label };
 export {
   Menubar,

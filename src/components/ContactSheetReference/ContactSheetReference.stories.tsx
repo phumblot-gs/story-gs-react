@@ -709,7 +709,9 @@ export const MissingReference: Story = {
 
 /**
  * `titleContent` is rendered right after the title, before the grade and the actions. Here, the
- * featured ("vedette") indicator: hover or focus it to preview the featured picture.
+ * featured ("vedette") indicator: hover or focus it, and after `openDelay` (150ms) a HoverCard
+ * previews the featured picture. The card uses the library defaults (white surface, grey-strong
+ * border, 2px radius, 10px padding, 5px offset), with no style override.
  */
 export const TitleContent: Story = {
   render: () => {
@@ -732,14 +734,7 @@ export const TitleContent: Story = {
                     <VedetteIndicator />
                   </button>
                 </HoverCardTrigger>
-                {/* HoverCard is not portalled: inside a Layout bg its bg-popover resolves to nothing,
-                    so the surface is set explicitly, like Tooltip surface="light". */}
-                <HoverCardContent
-                  side="bottom"
-                  align="start"
-                  sideOffset={5}
-                  className="w-auto p-2 rounded-sm border-grey-strong bg-white text-black shadow-md"
-                >
+                <HoverCardContent side="bottom" align="start">
                   <img
                     src="https://picsum.photos/seed/7e0125de91-0/600/750"
                     alt="Featured picture of 7e0125de91"
@@ -760,7 +755,7 @@ export const TitleContent: Story = {
     const vedette = canvas.getByRole("button", { name: "Featured picture" });
     await expect(title.compareDocumentPosition(vedette) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     await userEvent.hover(vedette);
-    // HoverCard content is portalled outside the story canvas.
+    // Opens after openDelay; the card is portalled to document.body, outside the story canvas.
     await expect(await within(document.body).findByAltText("Featured picture of 7e0125de91")).toBeInTheDocument();
   },
 };
