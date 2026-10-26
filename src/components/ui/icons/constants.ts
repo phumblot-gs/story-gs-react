@@ -2,12 +2,12 @@
 // Define a list of all available icons
 export const AVAILABLE_ICONS = [
   "Alert", "AlertTriangle", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowUp",
-  "Bell", "BrokenFile", "Check", "ChevronDown", "ChevronLeft", "ChevronRight", "ChevronUp",
-  "Cloud", "Comment", "Download", "EmptyElement", "EmptyFile", "EmptySearch", "Eraser", "Eye", "File", "FileImage", "Filter", "Flag", "FlagEmpty", "Folder",
+  "Bell", "Broadcast", "BrokenFile", "Check", "ChevronDown", "ChevronLeft", "ChevronRight", "ChevronUp",
+  "Comment", "Download", "EmptyElement", "EmptyFile", "EmptySearch", "Eraser", "Eye", "File", "FileImage", "Filter", "Flag", "FlagEmpty", "Folder",
   "FolderOpened", "FolderMoved", "Globe", "Grip",
   "Hand", "Help", "Highlighter", "Loader", "Logout", "Mail", "Menu", "Minus", "MoreHorizontal", "MoreVertical", "Move", "Pencil",
   "Selection", "SelectionAdd", "SelectionSubtract", "SelectionInvert", "SelectionDelete", "SelectionDeselect",
-  "Plus", "Refresh", "Reports", "RotateCcw", "Scroll", "Search", "Settings", "Share", "Sort", "Star", "StarFilled", "Status",
+  "Plus", "Refresh", "Reports", "Restore", "RotateCcw", "Scroll", "Search", "Settings", "Share", "Sort", "Star", "StarFilled", "Status",
   "Tag", "ToastErrorIcon", "ToastSuccessIcon", "Switch", "Trash", "Upload", "Urgent",
   "User", "Users", "Vedette", "ViewSingle", "ViewSplit", "X", "ZoomIn", "ZoomOut"
 ] as const;

@@ -180,3 +180,25 @@ export const CustomScrollIcon: React.FC<CustomIconProps> = ({ size = 12, strokeW
     <path d="M1 9H5" stroke="currentColor" strokeWidth={strokeWidth} strokeMiterlimit="10" strokeLinecap="round"/>
   </svg>
 )
+
+// Glyphs from Typicons 2.0 (c) Stephen Hutchings, SIL Open Font License 1.1: the broadcast and
+// restore icons of the legacy gs_node validation (typcn-cloud-storage, typcn-arrow-loop).
+export const CustomBroadcastIcon: React.FC<CustomIconProps> = ({ size = 12 }) => (
+  <svg width={size} height={size} viewBox="0 83.5 833 833" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path
+      transform="translate(0 800) scale(1 -1)"
+      fill="currentColor"
+      d="M625 425q86 0 147 -61t61 -147t-61 -147.5t-147 -61.5h-167v191l54 -53q13 -13 30 -13q16 0 29 13q12 12 12 29t-12 29l-125 125q-11 11 -29 11.5t-30 -11.5l-125 -125q-12 -12 -12 -29t12 -29q13 -13 30 -13q16 0 29 13l54 53v-191h-208q-69 0 -118 49t-49 118q0 58 35 102.5t90 58.5v6q0 104 73.5 177t176.5 73q80 0 144.5 -46.5t90.5 -121.5z"
+    />
+  </svg>
+)
+
+export const CustomRestoreIcon: React.FC<CustomIconProps> = ({ size = 12 }) => (
+  <svg width={size} height={size} viewBox="0 104.5 750 750" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path
+      transform="translate(0 800) scale(1 -1)"
+      fill="currentColor"
+      d="M562 467q77 0 132.5 -61.5t55.5 -147.5t-61 -147t-147 -61h-334q-86 0 -147 61t-61 147t61 147.5t147 61.5q17 0 29.5 -12.5t12.5 -29.5t-12.5 -29.5t-29.5 -12.5q-52 0 -88.5 -36.5t-36.5 -88.5t36.5 -88.5t88.5 -36.5h334q52 0 88.5 36.5t36.5 88.5t-31 88.5t-74 36.5h-86l53 -54q12 -12 12 -29t-12 -29q-13 -13 -29 -13t-29 13l-155 154l155 154q12 12 29 12t29 -12t12 -29t-12 -29l-53 -54h86z"
+    />
+  </svg>
+)

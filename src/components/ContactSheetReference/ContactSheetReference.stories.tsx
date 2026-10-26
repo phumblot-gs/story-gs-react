@@ -759,9 +759,9 @@ export const TitleContent: Story = {
 };
 
 /**
- * Broadcast and restore buttons in a contact sheet: `statusButtons` take any library icon. "Cloud"
- * (status 51 colour) broadcasts a validated image, an active + disabled button shows the broadcast
- * state (51, 55, 52 with "AlertTriangle"), "RotateCcw" restores an ignored image. A click arrives as
+ * Broadcast and restore buttons in a contact sheet: `statusButtons` take any library icon. "Broadcast"
+ * (status 51 colour) broadcasts a validated image, the same icon active + disabled shows the
+ * broadcast state (51, 55, 52 in red), "Restore" restores an ignored image. A click arrives as
  * a `statusButton` change with the button key.
  */
 export const BroadcastStatusButtons: Story = {
@@ -769,18 +769,18 @@ export const BroadcastStatusButtons: Story = {
   render: (args) => {
     const state = (status: MediaStatus, label: string): ThumbnailStatusButton => ({
       key: "broadcast-state",
-      icon: status === MediaStatus.ERROR_DURING_BROADCAST ? "AlertTriangle" : "Cloud",
+      icon: "Broadcast",
       status,
       label,
       isActive: true,
       disabled: true,
     });
     const rows: [MediaStatus, ThumbnailStatusButton[]][] = [
-      [MediaStatus.VALIDATED, [{ key: "broadcast", icon: "Cloud", status: MediaStatus.READY_TO_BROADCAST, label: "Broadcast" }]],
+      [MediaStatus.VALIDATED, [{ key: "broadcast", icon: "Broadcast", status: MediaStatus.READY_TO_BROADCAST, label: "Broadcast" }]],
       [MediaStatus.READY_TO_BROADCAST, [state(MediaStatus.READY_TO_BROADCAST, "To broadcast")]],
       [MediaStatus.BROADCAST, [state(MediaStatus.BROADCAST, "Broadcasted")]],
       [MediaStatus.ERROR_DURING_BROADCAST, [state(MediaStatus.ERROR_DURING_BROADCAST, "Broadcast error")]],
-      [MediaStatus.IGNORED, [{ key: "restore", icon: "RotateCcw", status: MediaStatus.NOT_SELECTED, label: "Restore" }]],
+      [MediaStatus.IGNORED, [{ key: "restore", icon: "Restore", status: MediaStatus.NOT_SELECTED, label: "Restore" }]],
     ];
     const thumbnails = makeThumbnails("7e0125de91", rows.length).map((t, i) => ({
       ...t,

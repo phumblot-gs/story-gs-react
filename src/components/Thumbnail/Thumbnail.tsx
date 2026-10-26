@@ -70,8 +70,8 @@ export interface ThumbnailStatusButton {
   /** Identifiant renvoyé au clic ("select", "validate", "refuse"…). Unique dans la vignette. */
   key: string;
   /**
-   * Any library icon: "Check" / "X" for select, validate, refuse; e.g. "Cloud" to
-   * broadcast, "RotateCcw" to restore. Give a `label` for icons other than Check / X.
+   * Any library icon: "Check" / "X" for select, validate, refuse; e.g. "Broadcast" to
+   * broadcast, "Restore" to restore. Give a `label` for icons other than Check / X.
    */
   icon: IconName;
   /** Statut dont le bouton prend la couleur (MediaStatus : 30, 31, 50…). */

@@ -65,6 +65,10 @@ export const renderIcon = (
       return <CustomIcons.CustomLogoutIcon size={size} strokeWidth={strokeWidth} />;
     case "Refresh":
       return <CustomIcons.CustomRefreshIcon size={size} strokeWidth={strokeWidth} />;
+    case "Broadcast":
+      return <CustomIcons.CustomBroadcastIcon size={size} />;
+    case "Restore":
+      return <CustomIcons.CustomRestoreIcon size={size} />;
     case "Search":
       return <LucideIcons.Search size={size} strokeWidth={strokeWidth} />;
     case "ZoomIn":
@@ -135,8 +139,6 @@ export const renderIcon = (
       return <LucideIcons.ChevronRight size={size} strokeWidth={strokeWidth} className="max-w-[12px] max-h-[12px]" />;
     case "ChevronUp":
       return <LucideIcons.ChevronUp size={size} strokeWidth={strokeWidth} className="max-w-[12px] max-h-[12px]" />;
-    case "Cloud":
-      return <LucideIcons.Cloud size={size} strokeWidth={strokeWidth} className="max-w-[12px] max-h-[12px]" />;
     case "Download":
       return <LucideIcons.Download size={size} strokeWidth={strokeWidth} className="max-w-[12px] max-h-[12px]" />;
     case "EmptyElement":

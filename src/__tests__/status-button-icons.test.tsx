@@ -11,15 +11,15 @@ import { MediaStatus } from "@/utils/mediaStatus";
 
 /**
  * Status buttons accept any library icon (CR-684): gs_w validation needs a broadcast
- * button (Cloud, 51), broadcast state indicators (51 / 55 / 52) and a restore button
- * (RotateCcw, from status 1).
+ * button (Broadcast, 51), broadcast state indicators (51 / 55 / 52, same glyph as the legacy
+ * validation) and a restore button (Restore, from status 1).
  */
 
 afterEach(() => cleanup());
 
 describe("Icônes de la librairie", () => {
-  it("chaque nom de AVAILABLE_ICONS a un rendu, Cloud compris", () => {
-    expect(AVAILABLE_ICONS).toContain("Cloud");
+  it("chaque nom de AVAILABLE_ICONS a un rendu, Broadcast et Restore compris", () => {
+    expect(AVAILABLE_ICONS).toEqual(expect.arrayContaining(["Broadcast", "Restore"]));
     const missing = AVAILABLE_ICONS.filter((name) => renderIcon(name) === null);
     expect(missing).toEqual([]);
   });
@@ -40,8 +40,8 @@ describe("ButtonStatus — icône et libellé accessible", () => {
   it("une autre icône n'est plus annoncée « Reject » : libellé du statut, ou aria-label", () => {
     render(
       <>
-        <ButtonStatus icon="Cloud" status={MediaStatus.READY_TO_BROADCAST} />
-        <ButtonStatus icon="RotateCcw" status={MediaStatus.NOT_SELECTED} aria-label="Restore" />
+        <ButtonStatus icon="Broadcast" status={MediaStatus.READY_TO_BROADCAST} />
+        <ButtonStatus icon="Restore" status={MediaStatus.NOT_SELECTED} aria-label="Restore" />
       </>,
     );
     const cloud = screen.getByRole("button", { name: "Media status: Ready to Broadcast" });
@@ -54,13 +54,13 @@ describe("Thumbnail — boutons de diffusion et de restauration", () => {
   const baseProps = { picture_id: 1, src: "/photo.jpg", filename: "photo.jpg" };
   const broadcast: ThumbnailStatusButton = {
     key: "broadcast",
-    icon: "Cloud",
+    icon: "Broadcast",
     status: MediaStatus.READY_TO_BROADCAST,
     label: "Broadcast",
   };
   const restore: ThumbnailStatusButton = {
     key: "restore",
-    icon: "RotateCcw",
+    icon: "Restore",
     status: MediaStatus.NOT_SELECTED,
     label: "Restore",
   };
@@ -73,7 +73,7 @@ describe("Thumbnail — boutons de diffusion et de restauration", () => {
     disabled: true,
   });
 
-  it("Diffuser (Cloud, 51) est cliquable et remonte sa clé", async () => {
+  it("Diffuser (Broadcast, 51) est cliquable et remonte sa clé", async () => {
     const onStatusButtonClick = vi.fn();
     render(
       <Thumbnail
@@ -90,9 +90,9 @@ describe("Thumbnail — boutons de diffusion et de restauration", () => {
   });
 
   it.each([
-    [MediaStatus.READY_TO_BROADCAST, "Cloud", "To broadcast"],
-    [MediaStatus.BROADCAST, "Cloud", "Broadcasted"],
-    [MediaStatus.ERROR_DURING_BROADCAST, "AlertTriangle", "Broadcast error"],
+    [MediaStatus.READY_TO_BROADCAST, "Broadcast", "To broadcast"],
+    [MediaStatus.BROADCAST, "Broadcast", "Broadcasted"],
+    [MediaStatus.ERROR_DURING_BROADCAST, "Broadcast", "Broadcast error"],
   ] as const)("indicateur %s : actif, non cliquable, nommé", async (status, icon, label) => {
     const onStatusButtonClick = vi.fn();
     render(
@@ -110,7 +110,7 @@ describe("Thumbnail — boutons de diffusion et de restauration", () => {
     expect(onStatusButtonClick).not.toHaveBeenCalled();
   });
 
-  it("Restaurer (RotateCcw) est cliquable depuis le statut 1", async () => {
+  it("Restaurer (Restore) est cliquable depuis le statut 1", async () => {
     const onStatusButtonClick = vi.fn();
     render(
       <Thumbnail

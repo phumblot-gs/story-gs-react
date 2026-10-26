@@ -1378,10 +1378,10 @@ export const StatusButtons: Story = {
 
 
 /**
- * Status buttons take any library icon. Broadcast workflow: "Cloud" in the colour of status 51 to
- * broadcast a validated image; then a non-clickable indicator (`isActive` + `disabled`) for "to
- * broadcast" (51), "broadcasted" (55) and "broadcast error" (52, "AlertTriangle"); "RotateCcw" to
- * restore an ignored image (status 1). Give a `label` (tooltip and accessible name) to any icon
+ * Status buttons take any library icon. Broadcast workflow, with the legacy validation glyphs: the
+ * "Broadcast" icon in the colour of status 51 to broadcast a validated image; then the same icon as a
+ * non-clickable indicator (`isActive` + `disabled`) for "to broadcast" (51), "broadcasted" (55) and
+ * "broadcast error" (52, red); "Restore" to restore an ignored image (status 1). Give a `label` (tooltip and accessible name) to any icon
  * other than "Check" / "X".
  */
 export const BroadcastAndRestoreButtons: Story = {
@@ -1389,7 +1389,7 @@ export const BroadcastAndRestoreButtons: Story = {
   render: (args) => {
     const indicator = (status: MediaStatus, label: string): ThumbnailStatusButton => ({
       key: "broadcast-state",
-      icon: status === MediaStatus.ERROR_DURING_BROADCAST ? "AlertTriangle" : "Cloud",
+      icon: "Broadcast",
       status,
       label,
       isActive: true,
@@ -1399,7 +1399,7 @@ export const BroadcastAndRestoreButtons: Story = {
       {
         title: "Validated: Broadcast (clickable)",
         status: MediaStatus.VALIDATED,
-        buttons: [{ key: "broadcast", icon: "Cloud", status: MediaStatus.READY_TO_BROADCAST, label: "Broadcast" }],
+        buttons: [{ key: "broadcast", icon: "Broadcast", status: MediaStatus.READY_TO_BROADCAST, label: "Broadcast" }],
       },
       { title: "51: to broadcast", status: MediaStatus.READY_TO_BROADCAST, buttons: [indicator(MediaStatus.READY_TO_BROADCAST, "To broadcast")] },
       { title: "55: broadcasted", status: MediaStatus.BROADCAST, buttons: [indicator(MediaStatus.BROADCAST, "Broadcasted")] },
@@ -1407,7 +1407,7 @@ export const BroadcastAndRestoreButtons: Story = {
       {
         title: "1: Restore (clickable)",
         status: MediaStatus.IGNORED,
-        buttons: [{ key: "restore", icon: "RotateCcw", status: MediaStatus.NOT_SELECTED, label: "Restore" }],
+        buttons: [{ key: "restore", icon: "Restore", status: MediaStatus.NOT_SELECTED, label: "Restore" }],
       },
     ];
     return (

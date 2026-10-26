@@ -36,12 +36,15 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 - `ButtonStatus.icon` et `ThumbnailStatusButton.icon` acceptent toute icône de la librairie (`IconName`), plus seulement
   `"Check"` | `"X"` : sur-ensemble, rien ne change pour l'existant. Pour une autre icône, le libellé accessible par défaut
   est « Statut du média : {nom du statut} » (et non plus « Reject - … ») : passer `label` (vignette) ou `aria-label`
-  (`ButtonStatus`). Check / X gardent « Approve / Reject - {statut} ». Usage diffusion : `"Cloud"` pour diffuser (statut
-  51), indicateurs actifs et désactivés `"Cloud"` (51, 55) et `"AlertTriangle"` (52), `"RotateCcw"` pour restaurer. La doc
+  (`ButtonStatus`). Check / X gardent « Approve / Reject - {statut} ». Usage diffusion, glyphes de la validation legacy :
+  `"Broadcast"` pour diffuser (statut 51) et, actif et désactivé, pour les états 51, 55 et 52 ; `"Restore"` pour
+  restaurer (statut 1). La doc
   de `statusButtons` ne fixe plus « 0, 1 ou 2 » : tous les boutons sont rendus sur une ligne centrée, 2 est le cas courant
   et 3 tiennent sur une vignette de 100px. Stories `Thumbnail/BroadcastAndRestoreButtons`,
   `ContactSheetReference/BroadcastStatusButtons`, `ButtonStatus/OtherIcons`.
-- Icône `Cloud` (lucide), ajoutée à `AVAILABLE_ICONS` et au catalogue `Icon/AllIcons`.
+- Icônes `Broadcast` et `Restore`, ajoutées à `AVAILABLE_ICONS` et au catalogue `Icon/AllIcons` : glyphes Typicons
+  `typcn-cloud-storage` (`\e04b`) et `typcn-arrow-loop` (`\e010`) de la validation gs_node, en SVG
+  (Typicons 2.0, © Stephen Hutchings, SIL Open Font License 1.1).
 
 ### Corrigé
 

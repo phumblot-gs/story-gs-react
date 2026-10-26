@@ -198,10 +198,10 @@ export const LargeSize: Story = {
 export const OtherIcons: Story = {
   render: () => (
     <div className="flex gap-4 items-center">
-      <ButtonStatus icon="Cloud" status={MediaStatus.READY_TO_BROADCAST} aria-label="Broadcast" />
-      <ButtonStatus icon="Cloud" status={MediaStatus.BROADCAST} isActive disabled aria-label="Broadcasted" />
-      <ButtonStatus icon="AlertTriangle" status={MediaStatus.ERROR_DURING_BROADCAST} isActive disabled aria-label="Broadcast error" />
-      <ButtonStatus icon="RotateCcw" status={MediaStatus.NOT_SELECTED} aria-label="Restore" />
+      <ButtonStatus icon="Broadcast" status={MediaStatus.READY_TO_BROADCAST} aria-label="Broadcast" />
+      <ButtonStatus icon="Broadcast" status={MediaStatus.BROADCAST} isActive disabled aria-label="Broadcasted" />
+      <ButtonStatus icon="Broadcast" status={MediaStatus.ERROR_DURING_BROADCAST} isActive disabled aria-label="Broadcast error" />
+      <ButtonStatus icon="Restore" status={MediaStatus.NOT_SELECTED} aria-label="Restore" />
     </div>
   ),
 };

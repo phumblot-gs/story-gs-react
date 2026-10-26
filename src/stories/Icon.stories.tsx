@@ -99,13 +99,13 @@ export const AllIcons: Story = {
   render: () => {
     // Organiser les icônes par catégories selon icon-renderer.tsx
     const statusIcons: IconName[] = ["Check", "X", "Alert", "Status", "Urgent"];
-    const actionIcons: IconName[] = ["Plus", "Pencil", "Sort", "Filter", "Eye", "Logout", "Refresh", "Search", "Flag", "FlagEmpty", "Switch", "Scroll"];
+    const actionIcons: IconName[] = ["Plus", "Pencil", "Sort", "Filter", "Eye", "Logout", "Refresh", "Broadcast", "Restore", "Search", "Flag", "FlagEmpty", "Switch", "Scroll"];
     const itemIcons: IconName[] = ["Tag", "Bell", "Star", "Vedette", "Comment", "FolderOpened", "FolderMoved", "EmptyElement", "EmptyFile", "EmptySearch", "BrokenFile"];
     const navigationIcons: IconName[] = ["ArrowRight", "ArrowLeft", "ArrowUp", "ArrowDown"];
     const utilityIcons: IconName[] = ["Help", "Settings", "User"];
     const customIcons: IconName[] = ["ToastSuccessIcon", "ToastErrorIcon"];
     const lucideIcons: IconName[] = [
-      "AlertTriangle", "Loader", "ChevronDown", "ChevronLeft", "ChevronRight", "ChevronUp", "Cloud",
+      "AlertTriangle", "Loader", "ChevronDown", "ChevronLeft", "ChevronRight", "ChevronUp",
       "Download", "File", "Folder", "Globe", "Grip", "Mail", "Menu", "Minus",
       "MoreHorizontal", "MoreVertical", "Move", "RotateCcw", "Share",
       "StarFilled", "Trash", "Upload", "Users"
