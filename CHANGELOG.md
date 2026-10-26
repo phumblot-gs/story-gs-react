@@ -48,6 +48,14 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ### Corrigé
 
+- Jetons : sous `[data-bg="white|grey|black"]`, `--popover` et `--popover-foreground` étaient émis en hexadécimal alors
+  que Tailwind attend des composantes HSL (`hsl(var(--popover))`) : `bg-popover` et `text-popover-foreground` ne
+  donnaient rien dans un `Layout bg`. Corrigé à la source (`scripts/generate-css-tokens.cjs`, liste
+  `SHADCN_TOKENS_FORCE_HSL`). **Visible** pour un composant non portalé qui garde `bg-popover` sous un `Layout bg`
+  (`Command`, la vue de `NavigationMenu`) : fond transparent avant, surface sombre de la charte après (#292828,
+  #3a3a3a sur fond noir), texte blanc. Les menus et popovers de la librairie (portalés, fond surchargé) ne changent pas
+  visuellement ; seule la couleur héritée de leur conteneur change, sans texte qui en dépende (vérifié sur
+  `ButtonMenu` et `ButtonMenuSmall`, tous fonds).
 - Documentation de `ReorderDetails.viewChanges` (`ContactSheetReference`, `onReorder`) : elle ne liste que les médias
   dont le code de vue a changé, et non tous ceux qui ont changé de position (un média déplacé entre deux emplacements de
   même vue n'y figure pas). Pour les simples changements de position, utiliser `slots` (ou `pictureIds`) et

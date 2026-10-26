@@ -1,7 +1,7 @@
 /**
  * Variables CSS générées automatiquement depuis les tokens Figma
  * NE PAS MODIFIER DIRECTEMENT - Généré par scripts/generate-css-tokens.cjs
- * Date: 2026-10-20T23:17:53.788Z
+ * Date: 2026-10-26T16:11:46.608Z
  */
 
 :root {
@@ -893,8 +893,8 @@
   --card-foreground: #292828;
   --muted: #f3f3f3;
   --muted-foreground: #c1c1c1;
-  --popover: #292828;
-  --popover-foreground: #ffffff;
+  --popover: 0 1% 16%;
+  --popover-foreground: 0 0% 100%;
   --primary: #cdedff;
   --primary-foreground: #292828;
   --secondary: #292828;
@@ -915,8 +915,8 @@
   --card-foreground: #292828;
   --muted: #ffffff;
   --muted-foreground: #c1c1c1;
-  --popover: #292828;
-  --popover-foreground: #ffffff;
+  --popover: 0 1% 16%;
+  --popover-foreground: 0 0% 100%;
   --primary: #cdedff;
   --primary-foreground: #292828;
   --secondary: #292828;
@@ -937,8 +937,8 @@
   --card-foreground: #ffffff;
   --muted: #3a3a3a;
   --muted-foreground: #c1c1c1;
-  --popover: #3a3a3a;
-  --popover-foreground: #ffffff;
+  --popover: 0 0% 23%;
+  --popover-foreground: 0 0% 100%;
   --primary: #cdedff;
   --primary-foreground: #292828;
   --secondary: #ffffff;

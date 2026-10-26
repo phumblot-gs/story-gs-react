@@ -46,7 +46,7 @@ function hexToHslTriplet(hex) {
 // actuellement en hex et non consommés via hsl() en pratique côté consommateurs — les corriger
 // casserait les rares usages directs qui attendent du hex. border/input sont la source
 // avérée du bug (règle universelle `* { border-color: hsl(var(--border)) }`).
-const SHADCN_TOKENS_FORCE_HSL = new Set(['Border', 'Input']);
+const SHADCN_TOKENS_FORCE_HSL = new Set(['Border', 'Input', 'Popover', 'PopoverForeground']);
 
 /**
  * Convertit les noms de tokens Figma en noms de variables CSS
