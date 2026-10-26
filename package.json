@@ -243,7 +243,8 @@
   "files": [
     "dist",
     "scripts",
-    "tailwind-preset.cjs"
+    "tailwind-preset.cjs",
+    "THIRD_PARTY_NOTICES.md"
   ],
   "sideEffects": [
     "*.css"

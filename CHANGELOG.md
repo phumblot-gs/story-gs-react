@@ -48,9 +48,11 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
   de `statusButtons` ne fixe plus « 0, 1 ou 2 » : tous les boutons sont rendus sur une ligne centrée, 2 est le cas courant
   et 3 tiennent sur une vignette de 100px. Stories `Thumbnail/BroadcastAndRestoreButtons`,
   `ContactSheetReference/BroadcastStatusButtons`, `ButtonStatus/OtherIcons`.
-- Icônes `Broadcast` et `Restore`, ajoutées à `AVAILABLE_ICONS` et au catalogue `Icon/AllIcons` : glyphes Typicons
-  `typcn-cloud-storage` (`\e04b`) et `typcn-arrow-loop` (`\e010`) de la validation gs_node, en SVG
-  (Typicons 2.0, © Stephen Hutchings, SIL Open Font License 1.1).
+- Icônes `Broadcast` et `Restore`, ajoutées à `AVAILABLE_ICONS` et au catalogue `Icon/AllIcons` : glyphes
+  `typcn-cloud-storage` (`\e04b`) et `typcn-arrow-loop` (`\e010`) de la validation gs_node, convertis en SVG. Typicons
+  2.0.3 par Stephen Hutchings, dessins sous licence CC BY-SA 3.0 (https://creativecommons.org/licenses/by-sa/3.0/) ;
+  attribution conservée dans le bundle (commentaire `@license`) et dans `THIRD_PARTY_NOTICES.md`, publié avec le
+  paquet. **Provisoires**, en attendant des icônes maison de la charte.
 
 ### Corrigé
 

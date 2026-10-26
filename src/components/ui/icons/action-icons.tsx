@@ -181,8 +181,9 @@ export const CustomScrollIcon: React.FC<CustomIconProps> = ({ size = 12, strokeW
   </svg>
 )
 
-// Glyphs from Typicons 2.0 (c) Stephen Hutchings, SIL Open Font License 1.1: the broadcast and
-// restore icons of the legacy gs_node validation (typcn-cloud-storage, typcn-arrow-loop).
+/*! @license Broadcast and Restore icons: Typicons 2.0.3 by Stephen Hutchings, artwork licensed
+ * CC BY-SA 3.0 (https://creativecommons.org/licenses/by-sa/3.0/). Glyphs \e04b (cloud-storage) and
+ * \e010 (arrow-loop) converted to SVG. Temporary, until in-house charter icons replace them. */
 export const CustomBroadcastIcon: React.FC<CustomIconProps> = ({ size = 12 }) => (
   <svg width={size} height={size} viewBox="0 83.5 833 833" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
