@@ -28,30 +28,39 @@ export interface HoverCardContentProps
   extends React.ComponentPropsWithoutRef<typeof HoverCardPrimitive.Content> {
   /** Card surface: "light" (default, white with a grey-strong border) or "dark" (black). */
   surface?: "light" | "dark"
+  /** Render the card in a portal (default). `false` renders it in place, next to the trigger. */
+  portal?: boolean
+  /** Portal target; `document.body` by default. */
+  container?: HTMLElement | null
 }
 
 /**
  * Card shown while the trigger is hovered or focused, after the Root's `openDelay`.
- * Portalled to `document.body`, so a scrolling or `overflow: hidden` parent does not clip it.
+ * Portalled to `document.body` by default, so a scrolling or `overflow: hidden` parent does not clip
+ * it; `container` changes the target and `portal={false}` renders it in place.
  */
 const HoverCardContent = React.forwardRef<
   React.ElementRef<typeof HoverCardPrimitive.Content>,
   HoverCardContentProps
->(({ className, align = "center", sideOffset = 5, surface = "light", children, ...props }, ref) => {
+>(({ className, align = "center", sideOffset = 5, surface = "light", portal = true, container, children, ...props }, ref) => {
   const surfaceBg = surface === "light" ? "white" : "black"
+  const content = (
+    <HoverCardPrimitive.Content
+      ref={ref}
+      align={align}
+      sideOffset={sideOffset}
+      data-bg={surfaceBg}
+      data-surface={surface}
+      className={cn(hoverCardContentVariants({ surface }), className)}
+      {...props}
+    >
+      <BgProvider value={surfaceBg}>{children}</BgProvider>
+    </HoverCardPrimitive.Content>
+  )
+  if (!portal) return content
   return (
-    <HoverCardPrimitive.Portal>
-      <HoverCardPrimitive.Content
-        ref={ref}
-        align={align}
-        sideOffset={sideOffset}
-        data-bg={surfaceBg}
-        data-surface={surface}
-        className={cn(hoverCardContentVariants({ surface }), className)}
-        {...props}
-      >
-        <BgProvider value={surfaceBg}>{children}</BgProvider>
-      </HoverCardPrimitive.Content>
+    <HoverCardPrimitive.Portal container={container} forceMount={props.forceMount}>
+      {content}
     </HoverCardPrimitive.Portal>
   )
 })

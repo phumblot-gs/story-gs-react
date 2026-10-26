@@ -19,6 +19,13 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
   surcharger).
 - **Impact TypeScript** — `ContactSheetReferenceProps["reference"]` devient `ReferenceData | null` : un code TS qui lit
   `props.reference.ref` sur ce type obtient TS18047 et doit tester `null`.
+- **Impact consommateurs** — `HoverCardContent` adopte la charte par défaut et est portalé dans `document.body` :
+  surface claire (fond blanc, bordure 1px grey-strong, texte noir), rayon 2px (`rounded-sm`), padding 10px (`p-2`),
+  `shadow-md`, `sideOffset` 5, largeur selon le contenu (plus de `w-64`). Avant, sous un `Layout bg`, la carte était
+  transparente, avec un rayon de 6px et un padding de 20px. Nouvelle prop `surface` (`"light"` par défaut, `"dark"`),
+  sur le modèle de `Tooltip` ; le contenu reçoit la surface comme contexte `bg`. Un `className` passé reste prioritaire.
+  `portal={false}` la rend sur place et `container` change la cible du portail. Seul consommateur connu :
+  `MediaVedette` de gs_w. Stories `UI/HoverCard` et `TitleContent` (sans surcharge).
 
 ### Ajouté
 
@@ -30,12 +37,6 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
   d'erreur « Référence manquante » (`contactSheet.missingReference`, EN/FR/ES/IT/DE) ; ni urgence, ni bouton Modifier, ni
   attributs (`openEdit` ne fait rien). Vignettes, sélection et exports fonctionnent comme d'habitude ; la case est nommée
   `contactSheet.selectMissingReference`. `title` remplace le badge si fourni. Story `MissingReference`.
-- **Impact consommateurs** — `HoverCardContent` adopte la charte par défaut et est portalé dans `document.body` :
-  surface claire (fond blanc, bordure 1px grey-strong, texte noir), rayon 2px (`rounded-sm`), padding 10px (`p-2`),
-  `shadow-md`, `sideOffset` 5, largeur selon le contenu (plus de `w-64`). Avant, sous un `Layout bg`, la carte était
-  transparente, avec un rayon de 6px et un padding de 20px. Nouvelle prop `surface` (`"light"` par défaut, `"dark"`),
-  sur le modèle de `Tooltip` ; le contenu reçoit la surface comme contexte `bg`. Un `className` passé reste prioritaire.
-  Seul consommateur connu : `MediaVedette` de gs_w. Stories `UI/HoverCard` et `TitleContent` (sans surcharge).
 - `ContactSheetReference` : prop `titleContent`, rendue juste après le titre et avant le grade et les actions (ex. un
   `VedetteIndicator` avec aperçu au survol dans un `HoverCard`), sur le modèle de `PageHeader.titleContent`. Sans la
   prop, rien ne change. Story `TitleContent`.

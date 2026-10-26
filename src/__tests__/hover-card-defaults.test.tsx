@@ -12,14 +12,16 @@ import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/h
 
 afterEach(() => cleanup());
 
-const renderCard = (surface?: "light" | "dark") =>
+const renderCard = (surface?: "light" | "dark", extra: Partial<React.ComponentProps<typeof HoverCardContent>> = {}) =>
   render(
     <Layout bg="grey">
       <HoverCard defaultOpen>
         <HoverCardTrigger asChild>
           <button type="button">Trigger</button>
         </HoverCardTrigger>
-        <HoverCardContent surface={surface}>Card</HoverCardContent>
+        <HoverCardContent surface={surface} {...extra}>
+          Card
+        </HoverCardContent>
       </HoverCard>
     </Layout>,
   );
@@ -45,5 +47,17 @@ describe("HoverCardContent — valeurs par défaut de la charte", () => {
     const card = screen.getByText("Card").closest("[data-surface]")!;
     expect(card).toHaveAttribute("data-bg", "black");
     expect(card).toHaveClass("bg-black", "text-white");
+  });
+
+  it("portal={false} la rend sur place, container change la cible du portail", () => {
+    const { container, unmount } = renderCard(undefined, { portal: false });
+    expect(container).toContainElement(screen.getByText("Card"));
+    unmount();
+
+    const target = document.createElement("div");
+    document.body.appendChild(target);
+    renderCard(undefined, { container: target });
+    expect(target).toContainElement(screen.getByText("Card"));
+    target.remove();
   });
 });
