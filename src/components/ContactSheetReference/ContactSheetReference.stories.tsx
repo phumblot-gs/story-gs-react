@@ -732,7 +732,14 @@ export const TitleContent: Story = {
                     <VedetteIndicator />
                   </button>
                 </HoverCardTrigger>
-                <HoverCardContent side="bottom" align="start" className="w-auto p-2">
+                {/* HoverCard is not portalled: inside a Layout bg its bg-popover resolves to nothing,
+                    so the surface is set explicitly, like Tooltip surface="light". */}
+                <HoverCardContent
+                  side="bottom"
+                  align="start"
+                  sideOffset={5}
+                  className="w-auto p-2 rounded-sm border-grey-strong bg-white text-black shadow-md"
+                >
                   <img
                     src="https://picsum.photos/seed/7e0125de91-0/600/750"
                     alt="Featured picture of 7e0125de91"
