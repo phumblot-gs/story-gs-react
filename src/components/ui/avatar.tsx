@@ -2,6 +2,7 @@ import * as React from "react"
 import * as AvatarPrimitive from "@radix-ui/react-avatar"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
+import { trimTextChildren } from "@/lib/text-trim"
 
 export type AvatarSize = "small" | "medium" | "large";
 
@@ -73,12 +74,17 @@ export interface AvatarFallbackProps
 const AvatarFallback = React.forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Fallback>,
   AvatarFallbackProps
->(({ className, size = "medium", ...props }, ref) => (
+>(({ className, size = "medium", children, ...props }, ref) => (
   <AvatarPrimitive.Fallback
     ref={ref}
     className={cn(avatarFallbackVariants({ size }), className)}
     {...props}
-  />
+  >
+    {/* Initiales rognées sur la hauteur de capitale : sans ça, la police les
+        dessine au-dessus du centre (cf. trimTextChildren). Avec asChild, le
+        Slot de Radix attend un élément unique : on n'y touche pas. */}
+    {props.asChild ? children : trimTextChildren(children)}
+  </AvatarPrimitive.Fallback>
 ))
 AvatarFallback.displayName = AvatarPrimitive.Fallback.displayName
 

@@ -5,6 +5,20 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.37.1] - 2026-10-28
+
+### Corrigé
+
+- `AvatarFallback` : les initiales sont centrées sur la hauteur des capitales. Avenir Next réserve de la place pour les
+  jambages, et les majuscules s'affichaient environ 0,1 em au-dessus du centre (1 px à 13 px, 2 à 2,5 px vers 20 px). Le
+  texte est rogné par `gs-text-trim`, comme dans le Badge ; les éléments passés en enfants (icônes, spans) et le mode
+  `asChild` ne sont pas modifiés. Story `InitialsCentering`.
+
+### Modifié
+
+- `trimTextChildren`, qui enveloppe le texte dans un span `gs-text-trim`, passe de `badge.tsx` à `src/lib/text-trim.tsx`
+  pour être partagé. Le Badge ne change pas.
+
 ## [1.37.0] - 2026-10-23
 
 ### Ajouté
