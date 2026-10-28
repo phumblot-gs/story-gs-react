@@ -25,6 +25,29 @@ function deferred() {
 }
 
 describe("ClippingEditor", () => {
+  it("détache les handlers et la source des images à chaque nouvelle session", () => {
+    const original = globalThis.Image;
+    const images: { src: string; onload: unknown; onerror: unknown }[] = [];
+    class FakeImage {
+      src = "";
+      onload: unknown = null;
+      onerror: unknown = null;
+      constructor() { images.push(this); }
+      removeAttribute() { this.src = ""; }
+    }
+    globalThis.Image = FakeImage as unknown as typeof Image;
+    try {
+      const { rerender, unmount } = renderEditor({ src: "one.png" });
+      expect(images[0].src).toBe("one.png");
+      expect(images[0].onload).toBeTypeOf("function");
+      rerender(<ClippingEditor src="one.png" imageKey="revision-2" onSegment={vi.fn()} />);
+      expect(images).toHaveLength(2);
+      expect(images[0]).toMatchObject({ src: "", onload: null, onerror: null });
+      unmount();
+      expect(images[1]).toMatchObject({ src: "", onload: null, onerror: null });
+    } finally { globalThis.Image = original; }
+  });
+
   it("conserve la structure du header sans les nouvelles props", () => {
     renderEditor({ fileName: "photo.png", onClose: vi.fn() });
     const header = screen.getByRole("toolbar", { name: "Clipping display" });
@@ -397,6 +420,37 @@ describe("ClippingEditor", () => {
       renderEditor({ onSegment, autoSegment: true, defaultMarks: [keep] });
       await wait(400);
       expect(onSegment).toHaveBeenCalledTimes(1);
+    });
+
+    it("libère les canvas, annule le moteur et réinitialise les marques au changement d'image", async () => {
+      stubCanvas();
+      const canvases: HTMLCanvasElement[] = [];
+      const original = document.createElement.bind(document);
+      const create = vi.spyOn(document, "createElement").mockImplementation(((tag: string, options?: ElementCreationOptions) => {
+        const node = original(tag, options);
+        if (tag === "canvas") canvases.push(node as HTMLCanvasElement);
+        return node;
+      }) as typeof document.createElement);
+      restore.push(() => create.mockRestore());
+      const pending: { signal: AbortSignal; resolve: (mask: typeof known) => void; marks: unknown[] }[] = [];
+      const onSegment = vi.fn(({ signal, marks }) => new Promise<typeof known>((resolve) => pending.push({ signal, resolve, marks })));
+      const { rerender, unmount } = renderEditor({ src: "first.png", onSegment, autoSegment: true, defaultMarks: [keep] });
+      await wait(400);
+      expect(pending).toHaveLength(1);
+      fireEvent.click(screen.getByRole("button", { name: "Undo (Z)" })); // no history yet
+      const old = [...canvases];
+      rerender(<ClippingEditor src="second.png" onSegment={onSegment} autoSegment defaultMarks={[]} language="en" />);
+      expect(pending[0].signal.aborted).toBe(true);
+      expect(old.every((canvas) => canvas.width === 0 && canvas.height === 0)).toBe(true);
+      expect(screen.getByRole("button", { name: "Undo (Z)" })).toBeDisabled();
+      await wait(400);
+      expect(pending).toHaveLength(2);
+      expect(pending[1].marks).toEqual([]);
+      await act(async () => pending[0].resolve(known));
+      expect(screen.queryByText("Preview up to date")).not.toBeInTheDocument();
+      unmount();
+      expect(pending[1].signal.aborted).toBe(true);
+      expect(canvases.every((canvas) => canvas.width === 0 && canvas.height === 0)).toBe(true);
     });
 
     it("affiche le masque initial tout de suite et n'appelle pas onSegment tant que les traits ne changent pas", async () => {

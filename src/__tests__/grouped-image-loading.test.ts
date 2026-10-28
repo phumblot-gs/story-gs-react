@@ -93,6 +93,64 @@ describe("chunkItems", () => {
 });
 
 describe("GroupedImageLoader", () => {
+  it("ne retient pas les ressources des 1 000 pages précédentes", async () => {
+    const { scheduler, run } = manualScheduler();
+    let allocated = 0, released = 0;
+    const loader = new GroupedImageLoader({ scheduler, onChange: vi.fn(), preload: (src) => {
+      allocated++;
+      return { promise: Promise.resolve("loaded"), cancel: vi.fn(), image: {
+        src, onload: null, onerror: null, removeAttribute: () => { released++; },
+      } as unknown as HTMLImageElement };
+    } });
+    for (let page = 0; page < 1000; page++) {
+      loader.setItems(items(24, `page-${page}`), 6);
+      loader.setNear(1, true); loader.sync(); run(); await flush();
+      expect(loader.retainedImages).toBe(24);
+      expect(allocated - released).toBe(24);
+    }
+    loader.reset();
+    expect(loader.retainedImages).toBe(0);
+    expect(allocated).toBe(24000);
+    expect(released).toBe(allocated);
+  });
+
+  it("borne les ressources au fil du scroll, recharge une image évincée et vide une grille éloignée", async () => {
+    const { fake, run, loader } = setup({ count: 240 });
+    loader.setCacheOptions({ maxImages: 48, keepAroundRows: 0 });
+    let previous: number | null = null;
+    for (let key = 1; key <= 240; key += 24) {
+      if (previous !== null) loader.setNear(previous, false);
+      loader.setNear(key, true); loader.sync(); run();
+      fake.calls.forEach((call) => call.resolve("loaded"));
+      await flush(); run();
+      expect(loader.retainedImages).toBeLessThanOrEqual(48);
+      previous = key;
+    }
+    expect(loader.getState(1)?.pending).toBe(true);
+    const before = fake.calls.length;
+    loader.setNear(previous!, false); loader.setNear(1, true); loader.sync(); run();
+    expect(fake.calls.length).toBeGreaterThan(before);
+    fake.calls.forEach((call) => call.resolve("loaded")); await flush();
+    expect(loader.getState(1)?.pending).toBe(false);
+    loader.setNear(1, false); loader.sync();
+    expect(loader.retainedImages).toBe(0);
+  });
+
+  it("protège le bloc visible même si le budget est plus petit et libère les sources au retrait", async () => {
+    const released = vi.fn();
+    const { scheduler, run } = manualScheduler();
+    const loader = new GroupedImageLoader({ scheduler, imageCache: { maxImages: 1, keepAroundRows: 0 }, onChange: vi.fn(),
+      preload: (src) => ({ promise: Promise.resolve("loaded"), cancel: vi.fn(), image: {
+        src, onload: null, onerror: null, removeAttribute: released,
+      } as unknown as HTMLImageElement }),
+    });
+    loader.setItems(items(3), 6); loader.setNear(1, true); loader.sync(); run(); await flush();
+    expect(loader.retainedImages).toBe(3);
+    loader.setItems([], 6);
+    expect(loader.retainedImages).toBe(0);
+    expect(released).toHaveBeenCalledTimes(3);
+  });
+
   it("ne demande rien tant que le bloc n'approche pas de l'écran", async () => {
     const { fake, run, loader, states } = setup();
     run();

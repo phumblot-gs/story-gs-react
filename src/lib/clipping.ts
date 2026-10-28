@@ -117,7 +117,16 @@ const commit = (state: ClippingHistory, present: ClippingMark[]): ClippingHistor
   future: [],
 });
 
-export function clippingHistoryReducer(state: ClippingHistory, action: ClippingHistoryAction): ClippingHistory {
+/** Bounded undo/redo snapshots; current editing marks are never truncated. */
+export function clippingHistoryReducer(state: ClippingHistory, action: ClippingHistoryAction, maxEntries = 100): ClippingHistory {
+  const next = reduceClippingHistory(state, action);
+  const limit = Number.isFinite(maxEntries) ? Math.max(0, Math.floor(maxEntries)) : 100;
+  if (next.past.length + next.future.length <= limit) return next;
+  const past = limit ? next.past.slice(-limit) : [];
+  return { ...next, past, future: next.future.slice(0, Math.max(0, limit - past.length)) };
+}
+
+function reduceClippingHistory(state: ClippingHistory, action: ClippingHistoryAction): ClippingHistory {
   switch (action.type) {
     case "add":
       return action.mark.points.length === 0 && !HAS_NO_POINTS.includes(action.mark.tool) ? state : commit(state, [...state.present, action.mark]);

@@ -21,8 +21,14 @@ import type {
   ThumbnailFeatures,
 } from "./types";
 import { isEmptySlot } from "./types";
+import type { ContactSheetImageCache } from "@/lib/grouped-image-loading";
 
 export interface ContactSheetReferenceProps {
+  /** Grouped image cache per reference: 120 images, 4 protected surrounding rows by default.
+   * Nearby blocks may exceed the budget. Does not control the browser's own cache. */
+  imageCache?: ContactSheetImageCache;
+  /** Mount only viewport rows; disabled when onReorder is supplied or exports are separated. */
+  virtualized?: boolean;
   /** Reference data (`/reference` endpoint). */
   reference: ReferenceData;
   /**
@@ -142,6 +148,8 @@ export const ContactSheetReference: React.FC<ContactSheetReferenceProps> = ({
   thumbnailFeatures,
   bench,
   imageLoading,
+  imageCache,
+  virtualized,
   onReorder,
   className,
   language,
@@ -209,6 +217,8 @@ export const ContactSheetReference: React.FC<ContactSheetReferenceProps> = ({
       onExportHover={setHoveredExportId}
       bench={bench}
       imageLoading={imageLoading}
+      imageCache={imageCache}
+      virtualized={virtualized}
       language={language}
       translations={translations}
     />

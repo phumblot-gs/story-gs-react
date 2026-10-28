@@ -5,6 +5,37 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.38.0] - 2026-10-29
+
+### Ajouté
+
+- `ContactSheetThumbnails` : planche contact sans regroupement par référence, avec une grille continue, sélection
+  globale alignée sur les cases des vignettes, actions de barre et API de changements commune à `ContactSheetReference`.
+- `virtualized` sur les deux planches : montage des lignes visibles et de deux lignes de réserve de chaque côté.
+  Le rendu reste complet avec `onReorder` ou des exports séparés pour préserver le glisser-déposer.
+- `imageCache` : budget de 120 images par grille et quatre lignes protégées par défaut, configurable en chargement
+  groupé. Éviction des images éloignées les moins récemment utilisées et libération des images d'une grille entièrement
+  hors de la zone de préchargement. Les blocs proches restent protégés et peuvent dépasser le budget.
+- `useContactSheetPages` : chargement serveur avec cache de pages borné (3 pages de 60 emplacements par défaut),
+  annulation des demandes obsolètes, invalidation et rejet des réponses dépassant la taille de page. Documentation et
+  stories de pagination, sélection persistante, virtualisation et cache borné.
+- `ClippingEditor` : `historyLimit` (100 étapes par défaut) et `imageKey` pour réinitialiser une session lorsque l'URL
+  source est réutilisée pour une nouvelle image ou révision.
+
+### Corrigé
+
+- Les caches de callbacks et d'actions des vignettes démontées sont supprimés. La priorité des images visibles prend
+  en compte les cellules montées par la virtualisation et ignore les ancêtres qui ne défilent pas réellement.
+- `ClippingEditor` : changer de source démarre une nouvelle session et libère l'historique et les états de l'ancienne.
+  Les handlers et sources d'images, les canvas de lecture, d'aperçu, temporaires et des volets sont nettoyés ; les
+  calculs précédents sont annulés et leurs résultats tardifs ignorés. Les téléchargements obsolètes sont écartés.
+
+### Modifié
+
+- `ContactSheetThumbnails` utilise le chargement groupé par défaut. La révélation des images bénéficie d'un fondu de
+  150 ms, y compris en mode virtualisé, sans rejouer le fondu au remontage d'une image encore en cache et en respectant
+  la préférence de réduction des animations. Le chargement natif reste le défaut de `ContactSheetReference`.
+
 ## [1.37.1] - 2026-10-28
 
 ### Corrigé

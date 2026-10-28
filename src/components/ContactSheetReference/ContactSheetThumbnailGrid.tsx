@@ -18,7 +18,8 @@ import type {
 } from "./types";
 import { isEmptySlot } from "./types";
 import { useGroupedImageLoading } from "./useGroupedImageLoading";
-import type { GroupedImageItem } from "@/lib/grouped-image-loading";
+import type { GroupedImageItem, ContactSheetImageCache } from "@/lib/grouped-image-loading";
+import { useThumbnailWindow } from "./useThumbnailWindow";
 
 /**
  * Clé d'une cellule : l'id du média, ou la position pour un emplacement vide
@@ -34,6 +35,10 @@ export interface ContactSheetThumbnailGridProps {
   exports: ContactSheetExport[];
   /** Nombre de vignettes par ligne ; leur largeur s'adapte, l'interstice est fixe (15px). */
   thumbnailsPerRow: number;
+  /** Mount only viewport rows (+ two rows each side). Grouped layout only;
+   * disabled while onReorder is supplied to preserve native drag & drop. */
+  virtualized?: boolean;
+  imageCache?: ContactSheetImageCache;
   features?: ThumbnailFeatures;
   onThumbnailChange?: (change: ThumbnailChange) => void | Promise<void>;
   /**
@@ -104,6 +109,19 @@ interface DragState {
 }
 
 const DRAG_TYPE = "application/x-gs-contact-sheet-thumbnail";
+
+/** A cached image remounted by virtualization is already visible; only a new
+ * reveal (or a changed URL) should fade. This flag lives with the mounted cell,
+ * so no extra cache accumulates as the user scrolls. */
+const ContactSheetThumbnailView = React.memo(({ skipInitialFade, ...props }: ThumbnailProps & { skipInitialFade: boolean }) => {
+  const reveal = React.useRef({ src: props.src, animate: props.imagePending === true });
+  const changedSrc = props.src !== reveal.current.src;
+  React.useEffect(() => {
+    if (props.imagePending || props.src !== reveal.current.src) reveal.current = { src: props.src, animate: true };
+  }, [props.imagePending, props.src]);
+  return <Thumbnail {...props} imageFadeIn={props.imageFadeIn && (!skipInitialFade || reveal.current.animate || changedSrc)} />;
+});
+ContactSheetThumbnailView.displayName = "ContactSheetThumbnailView";
 
 const ALL_FEATURES: Required<ThumbnailFeatures> = {
   selection: true,
@@ -215,6 +233,8 @@ type DistributiveOmit<T, K extends PropertyKey> = T extends unknown ? Omit<T, K>
 export const ContactSheetThumbnailGrid: React.FC<ContactSheetThumbnailGridProps> = ({
   exports,
   thumbnailsPerRow,
+  virtualized = false,
+  imageCache,
   features,
   onThumbnailChange,
   onReorder,
@@ -256,6 +276,14 @@ export const ContactSheetThumbnailGrid: React.FC<ContactSheetThumbnailGridProps>
   const gap = metrics?.gap ?? 0;
   const cellWidth = metrics ? Math.floor((metrics.width - gap * (columns - 1)) / columns) : null;
   const thumbnailSize = cellWidth && cellWidth > 0 ? `${cellWidth}px` : "auto";
+  const cells = React.useMemo(
+    () => exports.flatMap((group) => group.thumbnails.map((thumb, index) => ({ group, thumb, index }))),
+    [exports],
+  );
+  const windowed = virtualized && exportsLayout === "grouped" && !reorderable;
+  const windowRange = useThumbnailWindow({
+    enabled: windowed, count: cells.length, columns, cellWidth, gap, containerRef: gridRef,
+  });
 
   // --- Cellules et rectangles ------------------------------------------------
   const cellRefs = React.useRef(new Map<CellKey, HTMLDivElement>());
@@ -435,6 +463,7 @@ export const ContactSheetThumbnailGrid: React.FC<ContactSheetThumbnailGridProps>
   const thumbsRef = React.useRef(new Map<string, ContactSheetThumbnail>());
   const handlersRef = React.useRef(new Map<string, ThumbnailHandlers>());
   const actionsRef = React.useRef(new Map<string, { signature: string; actions: ThumbnailAction[] }>());
+  const renderedThumbs = new Set<string>();
   const thumbId = (exportId: string | number, pictureId: number) => `${exportId}\u0000${pictureId}`;
 
   // Dernières données de chaque vignette, et ménage des vignettes disparues.
@@ -448,7 +477,7 @@ export const ContactSheetThumbnailGrid: React.FC<ContactSheetThumbnailGridProps>
   React.useEffect(() => {
     [handlersRef.current, actionsRef.current].forEach((cache) =>
       cache.forEach((_, id) => {
-        if (!thumbsRef.current.has(id)) cache.delete(id);
+        if (!renderedThumbs.has(id)) cache.delete(id);
       }),
     );
   });
@@ -513,6 +542,7 @@ export const ContactSheetThumbnailGrid: React.FC<ContactSheetThumbnailGridProps>
     enabled: imageLoading === "grouped",
     items: loadingItems,
     columns,
+    imageCache,
     containerRef: gridRef,
     getNode: (key) => cellRefs.current.get(key),
   });
@@ -527,10 +557,12 @@ export const ContactSheetThumbnailGrid: React.FC<ContactSheetThumbnailGridProps>
     const statusButtons =
       thumb.statusButtons ?? (hasStatusButtons && !enabled?.validation ? [] : undefined);
     const media = !isEmptySlot(thumb);
-    const handlers = media ? handlersFor(exportId, thumb.picture_id as number) : undefined;
+    if (media) renderedThumbs.add(thumbId(exportId, thumb.picture_id as number));
+    const handlers = media && enabled ? handlersFor(exportId, thumb.picture_id as number) : undefined;
     const image = media && thumb.src ? getImageState(thumb.picture_id as number, thumb.src) : undefined;
     return (
-      <Thumbnail
+      <ContactSheetThumbnailView
+        skipInitialFade={windowed}
         filenameTruncation="middle"
         bench={bench}
         language={language}
@@ -585,6 +617,7 @@ export const ContactSheetThumbnailGrid: React.FC<ContactSheetThumbnailGridProps>
         onMouseEnter={onExportHover ? () => onExportHover(group.id) : undefined}
         onMouseLeave={onExportHover ? () => onExportHover(null) : undefined}
         data-picture-id={empty ? undefined : thumb.picture_id}
+        data-contact-sheet-cell=""
         data-empty-view={empty ? thumb.view ?? "" : undefined}
         data-export-id={group.id}
         draggable={draggable}
@@ -639,6 +672,22 @@ export const ContactSheetThumbnailGrid: React.FC<ContactSheetThumbnailGridProps>
             </div>
           </div>
         ))}
+      </div>
+    );
+  }
+
+  if (windowed) {
+    return (
+      <div
+        ref={gridRef}
+        className="relative w-full gap-3"
+        style={{ height: windowRange.height, overflowAnchor: "none" }}
+        data-exports-layout="grouped"
+        data-virtualized="true"
+      >
+        <div className="absolute left-0 right-0 grid gap-3" style={{ ...gridStyle, top: windowRange.offset }}>
+          {cells.slice(windowRange.start, windowRange.end).map(({ group, thumb, index }) => renderCell(group, thumb, index))}
+        </div>
       </div>
     );
   }

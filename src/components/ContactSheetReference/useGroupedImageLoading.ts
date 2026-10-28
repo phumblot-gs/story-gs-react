@@ -6,6 +6,7 @@ import {
   type GroupedImageState,
   type ImageLoadScheduler,
   type PreloadImageFn,
+  type ContactSheetImageCache,
 } from "@/lib/grouped-image-loading";
 
 /** Zone de préchargement : l'écran (ou le conteneur qui défile) élargi de 300px en haut et en bas. */
@@ -26,14 +27,15 @@ export interface UseGroupedImageLoadingOptions {
   scheduler?: ImageLoadScheduler;
   preload?: PreloadImageFn;
   revealTimeoutMs?: number;
+  imageCache?: ContactSheetImageCache;
 }
 
 /** Premier ancêtre qui défile verticalement : racine de l'IntersectionObserver (sinon l'écran). */
-function findScrollRoot(node: HTMLElement | null): HTMLElement | null {
+export function findScrollRoot(node: HTMLElement | null): HTMLElement | null {
   if (typeof getComputedStyle === "undefined") return null;
   let parent = node?.parentElement ?? null;
   while (parent && parent !== document.body && parent !== document.documentElement) {
-    if (/(auto|scroll|overlay)/.test(getComputedStyle(parent).overflowY)) return parent;
+    if (/(auto|scroll|overlay)/.test(getComputedStyle(parent).overflowY) && parent.scrollHeight > parent.clientHeight) return parent;
     parent = parent.parentElement;
   }
   return null;
@@ -55,6 +57,7 @@ export function useGroupedImageLoading({
   scheduler,
   preload,
   revealTimeoutMs,
+  imageCache,
 }: UseGroupedImageLoadingOptions): (key: GroupedImageKey, src: string) => GroupedImageState | undefined {
   const [, rerender] = React.useReducer((n: number) => n + 1, 0);
   const mountedRef = React.useRef(false);
@@ -68,22 +71,23 @@ export function useGroupedImageLoading({
       scheduler,
       preload,
       revealTimeoutMs,
+      imageCache,
       onChange: () => {
         if (mountedRef.current) rerender();
       },
-      // Bloc à l'écran : de la première à la dernière de ses cellules (ordre d'affichage).
+      // Bloc à l'écran : au moins une de ses cellules montées est visible.
       isVisible: (keys) => {
         if (typeof IntersectionObserver === "undefined") return true;
-        const first = keys.length ? getNodeRef.current(keys[0]) : undefined;
-        const last = keys.length ? getNodeRef.current(keys[keys.length - 1]) : undefined;
-        if (!first || !last) return false;
-        const top = first.getBoundingClientRect().top;
-        const bottom = last.getBoundingClientRect().bottom;
         const root = rootRef.current;
-        const view = root
-          ? root.getBoundingClientRect()
-          : { top: 0, bottom: window.innerHeight || document.documentElement.clientHeight };
-        return top < view.bottom && bottom > view.top;
+        const viewportBottom = window.innerHeight || document.documentElement.clientHeight;
+        const bounds = root?.getBoundingClientRect();
+        const top = Math.max(0, bounds?.top ?? 0);
+        const bottom = Math.min(viewportBottom, bounds?.bottom ?? viewportBottom);
+        // Une fenêtre virtualisée peut ne monter qu'une partie du bloc.
+        return keys.some((key) => {
+          const rect = getNodeRef.current(key)?.getBoundingClientRect();
+          return !!rect && rect.top < bottom && rect.bottom > top;
+        });
       },
     });
   }
@@ -99,6 +103,7 @@ export function useGroupedImageLoading({
     const loader = loaderRef.current;
     if (!enabled || !loader) return;
     mountedRef.current = true;
+    loader.setCacheOptions(imageCache);
     const supported = typeof IntersectionObserver !== "undefined";
     if (!supported) {
       loader.setAllNear(true);

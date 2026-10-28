@@ -13,6 +13,32 @@ An interactive background-removal editor, modeled on [Clipping Magic](https://cl
 
 ---
 
+## Long editing sessions and memory
+
+Changing `src` starts a new editing session: previous marks, undo/redo history,
+viewport, drafts and initial mask are discarded. Pass the next image's
+`defaultMarks` and `initialMask` together with its URL. `imageKey` can start a new
+session when the URL is reused for another image or revision. Changing header
+accessories on the same image preserves the session.
+
+`historyLimit` bounds undo/redo snapshots per image (default **100**, `0` disables
+undo/redo). The current marks are never truncated: they are the editing document.
+Source image handlers are detached and loading is cancelled on session teardown;
+source-readback, preview, temporary overlay and pane canvas buffers are released
+when no longer used. Segmentation requests receive an aborted `signal` when
+superseded or unmounted; late results cannot update the next image. Object URLs
+created by the download action are revoked.
+
+The host must also honor `signal` in `onSegment`, release worker/WASM/GPU resources
+it owns, revoke any object URLs it created, and avoid retaining every original,
+mask, export Blob or engine in a global cache. Hiding the editor with CSS does not
+end its session: unmount it when closing. `onClose` only notifies the host.
+
+Memory remains proportional to the **current image resolution** and its current
+marks, rather than the number of images previously edited. A large image can
+still require several full-resolution buffers. These lifecycle guarantees are
+covered by automated tests; they are not an all-day browser memory benchmark.
+
 ## Quick start
 
 ```tsx

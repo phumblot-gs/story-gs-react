@@ -8,6 +8,18 @@ import { createColorClippingSegmenter } from "@/lib/clipping-color-segmenter";
 const mark = (id: string, x: number, tool: ClippingMark["tool"] = "keep", size = 10): ClippingMark => ({ id, tool, size, points: [{ x, y: 0 }] });
 
 describe("historique des traits", () => {
+  it("borne les instantanés sans supprimer les marques de l'image courante", () => {
+    let h = createClippingHistory();
+    for (let i = 0; i < 1000; i++) h = clippingHistoryReducer(h, { type: "add", mark: mark(String(i), i) }, 10);
+    expect(h.present).toHaveLength(1000);
+    expect(h.past).toHaveLength(10);
+    for (let i = 0; i < 20; i++) h = clippingHistoryReducer(h, { type: "undo" }, 10);
+    expect(h.present).toHaveLength(990);
+    expect(h.future).toHaveLength(10);
+    h = clippingHistoryReducer(h, { type: "add", mark: mark("next", 1) }, 0);
+    expect(h.past).toHaveLength(0);
+    expect(h.future).toHaveLength(0);
+  });
   it("ajoute, annule et rétablit", () => {
     let h = createClippingHistory();
     h = clippingHistoryReducer(h, { type: "add", mark: mark("a", 0) });

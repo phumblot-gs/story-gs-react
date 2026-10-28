@@ -29,6 +29,21 @@ attributes, export badges and thumbnails.
 The component is **controlled**: it keeps no copy of its data. Any new \`reference\` or \`exports\`
 value (status, tags, order…) is rendered immediately — update your state, pass it back, done.
 
+### Memory during long sessions
+
+In grouped loading mode, \`imageCache={{ maxImages: 120, keepAroundRows: 4 }}\`
+is the default per-grid budget. Nearby blocks may exceed it; a grid entirely
+outside the preload zone releases its images. Evicted images reload on return.
+\`virtualized\` mounts only viewport rows and two surrounding rows (grouped exports,
+without \`onReorder\`). Callback caches retain only mounted thumbnails.
+
+To also bound server data, use the exported \`useContactSheetPages\` hook with
+\`pageSize: 60\`, \`maxCachedPages: 3\`, a stable \`loadPage({ page, pageSize, signal })\`
+returning \`{ exports, totalCount }\`, and a \`cacheKey\` reflecting filters/sort.
+Pass its current-page exports to the component; call \`reload()\` after mutations.
+Paginate reference objects in the parent too. Data retained by the parent cannot
+be freed by this component. Native loading mode uses the browser's image cache.
+
 ### Basic usage
 
 Pass one reference, the attributes to display, and its exports with their thumbnails. This is the
@@ -874,4 +889,17 @@ export const GroupedImageLoading: Story = {
     };
     return <Sheet />;
   },
+};
+
+/** Read-only window with a bounded image cache: old images are evicted while scrolling. */
+export const VirtualizedImageCache: Story = {
+  render: () => (
+    <ContactSheetReference
+      reference={{ reference_id: 100, ref: "CACHE-DEMO" }}
+      exports={[{ id: "site", thumbnails: makeThumbnails("cache", 240) }]}
+      imageLoading="grouped"
+      virtualized
+      imageCache={{ maxImages: 48, keepAroundRows: 2 }}
+    />
+  ),
 };

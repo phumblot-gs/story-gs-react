@@ -33,31 +33,50 @@ export interface PreloadImageOptions {
 
 export type PreloadImageFn = (src: string, options?: PreloadImageOptions) => ImagePreload;
 
+function releaseImage(image?: HTMLImageElement) {
+  if (!image) return;
+  image.onload = null; image.onerror = null;
+  if (image.removeAttribute) image.removeAttribute("src");
+  else image.src = "";
+}
+
+/** Per-grid budget. Nearby blocks may exceed it to avoid evicting visible images. */
+export interface ContactSheetImageCache {
+  /** Retained images, default 120. */
+  maxImages?: number;
+  /** Extra protected rows around the preload zone, default 4. */
+  keepAroundRows?: number;
+}
+
+export const DEFAULT_IMAGE_CACHE_SIZE = 120;
+
 /**
  * Charge puis décode une image. Une erreur réseau (404…) ou une image
  * indécodable (`decode()` rejeté) rend `error`. Sans `Image` (SSR), rend
  * `loaded` tout de suite : la vignette se chargera elle-même.
  */
 export const preloadImage: PreloadImageFn = (src, { highPriority = false } = {}) => {
+  const image = typeof Image === "undefined" ? undefined : new Image();
   let settle: (result: ImagePreloadResult) => void = () => {};
   let settled = false;
   const promise = new Promise<ImagePreloadResult>((resolve) => {
     settle = (result) => {
       if (settled) return;
       settled = true;
+      if (image) { image.onload = null; image.onerror = null; }
       resolve(result);
     };
   });
-  if (typeof Image === "undefined") {
+  if (!image) {
     settle("loaded");
     return { promise, cancel: () => {} };
   }
-  const image = new Image() as HTMLImageElement & { fetchPriority?: string };
+  const target = image;
   image.decoding = "async";
   if (highPriority) image.fetchPriority = "high";
   image.onload = () => {
-    if (typeof image.decode !== "function") return settle("loaded");
-    image.decode().then(
+    if (typeof target.decode !== "function") return settle("loaded");
+    target.decode().then(
       () => settle("loaded"),
       () => settle("error"),
     );
@@ -69,10 +88,10 @@ export const preloadImage: PreloadImageFn = (src, { highPriority = false } = {})
     image,
     cancel: () => {
       if (settled) return;
-      image.onload = null;
-      image.onerror = null;
+      target.onload = null;
+      target.onerror = null;
       // Vider src interrompt la requête en cours.
-      image.src = "";
+      releaseImage(target);
       settle("cancelled");
     },
   };
@@ -211,6 +230,7 @@ export const GROUPED_REVEAL_TIMEOUT_MS = 2000;
 type EntryStatus = "idle" | "queued" | "loading" | "loaded" | "error";
 
 interface Entry {
+  used: number;
   src: string;
   status: EntryStatus;
   /** Ce qui est affiché ; `null` : en attente. */
@@ -236,6 +256,7 @@ export interface GroupedImageLoaderOptions {
   revealTimeoutMs?: number;
   /** Les vignettes de ces clés sont-elles à l'écran ? (défaut : oui) */
   isVisible?: (keys: GroupedImageKey[]) => boolean;
+  imageCache?: ContactSheetImageCache;
 }
 
 export class GroupedImageLoader {
@@ -249,11 +270,54 @@ export class GroupedImageLoader {
   private readonly scheduler: ImageLoadScheduler;
   private readonly preload: PreloadImageFn;
   private readonly revealTimeoutMs: number;
+  private clock = 0;
+  private columns = 6;
+  private cache: ContactSheetImageCache;
 
   constructor(private readonly options: GroupedImageLoaderOptions) {
     this.scheduler = options.scheduler ?? sharedImageLoadScheduler;
     this.preload = options.preload ?? preloadImage;
     this.revealTimeoutMs = options.revealTimeoutMs ?? GROUPED_REVEAL_TIMEOUT_MS;
+    this.cache = options.imageCache ?? {};
+  }
+
+  setCacheOptions(options: ContactSheetImageCache = {}): void { this.cache = options; }
+
+  /** Diagnostic: resources retained by this loader, not browser-wide RAM. */
+  get retainedImages(): number {
+    return [...this.entries.values()].filter((entry) => entry.image || entry.preload || entry.display).length;
+  }
+
+  private trimCache(): void {
+    if (this.allNear) return; // No visibility information: keep displayed images intact.
+    const budget = this.cache.maxImages ?? DEFAULT_IMAGE_CACHE_SIZE;
+    const limit = this.near.size === 0 ? 0 : Number.isFinite(budget) ? Math.max(1, Math.floor(budget)) : DEFAULT_IMAGE_CACHE_SIZE;
+    let retained = this.retainedImages;
+    if (retained <= limit) return;
+    const rows = this.cache.keepAroundRows ?? 4;
+    const padding = (Number.isFinite(rows) ? Math.max(0, Math.floor(rows)) : 4) * this.columns;
+    const keys = [...this.entries.keys()];
+    const protectedKeys = new Set<GroupedImageKey>();
+    keys.forEach((key, index) => {
+      if (!this.allNear && !this.near.has(key)) return;
+      for (let i = Math.max(0, index - padding); i <= Math.min(keys.length - 1, index + padding); i++) protectedKeys.add(keys[i]);
+    });
+    // An entire nearby block is protected: never reveal half a block by eviction.
+    this.chunks.forEach((chunk, index) => {
+      if (this.isChunkNear(index)) chunk.forEach((key) => protectedKeys.add(key));
+    });
+    const candidates = [...this.entries].filter(([key, entry]) =>
+      !protectedKeys.has(key) && (entry.image || entry.preload || entry.display),
+    ).sort((a, b) => a[1].used - b[1].used);
+    let changed = false;
+    for (const [key, entry] of candidates) {
+      if (retained <= limit) break;
+      entry.display = null;
+      this.detach(key, entry);
+      entry.status = "idle";
+      retained--; changed = true;
+    }
+    if (changed) this.options.onChange();
   }
 
   /** État d'affichage d'une image ; `undefined` si la clé est inconnue. */
@@ -271,12 +335,13 @@ export class GroupedImageLoader {
    * l'ancienne reste affichée jusqu'à ce que la nouvelle soit prête.
    */
   setItems(items: readonly GroupedImageItem[], columns: number): void {
+    this.columns = Math.max(1, Math.round(columns));
     const next = new Map<GroupedImageKey, Entry>();
     for (const { key, src } of items) {
       if (next.has(key)) continue;
       let entry = this.entries.get(key);
       if (!entry) {
-        entry = { src, status: "idle", display: null };
+        entry = { src, status: "idle", display: null, used: ++this.clock };
       } else if (entry.src !== src) {
         this.detach(key, entry);
         entry.src = src;
@@ -291,6 +356,7 @@ export class GroupedImageLoader {
       if (!next.has(key)) this.detach(key, entry);
     });
     this.entries = next;
+    this.near.forEach((key) => { if (!next.has(key)) this.near.delete(key); });
     this.chunks = chunkItems(
       [...next.keys()],
       columns,
@@ -302,7 +368,11 @@ export class GroupedImageLoader {
 
   /** Une vignette entre dans la zone de préchargement, ou en sort. */
   setNear(key: GroupedImageKey, near: boolean): void {
-    if (near) this.near.add(key);
+    if (near) {
+      this.near.add(key);
+      const entry = this.entries.get(key);
+      if (entry) entry.used = ++this.clock;
+    }
     else this.near.delete(key);
   }
 
@@ -341,6 +411,7 @@ export class GroupedImageLoader {
       const idle = chunk.filter((key) => this.entries.get(key)?.status === "idle");
       if (idle.length > 0) this.createJob(idle);
     });
+    this.trimCache();
   }
 
   private createJob(keys: GroupedImageKey[]): void {
@@ -364,12 +435,14 @@ export class GroupedImageLoader {
         if (!entry || entry.job !== job) return;
         if (entry.status !== "loaded" && entry.status !== "error") return;
         entry.display = { src: entry.src, error: entry.status === "error" };
+        entry.used = ++this.clock;
         entry.job = undefined;
         job.keys.delete(key);
         changed = true;
       });
       if (job.keys.size === 0) finish();
       if (changed) this.options.onChange();
+      this.trimCache();
     };
     // Une image terminée : seule après le délai, sinon avec tout le bloc quand c'est la dernière.
     const settle = (key: GroupedImageKey) => {
@@ -447,7 +520,10 @@ export class GroupedImageLoader {
     const preload = entry.preload;
     entry.preload = undefined;
     preload?.cancel();
+    releaseImage(preload?.image);
     job?.forget(key);
+    releaseImage(entry.image);
+    entry.image = undefined;
   }
 
   /** Abandonne tout (démontage) ; l'objet reste utilisable via `setItems`. */
@@ -456,7 +532,7 @@ export class GroupedImageLoader {
     this.jobs.clear();
     this.timers.forEach((timer) => clearTimeout(timer));
     this.timers.clear();
-    this.entries.forEach((entry) => entry.preload?.cancel());
+    this.entries.forEach((entry) => { entry.preload?.cancel(); releaseImage(entry.image); });
     this.entries = new Map();
     this.chunks = [];
     this.chunkOf = new Map();

@@ -1018,6 +1018,7 @@ const ThumbnailBase: React.FC<ThumbnailProps> = ({
           {/* En attente (chargement groupé) : pas d'<img>, le cadre garde sa taille. */}
           {!hasError && src && !imagePending && (
             <img
+              key={src}
               src={src}
               alt={alt}
               onError={onImageError}
@@ -1025,7 +1026,7 @@ const ThumbnailBase: React.FC<ThumbnailProps> = ({
               className={cn(
                 "object-contain block mx-auto max-w-full border-[0.25px] border-grey-light",
                 config.isAuto && "w-full",
-                imageFadeIn && "animate-in fade-in-0 duration-150 motion-reduce:animate-none"
+                imageFadeIn && "animate-in fade-in-0 duration-150 ease-out motion-reduce:animate-none"
               )}
               style={{
                 maxHeight: config.imageMaxHeight,

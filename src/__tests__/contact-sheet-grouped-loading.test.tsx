@@ -1,8 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { act, cleanup, render, waitFor } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
 
 import { ContactSheetReference, type ContactSheetExport } from "@/components/ContactSheetReference";
+import { ContactSheetThumbnails } from "@/components/ContactSheetThumbnails";
 
 /**
  * Chargement groupé (`imageLoading="grouped"`) : `Image` et
@@ -91,6 +92,58 @@ const exportsOf = (srcs: string[]): ContactSheetExport[] => [
 ];
 
 const thumbnailImages = (container: HTMLElement) => container.querySelectorAll("[data-picture-id] img");
+
+describe("ContactSheetThumbnails — chargement groupé par défaut", () => {
+  it("adoucit une nouvelle révélation virtualisée sans rejouer le fondu des images encore en cache", async () => {
+    vi.stubGlobal("IntersectionObserver", undefined);
+    let scrollTop = 0;
+    vi.spyOn(HTMLElement.prototype, "clientWidth", "get").mockReturnValue(1000);
+    vi.spyOn(Element.prototype, "getBoundingClientRect").mockImplementation(function (this: Element) {
+      return new DOMRect(0, this.hasAttribute("data-contact-sheet-cell") ? 0 : -scrollTop, 1000, this.hasAttribute("data-contact-sheet-cell") ? 400 : 6000);
+    });
+    try {
+      const exports = exportsOf(Array.from({ length: 25 }, (_, i) => `/fade-${i}.jpg`));
+      const { container } = render(<ContactSheetThumbnails exports={exports} thumbnailsPerRow={5} virtualized />);
+      await waitFor(() => expect(requested()).toHaveLength(25));
+      for (let i = 0; i < 24; i++) await finish(`/fade-${i}.jpg`);
+      const firstImage = () => container.querySelector('[data-picture-id="1"] img');
+      expect(firstImage()).toHaveClass("fade-in-0", "duration-150", "ease-out", "motion-reduce:animate-none");
+      await waitFor(() => expect(requested()).toHaveLength(25));
+      await finish("/fade-24.jpg");
+      scrollTop = 4000; fireEvent.scroll(window);
+      await waitFor(() => expect(firstImage()).not.toBeInTheDocument());
+      scrollTop = 0; fireEvent.scroll(window);
+      await waitFor(() => expect(firstImage()).toBeInTheDocument());
+      expect(firstImage()).not.toHaveClass("fade-in-0");
+    } finally { vi.restoreAllMocks(); }
+  });
+
+  it("révèle le bloc après décodage de toutes ses images", async () => {
+    vi.stubGlobal("IntersectionObserver", undefined);
+    const { container } = render(<ContactSheetThumbnails exports={exportsOf(["/a.jpg", "/b.jpg"])} />);
+    expect(thumbnailImages(container)).toHaveLength(0);
+    await waitFor(() => expect(requested()).toHaveLength(2));
+    await finish("/b.jpg");
+    expect(thumbnailImages(container)).toHaveLength(0);
+    await finish("/a.jpg");
+    expect(thumbnailImages(container)).toHaveLength(2);
+  });
+
+  it("priorise un bloc visible même si la fin du bloc n'est pas montée", async () => {
+    vi.stubGlobal("IntersectionObserver", FakeIntersectionObserver);
+    vi.spyOn(HTMLElement.prototype, "clientWidth", "get").mockReturnValue(1000);
+    vi.spyOn(Element.prototype, "getBoundingClientRect").mockImplementation(function (this: Element) {
+      return new DOMRect(0, 0, 1000, this.hasAttribute("data-contact-sheet-cell") ? 400 : 60000);
+    });
+    try {
+      const { container } = render(<ContactSheetThumbnails virtualized thumbnailsPerRow={5} exports={exportsOf(Array.from({ length: 100 }, (_, i) => `/i${i}.jpg`))} />);
+      expect(container.querySelectorAll("[data-contact-sheet-cell]").length).toBeLessThan(24);
+      FakeIntersectionObserver.instances[0].intersect(true);
+      await waitFor(() => expect(requested().length).toBeGreaterThan(0));
+      expect(FakeImage.created.filter((image) => image.src).every((image) => image.fetchPriority === "high")).toBe(true);
+    } finally { vi.restoreAllMocks(); }
+  });
+});
 
 describe("ContactSheetReference — imageLoading=\"grouped\"", () => {
   it("révèle les images ensemble ; une 404 ne retarde pas les autres et affiche le fichier cassé", async () => {

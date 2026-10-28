@@ -24,6 +24,11 @@ export type { ClippingMark, ClippingMask, ClippingNode, ClippingPoint, ClippingS
 export interface ClippingEditorProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange' | 'children'> {
   /** Image à détourer. Une URL d'un autre domaine doit autoriser CORS (le détourage lit ses pixels). */
   src: string;
+  /** Changing src starts a fresh editing session. Use imageKey to also reset
+   * when reusing the same URL for another image/revision. */
+  imageKey?: string | number;
+  /** Undo/redo snapshots retained per image. Default 100; 0 disables history. */
+  historyLimit?: number;
   /** Nom du fichier affiché dans le header et base du nom exporté. */
   fileName?: string;
   /** Contenu hôte affiché à côté du titre, sans réinitialiser l'éditeur. */
@@ -129,12 +134,16 @@ const TOOL_ICONS: Record<ClippingTool, React.ReactNode> = {
 };
 const TOOL_KEYS: Record<ClippingTool, string> = { keep: '␣', remove: '␣', hair: 'V', eraser: 'X', pencil: 'S', pencilAdd: 'A', pencilSub: 'D', scalpel: 'S', pan: 'C' };
 
-export function ClippingEditor({
+export function ClippingEditor(props: ClippingEditorProps) {
+  return <ClippingEditorSession key={JSON.stringify([props.src, props.imageKey])} {...props} />;
+}
+
+function ClippingEditorSession({
   src, fileName, onSegment, defaultMarks, onMarksChange, onDownload, onClose, defaultTool = 'keep', defaultBrushSize = 20,
-  defaultView = 'split', defaultSettingsOpen = true, onSettingsOpenChange, defaultFileInfoOpen = false, onFileInfoOpenChange, autoSegment = false, initialMask, titleAccessory, primaryAction, language, translations, className, onKeyDown, ...props
+  defaultView = 'split', defaultSettingsOpen = true, onSettingsOpenChange, defaultFileInfoOpen = false, onFileInfoOpenChange, autoSegment = false, initialMask, titleAccessory, primaryAction, language, translations, className, onKeyDown, imageKey: _imageKey, historyLimit = 100, ...props
 }: ClippingEditorProps) {
   const { t } = useTranslationSafe(translations, language);
-  const [history, dispatch] = useReducer(clippingHistoryReducer, defaultMarks, createClippingHistory);
+  const [history, dispatch] = useReducer((state: ReturnType<typeof createClippingHistory>, action: Parameters<typeof clippingHistoryReducer>[1]) => clippingHistoryReducer(state, action, historyLimit), defaultMarks, createClippingHistory);
   const [tool, setTool] = useState<ClippingTool>(defaultTool === 'scalpel' ? 'pencil' : defaultTool);
   const [feather, setFeather] = useState(0);
   const [settingsOpen, setSettingsOpen] = useState(defaultSettingsOpen);
@@ -204,8 +213,8 @@ export function ClippingEditor({
     img.crossOrigin = 'anonymous';
     img.onload = () => {
       if (cancelled) return;
+      const canvas = document.createElement('canvas');
       try {
-        const canvas = document.createElement('canvas');
         canvas.width = img.naturalWidth; canvas.height = img.naturalHeight;
         const ctx = canvas.getContext('2d', { willReadFrequently: true });
         if (!ctx) throw new Error('2d context unavailable');
@@ -213,11 +222,17 @@ export function ClippingEditor({
         setSource({ img, pixels: ctx.getImageData(0, 0, canvas.width, canvas.height) });
       } catch {
         setLoadFailed(true);
+      } finally {
+        canvas.width = 0; canvas.height = 0;
+        img.onload = null; img.onerror = null;
       }
     };
     img.onerror = () => { if (!cancelled) setLoadFailed(true); };
     img.src = src;
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true; img.onload = null; img.onerror = null;
+      if (img.removeAttribute) img.removeAttribute('src'); else img.src = '';
+    };
   }, [src]);
 
   // --- Détourage : une demande par état de traits, la précédente est annulée -
@@ -249,15 +264,17 @@ export function ClippingEditor({
   }, [history.present]);
 
   // --- Image détourée (RGBA × masque) ---------------------------------------
-  const cutout = useMemo(() => {
-    if (!source) return null;
+  const [cutout, setCutout] = useState<HTMLCanvasElement | null>(null);
+  useLayoutEffect(() => {
+    if (!source) { setCutout(null); return; }
     const canvas = document.createElement('canvas');
     canvas.width = source.pixels.width; canvas.height = source.pixels.height;
     const ctx = canvas.getContext('2d');
-    if (!ctx) return null;
+    if (!ctx) { canvas.width = 0; canvas.height = 0; setCutout(null); return; }
     const rgba = mask ? applyAlphaMask(source.pixels.data, mask) : source.pixels.data;
     ctx.putImageData(new ImageData(new Uint8ClampedArray(rgba), canvas.width, canvas.height), 0, 0);
-    return canvas;
+    setCutout(canvas);
+    return () => { canvas.width = 0; canvas.height = 0; };
   }, [source, mask]);
 
   useEffect(() => { if (!isPencilTool(tool)) scalpel.reset(); }, [tool]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -304,7 +321,7 @@ export function ClippingEditor({
       const color = MARK_COLORS[mark.tool];
       if (color && (mark.tool === 'keep' || mark.tool === 'remove' || mark.tool === 'hair')) paintOn(layer, mark.points, mark.size, color, 0.55);
     }
-    if (off) { ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1; ctx.drawImage(off, 0, 0); ctx.restore(); }
+    if (off) { ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1; ctx.drawImage(off, 0, 0); ctx.restore(); off.width = 0; off.height = 0; }
     const selectionOutline = (mark: ClippingMark & { nodes: NonNullable<ClippingMark['nodes']> }) => {
       if (!(mark.tool === 'scalpel' || liveIds.has(mark.id) || !history.present.some((m) => m.id === mark.id))) return;
       // Contour du tracé : courbe lissée, contour noir puis trait de couleur (cyan, vert pour Pencil+, rouge pour Pencil−).
@@ -347,7 +364,9 @@ export function ClippingEditor({
           dctx.globalCompositeOperation = 'destination-out'; dctx.drawImage(sel, 0, 0);
           ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.drawImage(dim, 0, 0); ctx.restore();
         }
+        dim.width = 0; dim.height = 0;
       }
+      sel.width = 0; sel.height = 0;
     }
     if (isPencilTool(effectiveTool)) scalpel.drawOverlay(ctx, vp, size, hover);
     if (hover && !panning && !shiftHeld && tool !== 'pan' && !isPencilTool(tool)) {
@@ -358,7 +377,7 @@ export function ClippingEditor({
     }
   };
   const drawPreview = (ctx: CanvasRenderingContext2D, size: PaneSize) => {
-    if (!source || !cutout) return;
+    if (!source || !cutout || !cutout.width || !cutout.height) return;
     const vp = resolveViewport(size);
     ctx.save();
     applyViewTransform(ctx, size, vp);
@@ -477,19 +496,20 @@ export function ClippingEditor({
   };
 
   const download = async () => {
-    if (!cutout) return;
+    if (!cutout || !cutout.width || !cutout.height) return;
     setDownloadFailed(false);
     try {
       const blob = await new Promise<Blob>((resolve, reject) => cutout.toBlob((b) => (b ? resolve(b) : reject(new Error('toBlob'))), 'image/png'));
+      if (!mounted.current) return;
       const name = `${(fileName ?? 'image').replace(/\.[^./\\]+$/, '')}-clipped.png`;
       if (onDownload) await onDownload(blob, name);
       else {
         const url = URL.createObjectURL(blob);
-        const a = document.createElement('a'); a.href = url; a.download = name; a.click();
-        setTimeout(() => URL.revokeObjectURL(url), 0);
+        try { const a = document.createElement('a'); a.href = url; a.download = name; a.click(); }
+        finally { setTimeout(() => URL.revokeObjectURL(url), 0); }
       }
     } catch {
-      setDownloadFailed(true);
+      if (mounted.current) setDownloadFailed(true);
     }
   };
 
@@ -644,6 +664,10 @@ function Pane({ title, ariaLabel, action, cursor, checker, draw, sizeRef, onMeas
   const canvas = useRef<HTMLCanvasElement>(null);
   const [size, setSize] = useState<PaneSize>({ width: 1, height: 1 });
   const wheelRef = useRef(onWheel);
+  useEffect(() => {
+    const el = canvas.current;
+    return () => { if (el) { el.width = 0; el.height = 0; } };
+  }, []);
   wheelRef.current = onWheel;
 
   useLayoutEffect(() => {

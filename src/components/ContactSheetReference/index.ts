@@ -12,6 +12,7 @@ export { ReferenceEditModal } from "./ReferenceEditModal";
 export type { ReferenceEditModalProps } from "./ReferenceEditModal";
 
 export { isEmptySlot } from "./types";
+export type { ContactSheetImageCache } from "@/lib/grouped-image-loading";
 
 export type {
   ReferenceData,
