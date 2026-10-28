@@ -140,6 +140,55 @@ export const Sizes: Story = {
   ),
 };
 
+const INITIALS = ["BK", "MJ", "AL", "WQ"];
+
+/**
+ * Initials are trimmed to the cap height (`gs-text-trim`), so they sit at the
+ * optical centre of the circle. Without it, Avenir Next reserves room for
+ * descenders and capitals render about 0.1em above the centre.
+ */
+export const InitialsCentering: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Text initials are wrapped in a `gs-text-trim` span (`text-box: trim-both cap alphabetic`) so capitals are centred on the cap height rather than on the font's full line box, which leaves them about 0.1em too high. The last row uses a custom 28px avatar with 13px text. Elements passed as children (icons, custom spans) are not wrapped.",
+      },
+    },
+  },
+  render: () => (
+    <VStack gap={4}>
+      {(["small", "medium", "large"] as const).map((size) => (
+        <HStack key={size} gap={3} align="center">
+          {INITIALS.map((initials) => (
+            <Avatar key={initials} size={size}>
+              <AvatarFallback size={size} className="bg-grey-light text-black">
+                {initials}
+              </AvatarFallback>
+            </Avatar>
+          ))}
+          <span className="text-xs text-grey-stronger">{size}</span>
+        </HStack>
+      ))}
+      <HStack gap={3} align="center">
+        {INITIALS.map((initials) => (
+          <Avatar key={initials} className="h-[28px] w-[28px]">
+            <AvatarFallback className="bg-grey-light text-black text-[13px]">{initials}</AvatarFallback>
+          </Avatar>
+        ))}
+        <span className="text-xs text-grey-stronger">custom 28px / 13px</span>
+      </HStack>
+    </VStack>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const initials = await canvas.findAllByText("BK");
+    for (const el of initials) {
+      await expect(el).toHaveClass("gs-text-trim");
+    }
+  },
+};
+
 export const WithButton: Story = {
   args: {
     size: "medium",
