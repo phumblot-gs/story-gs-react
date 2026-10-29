@@ -19,7 +19,7 @@ import type {
 import { isEmptySlot } from "./types";
 import { useGroupedImageLoading } from "./useGroupedImageLoading";
 import type { GroupedImageItem, ContactSheetImageCache } from "@/lib/grouped-image-loading";
-import { useThumbnailWindow } from "./useThumbnailWindow";
+import { getCellOffset, useThumbnailWindow } from "./useThumbnailWindow";
 
 /**
  * Clé d'une cellule : l'id du média, ou la position pour un emplacement vide
@@ -35,9 +35,18 @@ export interface ContactSheetThumbnailGridProps {
   exports: ContactSheetExport[];
   /** Nombre de vignettes par ligne ; leur largeur s'adapte, l'interstice est fixe (15px). */
   thumbnailsPerRow: number;
-  /** Mount only viewport rows (+ two rows each side). Grouped layout only;
-   * disabled while onReorder is supplied to preserve native drag & drop. */
-  virtualized?: boolean;
+  /**
+   * Mount only viewport rows (+ two rows each side), in both layouts. In
+   * "separated", every export header stays mounted and each export grid is
+   * windowed on its own. Drag & drop keeps working: the dragged thumbnail stays
+   * mounted while it is scrolled out of the window, and the drop position of
+   * unmounted thumbnails is computed from the (uniform) row height.
+   *
+   * "auto" (default): only above `VIRTUALIZATION_THRESHOLD` thumbnails. `false`
+   * mounts everything (browser find, printing, scrolling to a picture by its DOM
+   * node, tests without layout).
+   */
+  virtualized?: boolean | "auto";
   imageCache?: ContactSheetImageCache;
   features?: ThumbnailFeatures;
   onThumbnailChange?: (change: ThumbnailChange) => void | Promise<void>;
@@ -110,6 +119,14 @@ interface DragState {
 
 const DRAG_TYPE = "application/x-gs-contact-sheet-thumbnail";
 
+/**
+ * `virtualized="auto"` : nombre de vignettes (tous exports de la grille) au-delà
+ * duquel la grille est fenêtrée. En dessous, tout est monté : quelques lignes ne
+ * justifient pas l'écoute du défilement, surtout quand une page empile de
+ * nombreuses références.
+ */
+export const VIRTUALIZATION_THRESHOLD = 100;
+
 /** A cached image remounted by virtualization is already visible; only a new
  * reveal (or a changed URL) should fade. This flag lives with the mounted cell,
  * so no extra cache accumulates as the user scrolls. */
@@ -132,6 +149,9 @@ const ALL_FEATURES: Required<ThumbnailFeatures> = {
   validation: true,
   open: true,
 };
+
+/** Rectangle qu'aucun pointeur ne peut atteindre (cellule introuvable). */
+const OUTSIDE_RECT: CellRect = { left: -Infinity, top: -Infinity, right: -Infinity, bottom: -Infinity };
 
 function toCellRect(rect: DOMRect): CellRect {
   return { left: rect.left, top: rect.top, right: rect.right, bottom: rect.bottom };
@@ -233,7 +253,7 @@ type DistributiveOmit<T, K extends PropertyKey> = T extends unknown ? Omit<T, K>
 export const ContactSheetThumbnailGrid: React.FC<ContactSheetThumbnailGridProps> = ({
   exports,
   thumbnailsPerRow,
-  virtualized = false,
+  virtualized = "auto",
   imageCache,
   features,
   onThumbnailChange,
@@ -249,6 +269,8 @@ export const ContactSheetThumbnailGrid: React.FC<ContactSheetThumbnailGridProps>
   const columns = Math.max(1, Math.round(thumbnailsPerRow));
   const enabled = onThumbnailChange ? { ...ALL_FEATURES, ...features } : null;
   const reorderable = !!onReorder;
+  const thumbnailCount = exports.reduce((count, group) => count + group.thumbnails.length, 0);
+  const windowed = virtualized === true || (virtualized === "auto" && thumbnailCount > VIRTUALIZATION_THRESHOLD);
 
   // --- Largeur des vignettes -------------------------------------------------
   // Le Thumbnail reçoit une largeur en px : sa zone image est alors carrée,
@@ -257,7 +279,7 @@ export const ContactSheetThumbnailGrid: React.FC<ContactSheetThumbnailGridProps>
   // on le relit dans le style calculé plutôt que de le dupliquer ici.
   // Avant la première mesure, "auto" remplit la cellule. En mode "separated",
   // on mesure la grille du premier export : toutes ont la même largeur.
-  const gridRef = React.useRef<HTMLDivElement>(null);
+  const gridRef = React.useRef<HTMLDivElement | null>(null);
   const [metrics, setMetrics] = React.useState<{ width: number; gap: number } | null>(null);
   React.useLayoutEffect(() => {
     const grid = gridRef.current;
@@ -272,7 +294,7 @@ export const ContactSheetThumbnailGrid: React.FC<ContactSheetThumbnailGridProps>
     const observer = new ResizeObserver(measure);
     observer.observe(grid);
     return () => observer.disconnect();
-  }, [exportsLayout]);
+  }, [exportsLayout, windowed]);
   const gap = metrics?.gap ?? 0;
   const cellWidth = metrics ? Math.floor((metrics.width - gap * (columns - 1)) / columns) : null;
   const thumbnailSize = cellWidth && cellWidth > 0 ? `${cellWidth}px` : "auto";
@@ -280,9 +302,31 @@ export const ContactSheetThumbnailGrid: React.FC<ContactSheetThumbnailGridProps>
     () => exports.flatMap((group) => group.thumbnails.map((thumb, index) => ({ group, thumb, index }))),
     [exports],
   );
-  const windowed = virtualized && exportsLayout === "grouped" && !reorderable;
-  const windowRange = useThumbnailWindow({
-    enabled: windowed, count: cells.length, columns, cellWidth, gap, containerRef: gridRef,
+  // Fenêtrage : une grille en mode "grouped", une par export en "separated".
+  // `segmentOf` situe une vignette (export, index) dans sa grille.
+  const separated = exportsLayout === "separated";
+  const segmentCounts = separated ? exports.map((group) => group.thumbnails.length) : [cells.length];
+  const segmentsRef = React.useRef<(HTMLElement | null)[]>([]);
+  segmentsRef.current.length = segmentCounts.length;
+  const segmentRef = (i: number) => (node: HTMLDivElement | null) => {
+    segmentsRef.current[i] = node;
+    if (i === 0) gridRef.current = node;
+  };
+  const exportStarts = React.useMemo(() => {
+    const starts = new Map<string | number, { segment: number; offset: number }>();
+    let offset = 0;
+    exports.forEach((group, i) => {
+      starts.set(group.id, separated ? { segment: i, offset: 0 } : { segment: 0, offset });
+      offset += group.thumbnails.length;
+    });
+    return starts;
+  }, [exports, separated]);
+  const segmentOf = (exportId: string | number, index: number) => {
+    const start = exportStarts.get(exportId);
+    return start ? { segment: start.segment, index: start.offset + index } : null;
+  };
+  const windowState = useThumbnailWindow({
+    enabled: windowed, counts: segmentCounts, columns, cellWidth, gap, containersRef: segmentsRef,
   });
 
   // --- Cellules et rectangles ------------------------------------------------
@@ -290,11 +334,28 @@ export const ContactSheetThumbnailGrid: React.FC<ContactSheetThumbnailGridProps>
   const exportsRef = React.useRef(exports);
   exportsRef.current = exports;
 
+  // Rectangles des vignettes d'un export, pour la cible de drop. Une vignette
+  // montée est mesurée ; une vignette hors fenêtre (non montée) est placée par
+  // calcul : toutes les lignes ont la même hauteur, sa position se déduit de son
+  // index et du haut de sa grille. Le pointeur étant toujours au-dessus de
+  // cellules montées, la précision est celle de la mesure.
+  const geometryRef = React.useRef({ windowed, columns, gap, step: windowState.step, rowHeight: windowState.rowHeight, segmentOf });
+  geometryRef.current = { windowed, columns, gap, step: windowState.step, rowHeight: windowState.rowHeight, segmentOf };
   const getRects = React.useCallback((exportId: string | number): CellRect[] => {
     const group = exportsRef.current.find((e) => e.id === exportId);
+    const geometry = geometryRef.current;
     return (group?.thumbnails ?? []).map((thumb, index) => {
       const node = cellRefs.current.get(cellKey(thumb, exportId, index));
-      return node ? toCellRect(node.getBoundingClientRect()) : { left: 0, top: 0, right: 0, bottom: 0 };
+      if (node) return toCellRect(node.getBoundingClientRect());
+      const position = geometry.windowed ? geometry.segmentOf(exportId, index) : null;
+      const grid = position ? segmentsRef.current[position.segment] : null;
+      if (!position || !grid) return OUTSIDE_RECT;
+      const bounds = grid.getBoundingClientRect();
+      const { columns: cols, gap: g, step, rowHeight } = geometry;
+      const width = (bounds.width - g * (cols - 1)) / cols;
+      const { column, top } = getCellOffset(position.index, cols, step);
+      const left = bounds.left + column * (width + g);
+      return { left, top: bounds.top + top, right: left + width, bottom: bounds.top + top + rowHeight };
     });
   }, []);
 
@@ -568,6 +629,13 @@ export const ContactSheetThumbnailGrid: React.FC<ContactSheetThumbnailGridProps>
         language={language}
         translations={translations}
         {...thumb}
+        // La racine du Thumbnail a une hauteur `-webkit-fill-available`, que
+        // seul Safari applique (Chrome et Firefox l'ignorent) : les vignettes
+        // y faisaient plus de trois fois leur hauteur (859px au lieu de 256px),
+        // et en grille fenêtrée la hauteur mesurée des lignes s'emballait jusqu'à
+        // la limite de WebKit (33 millions de px), la fenêtre ne suivant plus le
+        // défilement. `h-auto` donne à Safari le rendu de Chrome et Firefox.
+        className={cn(thumb.className, "h-auto")}
         actions={media ? actionsFor(exportId, thumb.picture_id as number, thumb.actions) : thumb.actions}
         statusButtons={statusButtons}
         size={thumbnailSize}
@@ -591,7 +659,12 @@ export const ContactSheetThumbnailGrid: React.FC<ContactSheetThumbnailGridProps>
     );
   };
 
-  const renderCell = (group: ContactSheetExport, thumb: ContactSheetThumbnail, index: number) => {
+  const renderCell = (
+    group: ContactSheetExport,
+    thumb: ContactSheetThumbnail,
+    index: number,
+    style?: React.CSSProperties,
+  ) => {
     const sameExport = drag?.exportId === group.id;
     const isSource = sameExport && drag.indexes.includes(index);
     const target = sameExport ? drag.target : null;
@@ -620,6 +693,7 @@ export const ContactSheetThumbnailGrid: React.FC<ContactSheetThumbnailGridProps>
         data-contact-sheet-cell=""
         data-empty-view={empty ? thumb.view ?? "" : undefined}
         data-export-id={group.id}
+        style={style}
         draggable={draggable}
         onDragStart={draggable ? (e) => handleDragStart(e, group.id, thumb.picture_id as number, index) : undefined}
         onDragEnd={reorderable ? endDrag : undefined}
@@ -654,22 +728,81 @@ export const ContactSheetThumbnailGrid: React.FC<ContactSheetThumbnailGridProps>
 
   const gridStyle = { gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` };
   const dropHandlers = {
+    // Safari : un dragenter non annulé remet l'opération du drag à « none »
+    // jusqu'au dragover suivant, et il arrive qu'aucun ne suive avant le
+    // lâcher (grille fenêtrée) : le drop était annulé, ou visait la cible
+    // précédente. dragenter calcule donc la cible comme dragover.
+    onDragEnter: reorderable ? handleDragOver : undefined,
     onDragOver: reorderable ? handleDragOver : undefined,
     onDrop: reorderable ? handleDrop : undefined,
+  };
+
+  // Grille fenêtrée : seules les lignes proches de l'écran sont montées, chacune
+  // dans sa propre grille CSS placée en absolu, dans un conteneur à la hauteur
+  // de toutes les lignes. La vignette saisie reste montée tant que dure le drag,
+  // même hors fenêtre : si elle était démontée, le navigateur perdrait la fin du
+  // drag (dragend). Sa ligne est alors rendue avec elle seule. Les lignes sont
+  // clées par leur numéro et rendues dans l'ordre : quand la fenêtre se déplace,
+  // la ligne et le nœud DOM de la vignette saisie restent en place.
+  const renderWindowedGrid = (
+    segment: number,
+    segmentCells: { group: ContactSheetExport; thumb: ContactSheetThumbnail; index: number }[],
+    props?: Record<string, unknown>,
+  ) => {
+    const range = windowState.ranges[segment] ?? { start: 0, end: 0, height: 0 };
+    const pinned = drag ? segmentOf(drag.exportId, drag.from) : null;
+    const indexes: number[] = [];
+    if (pinned?.segment === segment && pinned.index < range.start) indexes.push(pinned.index);
+    for (let i = range.start; i < range.end; i++) indexes.push(i);
+    if (pinned?.segment === segment && pinned.index >= range.end && pinned.index < segmentCells.length) {
+      indexes.push(pinned.index);
+    }
+    const rows = new Map<number, number[]>();
+    indexes.forEach((i) => {
+      const { row } = getCellOffset(i, columns, windowState.step);
+      rows.set(row, [...(rows.get(row) ?? []), i]);
+    });
+    return (
+      <div
+        ref={segmentRef(segment)}
+        className="relative w-full gap-3"
+        style={{ height: range.height, overflowAnchor: "none" }}
+        data-virtualized="true"
+        {...props}
+      >
+        {Array.from(rows, ([row, rowIndexes]) => (
+          <div
+            key={row}
+            className="absolute left-0 right-0 grid gap-3"
+            style={{ ...gridStyle, top: row * windowState.step }}
+            data-window-row={row}
+          >
+            {rowIndexes.map((i) => {
+              const { group, thumb, index } = segmentCells[i];
+              return renderCell(group, thumb, index, { gridColumnStart: (i % columns) + 1 });
+            })}
+          </div>
+        ))}
+      </div>
+    );
   };
 
   // Exports séparés : une section par export (en-tête puis grille), empilées.
   // Le drag & drop reste géré ici, à l'échelle de toutes les sections : les
   // autres exports s'estompent pendant un drag comme en mode groupé.
-  if (exportsLayout === "separated") {
+  if (separated) {
     return (
       <div className="flex flex-col gap-4 w-full" data-exports-layout="separated" {...dropHandlers}>
         {exports.map((group, i) => (
           <div key={group.id} className="flex flex-col gap-2 min-w-0" data-export-section={group.id}>
             {renderExportHeader?.(group)}
-            <div ref={i === 0 ? gridRef : undefined} className="grid w-full gap-3" style={gridStyle}>
-              {group.thumbnails.map((thumb, index) => renderCell(group, thumb, index))}
-            </div>
+            {windowed ? (
+              renderWindowedGrid(i, group.thumbnails.map((thumb, index) => ({ group, thumb, index })))
+            ) : (
+              <div ref={segmentRef(i)} className="grid w-full gap-3" style={gridStyle}>
+                {group.thumbnails.map((thumb, index) => renderCell(group, thumb, index))}
+              </div>
+            )}
           </div>
         ))}
       </div>
@@ -677,24 +810,12 @@ export const ContactSheetThumbnailGrid: React.FC<ContactSheetThumbnailGridProps>
   }
 
   if (windowed) {
-    return (
-      <div
-        ref={gridRef}
-        className="relative w-full gap-3"
-        style={{ height: windowRange.height, overflowAnchor: "none" }}
-        data-exports-layout="grouped"
-        data-virtualized="true"
-      >
-        <div className="absolute left-0 right-0 grid gap-3" style={{ ...gridStyle, top: windowRange.offset }}>
-          {cells.slice(windowRange.start, windowRange.end).map(({ group, thumb, index }) => renderCell(group, thumb, index))}
-        </div>
-      </div>
-    );
+    return renderWindowedGrid(0, cells, { "data-exports-layout": "grouped", ...dropHandlers });
   }
 
   return (
     <div
-      ref={gridRef}
+      ref={segmentRef(0)}
       className="grid w-full gap-3"
       style={gridStyle}
       data-exports-layout="grouped"

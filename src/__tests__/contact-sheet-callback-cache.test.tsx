@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render, waitFor } from "@testing-library/react";
-import { ContactSheetThumbnails } from "@/components/ContactSheetThumbnails";
+import { ContactSheetPicture } from "@/components/ContactSheetPicture";
 import type { ThumbnailProps } from "@/components/Thumbnail/Thumbnail";
 
 const callbacks = vi.hoisted(() => new Map<number, ThumbnailProps["onSelectionChange"]>());
@@ -21,10 +21,10 @@ describe("contact sheet callback cache", () => {
     });
     const exports = [{ id: "site", thumbnails: Array.from({ length: 500 }, (_, i) => ({ picture_id: i + 1, src: `/p${i}.jpg` })) }];
     const props = { exports, onThumbnailChange: vi.fn(), virtualized: true, imageLoading: "native" as const };
-    const { container, rerender } = render(<ContactSheetThumbnails {...props} />);
+    const { container, rerender } = render(<ContactSheetPicture {...props} />);
     const first = callbacks.get(1);
     expect(first).toBeTypeOf("function");
-    rerender(<ContactSheetThumbnails {...props} />);
+    rerender(<ContactSheetPicture {...props} />);
     expect(callbacks.get(1)).toBe(first);
     scrollTop = 4200; fireEvent.scroll(window);
     await waitFor(() => expect(container.querySelector('[data-picture-id="1"]')).toBeNull());

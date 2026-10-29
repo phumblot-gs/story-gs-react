@@ -86,7 +86,7 @@ export const Default: Story = {
   render: (args) => (
     <Avatar {...args}>
       <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-      <AvatarFallback size={args.size}>CN</AvatarFallback>
+      <AvatarFallback>CN</AvatarFallback>
     </Avatar>
   ),
 };
@@ -99,7 +99,7 @@ export const Fallback: Story = {
     <Avatar {...args}>
       {/* Image invalide sans requête réseau : le fallback s'affiche. */}
       <AvatarImage src="data:image/png;base64," alt="@user" />
-      <AvatarFallback size={args.size}>AB</AvatarFallback>
+      <AvatarFallback>AB</AvatarFallback>
     </Avatar>
   ),
 };
@@ -117,21 +117,21 @@ export const Sizes: Story = {
         <VStack gap={2} align="center">
           <Avatar size="small">
             <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-            <AvatarFallback size="small">CN</AvatarFallback>
+            <AvatarFallback>CN</AvatarFallback>
           </Avatar>
           <span className="text-xs text-grey-stronger">Small (20px)</span>
         </VStack>
         <VStack gap={2} align="center">
           <Avatar size="medium">
             <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-            <AvatarFallback size="medium">CN</AvatarFallback>
+            <AvatarFallback>CN</AvatarFallback>
           </Avatar>
           <span className="text-xs text-grey-stronger">Medium (30px)</span>
         </VStack>
         <VStack gap={2} align="center">
           <Avatar size="large">
             <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-            <AvatarFallback size="large">CN</AvatarFallback>
+            <AvatarFallback>CN</AvatarFallback>
           </Avatar>
           <span className="text-xs text-grey-stronger">Large (50px)</span>
         </VStack>
@@ -143,16 +143,16 @@ export const Sizes: Story = {
 const INITIALS = ["BK", "MJ", "AL", "WQ"];
 
 /**
- * Initials are trimmed to the cap height (`gs-text-trim`), so they sit at the
- * optical centre of the circle. Without it, Avenir Next reserves room for
- * descenders and capitals render about 0.1em above the centre.
+ * Initials are sized at 40% of the avatar's diameter (9px minimum) and trimmed
+ * to the cap height (`gs-text-trim`), so they scale with any size and sit at
+ * the optical centre of the circle.
  */
 export const InitialsCentering: Story = {
   parameters: {
     docs: {
       description: {
         story:
-          "Text initials are wrapped in a `gs-text-trim` span (`text-box: trim-both cap alphabetic`) so capitals are centred on the cap height rather than on the font's full line box, which leaves them about 0.1em too high. The last row uses a custom 28px avatar with 13px text. Elements passed as children (icons, custom spans) are not wrapped.",
+          "Initials scale with the avatar: 40% of its diameter, 9px minimum (20px → 9px, 30px → 12px, 50px → 20px), including custom sizes set with `className`. A `text-*` class on `AvatarFallback` still overrides it. The text is wrapped in a `gs-text-trim` span (`text-box: trim-both cap alphabetic`) so capitals are centred on the cap height rather than on the font's full line box, which leaves them about 0.1em too high. Elements passed as children (icons, custom spans) are not wrapped.",
       },
     },
   },
@@ -162,7 +162,7 @@ export const InitialsCentering: Story = {
         <HStack key={size} gap={3} align="center">
           {INITIALS.map((initials) => (
             <Avatar key={initials} size={size}>
-              <AvatarFallback size={size} className="bg-grey-light text-black">
+              <AvatarFallback className="bg-grey-light text-black">
                 {initials}
               </AvatarFallback>
             </Avatar>
@@ -170,22 +170,27 @@ export const InitialsCentering: Story = {
           <span className="text-xs text-grey-stronger">{size}</span>
         </HStack>
       ))}
-      <HStack gap={3} align="center">
-        {INITIALS.map((initials) => (
-          <Avatar key={initials} className="h-[28px] w-[28px]">
-            <AvatarFallback className="bg-grey-light text-black text-[13px]">{initials}</AvatarFallback>
-          </Avatar>
-        ))}
-        <span className="text-xs text-grey-stronger">custom 28px / 13px</span>
-      </HStack>
+      {[28, 40, 80].map((px) => (
+        <HStack key={px} gap={3} align="center">
+          {INITIALS.map((initials) => (
+            <Avatar key={initials} style={{ width: px, height: px }}>
+              <AvatarFallback className="bg-grey-light text-black">{initials}</AvatarFallback>
+            </Avatar>
+          ))}
+          <span className="text-xs text-grey-stronger">custom {px}px</span>
+        </HStack>
+      ))}
     </VStack>
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const initials = await canvas.findAllByText("BK");
-    for (const el of initials) {
-      await expect(el).toHaveClass("gs-text-trim");
-    }
+    // small, medium, large, then the 28 / 40 / 80px custom avatars.
+    const expectedSizes = [9, 12, 20, 11.2, 16, 32];
+    initials.forEach((el, i) => {
+      expect(el).toHaveClass("gs-text-trim");
+      expect(parseFloat(getComputedStyle(el).fontSize)).toBeCloseTo(expectedSizes[i], 1);
+    });
   },
 };
 
@@ -239,7 +244,7 @@ export const WithButton: Story = {
             >
               <Avatar size="small">
                 <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-                <AvatarFallback size="small">CN</AvatarFallback>
+                <AvatarFallback>CN</AvatarFallback>
               </Avatar>
             </Button>
           </div>
@@ -253,7 +258,7 @@ export const WithButton: Story = {
             >
               <Avatar size="medium">
                 <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-                <AvatarFallback size="medium">CN</AvatarFallback>
+                <AvatarFallback>CN</AvatarFallback>
               </Avatar>
             </Button>
           </div>
@@ -267,7 +272,7 @@ export const WithButton: Story = {
             >
               <Avatar size="large">
                 <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-                <AvatarFallback size="large">CN</AvatarFallback>
+                <AvatarFallback>CN</AvatarFallback>
               </Avatar>
             </Button>
           </div>
@@ -324,7 +329,7 @@ export const WithDifferentVariants: Story = {
           <Button variant="ghost" className="p-0 w-6 h-6">
             <Avatar size="medium">
               <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-              <AvatarFallback size="medium">CN</AvatarFallback>
+              <AvatarFallback>CN</AvatarFallback>
             </Avatar>
           </Button>
           <span className="text-xs text-grey-stronger">Ghost</span>
@@ -333,7 +338,7 @@ export const WithDifferentVariants: Story = {
           <Button variant="secondary" className="p-0 w-6 h-6">
             <Avatar size="medium">
               <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-              <AvatarFallback size="medium">CN</AvatarFallback>
+              <AvatarFallback>CN</AvatarFallback>
             </Avatar>
           </Button>
           <span className="text-xs text-grey-stronger">Secondary</span>
@@ -342,7 +347,7 @@ export const WithDifferentVariants: Story = {
           <Button variant="outline" className="p-0 w-6 h-6">
             <Avatar size="medium">
               <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-              <AvatarFallback size="medium">CN</AvatarFallback>
+              <AvatarFallback>CN</AvatarFallback>
             </Avatar>
           </Button>
           <span className="text-xs text-grey-stronger">Outline</span>

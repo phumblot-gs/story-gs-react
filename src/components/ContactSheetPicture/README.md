@@ -1,4 +1,4 @@
-# ContactSheetThumbnails
+# ContactSheetPicture
 
 Planche contact sans regroupement par référence. Les exports s'enchaînent dans une
 seule grille ; les données et événements sont ceux de `ContactSheetReference`.
@@ -30,7 +30,7 @@ Le parent conserve les données et applique les changements.
 ## Montage selon le scroll
 
 ```tsx
-<ContactSheetThumbnails
+<ContactSheetPicture
   exports={exports}
   thumbnailsPerRow={6}
   virtualized
@@ -38,8 +38,9 @@ Le parent conserve les données et applique les changements.
 />
 ```
 
-`virtualized` (désactivé par défaut) monte uniquement les lignes visibles et deux
-lignes supplémentaires de chaque côté. Les autres lignes sont remplacées par un
+`virtualized` monte uniquement les lignes visibles et deux lignes supplémentaires
+de chaque côté. Par défaut (`"auto"`), il ne s'active qu'au-delà de **100
+vignettes** dans la grille ; `true` le force, `false` le désactive. Les autres lignes sont remplacées par un
 espace de même hauteur ; leurs composants `Thumbnail` et leurs cellules DOM ne
 sont pas montés. La hauteur des lignes est mesurée, puis réajustée au changement
 de largeur. Le scroll de la fenêtre et celui d'un conteneur sont pris en charge.
@@ -48,17 +49,28 @@ Les données, la sélection avec Maj et le cache de chargement restent au niveau
 la grille. Revenir sur une image déjà décodée ne relance pas son fondu d'apparition.
 Les contrôles démontés perdent leur état local (par exemple un menu ouvert).
 
-Avec `onReorder`, la virtualisation est **désactivée automatiquement** pour
-conserver les cibles et l'aperçu du glisser-déposer natif. Préférer alors une
-pagination bornant le nombre de vignettes par page. `ContactSheetReference`
-conserve son comportement par défaut : montage complet et chargement natif.
+Le glisser-déposer (`onReorder`) fonctionne avec `virtualized`. La vignette saisie
+reste montée pendant tout le drag, même si on fait défiler loin d'elle : sans
+cela, le navigateur perdrait la fin du drag. La cible de dépôt est mesurée sur les
+vignettes montées (le pointeur est toujours au-dessus d'elles) ; les autres sont
+placées par calcul, toutes les lignes ayant la même hauteur. Dans
+`ContactSheetReference`, la virtualisation s'applique aussi à
+`exportsLayout="separated"` : les en-têtes d'export restent montés et chaque grille
+d'export est fenêtrée séparément. La règle `"auto"` est la même pour
+`ContactSheetReference` (qui garde par ailleurs le chargement natif par défaut).
+
+Passer `virtualized={false}` quand toutes les vignettes doivent être dans la page :
+recherche du navigateur (Ctrl+F) et impression, défilement vers une image par son
+nœud DOM (`scrollIntoView` sur `[data-picture-id=…]`), état local à conserver hors
+de l'écran (menu ouvert, commentaire en cours), tests sans moteur de rendu (jsdom),
+où seules les premières lignes sont montées.
 
 ## Mémoire et cache borné (les deux composants)
 
 En mode `imageLoading="grouped"`, `imageCache` limite les images conservées :
 
 ```tsx
-<ContactSheetThumbnails
+<ContactSheetPicture
   exports={exports}
   virtualized
   imageCache={{ maxImages: 120, keepAroundRows: 4 }}
@@ -121,7 +133,7 @@ comme départage en cas d'égalité.
 ```tsx
 import * as React from "react";
 import {
-  ContactSheetThumbnails, Pagination, useContactSheetPages, usePaginatedSelection,
+  ContactSheetPicture, Pagination, useContactSheetPages, usePaginatedSelection,
   type ContactSheetPageRequest,
 } from "@gs/gs-components-library";
 
@@ -148,7 +160,7 @@ function PaginatedContactSheet({ filters }: { filters: string }) {
     <div aria-busy={data.loading}>
       {data.error && <p role="alert">{data.error.message}</p>}
       {data.loading ? <p>Chargement…</p> : !data.error && (
-        <ContactSheetThumbnails
+        <ContactSheetPicture
           key={page}
           exports={pageExports}
           virtualized

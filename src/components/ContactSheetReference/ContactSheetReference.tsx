@@ -27,8 +27,12 @@ export interface ContactSheetReferenceProps {
   /** Grouped image cache per reference: 120 images, 4 protected surrounding rows by default.
    * Nearby blocks may exceed the budget. Does not control the browser's own cache. */
   imageCache?: ContactSheetImageCache;
-  /** Mount only viewport rows; disabled when onReorder is supplied or exports are separated. */
-  virtualized?: boolean;
+  /** Mount only viewport rows (+ two rows each side), with or without onReorder,
+   * in both exports layouts ("separated": headers stay mounted, each export grid
+   * is windowed on its own). Default "auto": only above 100 thumbnails. `false`
+   * mounts everything (browser find, printing, scrolling to a picture's DOM node,
+   * tests without layout). */
+  virtualized?: boolean | "auto";
   /** Reference data (`/reference` endpoint). */
   reference: ReferenceData;
   /**
