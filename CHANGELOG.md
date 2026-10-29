@@ -5,6 +5,20 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.39.1] - 2026-10-30
+
+### Corrigé
+
+- `ContactSheetReference` et `ContactSheetPicture` virtualisées (plus de 100 vignettes) : un défilement rapide
+  pouvait figer l'application sur une page blanche (« Maximum update depth exceeded », erreur React #185). Une
+  vignette dont l'image était chargée mesurait 2 px de plus qu'une vignette en attente (les bordures du cadre
+  s'ajoutaient à l'image), et la grille, qui mesure la hauteur de ses lignes, oscillait entre les deux valeurs.
+- `Thumbnail` en taille fixe (`small`, `large` ou une taille comme `"239px"`) : le cadre de l'image a exactement
+  cette hauteur, bordures comprises, que l'image soit en attente, en chargement, affichée, en erreur ou absente (vue
+  vide). L'image tient dans le cadre (2 px de moins qu'avant). La taille `auto` ne change pas.
+- Grille virtualisée : à largeur de cellule égale, la hauteur de ligne mesurée ne fait plus que croître, ce qui
+  empêche toute oscillation de ce type.
+
 ## [1.39.0] - 2026-10-29
 
 ### Modifié

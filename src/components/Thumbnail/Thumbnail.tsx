@@ -935,7 +935,11 @@ const ThumbnailBase: React.FC<ThumbnailProps> = ({
               : isLoading || (imagePending && !hasError)
               ? placeholderMinHeight
               : config.imageMinHeight,
-            ...(config.isAuto ? { height: "stretch" } : {}),
+            // Taille fixe : le cadre a exactement cette hauteur, bordures comprises, que l'image soit en attente,
+            // en chargement, affichée, en erreur ou absente (vue vide) : l'image et les placeholders tiennent dans le
+            // cadre. Sinon une image chargée ajoutait les 2 px des bordures, et une grille virtualisée qui mesure ses
+            // lignes oscillait jusqu'à la boucle de rendu (React #185).
+            ...(config.isAuto ? { height: "stretch" } : config.imageMinHeight ? { height: config.imageMinHeight } : {}),
             ...(viewportBgColor && !isEmptyView ? { backgroundColor: viewportBgColor } : {}),
           }}
         >
@@ -1029,15 +1033,15 @@ const ThumbnailBase: React.FC<ThumbnailProps> = ({
                 imageFadeIn && "animate-in fade-in-0 duration-150 ease-out motion-reduce:animate-none"
               )}
               style={{
-                maxHeight: config.imageMaxHeight,
+                maxHeight: config.isAuto ? config.imageMaxHeight : "100%",
                 backgroundColor: imageBgColor,
               }}
             />
           )}
           {hasError && src && (
             <div
-              className="w-full flex items-center justify-center bg-grey-middle"
-              style={{ minHeight: placeholderMinHeight }}
+              className="w-full self-stretch flex items-center justify-center bg-grey-middle"
+              style={{ minHeight: config.isAuto ? placeholderMinHeight : undefined }}
               data-image-error=""
             >
               <Icon name="BrokenFile" size={20} className="text-white" />
@@ -1045,8 +1049,8 @@ const ThumbnailBase: React.FC<ThumbnailProps> = ({
           )}
           {(!picture_id || picture_id === -1) && view && (
             <div
-              className="flex items-center justify-center w-full"
-              style={{ minHeight: placeholderMinHeight }}
+              className="flex items-center justify-center w-full self-stretch"
+              style={{ minHeight: config.isAuto ? placeholderMinHeight : undefined }}
             >
               <Icon name="EmptyFile" size={30} className="text-white" />
             </div>
