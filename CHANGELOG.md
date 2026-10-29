@@ -5,6 +5,41 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.39.0] - 2026-10-29
+
+### Modifié
+
+- `ContactSheetThumbnails` est renommé `ContactSheetPicture` (et `ContactSheetThumbnailsProps` en
+  `ContactSheetPictureProps`). Les anciens noms restent exportés comme alias dépréciés ; la story passe à
+  `Components/ContactSheetPicture`.
+- `ContactSheetReference` et `ContactSheetPicture` : `virtualized` vaut maintenant `"auto"` par défaut. La grille
+  n'est fenêtrée qu'au-delà de 100 vignettes ; en dessous, rien ne change. `true` force la virtualisation, `false`
+  monte toutes les vignettes. **À vérifier dans les applications** : au-delà de 100 vignettes, les vignettes hors
+  écran ne sont plus dans le DOM (recherche Ctrl+F, impression, `scrollIntoView` sur `[data-picture-id=…]`, état
+  local d'un menu ouvert, tests jsdom qui cherchent une vignette lointaine). Passer `virtualized={false}` dans ces
+  cas.
+- `AvatarFallback` : les initiales font 40 % du diamètre de l'Avatar (9px minimum), tailles personnalisées
+  comprises : 20px → 9px, 30px → 12px, 50px → 20px (avant : 10px, 9px et 11px, le `medium` plus petit que le
+  `small`). Un `text-*` passé en `className` reste prioritaire. La prop `size` de `AvatarFallback` est dépréciée
+  et sans effet. Story `InitialsCentering`.
+
+### Ajouté
+
+- Virtualisation avec le glisser-déposer (`onReorder`) et en `exportsLayout="separated"`. En `separated`, les
+  en-têtes d'export restent montés et chaque grille d'export est fenêtrée séparément. La vignette saisie reste
+  montée pendant tout le drag, même hors de la fenêtre ; la cible de dépôt est mesurée sur les vignettes montées
+  et calculée pour les autres (lignes de hauteur identique). Story `VirtualizedReorder`.
+
+### Corrigé
+
+- Safari : avec `virtualized`, la page atteignait 33 millions de px de haut et la fenêtre ne suivait plus le
+  défilement (planche vide en bas). En cause, la hauteur `-webkit-fill-available` de la racine du `Thumbnail`,
+  que seul Safari applique.
+- Safari : dans toutes les grilles de planche contact, les vignettes faisaient 859px de haut au lieu de 256px
+  (même cause). Elles ont maintenant la hauteur de Chrome et Firefox.
+- Safari : avec la grille fenêtrée, un drop pouvait être annulé ou viser la cible précédente ; `dragenter`
+  calcule maintenant la cible comme `dragover`.
+
 ## [1.38.0] - 2026-10-29
 
 ### Ajouté
