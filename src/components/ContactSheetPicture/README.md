@@ -1,4 +1,4 @@
-# ContactSheetThumbnails
+# ContactSheetPicture
 
 Planche contact sans regroupement par référence. Les exports s'enchaînent dans une
 seule grille ; les données et événements sont ceux de `ContactSheetReference`.
@@ -30,7 +30,7 @@ Le parent conserve les données et applique les changements.
 ## Montage selon le scroll
 
 ```tsx
-<ContactSheetThumbnails
+<ContactSheetPicture
   exports={exports}
   thumbnailsPerRow={6}
   virtualized
@@ -58,7 +58,7 @@ conserve son comportement par défaut : montage complet et chargement natif.
 En mode `imageLoading="grouped"`, `imageCache` limite les images conservées :
 
 ```tsx
-<ContactSheetThumbnails
+<ContactSheetPicture
   exports={exports}
   virtualized
   imageCache={{ maxImages: 120, keepAroundRows: 4 }}
@@ -121,7 +121,7 @@ comme départage en cas d'égalité.
 ```tsx
 import * as React from "react";
 import {
-  ContactSheetThumbnails, Pagination, useContactSheetPages, usePaginatedSelection,
+  ContactSheetPicture, Pagination, useContactSheetPages, usePaginatedSelection,
   type ContactSheetPageRequest,
 } from "@gs/gs-components-library";
 
@@ -148,7 +148,7 @@ function PaginatedContactSheet({ filters }: { filters: string }) {
     <div aria-busy={data.loading}>
       {data.error && <p role="alert">{data.error.message}</p>}
       {data.loading ? <p>Chargement…</p> : !data.error && (
-        <ContactSheetThumbnails
+        <ContactSheetPicture
           key={page}
           exports={pageExports}
           virtualized

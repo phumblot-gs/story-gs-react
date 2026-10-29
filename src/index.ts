@@ -751,11 +751,11 @@ export type {
   ViewIndicatorProps,
 } from "./components/Thumbnail";
 
-export { ContactSheetThumbnails } from "./components/ContactSheetThumbnails";
+export { ContactSheetPicture, ContactSheetThumbnails } from "./components/ContactSheetPicture";
 export { useContactSheetPages } from "./hooks/useContactSheetPages";
 export type { ContactSheetPage, ContactSheetPageRequest, UseContactSheetPagesOptions } from "./hooks/useContactSheetPages";
 export type { ContactSheetImageCache } from "./lib/grouped-image-loading";
-export type { ContactSheetThumbnailsProps } from "./components/ContactSheetThumbnails";
+export type { ContactSheetPictureProps, ContactSheetThumbnailsProps } from "./components/ContactSheetPicture";
 
 // Export ContactSheetReference component
 export {

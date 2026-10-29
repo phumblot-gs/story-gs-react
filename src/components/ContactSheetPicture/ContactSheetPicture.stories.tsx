@@ -1,6 +1,6 @@
 import * as React from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { ContactSheetThumbnails, type ContactSheetThumbnailsProps } from ".";
+import { ContactSheetPicture, type ContactSheetPictureProps } from ".";
 import type { ContactSheetExport, ThumbnailChange } from "@/components/ContactSheetReference";
 import { MediaStatus } from "@/utils/mediaStatus";
 import { Pagination as PaginationControl } from "@/components/ui/pagination";
@@ -26,24 +26,24 @@ const exports: ContactSheetExport[] = [{
 }];
 
 const meta = {
-  title: "Components/ContactSheetThumbnails",
-  component: ContactSheetThumbnails,
+  title: "Components/ContactSheetPicture",
+  component: ContactSheetPicture,
   parameters: {
     layout: "fullscreen",
     docs: { description: { component: documentation } },
   },
   tags: ["autodocs"],
   args: { exports, thumbnailsPerRow: 5, language: "fr" },
-} satisfies Meta<typeof ContactSheetThumbnails>;
+} satisfies Meta<typeof ContactSheetPicture>;
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-function Playground(args: ContactSheetThumbnailsProps) {
+function Playground(args: ContactSheetPictureProps) {
   const [groups, setGroups] = React.useState(args.exports ?? []);
   const [lastChange, setLastChange] = React.useState<ThumbnailChange | null>(null);
   return (
     <>
-      <ContactSheetThumbnails
+      <ContactSheetPicture
         {...args}
         exports={groups}
         onSelectionChange={(selected, ids) => setGroups((all) => all.map((group) => ({
@@ -148,7 +148,7 @@ function PaginatedDemo() {
   return (
     <>
       <PaginationControl currentPage={page} totalPages={Math.ceil(all.length / pageSize)} onPageChange={setPage} />
-      <ContactSheetThumbnails
+      <ContactSheetPicture
         key={page}
         exports={pageExports}
         virtualized
@@ -181,7 +181,7 @@ function BoundedPagesDemo() {
     <div aria-busy={data.loading}>
       <PaginationControl currentPage={page} totalPages={Math.ceil(10000 / 60)} onPageChange={setPage} />
       {data.error && <p role="alert">{data.error.message}</p>}
-      <ContactSheetThumbnails key={page} exports={data.exports} virtualized imageCache={{ maxImages: 48, keepAroundRows: 2 }} />
+      <ContactSheetPicture key={page} exports={data.exports} virtualized imageCache={{ maxImages: 48, keepAroundRows: 2 }} />
     </div>
   );
 }

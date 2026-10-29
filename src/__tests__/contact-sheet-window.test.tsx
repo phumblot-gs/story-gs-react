@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
-import { ContactSheetThumbnails } from "@/components/ContactSheetThumbnails";
+import { ContactSheetPicture } from "@/components/ContactSheetPicture";
 import { getThumbnailWindow } from "@/components/ContactSheetReference/useThumbnailWindow";
 import { findScrollRoot } from "@/components/ContactSheetReference/useGroupedImageLoading";
 
@@ -39,7 +39,7 @@ describe("contact sheet row window", () => {
       picture_id: i + 1, src: `/p${i + 1}.jpg`, filename: `p${i + 1}.jpg`, selected: false,
     })) }];
     const onSelectionChange = vi.fn();
-    const { container, rerender } = render(<ContactSheetThumbnails exports={exports} thumbnailsPerRow={5} virtualized imageLoading="native" onSelectionChange={onSelectionChange} />);
+    const { container, rerender } = render(<ContactSheetPicture exports={exports} thumbnailsPerRow={5} virtualized imageLoading="native" onSelectionChange={onSelectionChange} />);
     expect(container.querySelectorAll("[data-contact-sheet-cell]").length).toBeLessThan(50);
     expect(container.querySelector('[data-picture-id="1"]')).toBeInTheDocument();
     fireEvent.click(screen.getByRole("checkbox"));
@@ -52,7 +52,7 @@ describe("contact sheet row window", () => {
     expect(container.querySelectorAll("[data-contact-sheet-cell]").length).toBeLessThan(50);
 
     width = 800;
-    rerender(<ContactSheetThumbnails exports={exports} thumbnailsPerRow={4} virtualized imageLoading="native" />);
+    rerender(<ContactSheetPicture exports={exports} thumbnailsPerRow={4} virtualized imageLoading="native" />);
     expect(container.querySelector("[data-virtualized] > div")).toHaveStyle({ gridTemplateColumns: "repeat(4, minmax(0, 1fr))" });
     scrollTop = 0;
     fireEvent.scroll(window);
@@ -61,7 +61,7 @@ describe("contact sheet row window", () => {
 
   it("conserve le rendu complet pour le réordonnancement", () => {
     const exports = [{ id: "site", thumbnails: Array.from({ length: 100 }, (_, i) => ({ picture_id: i + 1, src: `/p${i}.jpg` })) }];
-    const { container } = render(<ContactSheetThumbnails exports={exports} virtualized imageLoading="native" onReorder={vi.fn()} />);
+    const { container } = render(<ContactSheetPicture exports={exports} virtualized imageLoading="native" onReorder={vi.fn()} />);
     expect(container.querySelector("[data-virtualized]")).not.toBeInTheDocument();
     expect(container.querySelectorAll("[data-contact-sheet-cell]")).toHaveLength(100);
   });

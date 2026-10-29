@@ -3,7 +3,7 @@ import { act, cleanup, fireEvent, render, waitFor } from "@testing-library/react
 import "@testing-library/jest-dom/vitest";
 
 import { ContactSheetReference, type ContactSheetExport } from "@/components/ContactSheetReference";
-import { ContactSheetThumbnails } from "@/components/ContactSheetThumbnails";
+import { ContactSheetPicture } from "@/components/ContactSheetPicture";
 
 /**
  * Chargement groupé (`imageLoading="grouped"`) : `Image` et
@@ -93,7 +93,7 @@ const exportsOf = (srcs: string[]): ContactSheetExport[] => [
 
 const thumbnailImages = (container: HTMLElement) => container.querySelectorAll("[data-picture-id] img");
 
-describe("ContactSheetThumbnails — chargement groupé par défaut", () => {
+describe("ContactSheetPicture — chargement groupé par défaut", () => {
   it("adoucit une nouvelle révélation virtualisée sans rejouer le fondu des images encore en cache", async () => {
     vi.stubGlobal("IntersectionObserver", undefined);
     let scrollTop = 0;
@@ -103,7 +103,7 @@ describe("ContactSheetThumbnails — chargement groupé par défaut", () => {
     });
     try {
       const exports = exportsOf(Array.from({ length: 25 }, (_, i) => `/fade-${i}.jpg`));
-      const { container } = render(<ContactSheetThumbnails exports={exports} thumbnailsPerRow={5} virtualized />);
+      const { container } = render(<ContactSheetPicture exports={exports} thumbnailsPerRow={5} virtualized />);
       await waitFor(() => expect(requested()).toHaveLength(25));
       for (let i = 0; i < 24; i++) await finish(`/fade-${i}.jpg`);
       const firstImage = () => container.querySelector('[data-picture-id="1"] img');
@@ -120,7 +120,7 @@ describe("ContactSheetThumbnails — chargement groupé par défaut", () => {
 
   it("révèle le bloc après décodage de toutes ses images", async () => {
     vi.stubGlobal("IntersectionObserver", undefined);
-    const { container } = render(<ContactSheetThumbnails exports={exportsOf(["/a.jpg", "/b.jpg"])} />);
+    const { container } = render(<ContactSheetPicture exports={exportsOf(["/a.jpg", "/b.jpg"])} />);
     expect(thumbnailImages(container)).toHaveLength(0);
     await waitFor(() => expect(requested()).toHaveLength(2));
     await finish("/b.jpg");
@@ -136,7 +136,7 @@ describe("ContactSheetThumbnails — chargement groupé par défaut", () => {
       return new DOMRect(0, 0, 1000, this.hasAttribute("data-contact-sheet-cell") ? 400 : 60000);
     });
     try {
-      const { container } = render(<ContactSheetThumbnails virtualized thumbnailsPerRow={5} exports={exportsOf(Array.from({ length: 100 }, (_, i) => `/i${i}.jpg`))} />);
+      const { container } = render(<ContactSheetPicture virtualized thumbnailsPerRow={5} exports={exportsOf(Array.from({ length: 100 }, (_, i) => `/i${i}.jpg`))} />);
       expect(container.querySelectorAll("[data-contact-sheet-cell]").length).toBeLessThan(24);
       FakeIntersectionObserver.instances[0].intersect(true);
       await waitFor(() => expect(requested().length).toBeGreaterThan(0));

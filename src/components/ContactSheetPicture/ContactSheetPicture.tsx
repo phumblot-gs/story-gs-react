@@ -7,7 +7,7 @@ import { ContactSheetThumbnailGrid } from "@/components/ContactSheetReference/Co
 import type { ContactSheetReferenceProps } from "@/components/ContactSheetReference/ContactSheetReference";
 import { isEmptySlot } from "@/components/ContactSheetReference/types";
 
-export interface ContactSheetThumbnailsProps extends Pick<
+export interface ContactSheetPictureProps extends Pick<
   ContactSheetReferenceProps,
   | "exports"
   | "thumbnailsPerRow"
@@ -47,7 +47,7 @@ export interface ContactSheetThumbnailsProps extends Pick<
  * change events and export-scoped reordering as ContactSheetReference.
  * Controlled: the parent applies changes and passes updated exports back.
  */
-export const ContactSheetThumbnails: React.FC<ContactSheetThumbnailsProps> = ({
+export const ContactSheetPicture: React.FC<ContactSheetPictureProps> = ({
   exports = [],
   thumbnailsPerRow = 6,
   onThumbnailChange,
@@ -113,4 +113,12 @@ export const ContactSheetThumbnails: React.FC<ContactSheetThumbnailsProps> = ({
   );
 };
 
-ContactSheetThumbnails.displayName = "ContactSheetThumbnails";
+ContactSheetPicture.displayName = "ContactSheetPicture";
+
+/**
+ * @deprecated Renommé en `ContactSheetPicture` (1.39.0). Alias conservé pour ne
+ * pas casser les projets qui l'importent depuis la 1.38.0.
+ */
+export const ContactSheetThumbnails = ContactSheetPicture;
+/** @deprecated Renommé en `ContactSheetPictureProps` (1.39.0). */
+export type ContactSheetThumbnailsProps = ContactSheetPictureProps;
