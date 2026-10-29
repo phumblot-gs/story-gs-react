@@ -34,11 +34,13 @@ export interface ContactSheetPictureProps extends Pick<
   toolbarActions?: React.ReactNode;
   /** Enable on one contact sheet per page. Default: false. */
   captureSelectAllShortcut?: boolean;
-  /** Mount only viewport rows, with two extra rows on either side. Default: false.
+  /** Mount only viewport rows, with two extra rows on either side.
+   * Default "auto": only above 100 thumbnails. `false` mounts everything (browser
+   * find, printing, scrolling to a picture's DOM node, tests without layout).
    * Works with onReorder: the dragged thumbnail stays mounted until the drop.
    * Selection and image loading state remain independent of mounted rows.
    */
-  virtualized?: boolean;
+  virtualized?: boolean | "auto";
 }
 
 /**
@@ -59,7 +61,7 @@ export const ContactSheetPicture: React.FC<ContactSheetPictureProps> = ({
   onSelectionChange,
   toolbarActions,
   captureSelectAllShortcut = false,
-  virtualized = false,
+  virtualized = "auto",
   className,
   language,
   translations,

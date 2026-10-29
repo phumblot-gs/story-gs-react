@@ -136,4 +136,19 @@ describe("contact sheet row window", () => {
     expect(container.querySelector('[data-picture-id="1001"]')).not.toBeInTheDocument();
     expect(container.querySelectorAll("[data-contact-sheet-cell]").length).toBeLessThan(50);
   });
+
+  it('"auto" (défaut) : tout monté jusqu\'à 100 vignettes, fenêtré au-delà ; false monte tout', () => {
+    const make = (count: number) => [{ id: "site", thumbnails: Array.from({ length: count }, (_, i) => ({ picture_id: i + 1, src: `/p${i + 1}.jpg` })) }];
+    const { container, rerender } = render(<ContactSheetPicture exports={make(100)} imageLoading="native" />);
+    expect(container.querySelector("[data-virtualized]")).not.toBeInTheDocument();
+    expect(container.querySelectorAll("[data-contact-sheet-cell]")).toHaveLength(100);
+
+    rerender(<ContactSheetPicture exports={make(101)} imageLoading="native" />);
+    expect(container.querySelector("[data-virtualized]")).toBeInTheDocument();
+    expect(container.querySelectorAll("[data-contact-sheet-cell]").length).toBeLessThan(101);
+
+    rerender(<ContactSheetPicture exports={make(500)} imageLoading="native" virtualized={false} />);
+    expect(container.querySelector("[data-virtualized]")).not.toBeInTheDocument();
+    expect(container.querySelectorAll("[data-contact-sheet-cell]")).toHaveLength(500);
+  });
 });

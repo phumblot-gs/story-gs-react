@@ -41,8 +41,12 @@ export interface ContactSheetThumbnailGridProps {
    * windowed on its own. Drag & drop keeps working: the dragged thumbnail stays
    * mounted while it is scrolled out of the window, and the drop position of
    * unmounted thumbnails is computed from the (uniform) row height.
+   *
+   * "auto" (default): only above `VIRTUALIZATION_THRESHOLD` thumbnails. `false`
+   * mounts everything (browser find, printing, scrolling to a picture by its DOM
+   * node, tests without layout).
    */
-  virtualized?: boolean;
+  virtualized?: boolean | "auto";
   imageCache?: ContactSheetImageCache;
   features?: ThumbnailFeatures;
   onThumbnailChange?: (change: ThumbnailChange) => void | Promise<void>;
@@ -114,6 +118,14 @@ interface DragState {
 }
 
 const DRAG_TYPE = "application/x-gs-contact-sheet-thumbnail";
+
+/**
+ * `virtualized="auto"` : nombre de vignettes (tous exports de la grille) au-delà
+ * duquel la grille est fenêtrée. En dessous, tout est monté : quelques lignes ne
+ * justifient pas l'écoute du défilement, surtout quand une page empile de
+ * nombreuses références.
+ */
+export const VIRTUALIZATION_THRESHOLD = 100;
 
 /** A cached image remounted by virtualization is already visible; only a new
  * reveal (or a changed URL) should fade. This flag lives with the mounted cell,
@@ -241,7 +253,7 @@ type DistributiveOmit<T, K extends PropertyKey> = T extends unknown ? Omit<T, K>
 export const ContactSheetThumbnailGrid: React.FC<ContactSheetThumbnailGridProps> = ({
   exports,
   thumbnailsPerRow,
-  virtualized = false,
+  virtualized = "auto",
   imageCache,
   features,
   onThumbnailChange,
@@ -257,6 +269,8 @@ export const ContactSheetThumbnailGrid: React.FC<ContactSheetThumbnailGridProps>
   const columns = Math.max(1, Math.round(thumbnailsPerRow));
   const enabled = onThumbnailChange ? { ...ALL_FEATURES, ...features } : null;
   const reorderable = !!onReorder;
+  const thumbnailCount = exports.reduce((count, group) => count + group.thumbnails.length, 0);
+  const windowed = virtualized === true || (virtualized === "auto" && thumbnailCount > VIRTUALIZATION_THRESHOLD);
 
   // --- Largeur des vignettes -------------------------------------------------
   // Le Thumbnail reçoit une largeur en px : sa zone image est alors carrée,
@@ -280,7 +294,7 @@ export const ContactSheetThumbnailGrid: React.FC<ContactSheetThumbnailGridProps>
     const observer = new ResizeObserver(measure);
     observer.observe(grid);
     return () => observer.disconnect();
-  }, [exportsLayout, virtualized]);
+  }, [exportsLayout, windowed]);
   const gap = metrics?.gap ?? 0;
   const cellWidth = metrics ? Math.floor((metrics.width - gap * (columns - 1)) / columns) : null;
   const thumbnailSize = cellWidth && cellWidth > 0 ? `${cellWidth}px` : "auto";
@@ -290,7 +304,6 @@ export const ContactSheetThumbnailGrid: React.FC<ContactSheetThumbnailGridProps>
   );
   // Fenêtrage : une grille en mode "grouped", une par export en "separated".
   // `segmentOf` situe une vignette (export, index) dans sa grille.
-  const windowed = virtualized;
   const separated = exportsLayout === "separated";
   const segmentCounts = separated ? exports.map((group) => group.thumbnails.length) : [cells.length];
   const segmentsRef = React.useRef<(HTMLElement | null)[]>([]);
@@ -616,12 +629,13 @@ export const ContactSheetThumbnailGrid: React.FC<ContactSheetThumbnailGridProps>
         language={language}
         translations={translations}
         {...thumb}
-        // Fenêtrée : la racine du Thumbnail perd sa hauteur `-webkit-fill-available`.
-        // Dans une grille placée en absolu, Safari la résout contre tout le
-        // conteneur : la hauteur mesurée des lignes s'emballait jusqu'à la
-        // limite de WebKit (33 millions de px) et la fenêtre ne suivait plus le
-        // défilement. Les lignes ont de toute façon la même hauteur.
-        className={windowed ? cn(thumb.className, "h-auto") : thumb.className}
+        // La racine du Thumbnail a une hauteur `-webkit-fill-available`, que
+        // seul Safari applique (Chrome et Firefox l'ignorent) : les vignettes
+        // y faisaient plus de trois fois leur hauteur (859px au lieu de 256px),
+        // et en grille fenêtrée la hauteur mesurée des lignes s'emballait jusqu'à
+        // la limite de WebKit (33 millions de px), la fenêtre ne suivant plus le
+        // défilement. `h-auto` donne à Safari le rendu de Chrome et Firefox.
+        className={cn(thumb.className, "h-auto")}
         actions={media ? actionsFor(exportId, thumb.picture_id as number, thumb.actions) : thumb.actions}
         statusButtons={statusButtons}
         size={thumbnailSize}

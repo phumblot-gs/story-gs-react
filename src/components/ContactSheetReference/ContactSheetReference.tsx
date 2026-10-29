@@ -29,8 +29,10 @@ export interface ContactSheetReferenceProps {
   imageCache?: ContactSheetImageCache;
   /** Mount only viewport rows (+ two rows each side), with or without onReorder,
    * in both exports layouts ("separated": headers stay mounted, each export grid
-   * is windowed on its own). */
-  virtualized?: boolean;
+   * is windowed on its own). Default "auto": only above 100 thumbnails. `false`
+   * mounts everything (browser find, printing, scrolling to a picture's DOM node,
+   * tests without layout). */
+  virtualized?: boolean | "auto";
   /** Reference data (`/reference` endpoint). */
   reference: ReferenceData;
   /**

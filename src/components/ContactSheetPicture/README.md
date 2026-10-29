@@ -38,8 +38,9 @@ Le parent conserve les données et applique les changements.
 />
 ```
 
-`virtualized` (désactivé par défaut) monte uniquement les lignes visibles et deux
-lignes supplémentaires de chaque côté. Les autres lignes sont remplacées par un
+`virtualized` monte uniquement les lignes visibles et deux lignes supplémentaires
+de chaque côté. Par défaut (`"auto"`), il ne s'active qu'au-delà de **100
+vignettes** dans la grille ; `true` le force, `false` le désactive. Les autres lignes sont remplacées par un
 espace de même hauteur ; leurs composants `Thumbnail` et leurs cellules DOM ne
 sont pas montés. La hauteur des lignes est mesurée, puis réajustée au changement
 de largeur. Le scroll de la fenêtre et celui d'un conteneur sont pris en charge.
@@ -55,8 +56,14 @@ vignettes montées (le pointeur est toujours au-dessus d'elles) ; les autres son
 placées par calcul, toutes les lignes ayant la même hauteur. Dans
 `ContactSheetReference`, la virtualisation s'applique aussi à
 `exportsLayout="separated"` : les en-têtes d'export restent montés et chaque grille
-d'export est fenêtrée séparément. `ContactSheetReference` conserve son comportement
-par défaut : montage complet et chargement natif.
+d'export est fenêtrée séparément. La règle `"auto"` est la même pour
+`ContactSheetReference` (qui garde par ailleurs le chargement natif par défaut).
+
+Passer `virtualized={false}` quand toutes les vignettes doivent être dans la page :
+recherche du navigateur (Ctrl+F) et impression, défilement vers une image par son
+nœud DOM (`scrollIntoView` sur `[data-picture-id=…]`), état local à conserver hors
+de l'écran (menu ouvert, commentaire en cours), tests sans moteur de rendu (jsdom),
+où seules les premières lignes sont montées.
 
 ## Mémoire et cache borné (les deux composants)
 

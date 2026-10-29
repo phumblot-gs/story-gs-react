@@ -34,7 +34,8 @@ value (status, tags, order…) is rendered immediately — update your state, pa
 In grouped loading mode, \`imageCache={{ maxImages: 120, keepAroundRows: 4 }}\`
 is the default per-grid budget. Nearby blocks may exceed it; a grid entirely
 outside the preload zone releases its images. Evicted images reload on return.
-\`virtualized\` mounts only viewport rows and two surrounding rows, in both exports
+\`virtualized\` (default \`"auto"\`: only above 100 thumbnails; \`false\` mounts everything)
+mounts only viewport rows and two surrounding rows, in both exports
 layouts and with \`onReorder\`. In \`"separated"\`, export headers stay mounted and each
 export grid is windowed on its own. While dragging, the grabbed thumbnail stays mounted
 even when scrolled out of view. Callback caches retain only mounted thumbnails.
@@ -355,7 +356,7 @@ const Playground = ({
   thumbnailsPerRow: initialPerRow = 6,
   exportsLayout: initialLayout = "grouped",
   showControls = true,
-  virtualized = false,
+  virtualized = "auto",
 }: {
   refName?: string;
   count?: number;
@@ -364,7 +365,7 @@ const Playground = ({
   thumbnailsPerRow?: number;
   exportsLayout?: "grouped" | "separated";
   showControls?: boolean;
-  virtualized?: boolean;
+  virtualized?: boolean | "auto";
 }) => {
   const props = useReferenceState({
     reference: makeReference(refName, 1),
