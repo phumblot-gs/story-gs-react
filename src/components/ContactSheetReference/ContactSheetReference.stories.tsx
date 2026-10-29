@@ -34,8 +34,10 @@ value (status, tags, order…) is rendered immediately — update your state, pa
 In grouped loading mode, \`imageCache={{ maxImages: 120, keepAroundRows: 4 }}\`
 is the default per-grid budget. Nearby blocks may exceed it; a grid entirely
 outside the preload zone releases its images. Evicted images reload on return.
-\`virtualized\` mounts only viewport rows and two surrounding rows (grouped exports,
-without \`onReorder\`). Callback caches retain only mounted thumbnails.
+\`virtualized\` mounts only viewport rows and two surrounding rows, in both exports
+layouts and with \`onReorder\`. In \`"separated"\`, export headers stay mounted and each
+export grid is windowed on its own. While dragging, the grabbed thumbnail stays mounted
+even when scrolled out of view. Callback caches retain only mounted thumbnails.
 
 To also bound server data, use the exported \`useContactSheetPages\` hook with
 \`pageSize: 60\`, \`maxCachedPages: 3\`, a stable \`loadPage({ page, pageSize, signal })\`
@@ -353,6 +355,7 @@ const Playground = ({
   thumbnailsPerRow: initialPerRow = 6,
   exportsLayout: initialLayout = "grouped",
   showControls = true,
+  virtualized = false,
 }: {
   refName?: string;
   count?: number;
@@ -361,6 +364,7 @@ const Playground = ({
   thumbnailsPerRow?: number;
   exportsLayout?: "grouped" | "separated";
   showControls?: boolean;
+  virtualized?: boolean;
 }) => {
   const props = useReferenceState({
     reference: makeReference(refName, 1),
@@ -402,6 +406,7 @@ const Playground = ({
         attributes={attributes}
         thumbnailsPerRow={perRow}
         exportsLayout={layout}
+        virtualized={virtualized}
         grade="B"
       />
     </Layout>
@@ -902,4 +907,13 @@ export const VirtualizedImageCache: Story = {
       imageCache={{ maxImages: 48, keepAroundRows: 2 }}
     />
   ),
+};
+
+/**
+ * 3 exports of 300 images, `virtualized` with drag & drop, in the `"separated"` layout (switch to
+ * `"grouped"` with the control). Only rows near the viewport are mounted; export headers stay.
+ * Grab an image, scroll far away with the wheel and drop it: the drag still ends normally.
+ */
+export const VirtualizedReorder: Story = {
+  render: () => <Playground count={300} exportsCount={3} exportsLayout="separated" virtualized />,
 };

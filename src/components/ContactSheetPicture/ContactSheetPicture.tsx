@@ -35,7 +35,7 @@ export interface ContactSheetPictureProps extends Pick<
   /** Enable on one contact sheet per page. Default: false. */
   captureSelectAllShortcut?: boolean;
   /** Mount only viewport rows, with two extra rows on either side. Default: false.
-   * With onReorder, renders all thumbnails to preserve native drag & drop.
+   * Works with onReorder: the dragged thumbnail stays mounted until the drop.
    * Selection and image loading state remain independent of mounted rows.
    */
   virtualized?: boolean;

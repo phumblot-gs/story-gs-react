@@ -77,7 +77,7 @@ function Playground(args: ContactSheetPictureProps) {
             }),
           })));
         }}
-        onReorder={args.virtualized ? undefined : (id, _ids, slots) => setGroups((all) => all.map((group) => {
+        onReorder={(id, _ids, slots) => setGroups((all) => all.map((group) => {
           if (group.id !== id) return group;
           const byId = new Map(group.thumbnails.map((thumb) => [thumb.picture_id, thumb]));
           return { ...group, thumbnails: slots.map((slot) => ({ ...byId.get(slot.picture_id), ...slot })) };

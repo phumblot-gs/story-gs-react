@@ -48,10 +48,15 @@ Les données, la sélection avec Maj et le cache de chargement restent au niveau
 la grille. Revenir sur une image déjà décodée ne relance pas son fondu d'apparition.
 Les contrôles démontés perdent leur état local (par exemple un menu ouvert).
 
-Avec `onReorder`, la virtualisation est **désactivée automatiquement** pour
-conserver les cibles et l'aperçu du glisser-déposer natif. Préférer alors une
-pagination bornant le nombre de vignettes par page. `ContactSheetReference`
-conserve son comportement par défaut : montage complet et chargement natif.
+Le glisser-déposer (`onReorder`) fonctionne avec `virtualized`. La vignette saisie
+reste montée pendant tout le drag, même si on fait défiler loin d'elle : sans
+cela, le navigateur perdrait la fin du drag. La cible de dépôt est mesurée sur les
+vignettes montées (le pointeur est toujours au-dessus d'elles) ; les autres sont
+placées par calcul, toutes les lignes ayant la même hauteur. Dans
+`ContactSheetReference`, la virtualisation s'applique aussi à
+`exportsLayout="separated"` : les en-têtes d'export restent montés et chaque grille
+d'export est fenêtrée séparément. `ContactSheetReference` conserve son comportement
+par défaut : montage complet et chargement natif.
 
 ## Mémoire et cache borné (les deux composants)
 
