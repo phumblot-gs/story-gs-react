@@ -5,6 +5,20 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.39.2] - 2026-10-30
+
+### Corrigé
+
+- `Thumbnail` : un média (`picture_id`) sans `src`, ni en chargement ni en attente, affichait un cadre blanc muet. Il
+  affiche maintenant, comme une image en erreur (`hasError`), l'icône de fichier cassé, avec l'infobulle « Aperçu
+  indisponible » (traduite, clé `thumbnail.previewUnavailable`) sur toute la zone image et sans loupe au survol.
+  L'erreur s'affiche aussi sans `src`.
+- `ContactSheetReference` et `ContactSheetPicture` : un clic sur une vignette sans aperçu (pas de `src`, ou image en
+  erreur) émet le changement `open`, même quand `thumbnailFeatures.open` est désactivé, pour que l'application puisse
+  redemander la vignette. Les autres vignettes ne changent pas.
+- Storybook : stories `Thumbnail › PreviewUnavailable` et `ContactSheetReference › PreviewUnavailable`, story `Error`
+  et documentation des planches contact mises à jour.
+
 ## [1.39.1] - 2026-10-30
 
 ### Corrigé

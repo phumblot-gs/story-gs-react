@@ -179,6 +179,10 @@ export type ThumbnailChange = { pictureId: number; exportId: string | number } &
   | { type: "validate" }
   /** @deprecated Legacy reject button; use `statusButtons` and the `statusButton` change. */
   | { type: "reject"; reason?: string }
+  /**
+   * Click on the image (`features.open`). Also sent, whatever `features.open`, by a click on a thumbnail without a
+   * preview (no `src`, or image in error): the application can fetch the thumbnail again.
+   */
   | { type: "open" }
 );
 

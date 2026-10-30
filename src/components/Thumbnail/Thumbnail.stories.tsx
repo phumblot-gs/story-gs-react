@@ -619,15 +619,31 @@ export const LoadingReducedMotion: Story = {
 };
 
 /**
- * Error state (broken/corrupted image)
- * Shows the BrokenFile icon when an image fails to load
+ * Error state (broken/corrupted image, `hasError`): the BrokenFile icon, with the "Preview unavailable" tooltip on the
+ * whole image area and no zoom icon on hover.
  */
 export const Error: Story = {
   args: {
     picture_id: 9,
+    src: sampleImageUrl,
     filename: "missing_photo.jpg",
     hasError: true,
     status: MediaStatus.REFUSED_1,
+  },
+};
+
+/**
+ * Media without a preview: a `picture_id` and no `src` (e.g. a version whose thumbnail the server has not generated
+ * yet), neither loading nor pending. Same rendering as an error: the BrokenFile icon and the "Preview unavailable"
+ * tooltip (translated), instead of a blank frame. `onImageClick` still fires: in a contact sheet, the click sends the
+ * `open` change even when the `open` feature is off, so that the application can fetch the thumbnail again.
+ */
+export const PreviewUnavailable: Story = {
+  args: {
+    picture_id: 10,
+    filename: "3340444646875_1.png",
+    view: "1",
+    status: MediaStatus.SELECTED,
   },
 };
 

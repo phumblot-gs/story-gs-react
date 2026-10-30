@@ -111,7 +111,10 @@ export interface ThumbnailProps {
   // Image data
   /** ID de la photo */
   picture_id?: number;
-  /** URL de l'image thumbnail */
+  /**
+   * URL de l'image thumbnail. Absente sur un média (`picture_id`) qui n'est ni en chargement ni en attente : aperçu
+   * indisponible (icône de fichier cassé, infobulle « Aperçu indisponible », pas de loupe).
+   */
   src?: string;
   /** Texte alternatif de l'image */
   alt?: string;
@@ -215,7 +218,7 @@ export interface ThumbnailProps {
   // Loading states
   /** État de chargement de l'image */
   isLoading?: boolean;
-  /** Erreur de chargement de l'image */
+  /** Erreur de chargement de l'image : aperçu indisponible (icône de fichier cassé, infobulle « Aperçu indisponible »). */
   hasError?: boolean;
   /**
    * Image en attente, pilotée par le parent (chargement groupé de la planche
@@ -905,6 +908,20 @@ const ThumbnailBase: React.FC<ThumbnailProps> = ({
     "relative flex items-center justify-center border-[0.25px] border-white",
     isEmptyView ? ' bg-grey-middle' : !viewportBgColor && 'bg-white'
   );
+  // Un média sans aperçu (image en erreur, ou pas d'URL et rien en cours) : fichier cassé et infobulle
+  // « Aperçu indisponible » sur toute la zone image. Sans URL, le cadre restait blanc, sans explication.
+  const previewUnavailable = !!picture_id && picture_id !== -1 && (hasError || (!src && !isLoading && !imagePending));
+  const withPreviewUnavailableTooltip = (node: React.ReactElement) =>
+    previewUnavailable ? (
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>{node}</TooltipTrigger>
+          <TooltipContent side="bottom">{t("thumbnail.previewUnavailable")}</TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    ) : (
+      node
+    );
 
   return (
     <DeferredOverlaysProvider value={overlays.value}>
@@ -968,7 +985,7 @@ const ThumbnailBase: React.FC<ThumbnailProps> = ({
           )}
 
           {/* Shadow layer with hover effects */}
-          {!isLoading && picture_id && (
+          {!isLoading && picture_id && withPreviewUnavailableTooltip(
             <div
               className={cn(
                 "absolute inset-0 z-10 bg-black/0 transition-colors cursor-pointer",
@@ -1011,10 +1028,12 @@ const ThumbnailBase: React.FC<ThumbnailProps> = ({
                 </div>
               )}
 
-              {/* Search icon */}
-              <span className="search-icon flex absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white opacity-0 transition-opacity">
-                <Icon name="ZoomIn" size={config.iconSize} />
-              </span>
+              {/* Search icon (pas de loupe sans aperçu à agrandir) */}
+              {!previewUnavailable && (
+                <span className="search-icon flex absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white opacity-0 transition-opacity">
+                  <Icon name="ZoomIn" size={config.iconSize} />
+                </span>
+              )}
             </div>
           )}
 
@@ -1038,11 +1057,13 @@ const ThumbnailBase: React.FC<ThumbnailProps> = ({
               }}
             />
           )}
-          {hasError && src && (
+          {previewUnavailable && (
             <div
               className="w-full self-stretch flex items-center justify-center bg-grey-middle"
               style={{ minHeight: config.isAuto ? placeholderMinHeight : undefined }}
               data-image-error=""
+              role="img"
+              aria-label={t("thumbnail.previewUnavailable")}
             >
               <Icon name="BrokenFile" size={20} className="text-white" />
             </div>
