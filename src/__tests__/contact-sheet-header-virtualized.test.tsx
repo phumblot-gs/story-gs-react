@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, render, screen, within } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
 import userEvent from "@testing-library/user-event";
 
@@ -83,27 +83,42 @@ describe("ContactSheetPicture — CR-684 thumbnail features", () => {
     ];
     const { container } = render(<ContactSheetPicture exports={exports} imageLoading="native" />);
     expect(container.querySelector("[data-virtualized]")).toBeInTheDocument();
-    expect(screen.getAllByRole("button", { name: "Broadcast" }).length).toBeGreaterThan(0);
+    const buttons = screen.getAllByRole("button", { name: "Broadcast" });
+    expect(buttons.length).toBeGreaterThan(0);
+    // viewBox of the Typicons cloud-storage glyph: only CustomBroadcastIcon outputs it.
+    for (const button of buttons) {
+      expect(button.querySelector('svg[viewBox="0 83.5 833 833"] path')).toBeInTheDocument();
+    }
   });
 
-  it("the promise of onThumbnailChange (comment) reaches the field", async () => {
+  it("the promise of onThumbnailChange (comment) reaches the field in a virtualized grid", async () => {
     const onThumbnailChange = vi.fn((change: { type: string }) =>
       change.type === "comment" ? Promise.reject(new Error("500")) : undefined,
     );
-    render(
+    const thumbnails = Array.from({ length: 150 }, (_, i) => ({
+      picture_id: i + 1,
+      src: `/p${i + 1}.jpg`,
+      filename: `p${i + 1}.tif`,
+    }));
+    const { container } = render(
       <ContactSheetPicture
-        exports={[{ id: "e1", thumbnails: [{ picture_id: 7, src: "/p7.jpg", filename: "p7.tif" }] }]}
+        exports={[{ id: "e1", thumbnails }]}
         onThumbnailChange={onThumbnailChange}
-        thumbnailFeatures={{ validation: false }}
+        // Only the comments menu stays, so it is the single menu trigger of the thumbnail.
+        thumbnailFeatures={{ selection: false, rating: false, label: false, tags: false, validation: false, open: false }}
       />,
     );
-    const thumbnail = document.querySelector('[data-picture-id="7"]')!;
+    expect(container.querySelector("[data-virtualized]")).toBeInTheDocument();
+
+    const thumbnail = container.querySelector<HTMLElement>('[data-picture-id="7"]')!;
     await userEvent.hover(thumbnail);
-    const triggers = thumbnail.querySelectorAll<HTMLButtonElement>("button[data-open]");
-    await userEvent.click(triggers[triggers.length - 1]);
+    const trigger = within(thumbnail).getByRole("button", { expanded: false });
+    expect(trigger).toHaveAttribute("aria-haspopup", "menu");
+    await userEvent.click(trigger);
     await userEvent.type(await screen.findByPlaceholderText("Add a comment"), "Retouch the collar");
     await userEvent.click(screen.getByRole("button", { name: "Submit" }));
 
+    expect(onThumbnailChange).toHaveBeenCalledWith(expect.objectContaining({ type: "comment" }));
     expect(await screen.findByRole("alert")).toHaveTextContent("The comment could not be saved");
     expect(screen.getByPlaceholderText("Add a comment")).toHaveValue("Retouch the collar");
   });
