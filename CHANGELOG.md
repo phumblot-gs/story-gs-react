@@ -5,7 +5,7 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
-## [Unreleased]
+## [1.40.0] - 2026-10-30
 
 ### Modifié
 
@@ -39,7 +39,8 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
   `contactSheet.selectMissingReference`. `title` remplace le badge si fourni. Story `MissingReference`.
 - `ContactSheetReference` : prop `titleContent`, rendue juste après le titre et avant le grade et les actions (ex. un
   `VedetteIndicator` avec aperçu au survol dans un `HoverCard`), sur le modèle de `PageHeader.titleContent`. Sans la
-  prop, rien ne change. Story `TitleContent`.
+  prop, rien ne change. Story `TitleContent`. Le titre, le badge « Référence manquante » et `titleContent` sont hors de
+  la grille : même rendu qu'elle soit virtualisée (`"auto"` au-delà de 100 vignettes) ou non.
 - `ButtonStatus.icon` et `ThumbnailStatusButton.icon` acceptent toute icône de la librairie (`IconName`), plus seulement
   `"Check"` | `"X"` : sur-ensemble, rien ne change pour l'existant. Pour une autre icône, le libellé accessible par défaut
   est « Statut du média : {nom du statut} » (et non plus « Reject - … ») : passer `label` (vignette) ou `aria-label`
@@ -76,9 +77,11 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
   était déjà typé `=> Promise<void>`, donc tout consommateur qui renvoie une promesse passe dans ce mode : le champ est
   verrouillé jusqu'à son issue, et une application qui affiche déjà un toast en cas d'erreur API affichera aussi l'erreur
   dans le menu (faire résoudre la promesse pour l'éviter). Seul un callback qui ne renvoie rien garde exactement
-  l'ancien comportement (vidé et fermé tout de suite). Dans
-  `ContactSheetReference`, la promesse renvoyée par `onThumbnailChange` pour un changement `comment` remonte jusqu'au
-  champ. `Thumbnail.onCommentAdd` est typé `(comment) => void | Promise<void>`. Story `AsyncSaveFailure`.
+  l'ancien comportement (vidé et fermé tout de suite). Dans `ContactSheetReference` comme dans
+  `ContactSheetPicture`, la promesse renvoyée par `onThumbnailChange` pour un changement `comment` remonte jusqu'au
+  champ. `Thumbnail.onCommentAdd` est typé `(comment) => void | Promise<void>`. Story `AsyncSaveFailure`. Exception
+  d'une grille virtualisée : une vignette sortie de la fenêtre avant l'issue de la promesse est démontée et perd le
+  texte saisi et l'erreur (passer `virtualized={false}` pour les garder).
 
 ## [1.39.2] - 2026-10-30
 
