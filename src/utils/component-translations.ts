@@ -1253,6 +1253,9 @@ export const componentTranslations: TranslationMap = {
   "thumbnail.copied": {
     EN: "Copied", FR: "Copié", ES: "Copiado", IT: "Copiato", DE: "Kopiert"
   },
+  "thumbnail.previewUnavailable": {
+    EN: "Preview unavailable", FR: "Aperçu indisponible", ES: "Vista previa no disponible", IT: "Anteprima non disponibile", DE: "Vorschau nicht verfügbar"
+  },
   "thumbnail.add": {
     EN: "Add",
     FR: "Ajouter",

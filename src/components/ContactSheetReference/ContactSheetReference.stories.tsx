@@ -29,6 +29,12 @@ attributes, export badges and thumbnails.
 The component is **controlled**: it keeps no copy of its data. Any new \`reference\` or \`exports\`
 value (status, tags, order…) is rendered immediately — update your state, pass it back, done.
 
+### Thumbnails without a preview
+
+A media with no \`src\` (thumbnail not generated yet) or whose image fails shows the BrokenFile icon with the
+"Preview unavailable" tooltip. A click on it sends the \`open\` change even when \`thumbnailFeatures.open\` is off:
+fetch the thumbnail again and pass the new \`src\` back (**PreviewUnavailable** story).
+
 ### Memory during long sessions
 
 In grouped loading mode, \`imageCache={{ maxImages: 120, keepAroundRows: 4 }}\`
@@ -565,6 +571,34 @@ export const CustomHeaderActions: Story = {
 /** More thumbnails than columns: they wrap onto several rows. */
 export const ManyThumbnails: Story = {
   render: () => <Playground count={17} thumbnailsPerRow={8} />,
+};
+
+/**
+ * Thumbnails without a preview: media with no `src` (a version whose thumbnail the server has not generated yet), or
+ * whose image fails (`hasError`). They show the BrokenFile icon with the "Preview unavailable" tooltip instead of a
+ * blank frame. A click on one sends the `open` change even with the `open` feature off: here the application "fetches"
+ * the thumbnail again and passes it back after one second.
+ */
+export const PreviewUnavailable: Story = {
+  render: () => {
+    const Unavailable = () => {
+      const [thumbnails, setThumbnails] = useState<ContactSheetThumbnail[]>(() =>
+        makeThumbnails("5238694", 6).map((t, i) => (i === 1 || i === 4 ? { ...t, src: undefined } : t)));
+      const onThumbnailChange = (change: ThumbnailChange) => {
+        console.log("[onThumbnailChange]", change);
+        if (change.type !== "open") return;
+        setTimeout(() => setThumbnails((all) => all.map((t) => (t.picture_id === change.pictureId
+          ? { ...t, src: `https://picsum.photos/seed/refetched-${change.pictureId}/600/750` } : t))), 1000);
+      };
+      return (
+        <Layout bg="grey" className="min-h-screen">
+          <ContactSheetReference reference={{ reference_id: 3, ref: "5238694" }} exports={[{ id: "e", thumbnails }]}
+            onThumbnailChange={onThumbnailChange} thumbnailFeatures={{ selection: true, open: false }} />
+        </Layout>
+      );
+    };
+    return <Unavailable />;
+  },
 };
 
 /** No attribute configured and an unnamed export: only the title and the thumbnails remain. */
