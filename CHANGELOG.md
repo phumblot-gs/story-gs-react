@@ -5,6 +5,18 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.40.1] - 2026-11-02
+
+### Corrigé
+
+- Icônes `Broadcast` et `Restore` : elles paraissaient plus petites que `Check` et `X` dans les boutons de statut
+  (planche contact de gs_w). Leur viewBox carrée était calée sur la largeur du glyphe, plus large que haut ; elle est
+  désormais calée sur sa hauteur, remplie à 100 % (`124.5 208 584 584` et `104.5 209 541 541`), un peu au-dessus de
+  `X` (85 %) à la demande du produit, et le glyphe déborde latéralement de sa boîte sans être rogné
+  (`overflow="visible"`). La correction vaut pour tous les rendus
+  (`ButtonStatus`, `statusButtons` de `Thumbnail`, `Icon`). Aucun changement d'API. Story `UI/ButtonStatus` →
+  `IconWeightBySize`.
+
 ## [1.40.0] - 2026-10-30
 
 ### Modifié
