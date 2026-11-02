@@ -7,6 +7,7 @@ import { ButtonStatus } from "@/components/ButtonStatus";
 import { Thumbnail, type ThumbnailStatusButton } from "@/components/Thumbnail";
 import { AVAILABLE_ICONS } from "@/components/ui/icons/constants";
 import { renderIcon } from "@/components/ui/icons/icon-renderer";
+import { BROADCAST_ICON_VIEWBOX, RESTORE_ICON_VIEWBOX } from "@/components/ui/icons/action-icons";
 import { MediaStatus } from "@/utils/mediaStatus";
 
 /**
@@ -22,6 +23,21 @@ describe("Icônes de la librairie", () => {
     expect(AVAILABLE_ICONS).toEqual(expect.arrayContaining(["Broadcast", "Restore"]));
     const missing = AVAILABLE_ICONS.filter((name) => renderIcon(name) === null);
     expect(missing).toEqual([]);
+  });
+});
+
+describe("Broadcast et Restore — même poids visuel que Check et X", () => {
+  // Path bounds after transform: Broadcast x 0..833 y 208..792, Restore x 0..750 y 209..750. Square
+  // boxes centred on the glyph, height filled at 100% (CustomXIcon: 85%); the extra width overflows unclipped.
+  it.each([
+    ["Broadcast", BROADCAST_ICON_VIEWBOX, "124.5 208 584 584"],
+    ["Restore", RESTORE_ICON_VIEWBOX, "104.5 209 541 541"],
+  ] as const)("%s a une viewBox resserrée sur la hauteur du glyphe, sans rognage", (name, constant, expected) => {
+    expect(constant).toBe(expected);
+    const { container } = render(<ButtonStatus icon={name} status={MediaStatus.NOT_SELECTED} aria-label={name} />);
+    const svg = container.querySelector("svg");
+    expect(svg).toHaveAttribute("viewBox", expected);
+    expect(svg).toHaveAttribute("overflow", "visible");
   });
 });
 

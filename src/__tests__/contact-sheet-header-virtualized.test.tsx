@@ -5,6 +5,7 @@ import userEvent from "@testing-library/user-event";
 
 import { ContactSheetReference } from "@/components/ContactSheetReference";
 import { ContactSheetPicture } from "@/components/ContactSheetPicture";
+import { BROADCAST_ICON_VIEWBOX } from "@/components/ui/icons/action-icons";
 import { MediaStatus } from "@/utils/mediaStatus";
 
 /**
@@ -85,9 +86,9 @@ describe("ContactSheetPicture — CR-684 thumbnail features", () => {
     expect(container.querySelector("[data-virtualized]")).toBeInTheDocument();
     const buttons = screen.getAllByRole("button", { name: "Broadcast" });
     expect(buttons.length).toBeGreaterThan(0);
-    // viewBox of the Typicons cloud-storage glyph: only CustomBroadcastIcon outputs it.
+    // Only CustomBroadcastIcon outputs this viewBox.
     for (const button of buttons) {
-      expect(button.querySelector('svg[viewBox="0 83.5 833 833"] path')).toBeInTheDocument();
+      expect(button.querySelector(`svg[viewBox="${BROADCAST_ICON_VIEWBOX}"] path`)).toBeInTheDocument();
     }
   });
 

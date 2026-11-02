@@ -206,6 +206,23 @@ export const OtherIcons: Story = {
   ),
 };
 
+/** Broadcast and Restore must carry the same visual weight as Check and X at every size. */
+export const IconWeightBySize: Story = {
+  render: () => (
+    <div className="flex flex-col gap-4" data-testid="icon-weight-by-size">
+      {(["small", "medium", "large"] as const).map((size) => (
+        <div key={size} className="flex gap-2 items-center">
+          <ButtonStatus size={size} icon="Check" status={MediaStatus.VALIDATED} />
+          <ButtonStatus size={size} icon="X" status={MediaStatus.REFUSED_1} />
+          <ButtonStatus size={size} icon="Broadcast" status={MediaStatus.READY_TO_BROADCAST} aria-label="Broadcast" />
+          <ButtonStatus size={size} icon="Restore" status={MediaStatus.NOT_SELECTED} aria-label="Restore" />
+          <ButtonStatus size={size} icon="Broadcast" status={MediaStatus.BROADCAST} isActive disabled aria-label="Broadcasted" />
+        </div>
+      ))}
+    </div>
+  ),
+};
+
 // Show currentStatus matching behavior
 export const CurrentStatusMatching: Story = {
   render: () => (

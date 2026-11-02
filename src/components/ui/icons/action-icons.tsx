@@ -181,11 +181,15 @@ export const CustomScrollIcon: React.FC<CustomIconProps> = ({ size = 12, strokeW
   </svg>
 )
 
+// Height-fitted to 100%, a touch above CustomXIcon (85%): the wider glyph overflows the square box sideways, hence overflow="visible".
+export const BROADCAST_ICON_VIEWBOX = "124.5 208 584 584";
+export const RESTORE_ICON_VIEWBOX = "104.5 209 541 541";
+
 /*! @license Broadcast and Restore icons: Typicons 2.0.3 by Stephen Hutchings, artwork licensed
  * CC BY-SA 3.0 (https://creativecommons.org/licenses/by-sa/3.0/). Glyphs \e04b (cloud-storage) and
  * \e010 (arrow-loop) converted to SVG. Temporary, until in-house charter icons replace them. */
 export const CustomBroadcastIcon: React.FC<CustomIconProps> = ({ size = 12 }) => (
-  <svg width={size} height={size} viewBox="0 83.5 833 833" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <svg width={size} height={size} viewBox={BROADCAST_ICON_VIEWBOX} overflow="visible" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       transform="translate(0 800) scale(1 -1)"
       fill="currentColor"
@@ -195,7 +199,7 @@ export const CustomBroadcastIcon: React.FC<CustomIconProps> = ({ size = 12 }) =>
 )
 
 export const CustomRestoreIcon: React.FC<CustomIconProps> = ({ size = 12 }) => (
-  <svg width={size} height={size} viewBox="0 104.5 750 750" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <svg width={size} height={size} viewBox={RESTORE_ICON_VIEWBOX} overflow="visible" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       transform="translate(0 800) scale(1 -1)"
       fill="currentColor"
