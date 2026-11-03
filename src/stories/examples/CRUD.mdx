@@ -1,0 +1,179 @@
+import { Meta, Canvas } from '@storybook/addon-docs/blocks';
+import * as Stories from './SSOBackofficeExample.stories';
+
+<Meta of={Stories} name="Guide" />
+
+# CRUD — lists, details and forms
+
+Three compositions for management screens in a technical application: finding an entity, inspecting its attributes and relationships, and creating or updating its data. The SSO backoffice provides the example; the same guidelines apply to organisations, products, projects and workspaces.
+
+These screens use existing GS library components, context-aware colours and spacing tokens. The examples are interactive and use local data: they do not send invitations, sign users out or change real permissions. The language preference control is illustrative; the embedded application screens are in French.
+
+## Choosing the right screen
+
+<table>
+  <thead><tr><th>User need</th><th>Screen type</th><th>Main composition</th></tr></thead>
+  <tbody>
+    <tr><td>Find, compare or process multiple entities</td><td>List page</td><td>Filters + <code>DataTable</code> + pagination + <code>ActionBar</code></td></tr>
+    <tr><td>Understand an entity and manage its relationships</td><td>Detail page</td><td>Attribute card + related-entity cards</td></tr>
+    <tr><td>Create or edit a limited set of attributes</td><td>Modal dialog</td><td><code>Modal</code> + form + validation + fixed actions</td></tr>
+  </tbody>
+</table>
+
+## Shared page structure
+
+### Navigation and orientation
+
+- Keep the main navigation on the left using `Sidebar`. Group entries under `SidebarGroupLabel` and identify the current entry with `SidebarMenuButton isActive`.
+- Place `SidebarUserMenu` and `LanguageSwitcher` in `SidebarFooter`. Sign-out belongs in the user menu.
+- Keep the logo and application context in `PageHeader`. On mobile, show `SidebarTrigger` to open the navigation as an overlay.
+- Give each page an explicit title and a short description when its purpose needs explaining. On a detail page, use the entity name and provide a way back to the list.
+- In the integrated application, use links or the router for navigation. Preserve filters, sorting and pagination when returning to the list.
+
+### Hierarchy and density
+
+- Make one primary action easy to identify: “Invite a person” on the list, “Edit” on the detail page. Use `Button`; reserve `variant="secondary"` for secondary actions such as exporting.
+- Group less frequent actions in a `DropdownMenu`. Use labels that describe the effect of each action.
+- Use `Layout bg="grey"` for the page and `Card` for content groups. Cards inherit the background context and become white; controls adjust their contrast to the background.
+- Build alignment with `HStack` and `VStack`. Keep the library tokens, consistent density and consistent control sizes.
+- Let actions wrap on small screens and stack form fields. A wide table can scroll horizontally within its container.
+
+### Help and feedback
+
+Place help where the user makes the decision. Use `Alert` with `role="note"` for a page-level or card-level explanation. Optional help can be opened with a button that has an accessible label; important consequences should remain visible.
+
+After an operation, show a success message with `role="status"` or the application's notification system. On failure, explain what happened and allow another attempt without losing entered data. Colour alone is not enough to communicate status: include a label, for example with `Badge`.
+
+## 1. List page
+
+A list page helps users find an entity quickly and compare essential information. Keep filters compact to leave room for results.
+
+<Canvas of={Stories.Liste} />
+
+### Structure and components
+
+<table>
+  <thead><tr><th>Area</th><th>GS components</th><th>Usability guideline</th></tr></thead>
+  <tbody>
+    <tr><td>Title and actions</td><td><code>Text</code>, <code>HStack</code>, <code>Button</code></td><td>A title, one primary action and useful secondary actions</td></tr>
+    <tr><td>Search and filters</td><td><code>Card</code>, <code>Label</code>, <code>Search</code>, <code>Select</code></td><td>Visible labels, search by name, email or ID, and explicit “All” options</td></tr>
+    <tr><td>Results</td><td><code>CardTitle</code>, <code>Badge</code>, <code>DataTable</code></td><td>Filtered result count and columns that help compare entities</td></tr>
+    <tr><td>Statuses and roles</td><td><code>Badge</code></td><td>Explicit text; avoid relying on colour alone</td></tr>
+    <tr><td>Pagination</td><td>Pagination and page-size selector built into <code>DataTable</code></td><td>Show the displayed range and let users choose the number of rows</td></tr>
+    <tr><td>Multiple selection</td><td>Checkboxes built into <code>DataTable</code>, <code>ActionBar</code>, <code>Button</code></td><td>Show bulk actions only when a selection exists</td></tr>
+  </tbody>
+</table>
+
+### Search, sorting and pagination
+
+- This example updates results when filters change. For expensive remote searches, debounce input or provide a “Search” button; avoid uncontrolled requests on every keystroke.
+- Show “Reset” when a filter is active. Return to the first page when filters change and avoid retaining selections that have become hidden.
+- Set `sortable: true` on sortable `DataTable` columns and choose a useful default order, here the most recently created entities first. Sort underlying values, including dates, before paginating.
+- Use `pageSizeOptions` for page-size choices, and `currentPage` / `onPageChange` when the application controls the current page.
+- Pass already-filtered data to `DataTable`. For large datasets, handle search, sorting and pagination on the server: this example's table only processes the local data it receives.
+
+### Clickable rows and multiple selection
+
+A row opens its detail page through `onRowClick`. Also provide an explicit, keyboard-accessible control on the entity name. Clicking checkboxes, menus or other embedded controls must not trigger navigation; mark the relevant columns with `interactive: true`.
+
+Enable `selectable` and supply stable identifiers through `getRowId`. Use `selectedIds` / `onSelectionChange` for controlled selection. The header checkbox selects the current page; the table's selection menu provides the other selection scopes supported by the library. Always make the scope of an action clear, especially when selection spans several pages.
+
+The `actionBar` slot receives the selected rows and displays applicable actions at the bottom of the screen, with a count and a way to deselect everything. Confirm sensitive operations before applying them. Reserve enough space at the bottom of the page so the bar does not cover the last controls.
+
+### States to cover
+
+- **Loading**: show that results are being fetched with `Skeleton` or `Spinner`, without suggesting the list is empty.
+- **No entities yet**: explain how to create or invite the first entity.
+- **No filtered results**: offer to reset filters, as in this example.
+- **Loading error**: display a message and an action to retry.
+
+Connect network states in the application; this demonstration covers local filtering and empty search results.
+
+## 2. Detail page
+
+A detail page separates reference information from the areas used to manage related entities. Each card has one clear purpose.
+
+<Canvas of={Stories.Detail} />
+
+### Structure and components
+
+<table>
+  <thead><tr><th>Area</th><th>GS components</th><th>Usability guideline</th></tr></thead>
+  <tbody>
+    <tr><td>Orientation and actions</td><td><code>Text</code>, <code>Badge</code>, <code>Button</code>, <code>DropdownMenu</code></td><td>Entity name, status, return to list and “Edit” action</td></tr>
+    <tr><td>Main attributes</td><td><code>Card</code>, <code>CardTitle</code>, <code>VStack</code>, <code>Text</code></td><td>Labels and values aligned in a readable grid</td></tr>
+    <tr><td>Relationships and permissions</td><td>One <code>Card</code> per topic, <code>Select</code>, <code>Button</code></td><td>One area for the platform role and another for sessions</td></tr>
+    <tr><td>Consequences of a change</td><td><code>Alert</code>, <code>AlertDescription</code></td><td>Visible help close to the relevant control</td></tr>
+    <tr><td>Sensitive action</td><td><code>Modal</code>, <code>Button</code></td><td>Confirmation naming the target, consequences and precise action</td></tr>
+  </tbody>
+</table>
+
+### Attributes and related entities
+
+- Start with a card summarising the identity: name, email, organisation, language, creation date and technical ID.
+- Prioritise human-readable information. Keep the technical ID available without letting it dominate the page. Allow long values to wrap.
+- Make missing values explicit (“Not provided” or “—”); distinguish missing data from loading.
+- Give each related-entity card a title and, when useful, a count. Use `DataTable` for a relationship with several rows to manage.
+- Explain the empty state for sessions: “No active sessions”. In a connected application, distinguish this from a failure to fetch sessions.
+
+### Changes and sensitive actions
+
+Prepare a role change in a `Select`, then apply it with a “Save role” button. Keep the button disabled until the value changes. This prevents permissions from being applied immediately when an option is selected.
+
+Explain session termination and administrator email notifications next to the field, and repeat these consequences in the confirmation. Group other security actions in the “Actions” menu: reset second factors, require a new password, deactivate or anonymise.
+
+For sensitive operations, identify the target and effect precisely in the confirmation. Use `variant="destructive"` for destructive actions and explain that anonymisation is irreversible. Keep the cancel action immediately available.
+
+Permissions, notifications and actual session termination must be enforced by the SSO service. The prototype illustrates interactions and messages without performing these operations.
+
+## 3. Create or edit modal
+
+A modal suits a short form tied to the current page. Prefer a dedicated page for lengthy edits, multi-step workflows or forms with many relationships.
+
+<Canvas of={Stories.Modification} />
+
+### Structure and components
+
+<table>
+  <thead><tr><th>Area</th><th>GS components</th><th>Usability guideline</th></tr></thead>
+  <tbody>
+    <tr><td>Dialog</td><td><code>Modal</code></td><td>Accessible title, focus trapped inside, Escape to close and return to context</td></tr>
+    <tr><td>Fixed header</td><td><code>Text</code>, <code>Button</code>, <code>IconProvider</code></td><td>Clear action title and a labelled close button</td></tr>
+    <tr><td>Form</td><td><code>VStack</code>, <code>Label</code>, <code>Input</code>, <code>Select</code></td><td>Persistent labels and identified required and optional fields</td></tr>
+    <tr><td>Help</td><td><code>Alert</code>, <code>AlertDescription</code></td><td>Invitation behaviour and link validity period</td></tr>
+    <tr><td>Errors</td><td><code>Text</code> with <code>role="alert"</code>, or <code>Alert</code></td><td>Field-level or form-level messages depending on the cause</td></tr>
+    <tr><td>Fixed footer</td><td><code>Button</code></td><td>“Cancel” and a precise action: “Send invitation” or “Save changes”</td></tr>
+  </tbody>
+</table>
+
+### Validation and errors
+
+- Prefill values when editing. When creating an entity, ask only for necessary information.
+- Associate each `Label` with its control. Do not replace labels with placeholders.
+- Use a real `form` element and a submit button so Enter can submit. A button in the `Modal` footer can target the form using its `form` attribute.
+- Validate on submission and provide actionable explanations: “Enter a valid email address” or “This email address is already associated with a person”.
+- Associate the message with the field using `aria-describedby` and set `aria-invalid` on the control. Preserve entered values and let the user correct them.
+- When integrating, focus the first invalid field if several fields are affected. If a server error does not belong to a specific field, display a form-level error inside the modal.
+- While saving remotely, show progress, prevent duplicate submissions and keep the form open on failure. Close it after confirmed success, then update the list or detail page.
+- For a changed form, warn before closing if doing so would discard significant input.
+
+The invitation uses the same structure, with a help message explaining that the password creation link is valid for 7 days. The name is optional, and the language field determines communications sent to the person.
+
+### Variants to explore
+
+The entries under **Examples → CRUD** let you open each state separately:
+
+- **List**: search, filters, sortable columns and pagination.
+- **Detail**: attributes, role changes and active sessions.
+- **Invitation**: creation form and contextual help.
+- **Edit**: prefilled form.
+- **Validation error**: invalid email address and its field-level message.
+- **Multiple selection**: checked rows and a visible action bar.
+
+## Reusing these compositions
+
+These screens demonstrate composition using existing visual components. For another entity, keep the structure and adapt titles, columns, filters, attributes, relationships and actions to the domain.
+
+Install theme and translation providers at the application root. Selection with an action bar also requires `ActionBarProvider`, which is already included in this example. `SidebarProvider` wraps the navigation and page content.
+
+The components belong to the library; the reference composition is in `src/stories/examples/SSOBackofficeExample.tsx`. Before production use, connect data, routes, permissions, translations and network states to the application's services.

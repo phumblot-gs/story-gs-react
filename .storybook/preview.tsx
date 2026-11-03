@@ -24,6 +24,8 @@ const preview: Preview = {
           "Layout",
           "Components",
           "UI",
+          "*",
+          "Examples", ["CRUD", ["Guide", "List", "Detail", "Invitation", "Edit", "Validation error", "Multiple selection"]],
         ],
         method: "alphabetical",
       },
