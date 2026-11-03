@@ -34,7 +34,7 @@ These screens use existing GS library components, context-aware colours and spac
 
 - Make one primary action easy to identify: “Invite a person” on the list, “Edit” on the detail page. Use `Button`; reserve `variant="secondary"` for secondary actions such as exporting.
 - Group less frequent actions in a `DropdownMenu`. Use labels that describe the effect of each action.
-- Use `Layout bg="grey"` for the page and `Card` for content groups. Cards inherit the background context and become white; controls adjust their contrast to the background.
+- Use `Layout bg="grey"` for the page and `Card` for filters, attributes and related-entity content. Put section titles, counts and descriptions above the cards. Cards inherit the background context and become white; controls adjust their contrast to the background.
 - Build alignment with `HStack` and `VStack`. Keep the library tokens, consistent density and consistent control sizes.
 - Let actions wrap on small screens and stack form fields. A wide table can scroll horizontally within its container.
 
@@ -46,7 +46,7 @@ After an operation, show a success message with `role="status"` or the applicati
 
 ## 1. List page
 
-A list page helps users find an entity quickly and compare essential information. Keep filters compact to leave room for results.
+A list page helps users find an entity quickly and compare essential information. Keep filters compact to leave room for results. Place the section title above the filter card and render the results table directly on the page, without an enclosing card.
 
 <Canvas of={Stories.Liste} />
 
@@ -56,8 +56,8 @@ A list page helps users find an entity quickly and compare essential information
   <thead><tr><th>Area</th><th>GS components</th><th>Usability guideline</th></tr></thead>
   <tbody>
     <tr><td>Title and actions</td><td><code>Text</code>, <code>HStack</code>, <code>Button</code></td><td>A title, one primary action and useful secondary actions</td></tr>
-    <tr><td>Search and filters</td><td><code>Card</code>, <code>Label</code>, <code>Search</code>, <code>Select</code></td><td>Visible labels, search by name, email or ID, and explicit “All” options</td></tr>
-    <tr><td>Results</td><td><code>CardTitle</code>, <code>Badge</code>, <code>DataTable</code></td><td>Filtered result count and columns that help compare entities</td></tr>
+    <tr><td>Search and filters</td><td><code>Card</code>, <code>Label</code>, <code>Search</code>, <code>Select</code></td><td>Visible labels, search by name, email or ID, and explicit “All” options; 15px card padding on mobile and 20px from the small breakpoint upwards</td></tr>
+    <tr><td>Results</td><td><code>CardTitle</code>, <code>Badge</code>, <code>DataTable</code></td><td>Title, count and description above the table; no enclosing card so columns have more room</td></tr>
     <tr><td>Statuses and roles</td><td><code>Badge</code></td><td>Explicit text; avoid relying on colour alone</td></tr>
     <tr><td>Pagination</td><td>Pagination and page-size selector built into <code>DataTable</code></td><td>Show the displayed range and let users choose the number of rows</td></tr>
     <tr><td>Multiple selection</td><td>Checkboxes built into <code>DataTable</code>, <code>ActionBar</code>, <code>Button</code></td><td>Show bulk actions only when a selection exists</td></tr>
@@ -66,8 +66,8 @@ A list page helps users find an entity quickly and compare essential information
 
 ### Search, sorting and pagination
 
-- This example updates results when filters change. For expensive remote searches, debounce input or provide a “Search” button; avoid uncontrolled requests on every keystroke.
-- Show “Reset” when a filter is active. Return to the first page when filters change and avoid retaining selections that have become hidden.
+- Edit draft filters, then apply them with “Search” or Enter. Place the `Button variant="inverse"` below the filter card, aligned with its right edge. Avoid uncontrolled remote requests on every keystroke.
+- Show “Reset” when a draft or applied filter is active. Reset clears both draft and applied filters. Return to the first page and clear selection when a search is submitted.
 - Set `sortable: true` on sortable `DataTable` columns and choose a useful default order, here the most recently created entities first. Sort underlying values, including dates, before paginating.
 - Use `pageSizeOptions` for page-size choices, and `currentPage` / `onPageChange` when the application controls the current page.
 - Pass already-filtered data to `DataTable`. For large datasets, handle search, sorting and pagination on the server: this example's table only processes the local data it receives.
@@ -91,7 +91,7 @@ Connect network states in the application; this demonstration covers local filte
 
 ## 2. Detail page
 
-A detail page separates reference information from the areas used to manage related entities. Each card has one clear purpose.
+A detail page separates reference information from the areas used to manage related entities. Each card has one clear purpose, with its title, count and supporting description above the card.
 
 <Canvas of={Stories.Detail} />
 

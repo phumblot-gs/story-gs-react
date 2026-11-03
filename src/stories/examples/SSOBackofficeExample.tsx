@@ -3,7 +3,7 @@ import { Layout, HStack, VStack, Modal, ActionBarProvider } from "@/components/l
 import PageHeader from "@/components/PageHeader";
 import { Sidebar, SidebarProvider, SidebarHeader, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarInset, SidebarTrigger, SidebarUserMenu, useSidebar } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
-import { Card, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardTitle } from "@/components/ui/card";
 import { Text } from "@/components/ui/text";
 import { IconProvider } from "@/components/ui/icon-provider";
 import type { IconName } from "@/components/ui/icons/types";
@@ -54,7 +54,28 @@ function Header() {
   return <PageHeader title="Identité & accès" showTitleButton={false} leftContent={isMobile ? <SidebarTrigger /> : undefined} rightContent={<Badge variant="outline">Backoffice SSO</Badge>} />;
 }
 
-export interface SSOBackofficeExampleProps { initialView?: "list" | "detail" | "invite" | "edit" | "errors" | "selection"; }
+/** Section headings stay above cards; tables can use the full content width. */
+function ContentSection({ title, description, accessory, actions, uncontained = false, cardClassName, children }: {
+  title: string;
+  description?: string;
+  accessory?: React.ReactNode;
+  actions?: React.ReactNode;
+  uncontained?: boolean;
+  cardClassName?: string;
+  children: React.ReactNode;
+}) {
+  const heading = <HStack justify="between" align="center" gap={3} wrap>
+    <VStack gap={1}>
+      <HStack align="center" gap={2}><CardTitle>{title}</CardTitle>{accessory}</HStack>
+      {description && <Text as="p" className="text-sm text-grey-strongest">{description}</Text>}
+    </VStack>
+    {actions}
+  </HStack>;
+  return <VStack as="section" gap={3}>{heading}{uncontained ? children : <Card className={`gap-4 ${cardClassName ?? ""}`}>{children}</Card>}</VStack>;
+}
+
+export interface SSOBackofficeExampleProps {
+  initialView?: "list" | "detail" | "invite" | "edit" | "errors" | "selection"; }
 /** A local, interactive CRUD composition. No network or account operations. */
 export function SSOBackofficeExample({ initialView = "list" }: SSOBackofficeExampleProps) {
   const [rows, setRows] = React.useState(people);
@@ -63,12 +84,13 @@ export function SSOBackofficeExample({ initialView = "list" }: SSOBackofficeExam
   const [status, setStatus] = React.useState("Tous");
   const [role, setRole] = React.useState("Tous");
   const [type, setType] = React.useState("Tous");
+  const [appliedFilters, setAppliedFilters] = React.useState({ query: "", status: "Tous", role: "Tous", type: "Tous" });
   const [page, setPage] = React.useState(1);
   const [selected, setSelected] = React.useState(new Set(initialView === "selection" ? [people[1].id, people[2].id] : []));
   const [modal, setModal] = React.useState<"invite" | "edit" | null>(initialView === "edit" ? "edit" : ["invite", "errors"].includes(initialView) ? "invite" : null);
   const [email, setEmail] = React.useState(initialView === "edit" ? people[0].email : initialView === "errors" ? "marie@" : "");
   const [name, setName] = React.useState(initialView === "edit" ? people[0].name : "");
-  const [language, setLanguage] = React.useState("FR");
+  const [language, setLanguage] = React.useState(initialView === "edit" ? people[0].language : "FR");
   const [error, setError] = React.useState(initialView === "errors" ? "Saisissez une adresse e-mail valide." : "");
   const [notice, setNotice] = React.useState("");
   const [interfaceLanguage, setInterfaceLanguage] = React.useState({ code: "FR", name: "Français" });
@@ -77,10 +99,12 @@ export function SSOBackofficeExample({ initialView = "list" }: SSOBackofficeExam
   const [confirmation, setConfirmation] = React.useState<{ title: string; description: string; label: string; run: () => void } | null>(null);
   React.useEffect(() => { window.scrollTo(0, 0); }, [personId]);
   const person = rows.find(row => row.id === personId);
-  const hasFilters = !!query || status !== "Tous" || role !== "Tous" || type !== "Tous";
-  const filtered = rows.filter(row => (!query || normalize([row.name, row.email, row.id].join(" ")).includes(normalize(query))) && (status === "Tous" || row.status === status) && (role === "Tous" || row.role === role) && (type === "Tous" || row.type === type));
-  function changeFilter(setter: (v: string) => void, value: string) { setter(value); setPage(1); setSelected(new Set()); }
-  function reset() { setQuery(""); setStatus("Tous"); setRole("Tous"); setType("Tous"); setPage(1); setSelected(new Set()); }
+  const hasFilters = !!query || status !== "Tous" || role !== "Tous" || type !== "Tous" || (!!appliedFilters.query || appliedFilters.status !== "Tous" || appliedFilters.role !== "Tous" || appliedFilters.type !== "Tous");
+  const filters = appliedFilters;
+  const filtered = rows.filter(row => (!filters.query || normalize([row.name, row.email, row.id].join(" ")).includes(normalize(filters.query))) && (filters.status === "Tous" || row.status === filters.status) && (filters.role === "Tous" || row.role === filters.role) && (filters.type === "Tous" || row.type === filters.type));
+  function changeFilter(setter: (v: string) => void, value: string) { setter(value); }
+  function applySearch(event: React.FormEvent) { event.preventDefault(); setAppliedFilters({ query: query.trim(), status, role, type }); setPage(1); setSelected(new Set()); }
+  function reset() { setAppliedFilters({ query: "", status: "Tous", role: "Tous", type: "Tous" }); setQuery(""); setStatus("Tous"); setRole("Tous"); setType("Tous"); setPage(1); setSelected(new Set()); }
   function openPerson(row: Person) { setPersonId(row.id); setDraftRole(row.role); setSelected(new Set()); setNotice(""); }
   function openForm(mode: "invite" | "edit") { setEmail(mode === "edit" && person ? person.email : ""); setName(mode === "edit" && person ? person.name : ""); setLanguage(mode === "edit" && person ? person.language : "FR"); setError(""); setModal(mode); }
   function update(ids: Set<string>, changes: Partial<Person>) { setRows(current => current.map(row => ids.has(row.id) ? { ...row, ...changes } : row)); setSelected(new Set()); }
@@ -122,12 +146,21 @@ export function SSOBackofficeExample({ initialView = "list" }: SSOBackofficeExam
         {notice && <Alert role="status" className="border-0 bg-pastel-blue-secondary"><HStack justify="between" align="center" gap={3}><AlertDescription>{notice}</AlertDescription><Button variant="ghost" aria-label="Fermer le message" onClick={() => setNotice("")}><IconProvider icon="X" /></Button></HStack></Alert>}
         {help && <Alert role="note" className="border-0 bg-pastel-yellow-secondary"><AlertTitle>Comprendre les accès</AlertTitle><AlertDescription>Une identité permet de se connecter. L’accès aux espaces de travail est accordé par les organisations. Les rôles de plateforme donnent des droits d’administration transverses.</AlertDescription></Alert>}
         {!person ? <>
-          <Card className="gap-4"><HStack justify="between" align="center"><CardTitle>Rechercher et filtrer</CardTitle>{hasFilters && <Button variant="link" onClick={reset}>Réinitialiser</Button>}</HStack><Layout className="grid gap-4 md:grid-cols-2 xl:grid-cols-[2fr_1fr_1.5fr_1fr]"><VStack gap={2}><Label htmlFor="people-search">E-mail, nom ou identifiant</Label><Search id="people-search" containerClassName="w-full" className="w-full" captureFindShortcut value={query} placeholder="Rechercher une personne…" onChange={event => changeFilter(setQuery, event.target.value)} onClear={() => changeFilter(setQuery, "")} /></VStack><Choice id="filter-status" label="Statut" value={status} options={["Tous", "Active", "Invitée", "Désactivée"]} onChange={v => changeFilter(setStatus, v)} /><Choice id="filter-role" label="Rôle de plateforme" value={role} options={["Tous", ...roles]} onChange={v => changeFilter(setRole, v)} /><Choice id="filter-type" label="Type" value={type} options={["Tous", "Personne", "Agent IA"]} onChange={v => changeFilter(setType, v)} /></Layout></Card>
-          <Card className="gap-4"><HStack justify="between" align="center" wrap gap={2}><HStack align="center" gap={2}><CardTitle>Personnes</CardTitle><Badge variant="secondary">{filtered.length}</Badge></HStack><Text className="text-sm text-grey-strongest">Sélectionnez des lignes pour afficher les actions groupées.</Text></HStack><DataTable data={filtered} columns={columns} getRowId={row => row.id} onRowClick={openPerson} selectable selectedIds={selected} onSelectionChange={setSelected} pageSize={10} pageSizeOptions={[5, 10, 25, 50]} currentPage={page} onPageChange={setPage} defaultSort={{ columnId: "created", direction: "desc" }} language="FR" emptyState={<VStack align="center" gap={3} className="py-8"><IconProvider icon="Users" size={28} /><Text>Aucune personne ne correspond aux filtres.</Text><Button variant="secondary" onClick={reset}>Réinitialiser les filtres</Button></VStack>} actionBar={({ selectedRows }) => <><Button variant="secondary" onClick={() => exportCSV(selectedRows)}><IconProvider icon="Download" />Exporter la sélection</Button><Button variant="destructive" onClick={() => confirmDisable(new Set(selectedRows.map(row => row.id)))}>Désactiver</Button></>} /></Card>
+          <form onSubmit={applySearch}>
+            <VStack gap={3}>
+              <ContentSection title="Rechercher et filtrer" cardClassName="p-3 sm:p-4" actions={hasFilters ? <Button type="button" variant="link" onClick={reset}>Réinitialiser</Button> : undefined}>
+                <Layout className="grid gap-4 md:grid-cols-2 xl:grid-cols-[2fr_1fr_1.5fr_1fr]"><VStack gap={2}><Label htmlFor="people-search">E-mail, nom ou identifiant</Label><Search id="people-search" containerClassName="w-full" className="w-full" captureFindShortcut value={query} placeholder="Rechercher une personne…" onChange={event => changeFilter(setQuery, event.target.value)} onClear={() => changeFilter(setQuery, "")} /></VStack><Choice id="filter-status" label="Statut" value={status} options={["Tous", "Active", "Invitée", "Désactivée"]} onChange={v => changeFilter(setStatus, v)} /><Choice id="filter-role" label="Rôle de plateforme" value={role} options={["Tous", ...roles]} onChange={v => changeFilter(setRole, v)} /><Choice id="filter-type" label="Type" value={type} options={["Tous", "Personne", "Agent IA"]} onChange={v => changeFilter(setType, v)} /></Layout>
+              </ContentSection>
+              <Button type="submit" variant="inverse" className="self-end"><IconProvider icon="Search" />Rechercher</Button>
+            </VStack>
+          </form>
+          <ContentSection title="Personnes" accessory={<Badge variant="secondary">{filtered.length}</Badge>} description="Sélectionnez des lignes pour afficher les actions groupées." uncontained>
+            <DataTable data={filtered} columns={columns} getRowId={row => row.id} onRowClick={openPerson} selectable selectedIds={selected} onSelectionChange={setSelected} pageSize={10} pageSizeOptions={[5, 10, 25, 50]} currentPage={page} onPageChange={setPage} defaultSort={{ columnId: "created", direction: "desc" }} language="FR" emptyState={<VStack align="center" gap={3} className="py-8"><IconProvider icon="Users" size={28} /><Text>Aucune personne ne correspond aux filtres.</Text><Button variant="secondary" onClick={reset}>Réinitialiser les filtres</Button></VStack>} actionBar={({ selectedRows }) => <><Button variant="secondary" onClick={() => exportCSV(selectedRows)}><IconProvider icon="Download" />Exporter la sélection</Button><Button variant="destructive" onClick={() => confirmDisable(new Set(selectedRows.map(row => row.id)))}>Désactiver</Button></>} />
+          </ContentSection>
         </> : <>
-          <Card><HStack justify="between" align="center" gap={3}><CardTitle>Identité</CardTitle><Badge variant="secondary">{person.type}</Badge></HStack><Layout className="grid gap-x-6 gap-y-5 sm:grid-cols-2 xl:grid-cols-3"><Attribute label="Nom">{person.name || "Non renseigné"}</Attribute><Attribute label="E-mail / identifiant">{person.email}</Attribute><Attribute label="Organisation">{person.organisation}</Attribute><Attribute label="Langue">{person.language === "FR" ? "Français" : "English"}</Attribute><Attribute label="Créée le">{date(person.created)}</Attribute><Attribute label="Identifiant unique"><Text className="text-sm break-all">{person.id}</Text></Attribute></Layout></Card>
-          <Card><VStack gap={1}><CardTitle>Rôle de plateforme</CardTitle><CardDescription>Définissez les droits d’administration de cette personne.</CardDescription></VStack><HStack align="end" gap={3} wrap><Layout className="w-full sm:max-w-[360px]"><Choice id="person-role" label="Rôle de plateforme" value={draftRole} options={roles} onChange={setDraftRole} /></Layout><Button disabled={draftRole === person.role} onClick={() => setConfirmation({ title: "Modifier le rôle de plateforme ?", description: `Nouveau rôle : ${draftRole}. Les superadmins seront prévenus par e-mail et les sessions de la personne seront fermées.`, label: "Enregistrer le rôle", run: () => { update(new Set([person.id]), { role: draftRole }); setNotice("Rôle modifié dans la démonstration. Aucun e-mail n’a été envoyé."); } })}>Enregistrer le rôle</Button></HStack><Alert role="note" className="border-0 bg-pastel-yellow-secondary"><AlertDescription><Text className="font-medium">Une modification sensible.</Text> Chaque changement prévient les superadmins par e-mail et ferme les sessions de la personne.</AlertDescription></Alert></Card>
-          <Card><HStack align="center" gap={2}><CardTitle>Sessions ouvertes</CardTitle><Badge variant="secondary">0</Badge></HStack><VStack align="center" gap={2} className="py-5"><IconProvider icon="Check" size={28} /><Text className="font-medium">Aucune session ouverte</Text><Text className="text-sm text-grey-strongest">Les connexions actives de cette personne apparaîtront ici.</Text></VStack></Card>
+          <ContentSection title="Identité" accessory={<Badge variant="secondary">{person.type}</Badge>}><Layout className="grid gap-x-6 gap-y-5 sm:grid-cols-2 xl:grid-cols-3"><Attribute label="Nom">{person.name || "Non renseigné"}</Attribute><Attribute label="E-mail / identifiant">{person.email}</Attribute><Attribute label="Organisation">{person.organisation}</Attribute><Attribute label="Langue">{person.language === "FR" ? "Français" : "English"}</Attribute><Attribute label="Créée le">{date(person.created)}</Attribute><Attribute label="Identifiant unique"><Text className="text-sm break-all">{person.id}</Text></Attribute></Layout></ContentSection>
+          <ContentSection title="Rôle de plateforme" description="Définissez les droits d’administration de cette personne."><HStack align="end" gap={3} wrap><Layout className="w-full sm:max-w-[360px]"><Choice id="person-role" label="Rôle de plateforme" value={draftRole} options={roles} onChange={setDraftRole} /></Layout><Button disabled={draftRole === person.role} onClick={() => setConfirmation({ title: "Modifier le rôle de plateforme ?", description: `Nouveau rôle : ${draftRole}. Les superadmins seront prévenus par e-mail et les sessions de la personne seront fermées.`, label: "Enregistrer le rôle", run: () => { update(new Set([person.id]), { role: draftRole }); setNotice("Rôle modifié dans la démonstration. Aucun e-mail n’a été envoyé."); } })}>Enregistrer le rôle</Button></HStack><Alert role="note" className="border-0 bg-pastel-yellow-secondary"><AlertDescription><Text className="font-medium">Une modification sensible.</Text> Chaque changement prévient les superadmins par e-mail et ferme les sessions de la personne.</AlertDescription></Alert></ContentSection>
+          <ContentSection title="Sessions ouvertes" accessory={<Badge variant="secondary">0</Badge>}><VStack align="center" gap={2} className="py-5"><IconProvider icon="Check" size={28} /><Text className="font-medium">Aucune session ouverte</Text><Text className="text-sm text-grey-strongest">Les connexions actives de cette personne apparaîtront ici.</Text></VStack></ContentSection>
         </>}
         <Text className="text-sm text-grey-strongest">Démonstration interactive · données locales, sans connexion au service SSO.</Text>
       </VStack>
