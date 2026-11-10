@@ -44,7 +44,7 @@
   /* Border & Input */
   --border: 0 0% 76%; /* #C1C1C1 - grey-stronger */
   --input: 0 0% 76%;
-  --ring: 195 100% 90%; /* blue-primary */
+  --ring: 0 1% 16%; /* #292828 black, same as data-bg white/grey */
 
   /* Border radius - basé sur radiusBase (4px) des tokens Figma */
   --radius: 0.25rem; /* 4px */

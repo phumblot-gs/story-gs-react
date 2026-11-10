@@ -41,9 +41,9 @@ function hexToHslTriplet(hex) {
   return `${Math.round(hue)} ${Math.round(sat * 100)}% ${Math.round(l * 100)}%`;
 }
 
-// Tokens consumed through hsl(var(--x)) by Tailwind (border, input, popover): must be HSL triplets.
+// Tokens consumed through hsl(var(--x)) by Tailwind (border, input, popover, ring): must be HSL triplets.
 // The other surface tokens (--background, --primary…) stay hex for now: direct hex uses may rely on them.
-const SHADCN_TOKENS_FORCE_HSL = new Set(['Border', 'Input', 'Popover', 'PopoverForeground']);
+const SHADCN_TOKENS_FORCE_HSL = new Set(['Border', 'Input', 'Popover', 'PopoverForeground', 'Ring']);
 
 /**
  * Convertit les noms de tokens Figma en noms de variables CSS

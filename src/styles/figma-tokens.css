@@ -1,7 +1,7 @@
 /**
  * Variables CSS générées automatiquement depuis les tokens Figma
  * NE PAS MODIFIER DIRECTEMENT - Généré par scripts/generate-css-tokens.cjs
- * Date: 2026-10-26T16:11:46.608Z
+ * Date: 2026-11-10T12:01:46.436Z
  */
 
 :root {
@@ -903,7 +903,7 @@
   --accent-foreground: #cdedff;
   --destructive: #dd3733;
   --desctructive-foreground: #ffffff;
-  --ring: #292828;
+  --ring: 0 1% 16%;
   --border: 0 3% 85%;
   --input: 0 3% 85%;
 }
@@ -925,7 +925,7 @@
   --accent-foreground: #cdedff;
   --destructive: #dd3733;
   --desctructive-foreground: #ffffff;
-  --ring: #292828;
+  --ring: 0 1% 16%;
   --border: 0 3% 85%;
   --input: 0 3% 85%;
 }
@@ -946,7 +946,7 @@
   --accent-foreground: #cdedff;
   --destructive: #dd3733;
   --desctructive-foreground: #ffffff;
-  --ring: #ffffff;
+  --ring: 0 0% 100%;
   --border: 0 3% 85%;
   --input: 0 3% 85%;
 }
