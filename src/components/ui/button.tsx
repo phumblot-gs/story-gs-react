@@ -80,7 +80,7 @@ function normalizeSize(size?: ButtonSize | ShadcnSize): ButtonSize {
 
 // CVA variants
 const buttonVariants = cva(
-  "rounded-full font-regular inline-flex items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none",
+  "rounded-full font-regular inline-flex items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-context disabled:pointer-events-none",
   {
     variants: {
       variant: {

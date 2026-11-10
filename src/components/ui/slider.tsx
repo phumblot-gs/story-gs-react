@@ -264,7 +264,7 @@ const Slider = React.forwardRef<
             // drag : le pseudo-élément ::before étend la surface cliquable du
             // thumb de 10px tout autour.
             "before:content-[''] before:absolute before:-inset-[10px]",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-context",
             "disabled:pointer-events-none disabled:opacity-50",
             styles.thumb,
             debug && "before:bg-pink/20"

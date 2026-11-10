@@ -906,6 +906,7 @@
   --ring: 0 1% 16%;
   --border: 0 3% 85%;
   --input: 0 3% 85%;
+  --ring-offset: #ffffff;
 }
 
 [data-bg="grey"] {
@@ -928,6 +929,7 @@
   --ring: 0 1% 16%;
   --border: 0 3% 85%;
   --input: 0 3% 85%;
+  --ring-offset: var(--color-grey-light);
 }
 
 [data-bg="black"] {
@@ -949,6 +951,7 @@
   --ring: 0 0% 100%;
   --border: 0 3% 85%;
   --input: 0 3% 85%;
+  --ring-offset: #292828;
 }
 
 /* Classes Button contextuelles */

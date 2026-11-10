@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { cleanup, render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
-import { existsSync, readFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
+import { relative, resolve } from "node:path";
 
 import { Button } from "@/components/ui/button";
 import { Button as ButtonBase } from "@/components/ui/button-base";
@@ -13,6 +13,8 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Layout } from "@/components/layout/Layout";
+import { SegmentedControl, SegmentedControlList, SegmentedControlTrigger } from "@/components/ui/segmented-control";
+import { ButtonPlus } from "@/components/ui/button-plus";
 
 afterEach(cleanup);
 
@@ -32,11 +34,13 @@ function hslTripletToHex(triplet: string): string {
   return `#${[0, 8, 4].map((n) => channel(n).toString(16).padStart(2, "0")).join("")}`;
 }
 
-function ringIn(css: string, selector: string): string | undefined {
+function tokenIn(css: string, selector: string, token: string): string | undefined {
   const escaped = selector.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   const block = css.match(new RegExp(`(?:^|\\n)${escaped}\\s*\\{([^}]*)\\}`))?.[1];
-  return block?.match(/--ring:\s*([^;]+);/)?.[1].trim();
+  return block?.match(new RegExp(`${token}:\\s*([^;]+);`))?.[1].trim();
 }
+
+const ringIn = (css: string, selector: string) => tokenIn(css, selector, "--ring");
 
 // CR-1151: Tailwind maps `ring` to hsl(var(--ring)); a hex --ring made the rule invalid and no ring rendered.
 describe("--ring token is an HSL triplet with the charter colour", () => {
@@ -56,11 +60,44 @@ describe("--ring token is an HSL triplet with the charter colour", () => {
   });
 });
 
+// CR-1151: the white Tailwind default offset merged with the white ring on black into a solid 4px border.
+describe("--ring-offset token is the context background", () => {
+  it.each([
+    ['[data-bg="white"]', tokensCss, "#ffffff"],
+    ['[data-bg="grey"]', tokensCss, "var(--color-grey-light)"],
+    ['[data-bg="black"]', tokensCss, "#292828"],
+    [":root", shadcnCss, "#ffffff"],
+  ])("%s", (selector, css, value) => {
+    expect(tokenIn(css, selector, "--ring-offset")).toBe(value);
+  });
+
+  it("matches the background of each data-bg context", () => {
+    for (const bg of ["white", "grey", "black"]) {
+      const selector = `[data-bg="${bg}"]`;
+      expect(tokenIn(tokensCss, selector, "--ring-offset")).toBe(tokenIn(tokensCss, selector, "--background"));
+    }
+    expect(tokenIn(tokensCss, ":root", "--color-grey-light")).toBe("#efefef");
+  });
+
+  it(".dark does not override it (white offset, as without data-bg)", () => {
+    expect(tokenIn(shadcnCss, ".dark", "--ring-offset")).toBeUndefined();
+  });
+});
+
 describe.skipIf(!existsSync(LIB_CSS))("built lib.css (after npm run build:lib)", () => {
   const libCss = existsSync(LIB_CSS) ? readFileSync(LIB_CSS, "utf8") : "";
 
   it("ring-ring resolves through hsl(var(--ring))", () => {
     expect(libCss).toContain(".focus-visible\\:ring-ring:focus-visible{--tw-ring-color: hsl(var(--ring))}");
+  });
+
+  it("ring-offset-context paints --ring-offset", () => {
+    expect(libCss).toContain(".focus-visible\\:ring-offset-context:focus-visible{--tw-ring-offset-color: var(--ring-offset)}");
+  });
+
+  it.each(["white", "grey", "black"])("data-bg=%s ships --ring-offset", (bg) => {
+    const block = libCss.match(new RegExp(`\\[data-bg="?${bg}"?\\]\\{([^}]*--ring-offset:[^}]*)\\}`))?.[1];
+    expect(block).toBeDefined();
   });
 
   it.each(["white", "grey", "black"])("data-bg=%s ships an HSL --ring", (bg) => {
@@ -79,7 +116,25 @@ function expectKeyboardOnlyRing(element: HTMLElement) {
   expect(classes.filter((c) => /^focus:ring-[1-9]/.test(c))).toEqual([]);
   // hsl(var(--background)) is invalid under data-bg (hex) and would drop the whole box-shadow.
   expect(classes).not.toContain("ring-offset-background");
+  if (classes.some((c) => /^focus-visible:ring-offset-\d$/.test(c))) {
+    expect(classes).toContain("focus-visible:ring-offset-context");
+  }
 }
+
+const COMPONENTS_DIR = resolve(__dirname, "../components");
+// Kept unchanged on purpose: unknown external projects may still import it.
+const RING_OFFSET_BACKGROUND_ALLOWED = ["ui/select-old.tsx"];
+
+describe("no ring-offset-background in the components", () => {
+  it("only the legacy select-old.tsx keeps it", () => {
+    const offenders = (readdirSync(COMPONENTS_DIR, { recursive: true }) as string[])
+      .filter((file) => file.endsWith(".tsx"))
+      .map((file) => relative(COMPONENTS_DIR, resolve(COMPONENTS_DIR, file)).split("\\").join("/"))
+      .filter((file) => !RING_OFFSET_BACKGROUND_ALLOWED.includes(file))
+      .filter((file) => readFileSync(resolve(COMPONENTS_DIR, file), "utf8").includes("ring-offset-background"));
+    expect(offenders).toEqual([]);
+  });
+});
 
 describe("components carry a keyboard-only ring", () => {
   it.each(["white", "grey", "black"] as const)("on bg=%s", (bg) => {
@@ -100,6 +155,21 @@ describe("components carry a keyboard-only ring", () => {
     expectKeyboardOnlyRing(screen.getByRole("switch"));
     expectKeyboardOnlyRing(screen.getByRole("slider"));
     expectKeyboardOnlyRing(screen.getByRole("radio", { name: "Option A" }));
+  });
+
+  it("ButtonPlus and SegmentedControl trigger", () => {
+    render(
+      <Layout bg="black">
+        <ButtonPlus label="Plus" />
+        <SegmentedControl defaultValue="a">
+          <SegmentedControlList>
+            <SegmentedControlTrigger value="a">A</SegmentedControlTrigger>
+          </SegmentedControlList>
+        </SegmentedControl>
+      </Layout>,
+    );
+    expectKeyboardOnlyRing(screen.getByRole("button", { name: "Plus" }));
+    expectKeyboardOnlyRing(screen.getByRole("tab", { name: "A" }));
   });
 
   it("ButtonBase", () => {

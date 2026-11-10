@@ -19,13 +19,14 @@ const meta: Meta = {
         component: `
 Anneau de focus clavier de la librairie (\`focus-visible:ring-ring\`), à vérifier à la touche **Tab** : il ne s'affiche pas au clic souris.
 
-| Contexte | Couleur de l'anneau (\`--ring\`) |
-| --- | --- |
-| \`data-bg="white"\` / \`"grey"\` | \`#292828\` |
-| \`data-bg="black"\` | \`#ffffff\` |
-| sans contexte (popovers, menus portés) | \`#292828\` |
+| Contexte | Anneau (\`--ring\`) | Écart (\`--ring-offset\`) |
+| --- | --- | --- |
+| \`data-bg="white"\` | \`#292828\` | \`#ffffff\` |
+| \`data-bg="grey"\` | \`#292828\` | \`--color-grey-light\` (\`#efefef\`) |
+| \`data-bg="black"\` | \`#ffffff\` | \`#292828\` |
+| sans contexte (popovers, menus portés) | \`#292828\` | \`#ffffff\` |
 
-L'écart (\`ring-offset-2\`) est blanc (\`#fff\`, défaut Tailwind) quel que soit le fond.
+L'écart (\`ring-offset-2\` + \`ring-offset-context\`) prend la couleur du fond du contexte : l'anneau paraît détaché du contrôle au lieu de former, sur fond noir, une bordure blanche pleine de 4px.
         `,
       },
     },

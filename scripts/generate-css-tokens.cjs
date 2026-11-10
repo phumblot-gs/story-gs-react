@@ -264,6 +264,10 @@ function generateShadcnContextCSS(tokens, context) {
     }
   }
 
+  // Focus ring offset (ring-offset-context): the context background, so the offset reads as a gap.
+  const background = tokens[`shadcnBackground${suffix}`];
+  if (typeof background === 'string') css += `  --ring-offset: ${background};\n`;
+
   css += `}\n`;
   return css;
 }
@@ -1517,7 +1521,7 @@ function generateCSS() {
   );
   // Remplacer aussi --background: #eaeaea de manière générale (mais pas --color-grey)
   css = css.replace(
-    /(--background):\s*#eaeaea;/gi,
+    /(--background|--ring-offset):\s*#eaeaea;/gi,
     '$1: var(--color-grey-light);'
   );
 
