@@ -39,6 +39,13 @@ export interface ActionBarProps {
 
   /** Props du HStack (bg, gap, align, justify, padding, etc.) */
   hStackProps?: React.ComponentProps<typeof HStack>;
+
+  /**
+   * Débordement de la rangée des actions (`children`). `auto` (défaut) : la rangée rétrécit et défile,
+   * mais rogne l'anneau de focus clavier de ses boutons. `visible` : l'anneau s'affiche en entier ;
+   * la rangée garde alors la largeur de son contenu au lieu de rétrécir quand la barre est trop étroite.
+   */
+  contentOverflow?: 'auto' | 'visible';
 }
 
 /**
@@ -82,6 +89,7 @@ export function ActionBar({
   container,
   className,
   hStackProps,
+  contentOverflow = 'auto',
 }: ActionBarProps) {
   const instanceId = useId();
   const { registerActionBar, unregisterActionBar, updateActionBar, getActiveActionBar } = useActionBarContext();
@@ -158,7 +166,7 @@ export function ActionBar({
               )}
             </HStack>
           )}
-          <HStack gap={2} align="center">
+          <HStack gap={2} align="center" scroll={contentOverflow}>
             <IsInActionBarContext.Provider value={true}>
               {children}
             </IsInActionBarContext.Provider>
@@ -197,7 +205,7 @@ export function ActionBar({
             )}
           </HStack>
         )}
-        <HStack gap={2} align="center">
+        <HStack gap={2} align="center" scroll={contentOverflow}>
           <IsInActionBarContext.Provider value={true}>
             {children}
           </IsInActionBarContext.Provider>

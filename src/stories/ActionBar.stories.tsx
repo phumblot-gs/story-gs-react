@@ -155,6 +155,11 @@ Customize the ActionBar appearance using \`hStackProps\`:
       control: 'text',
       description: 'Additional Tailwind CSS classes for the container',
     },
+    contentOverflow: {
+      control: 'select',
+      options: ['auto', 'visible'],
+      description: 'Overflow of the actions row. `auto` (default): the row shrinks and scrolls, but clips the keyboard focus ring of its buttons. `visible`: the whole ring shows; the row keeps its content width instead of shrinking in a too narrow bar.',
+    },
   },
   decorators: [
     (Story) => (
@@ -273,6 +278,28 @@ export const WithMultipleActions: Story = {
       </>
     );
   },
+};
+
+export const ContentOverflowVisible: StoryObj = {
+  name: 'contentOverflow="visible" (focus ring)',
+  parameters: {
+    docs: {
+      description: {
+        story: 'Press **Tab** up to the action buttons: with `contentOverflow="visible"` their focus ring is no longer clipped by the actions row.',
+      },
+    },
+  },
+  render: () => (
+    <>
+      <Layout bg="grey" padding={8} className="min-h-screen pb-20">
+        <p className="text-sm text-grey-stronger">Tab to the buttons of the bar.</p>
+      </Layout>
+      <ActionBar selectedCount={2} translationKey="actionBar.filesSelected" onDeselectAll={() => {}} contentOverflow="visible">
+        <Button variant="secondary">Exporter</Button>
+        <Button variant="normal">Valider</Button>
+      </ActionBar>
+    </>
+  ),
 };
 
 export const WithoutSelectionInfo: Story = {
