@@ -12,8 +12,32 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 - `Slider` : prop `thumbTabIndex`, transmise au thumb comme `tabIndex`. `thumbTabIndex={-1}` retire le thumb de l'ordre de
   tabulation ; le drag souris/tactile reste identique et, après un clic, les flèches déplacent toujours la valeur (Radix
   focalise le thumb au pointerdown). Sans la prop, rien ne change (tabIndex 0 de Radix) ; ignorée quand le slider est
-  `disabled`. Anneau de focus inchangé. Story `UI/Slider` → `OutOfTabOrder`. Besoin : curseur « images par ligne » de
-  l'écran de validation gs_w (CR-1151).
+  `disabled`. Story `UI/Slider` → `OutOfTabOrder`. Besoin : curseur « images par ligne » de l'écran de validation
+  gs_w (CR-1151).
+- Story `Design System/Focus ring` : `Button`, `Checkbox`, `Switch`, `Slider` et `RadioGroup` sur fond white, grey,
+  black et sans `data-bg`, à parcourir à la touche Tab.
+
+### Corrigé
+
+- **Impact consommateurs (visible)** — l'anneau de focus clavier de la librairie (`focus-visible:ring-ring`) s'affiche
+  enfin. Tailwind lit `hsl(var(--ring))`, or `--ring` valait un hex dans les contextes `data-bg` (`hsl(#292828)`,
+  invalide) : aucun anneau ne s'affichait. `--ring` est désormais un triplet HSL, généré à la source
+  (`scripts/generate-css-tokens.cjs`), avec les mêmes couleurs : `#292828` sur fond white et grey, `#ffffff` sur fond
+  black. Les composants concernés (`Button`, `ButtonPlus`, `Checkbox`, `RadioGroup`, `Switch`, `Slider`,
+  `SegmentedControl`, `TagCross`, `ResizableHandle`, `ClippingEditor`, `Dialog`, `Badge`, `InputOTP`…) montrent donc
+  un anneau au focus clavier là où il n'y en avait pas. Les consommateurs qui ajoutaient leur propre `outline` au
+  `:focus-visible` sur ces composants auront deux indicateurs superposés tant qu'ils ne l'ont pas retiré ; un
+  conteneur en `overflow: hidden`/`clip` peut rogner l'anneau (2 px d'écart + 2 px d'anneau) d'un contrôle collé à son
+  bord. Aucun changement d'API.
+- **Impact consommateurs (visible)** — `--ring` par défaut (`:root`, composants sans contexte `data-bg`, par ex.
+  popovers et menus portés) passe du bleu pâle `195 100% 90%` au noir de la charte `#292828`, comme les fonds white et
+  grey. `.dark` inchangé.
+- `ButtonBase`, `Checkbox`, `RadioGroupItem`, `SegmentedControlContent`, bouton de fermeture de `Dialog`, case active
+  d'`InputOTP` : la classe `ring-offset-background` (`hsl(var(--background))`, invalide sous `data-bg` où
+  `--background` est un hex) annulait toute l'ombre, anneau compris. Retirée : l'écart prend le blanc par défaut, comme
+  `Button` et `Slider` (inchangé hors `data-bg`).
+- Bouton de fermeture de `Dialog` et `Badge` : `focus:ring-*` devient `focus-visible:ring-*`. L'anneau ne s'affiche
+  plus au clic souris ni à l'auto-focus d'ouverture de la modale ; il reste au clavier.
 
 ## [1.40.1] - 2026-11-02
 
