@@ -104,7 +104,7 @@ module.exports = {
       },
       // Focus ring offset painted with the context background (--ring-offset, per data-bg).
       ringOffsetColor: {
-        context: "var(--ring-offset)",
+        context: "var(--ring-offset, #fff)",
       },
       colors: {
         border: "hsl(var(--border))",
