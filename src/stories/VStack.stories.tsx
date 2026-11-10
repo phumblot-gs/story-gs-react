@@ -116,7 +116,7 @@ VStack inherits scroll behavior from Layout. Use the \`scroll\` prop for overflo
 </VStack>
 \`\`\`
 
-**Available scroll values:** \`none\`, \`auto\`, \`always\`, \`vertical\`, \`horizontal\`, \`both\`
+**Available scroll values:** \`none\`, \`auto\` (default), \`always\`, \`vertical\`, \`horizontal\`, \`both\`, \`visible\`
 
 ## Common Use Cases
 
@@ -204,8 +204,8 @@ VStack inherits scroll behavior from Layout. Use the \`scroll\` prop for overflo
     },
     scroll: {
       control: 'select',
-      options: ['none', 'auto', 'always', 'vertical', 'horizontal', 'both'],
-      description: 'Scroll behavior for overflow content',
+      options: ['none', 'auto', 'always', 'vertical', 'horizontal', 'both', 'visible'],
+      description: 'Scroll behavior for overflow content. Default: auto. `visible`: no clipping (overflow-visible)',
     },
     className: {
       control: 'text',

@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils';
 import { useBgContext, BgProvider } from './BgContext';
 
 type BgContext = 'white' | 'grey' | 'black';
-type ScrollBehavior = 'none' | 'auto' | 'always' | 'vertical' | 'horizontal' | 'both';
+type ScrollBehavior = 'none' | 'auto' | 'always' | 'vertical' | 'horizontal' | 'both' | 'visible';
 type SpacingValue = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 8 | 10 | 12 | 16 | 20 | 24 | 28 | 30 | 32 | 36 | 40 | 44 | 48 | 50 | 52 | 56 | 60 | 64 | 68 | 70 | 72 | 80 | 90 | 100;
 
 export interface LayoutProps {
@@ -19,7 +19,10 @@ export interface LayoutProps {
   /** Padding du layout (utilise les primitives spacing) */
   padding?: SpacingValue;
 
-  /** Comportement du scroll */
+  /**
+   * Comportement du scroll (défaut `auto`, qui rogne aussi l'anneau de focus des enfants au bord).
+   * `visible` : ni scroll ni rognage (`overflow-visible`), pour une rangée de boutons dont l'anneau doit déborder.
+   */
   scroll?: ScrollBehavior;
 
   /** Élément HTML à rendre */
@@ -34,7 +37,7 @@ export interface LayoutProps {
  *
  * Ce composant permet de :
  * - Définir le contexte de couleur (white/grey/black) pour les composants shadcn enfants
- * - Gérer le scroll (vertical, horizontal, les deux, ou aucun)
+ * - Gérer le scroll (vertical, horizontal, les deux, aucun, ou `visible` sans rognage)
  * - Appliquer un padding cohérent avec les primitives spacing
  * - Utiliser les classes Tailwind pour flexbox, grid, etc.
  *
@@ -127,6 +130,7 @@ export const Layout = React.forwardRef<HTMLDivElement, LayoutProps>(
           scroll === 'vertical' && 'overflow-y-auto overflow-x-hidden',
           scroll === 'horizontal' && 'overflow-x-auto overflow-y-hidden',
           scroll === 'both' && 'overflow-auto',
+          scroll === 'visible' && 'overflow-visible',
 
           // Classes personnalisées
           className
