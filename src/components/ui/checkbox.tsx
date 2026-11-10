@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils"
 import { useBgContext } from "@/components/layout/BgContext"
 
 const checkboxVariants = cva(
-  "peer h-3 w-3 shrink-0 border border-[1px] rounded-[2px] align-baseline ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 checkbox-default relative",
+  "peer h-3 w-3 shrink-0 border border-[1px] rounded-[2px] align-baseline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 checkbox-default relative",
   {
     variants: {},
     defaultVariants: {},
