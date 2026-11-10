@@ -5,6 +5,16 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.41.0] - 2026-11-10
+
+### Ajouté
+
+- `Slider` : prop `thumbTabIndex`, transmise au thumb comme `tabIndex`. `thumbTabIndex={-1}` retire le thumb de l'ordre de
+  tabulation ; le drag souris/tactile reste identique et, après un clic, les flèches déplacent toujours la valeur (Radix
+  focalise le thumb au pointerdown). Sans la prop, rien ne change (tabIndex 0 de Radix) ; ignorée quand le slider est
+  `disabled`. Anneau de focus inchangé. Story `UI/Slider` → `OutOfTabOrder`. Besoin : curseur « images par ligne » de
+  l'écran de validation gs_w (CR-1151).
+
 ## [1.40.1] - 2026-11-02
 
 ### Corrigé
