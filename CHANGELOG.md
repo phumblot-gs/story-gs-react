@@ -14,8 +14,20 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
   focalise le thumb au pointerdown). Sans la prop, rien ne change (tabIndex 0 de Radix) ; ignorée quand le slider est
   `disabled`. Story `UI/Slider` → `OutOfTabOrder`. Besoin : curseur « images par ligne » de l'écran de validation
   gs_w (CR-1151).
+- `Layout`, `HStack`, `VStack` : nouvelle valeur `scroll="visible"` (`overflow-visible`) : ni scroll ni rognage, pour
+  qu'une rangée de boutons laisse déborder leur anneau de focus. Les valeurs existantes et le défaut (`"auto"`) sont
+  inchangés. Story `Layout/HStack` → `scroll="visible" (focus ring)`.
+- `ActionBar` : prop `contentOverflow` (`"auto"` par défaut, inchangé ; `"visible"`), appliquée à la rangée des
+  actions (`children`). Avec `"visible"`, l'anneau de focus de ses boutons n'est plus rogné ; en contrepartie, la rangée
+  garde la largeur de son contenu au lieu de rétrécir et défiler quand la barre est trop étroite. Opt-in parce que la
+  même place gagnée sans changement de mise en page (voir `PageSearch`/`PageHeader` plus bas) ajoute un scroll vertical
+  à la barre de 50 px dès que la rangée dépasse 40 px. Story `Components/ActionBar` → `contentOverflow="visible"
+  (focus ring)`.
+- Token `--ring-offset` (couleur de l'écart de l'anneau de focus), généré par contexte `data-bg` à partir du fond :
+  `#ffffff` sur white, `var(--color-grey-light)` (`#efefef`) sur grey, `#292828` sur black ; `#ffffff` sans contexte
+  (`:root`). Le preset Tailwind expose `ringOffsetColor.context` (classe `ring-offset-context`).
 - Story `Design System/Focus ring` : `Button`, `Checkbox`, `Switch`, `Slider` et `RadioGroup` sur fond white, grey,
-  black et sans `data-bg`, à parcourir à la touche Tab.
+  black et sans `data-bg`, à parcourir à la touche Tab ; elle documente la couleur de l'anneau et de l'écart par fond.
 
 ### Corrigé
 
@@ -24,18 +36,40 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
   invalide) : aucun anneau ne s'affichait. `--ring` est désormais un triplet HSL, généré à la source
   (`scripts/generate-css-tokens.cjs`), avec les mêmes couleurs : `#292828` sur fond white et grey, `#ffffff` sur fond
   black. Les composants concernés (`Button`, `ButtonPlus`, `Checkbox`, `RadioGroup`, `Switch`, `Slider`,
-  `SegmentedControl`, `TagCross`, `ResizableHandle`, `ClippingEditor`, `Dialog`, `Badge`, `InputOTP`…) montrent donc
-  un anneau au focus clavier là où il n'y en avait pas. Les consommateurs qui ajoutaient leur propre `outline` au
-  `:focus-visible` sur ces composants auront deux indicateurs superposés tant qu'ils ne l'ont pas retiré ; un
-  conteneur en `overflow: hidden`/`clip` peut rogner l'anneau (2 px d'écart + 2 px d'anneau) d'un contrôle collé à son
-  bord. Aucun changement d'API.
+  `SegmentedControl`, `TagCross`, `ResizableHandle`, `Dialog`, `Badge`…) montrent donc un anneau au focus clavier là
+  où il n'y en avait pas. Les consommateurs qui ajoutaient leur propre `outline` au `:focus-visible` sur ces composants
+  auront deux indicateurs superposés tant qu'ils ne l'ont pas retiré. Un conteneur qui rogne (`overflow` autre que
+  `visible`, y compris un `Layout`/`HStack`/`VStack` au `scroll="auto"` par défaut) coupe l'anneau (2 px d'écart + 2 px
+  d'anneau) d'un contrôle collé à son bord : passer `scroll="visible"` à ce conteneur ou lui donner de la marge
+  intérieure. Aucun changement d'API.
+- **Impact consommateurs (visible)** — l'écart de l'anneau prend la couleur du fond du contexte (`ring-offset-context`,
+  token `--ring-offset`) sur `Button`, `ButtonBase`, `ButtonPlus`, `Checkbox`, `RadioGroupItem`, `SegmentedControl`
+  (onglets et contenu), thumb de `Slider`, bouton de fermeture de `Dialog`, `Badge` et `ResizableHandle` : sur fond
+  black, l'écart blanc par défaut de Tailwind et l'anneau blanc formaient une bordure blanche pleine de 4 px ; l'écart
+  est désormais `#292828` sur black, `#efefef` sur grey, blanc sur white et sans contexte (inchangé hors `data-bg`, sauf
+  `.dark`, voir plus bas). Couleurs de l'anneau inchangées.
 - **Impact consommateurs (visible)** — `--ring` par défaut (`:root`, composants sans contexte `data-bg`, par ex.
   popovers et menus portés) passe du bleu pâle `195 100% 90%` au noir de la charte `#292828`, comme les fonds white et
-  grey. `.dark` inchangé.
-- `ButtonBase`, `Checkbox`, `RadioGroupItem`, `SegmentedControlContent`, bouton de fermeture de `Dialog`, case active
-  d'`InputOTP` : la classe `ring-offset-background` (`hsl(var(--background))`, invalide sous `data-bg` où
-  `--background` est un hex) annulait toute l'ombre, anneau compris. Retirée : l'écart prend le blanc par défaut, comme
-  `Button` et `Slider` (inchangé hors `data-bg`).
+  grey. `--ring` de `.dark` inchangé.
+- `ButtonBase`, `Checkbox`, `RadioGroupItem`, `SegmentedControlContent`, bouton de fermeture de `Dialog` : la classe
+  `ring-offset-background` (`hsl(var(--background))`, invalide sous `data-bg` où `--background` est un hex) annulait
+  toute l'ombre, anneau compris. Elle est remplacée par `ring-offset-context` (ci-dessus). Sous `.dark`, hors
+  `data-bg`, l'écart de ces composants devient blanc (il était sombre, `--background` de `.dark`) : `.dark` ne redéfinit
+  pas `--ring-offset`, comme `Button`, `ButtonPlus` et `Slider` qui avaient déjà l'écart blanc. `select-old.tsx`
+  (ancien `Select`, laissé tel quel pour d'éventuels projets externes) garde `ring-offset-background`.
+- **Impact consommateurs (visible)** — `InputOTP` : la case active n'a plus d'anneau (`ring-2 ring-ring` et `z-10`
+  retirés). Il suivait la case active, souris comprise ; le curseur clignotant la signale déjà. Il était invisible sous
+  `data-bg` ; hors `data-bg`, l'anneau bleu pâle de la case active disparaît aussi.
+- `ClippingEditor` : pas d'anneau sur la racine de l'éditeur. Elle se focalise au survol de la souris
+  (`onPointerEnter`) pour recevoir ses raccourcis clavier, ce qui la fait correspondre à `:focus-visible` sans aucune
+  frappe : l'anneau, désormais visible, aurait encadré tout l'éditeur au simple survol. Le focus et les raccourcis sont
+  inchangés ; rendu identique à 1.40.1.
+- `PageSearch` (rangée `rightContent`) et `PageHeader` (rangée `rightContent`, zone du titre, rangée `leftContent`,
+  titre) : ces rangées internes, en `overflow` auto ou hidden, rognaient l'anneau de focus de leurs boutons. Elles
+  reçoivent une marge intérieure de 5 px compensée par une marge négative égale (`p-1 -m-1`, par côté sur le titre) :
+  encombrement, position des enfants et scroll mesurés identiques dans Storybook (1280, 700 et 420 px). Aucun
+  changement d'API ni de mise en page. Le contenu passé par le consommateur reste soumis à ses propres conteneurs (voir
+  le premier point).
 - Bouton de fermeture de `Dialog` et `Badge` : `focus:ring-*` devient `focus-visible:ring-*`. L'anneau ne s'affiche
   plus au clic souris ni à l'auto-focus d'ouverture de la modale ; il reste au clavier.
 
