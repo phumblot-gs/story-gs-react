@@ -25,12 +25,19 @@ export interface SliderProps
    * valeurs réelles ; ignore `min` / `max` / `step`.
    */
   steps?: number[]
+  /**
+   * `tabIndex` du thumb. Par défaut Radix le rend atteignable au Tab (0) ;
+   * `-1` le retire de l'ordre de tabulation sans toucher au drag souris/tactile
+   * ni aux flèches après un clic (Radix focalise le thumb au pointerdown).
+   * Ignoré quand le slider est `disabled`.
+   */
+  thumbTabIndex?: number
 }
 
 const Slider = React.forwardRef<
   React.ElementRef<typeof SliderPrimitive.Root>,
   SliderProps
->(({ className, labelMin, labelMax, labelCurrent, debug, disabled, onValueChange, steps, value, defaultValue, min, max, step, ...props }, ref) => {
+>(({ className, labelMin, labelMax, labelCurrent, debug, disabled, onValueChange, steps, thumbTabIndex, value, defaultValue, min, max, step, ...props }, ref) => {
   const bg = useBgContext()
 
   // Mode "paliers discrets" : on pilote Radix sur des index (0..n-1) et on
@@ -248,6 +255,8 @@ const Slider = React.forwardRef<
         <SliderPrimitive.Thumb
           aria-label={props["aria-label"]}
           aria-labelledby={props["aria-labelledby"]}
+          // Radix spreads thumb props over its own tabIndex: passing undefined would drop the default 0.
+          {...(thumbTabIndex !== undefined && !disabled ? { tabIndex: thumbTabIndex } : {})}
           className={cn(
             "block h-[10px] w-[10px] rounded-full border-0 transition-colors",
             "absolute top-1/2 -translate-x-1/2 -translate-y-1/2",

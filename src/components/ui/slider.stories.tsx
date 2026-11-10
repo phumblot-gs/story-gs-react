@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useState } from "react";
 import { Slider } from "./slider";
+import { Button } from "./button";
 import { Layout } from "@/components/layout";
 
 const meta: Meta<typeof Slider> = {
@@ -92,6 +93,11 @@ Disabled state uses grey-stronger color for all backgrounds.
       control: "text",
       description:
         "Label affiché au-dessus du point de la valeur sélectionnée (masqué au min/max si labelMin/labelMax est défini).",
+    },
+    thumbTabIndex: {
+      control: "number",
+      description:
+        "tabIndex du thumb. -1 le retire de l'ordre de tabulation ; le drag et les flèches après un clic restent actifs. Ignoré si disabled.",
     },
     disabled: {
       control: "boolean",
@@ -356,4 +362,35 @@ export const WithoutLabels: Story = {
       </Layout>
     ),
   ],
+};
+
+/**
+ * thumbTabIndex={-1} : Tab passe directement du premier bouton au second, sans
+ * s'arrêter sur le thumb. Le drag reste actif, et après un clic les flèches
+ * déplacent la valeur (Radix focalise le thumb au pointerdown).
+ */
+export const OutOfTabOrder: Story = {
+  render: () => {
+    const [value, setValue] = useState<number[]>([4]);
+    return (
+      <Layout bg="white" padding={6}>
+        <div className="flex w-full max-w-md flex-col gap-4 pt-4">
+          <Button>Avant</Button>
+          <Slider
+            aria-label="Images par ligne"
+            min={1}
+            max={7}
+            step={1}
+            value={value}
+            onValueChange={setValue}
+            labelMin="1"
+            labelMax="7"
+            labelCurrent={String(value[0])}
+            thumbTabIndex={-1}
+          />
+          <Button>Après</Button>
+        </div>
+      </Layout>
+    );
+  },
 };
