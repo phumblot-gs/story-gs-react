@@ -29,7 +29,7 @@ export interface SliderProps
    * `tabIndex` du thumb. Par défaut Radix le rend atteignable au Tab (0) ;
    * `-1` le retire de l'ordre de tabulation sans toucher au drag souris/tactile
    * ni aux flèches après un clic (Radix focalise le thumb au pointerdown).
-   * Ignoré quand le slider est `disabled`.
+   * Ignoré quand le slider est `disabled`. Négatif : le thumb n'affiche aucun anneau de focus.
    */
   thumbTabIndex?: number
 }
@@ -264,7 +264,9 @@ const Slider = React.forwardRef<
             // drag : le pseudo-élément ::before étend la surface cliquable du
             // thumb de 10px tout autour.
             "before:content-[''] before:absolute before:-inset-[10px]",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-context",
+            "focus-visible:outline-none",
+            // Out of the Tab order, the thumb is only focused by Radix on pointerdown, where Chromium still matches :focus-visible.
+            (thumbTabIndex ?? 0) >= 0 && "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-context",
             "disabled:pointer-events-none disabled:opacity-50",
             styles.thumb,
             debug && "before:bg-pink/20"

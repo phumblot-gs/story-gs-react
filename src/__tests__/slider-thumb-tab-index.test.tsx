@@ -45,4 +45,30 @@ describe("Slider thumbTabIndex", () => {
     expect(onValueChange).toHaveBeenLastCalledWith([4]);
     expect(thumb).toHaveAttribute("aria-valuenow", "4");
   });
+
+  // CR-1151: Radix focuses the thumb by script on pointerdown, and Chromium then matches :focus-visible,
+  // so a ring on an unreachable thumb would only ever show on a mouse click or drag.
+  const ringClasses = (el: Element) => Array.from(el.classList).filter((c) => /ring/.test(c));
+
+  it.each([
+    ["sans thumbTabIndex", undefined],
+    ["thumbTabIndex={0}", 0],
+  ])("%s, le thumb garde son anneau de focus clavier", (_, thumbTabIndex) => {
+    render(<Slider aria-label="Images par ligne" defaultValue={[3]} thumbTabIndex={thumbTabIndex} />);
+    const thumb = screen.getByRole("slider");
+    expect(ringClasses(thumb)).toEqual([
+      "focus-visible:ring-2",
+      "focus-visible:ring-ring",
+      "focus-visible:ring-offset-2",
+      "focus-visible:ring-offset-context",
+    ]);
+    expect(thumb).toHaveClass("focus-visible:outline-none");
+  });
+
+  it("thumbTabIndex négatif : aucun anneau de focus, outline toujours supprimé", () => {
+    render(<Slider aria-label="Images par ligne" defaultValue={[3]} thumbTabIndex={-1} />);
+    const thumb = screen.getByRole("slider");
+    expect(ringClasses(thumb)).toEqual([]);
+    expect(thumb).toHaveClass("focus-visible:outline-none", "h-[10px]", "w-[10px]", "rounded-full");
+  });
 });
