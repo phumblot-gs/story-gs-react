@@ -52,9 +52,9 @@ const PageSearch: React.FC<PageSearchProps> = ({
         </HStack>
       )}
 
-      {/* Right Side. p-1 -m-1: room for the buttons' 4px focus ring inside this overflow-auto row, same footprint. */}
+      {/* Right Side. Never shrinks, so it cannot scroll: visible lets the buttons' focus ring overflow. */}
       {rightContent && (
-        <HStack gap={2} align="center" className="justify-end flex-shrink-0 p-1 -m-1">
+        <HStack gap={2} align="center" scroll="visible" className="justify-end flex-shrink-0">
           {rightContent}
         </HStack>
       )}

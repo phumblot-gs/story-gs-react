@@ -44,16 +44,19 @@ describe("Layout scroll", () => {
   });
 });
 
-// CR-1151: these internal rows clipped the 4px focus ring of their buttons; the padding gives the ring
-// room and the equal negative margin keeps their footprint, so the layout of existing pages is unchanged.
-function expectRingRoom(el: Element) {
-  expect(el).toHaveClass("p-1", "-m-1");
-}
+// CR-1151: these internal rows clipped the 4px focus ring of their buttons.
+// Rows that never shrink (flex-shrink-0) cannot scroll, so they are simply visible: no padding a consumer
+// could cancel (className="p-0" gave 5px scrollbars). Only the shrinking title area keeps p-1 -m-1.
+const expectVisibleRow = (el: Element) => {
+  expect(overflowClasses(el)).toEqual(["overflow-visible"]);
+  expect(el).toHaveClass("flex-shrink-0");
+  expect(Array.from(el.classList).filter((c) => /^-?[pm][xytrbl]?-/.test(c))).toEqual([]);
+};
 
 describe("ring room inside the library rows", () => {
   it("PageSearch rightContent row", () => {
     render(<PageSearch leftContent={<span>Left</span>} rightContent={<button>Right</button>} />);
-    expectRingRoom(screen.getByRole("button", { name: "Right" }).parentElement!);
+    expectVisibleRow(screen.getByRole("button", { name: "Right" }).parentElement!);
     expect(screen.getByText("Left").parentElement).not.toHaveClass("p-1");
   });
 
@@ -66,16 +69,16 @@ describe("ring room inside the library rows", () => {
         rightContent={<button>Right</button>}
       />,
     );
-    expectRingRoom(screen.getByRole("button", { name: "Right" }).parentElement!);
+    expectVisibleRow(screen.getByRole("button", { name: "Right" }).parentElement!);
     const leftContent = screen.getByRole("button", { name: "Nav" }).parentElement!;
-    expectRingRoom(leftContent);
+    expectVisibleRow(leftContent);
     const titleArea = leftContent.parentElement!;
-    expectRingRoom(titleArea);
-    expect(titleArea).toHaveClass("overflow-hidden", "flex-shrink");
+    expect(titleArea).toHaveClass("p-1", "-m-1", "overflow-hidden", "flex-shrink");
     const title = screen.getByTestId("page-title-button").parentElement!;
-    // pl-4 and the left border stay: only the other sides need room, the left one already has 20px.
-    expect(title).toHaveClass("pl-4", "border-l", "py-1", "-my-1", "pr-1", "-mr-1");
-    expect(title).not.toHaveClass("p-1", "-m-1");
+    // No padding on the title: its left border is painted on the border box, padding would lengthen it (30 -> 40px).
+    expect(title).toHaveClass("pl-4", "border-l", "min-w-0", "flex-shrink");
+    expect(overflowClasses(title)).toEqual(["overflow-visible"]);
+    expect(Array.from(title.classList).filter((c) => /^-?(p[xytrb]?|m[xytrbl]?)-/.test(c))).toEqual([]);
   });
 
   // A 50px fixed-height bar: compensated padding would add a vertical scroll once the row passes 40px
