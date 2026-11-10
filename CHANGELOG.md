@@ -64,12 +64,23 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
   (`onPointerEnter`) pour recevoir ses raccourcis clavier, ce qui la fait correspondre à `:focus-visible` sans aucune
   frappe : l'anneau, désormais visible, aurait encadré tout l'éditeur au simple survol. Le focus et les raccourcis sont
   inchangés ; rendu identique à 1.40.1.
-- `PageSearch` (rangée `rightContent`) et `PageHeader` (rangée `rightContent`, zone du titre, rangée `leftContent`,
-  titre) : ces rangées internes, en `overflow` auto ou hidden, rognaient l'anneau de focus de leurs boutons. Elles
-  reçoivent une marge intérieure de 5 px compensée par une marge négative égale (`p-1 -m-1`, par côté sur le titre) :
-  encombrement, position des enfants et scroll mesurés identiques dans Storybook (1280, 700 et 420 px). Aucun
-  changement d'API ni de mise en page. Le contenu passé par le consommateur reste soumis à ses propres conteneurs (voir
-  le premier point).
+- **Impact consommateurs (visible au focus clavier seulement)** — `PageSearch` (rangée `rightContent`) et
+  `PageHeader` (rangées `rightContent` et `leftContent`, zone du titre, titre) : ces rangées internes, en `overflow`
+  auto ou hidden, rognaient l'anneau de focus de leurs boutons. Les rangées `rightContent` et `leftContent`, qui ne
+  rétrécissent jamais (`flex-shrink-0`) et ne pouvaient donc pas défiler, passent en `scroll="visible"` ; le titre
+  (`PageTitle`) passe en `overflow-visible`, sans marge intérieure, son trait de séparation gauche garde ses 30 px. Seule
+  la zone du titre, qui doit continuer à rétrécir et à rogner, reçoit `p-1 -m-1` (4 px de place compensés par une marge
+  négative égale). Rendu au repos identique pixel à pixel à 1.40.1 dans Storybook (1280 et 420 px), y compris avec un
+  `className="p-0"` sur `PageSearch`. Un descendant positionné (`absolute`) qui déborderait d'une rangée
+  `rightContent`/`leftContent` en se rattachant à un élément positionné de la rangée n'est plus rogné par elle (aucun cas
+  dans la librairie ni chez les consommateurs actuels). Aucun changement d'API. Le contenu passé par le consommateur
+  reste soumis à ses propres conteneurs (voir le premier point).
+- `Slider` : avec un `thumbTabIndex` négatif, le thumb n'a aucun anneau de focus. Il n'est pas atteignable au clavier,
+  mais Radix le focalise par script au pointerdown et Chromium le fait alors correspondre à `:focus-visible` : l'anneau,
+  désormais rendu (voir le premier point), serait apparu au clic ou au drag souris. Rendu identique à 1.40.1 pour ce
+  thumb. Sans la prop ou avec une valeur `>= 0`, l'anneau clavier s'affiche comme sur les autres composants.
+- Preset Tailwind : `ringOffsetColor.context` vaut `var(--ring-offset, #fff)`, pour qu'un consommateur qui utilise le
+  preset sans `lib.css` (où `--ring-offset` est défini) n'obtienne pas un `box-shadow` invalide.
 - Bouton de fermeture de `Dialog` et `Badge` : `focus:ring-*` devient `focus-visible:ring-*`. L'anneau ne s'affiche
   plus au clic souris ni à l'auto-focus d'ouverture de la modale ; il reste au clavier.
 
