@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
 import { StrictMode } from "react";
 
@@ -73,21 +73,35 @@ describe("Slider thumbTabIndex", () => {
     expect(thumb).toHaveClass("focus-visible:outline-none", "h-[10px]", "w-[10px]", "rounded-full");
   });
 
-  // CR-1151 (option B): with the default thumb, the ring shows on Tab only, never after a mouse or touch press.
-  describe("thumb par défaut : anneau au clavier seulement", () => {
-    const setup = (onValueChange = vi.fn()) => {
-      render(
+  // Like native :focus-visible: a pointer or touch press hides the ring until the user presses a key on the thumb.
+  describe("thumb par défaut : anneau au clavier, masqué après un appui jusqu'à la première touche", () => {
+    const setup = (props: Partial<React.ComponentProps<typeof Slider>> = {}) => {
+      const onValueChange = vi.fn();
+      const view = render(
         <StrictMode>
           <button>Avant</button>
-          <Slider aria-label="Images par ligne" defaultValue={[3]} min={1} max={7} step={1} onValueChange={onValueChange} />
+          <Slider aria-label="Images par ligne" defaultValue={[3]} min={1} max={7} step={1} onValueChange={onValueChange} {...props} />
         </StrictMode>,
       );
       const thumb = screen.getByRole("slider");
       thumb.setPointerCapture = vi.fn();
-      return { thumb, onValueChange };
+      const track = document.querySelector<HTMLElement>(".h-\\[2px\\]")!;
+      track.setPointerCapture = vi.fn();
+      return { ...view, thumb, track, onValueChange };
     };
+    const press = (target: HTMLElement, clientX?: number) => {
+      fireEvent.pointerDown(target, { pointerId: 1, button: 0, clientX });
+      fireEvent.pointerUp(document, { pointerId: 1, button: 0 });
+    };
+    const tabTo = (thumb: HTMLElement) => {
+      const before = screen.getByRole("button", { name: "Avant" });
+      before.focus();
+      fireEvent.keyDown(before, { key: "Tab" });
+      act(() => thumb.focus());
+    };
+    const RING = "focus-visible:ring-2";
 
-    it("pointerdown sur le thumb : focalisé, sans anneau ; les flèches changent la valeur sans le rendre", () => {
+    it("pointerdown sur le thumb : focalisé, sans anneau ; la première flèche change la valeur et rend l'anneau", () => {
       const { thumb, onValueChange } = setup();
       fireEvent.pointerDown(thumb, { pointerId: 1, button: 0 });
       expect(thumb).toHaveFocus();
@@ -95,44 +109,113 @@ describe("Slider thumbTabIndex", () => {
 
       fireEvent.keyDown(thumb, { key: "ArrowRight" });
       expect(onValueChange).toHaveBeenLastCalledWith([4]);
+      expect(ringClasses(thumb)).toContain(RING);
+    });
+
+    it("pointerdown sur la piste vers une nouvelle valeur : le thumb est focalisé, sans anneau", () => {
+      const { thumb, track } = setup();
+      fireEvent.pointerDown(track, { pointerId: 1, button: 0, clientX: 0 });
+      expect(thumb).toHaveFocus();
+      expect(thumb).toHaveAttribute("aria-valuenow", "1");
       expect(ringClasses(thumb)).toEqual([]);
     });
 
-    it("pointerdown sur la piste : le thumb est focalisé, sans anneau", () => {
-      const { thumb } = setup();
-      const track = document.querySelector<HTMLElement>(".h-\\[2px\\]")!;
-      track.setPointerCapture = vi.fn();
-      fireEvent.pointerDown(track, { pointerId: 1, button: 0, clientX: 0 });
+    // Review scenario A: jsdom rects are 0 wide, so a track press always resolves to `min`; with the value
+    // already at `min`, Radix neither changes the value nor focuses the thumb.
+    it("appui sur la piste à la valeur courante (thumb non focalisé) puis Tab : anneau", () => {
+      const { thumb, track } = setup({ defaultValue: [1] });
+      press(track, 0);
+      expect(thumb).not.toHaveFocus();
+      expect(thumb).toHaveAttribute("aria-valuenow", "1");
+
+      tabTo(thumb);
       expect(thumb).toHaveFocus();
-      expect(ringClasses(thumb)).toEqual([]);
+      expect(ringClasses(thumb)).toContain(RING);
+    });
+
+    // Review scenario B: preventDefault in the consumer handler makes Radix skip its own, the thumb is never focused.
+    it("onPointerDown du consommateur avec preventDefault puis Tab : anneau", () => {
+      const onPointerDown = vi.fn((event: React.PointerEvent) => event.preventDefault());
+      const { thumb } = setup({ onPointerDown });
+      press(thumb);
+      expect(onPointerDown).toHaveBeenCalledTimes(1);
+      expect(thumb).not.toHaveFocus();
+
+      tabTo(thumb);
+      expect(ringClasses(thumb)).toContain(RING);
+    });
+
+    // Review scenario C: Chromium blurs the thumb while React commits `disabled`, when ReactDOM drops events, so
+    // onBlur never runs. Blurring inside React's removal of tabindex reproduces it in jsdom, and the focus guard
+    // mirrors Chromium, where React's post-commit focus restore is a no-op on a thumb without tabindex.
+    it("disabled pendant le focus après un clic, réactivé, appui à vide puis Tab : anneau", () => {
+      const { thumb, track, rerender } = setup({ defaultValue: [1] });
+      fireEvent.pointerDown(thumb, { pointerId: 1, button: 0 });
+      fireEvent.pointerUp(document, { pointerId: 1, button: 0 });
+      expect(thumb).toHaveFocus();
+
+      const focus = thumb.focus.bind(thumb);
+      thumb.focus = (options?: FocusOptions) => {
+        if (thumb.hasAttribute("tabindex")) focus(options);
+      };
+      const removeAttribute = thumb.removeAttribute.bind(thumb);
+      const onBlurDuringCommit = vi.fn();
+      thumb.addEventListener("blur", onBlurDuringCommit);
+      thumb.removeAttribute = (name: string) => {
+        if (name === "tabindex") thumb.blur();
+        removeAttribute(name);
+      };
+      const renderSlider = (disabled: boolean) =>
+        rerender(
+          <StrictMode>
+            <button>Avant</button>
+            <Slider aria-label="Images par ligne" defaultValue={[1]} min={1} max={7} step={1} disabled={disabled} />
+          </StrictMode>,
+        );
+      renderSlider(true);
+      expect(onBlurDuringCommit).toHaveBeenCalled();
+      expect(thumb).not.toHaveFocus();
+
+      renderSlider(false);
+      press(track, 0);
+      expect(thumb).not.toHaveFocus();
+      tabTo(thumb);
+      expect(ringClasses(thumb)).toContain(RING);
     });
 
     it("après le blur, un nouveau focus clavier rend l'anneau, conservé avec les flèches", () => {
       const { thumb } = setup();
-      fireEvent.pointerDown(thumb, { pointerId: 1, button: 0 });
+      press(thumb);
       expect(ringClasses(thumb)).toEqual([]);
 
       fireEvent.blur(thumb);
-      screen.getByRole("button", { name: "Avant" }).focus();
-      thumb.focus();
-      expect(ringClasses(thumb)).toContain("focus-visible:ring-2");
+      tabTo(thumb);
+      expect(ringClasses(thumb)).toContain(RING);
 
       fireEvent.keyDown(thumb, { key: "ArrowRight" });
-      expect(ringClasses(thumb)).toContain("focus-visible:ring-2");
+      expect(ringClasses(thumb)).toContain(RING);
+    });
+
+    it("thumbTabIndex={-1} : appui puis flèche, toujours aucun anneau", () => {
+      const { thumb, onValueChange } = setup({ thumbTabIndex: -1 });
+      press(thumb);
+      expect(thumb).toHaveFocus();
+      fireEvent.keyDown(thumb, { key: "ArrowRight" });
+      expect(onValueChange).toHaveBeenLastCalledWith([4]);
+      expect(ringClasses(thumb)).toEqual([]);
     });
 
     it("disabled : un pointerdown ne masque pas l'anneau une fois réactivé", () => {
       const { rerender } = render(<Slider aria-label="Images par ligne" defaultValue={[3]} disabled />);
       fireEvent.pointerDown(screen.getByRole("slider"), { pointerId: 1, button: 0 });
       rerender(<Slider aria-label="Images par ligne" defaultValue={[3]} />);
-      expect(ringClasses(screen.getByRole("slider"))).toContain("focus-visible:ring-2");
+      act(() => screen.getByRole("slider").focus());
+      expect(ringClasses(screen.getByRole("slider"))).toContain(RING);
     });
 
     it("transmet le onPointerDown du consommateur", () => {
       const onPointerDown = vi.fn();
-      render(<Slider aria-label="Images par ligne" defaultValue={[3]} onPointerDown={onPointerDown} />);
-      const thumb = screen.getByRole("slider");
-      thumb.setPointerCapture = vi.fn();
+      const { thumb } = setup({ onPointerDown });
       fireEvent.pointerDown(thumb, { pointerId: 1, button: 0 });
       expect(onPointerDown).toHaveBeenCalledTimes(1);
     });
