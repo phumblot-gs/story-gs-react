@@ -91,8 +91,8 @@ describe.skipIf(!existsSync(LIB_CSS))("built lib.css (after npm run build:lib)",
     expect(libCss).toContain(".focus-visible\\:ring-ring:focus-visible{--tw-ring-color: hsl(var(--ring))}");
   });
 
-  it("ring-offset-context paints --ring-offset", () => {
-    expect(libCss).toContain(".focus-visible\\:ring-offset-context:focus-visible{--tw-ring-offset-color: var(--ring-offset)}");
+  it("ring-offset-context paints --ring-offset, with the preset's #fff fallback", () => {
+    expect(libCss).toContain(".focus-visible\\:ring-offset-context:focus-visible{--tw-ring-offset-color: var(--ring-offset, #fff)}");
   });
 
   it.each(["white", "grey", "black"])("data-bg=%s ships --ring-offset", (bg) => {
