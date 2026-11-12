@@ -183,6 +183,39 @@ describe("Slider thumbTabIndex", () => {
       expect(ringClasses(thumb)).toContain(RING);
     });
 
+    // On macOS a right-click opening a context menu swallows pointerup: the next key must end the press.
+    it("appui sur la piste sans pointerup, puis Tab : la touche termine l'appui, anneau", () => {
+      const { thumb, track } = setup({ defaultValue: [1] });
+      fireEvent.pointerDown(track, { pointerId: 1, button: 0, clientX: 0 });
+      expect(thumb).not.toHaveFocus();
+
+      tabTo(thumb);
+      expect(thumb).toHaveFocus();
+      expect(ringClasses(thumb)).toContain(RING);
+    });
+
+    // A press still open at unmount would otherwise leave its capture listeners on document.
+    it("démonté pendant un appui : les écouteurs de fin d'appui sont retirés du document", () => {
+      const { thumb, unmount } = setup();
+      const add = vi.spyOn(document, "addEventListener");
+      const remove = vi.spyOn(document, "removeEventListener");
+      const pressEndTypes = ["pointerup", "pointercancel", "keydown"];
+      const isPressEnd = ([type, , options]: Parameters<typeof document.addEventListener>) =>
+        pressEndTypes.includes(type) && options === true;
+      try {
+        fireEvent.pointerDown(thumb, { pointerId: 1, button: 0 });
+        const added = add.mock.calls.filter(isPressEnd);
+        expect(added.map(([type]) => type)).toEqual(pressEndTypes);
+
+        unmount();
+        const removed = remove.mock.calls.filter(isPressEnd);
+        expect(removed).toEqual(added);
+      } finally {
+        add.mockRestore();
+        remove.mockRestore();
+      }
+    });
+
     it("après le blur, un nouveau focus clavier rend l'anneau, conservé avec les flèches", () => {
       const { thumb } = setup();
       press(thumb);
