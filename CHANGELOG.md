@@ -5,7 +5,7 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
-## [1.41.0] - 2026-11-10
+## [1.41.0] - 2026-11-12
 
 ### Ajouté
 
@@ -74,11 +74,15 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
   `className="p-0"` sur `PageSearch`. Un descendant positionné (`absolute`) qui déborderait d'une rangée
   `rightContent`/`leftContent` en se rattachant à un élément positionné de la rangée n'est plus rogné par elle (aucun cas
   dans la librairie ni chez les consommateurs actuels). Aucun changement d'API. Le contenu passé par le consommateur
-  reste soumis à ses propres conteneurs (voir le premier point).
-- `Slider` : avec un `thumbTabIndex` négatif, le thumb n'a aucun anneau de focus. Il n'est pas atteignable au clavier,
-  mais Radix le focalise par script au pointerdown et Chromium le fait alors correspondre à `:focus-visible` : l'anneau,
-  désormais rendu (voir le premier point), serait apparu au clic ou au drag souris. Rendu identique à 1.40.1 pour ce
-  thumb. Sans la prop ou avec une valeur `>= 0`, l'anneau clavier s'affiche comme sur les autres composants.
+  reste soumis à ses propres conteneurs (voir le premier point). La rangée `leftContent` de `PageSearch`, qui doit
+  rétrécir, rogne toujours l'anneau de son contenu ; contournement : `leftContentMaxWidth='max-w-none overflow-visible'`,
+  comme le fait gs_w.
+- `Slider` : l'anneau du thumb ne s'affiche qu'au focus clavier (Tab), y compris pour le thumb par défaut. Radix
+  focalise le thumb par script au pointerdown et Chromium le fait alors correspondre à `:focus-visible` : l'anneau,
+  désormais rendu (voir le premier point), serait apparu au clic, au tap ou au drag. Après un appui souris ou tactile, sur
+  le thumb comme sur la piste, il reste masqué, flèches comprises, jusqu'à ce que le thumb perde le focus ; atteint de
+  nouveau au Tab, il le montre. Avec un `thumbTabIndex` négatif, le thumb n'a aucun anneau. Au repos, rendu identique à
+  1.40.1. Le `onPointerDown` passé au `Slider` reste transmis.
 - Preset Tailwind : `ringOffsetColor.context` vaut `var(--ring-offset, #fff)`, pour qu'un consommateur qui utilise le
   preset sans `lib.css` (où `--ring-offset` est défini) n'obtienne pas un `box-shadow` invalide.
 - Bouton de fermeture de `Dialog` et `Badge` : `focus:ring-*` devient `focus-visible:ring-*`. L'anneau ne s'affiche
