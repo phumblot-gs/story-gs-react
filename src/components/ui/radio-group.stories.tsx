@@ -261,7 +261,7 @@ export const DebugMode: Story = {
     const [value, setValue] = React.useState("option1");
 
     return (
-      <VStack gap={6}>
+      <VStack scroll="visible" gap={6}>
         <div>
           <h3 className="text-sm font-medium mb-3">Debug Mode</h3>
           <p className="text-xs text-grey-stronger mb-4">

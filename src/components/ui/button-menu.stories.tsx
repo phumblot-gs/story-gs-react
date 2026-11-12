@@ -321,7 +321,7 @@ export const AllVariants: Story = {
     <VStack gap={6} padding={6}>
       <VStack as={Layout} bg="white" padding={6} gap={4} className="border border-grey rounded">
         <h3 className="gs-typo-h3">Background White</h3>
-        <HStack gap={3}>
+        <HStack scroll="visible" gap={3}>
           <ButtonMenu variant="normal" actions={defaultActions}>
             Normal
           </ButtonMenu>
@@ -339,7 +339,7 @@ export const AllVariants: Story = {
 
       <VStack as={Layout} bg="grey" padding={6} gap={4} className="border border-grey rounded">
         <h3 className="gs-typo-h3">Background Grey</h3>
-        <HStack gap={3}>
+        <HStack scroll="visible" gap={3}>
           <ButtonMenu variant="normal" actions={defaultActions}>
             Normal
           </ButtonMenu>
@@ -357,7 +357,7 @@ export const AllVariants: Story = {
 
       <VStack as={Layout} bg="black" padding={6} gap={4} className="border border-grey rounded">
         <h3 className="gs-typo-h3 text-white">Background Black</h3>
-        <HStack gap={3}>
+        <HStack scroll="visible" gap={3}>
           <ButtonMenu variant="normal" actions={defaultActions}>
             Normal
           </ButtonMenu>
@@ -382,8 +382,8 @@ export const AllVariants: Story = {
 export const WithIcon: Story = {
   render: () => (
     <Layout bg="white" padding={6}>
-      <VStack gap={4}>
-        <HStack gap={3}>
+      <VStack scroll="visible" gap={4}>
+        <HStack scroll="visible" gap={3}>
           <ButtonMenu variant="normal" size="small" actions={defaultActions} className="p-1 w-4 h-4">
             <Icon name="MoreVertical" size={10} />
           </ButtonMenu>
@@ -394,7 +394,7 @@ export const WithIcon: Story = {
             <Icon name="MoreVertical" size={14} />
           </ButtonMenu>
         </HStack>
-        <HStack gap={3}>
+        <HStack scroll="visible" gap={3}>
           <ButtonMenu variant="secondary" size="small" actions={defaultActions} className="p-1 w-4 h-4">
             <Icon name="MoreVertical" size={10} />
           </ButtonMenu>
@@ -421,7 +421,7 @@ export const WithDisabledActions: Story = {
 
     return (
       <Layout bg="white" padding={6}>
-        <VStack gap={4}>
+        <VStack scroll="visible" gap={4}>
           <ButtonMenu variant="normal" actions={actionsWithDisabled}>
             Actions avec éléments désactivés
           </ButtonMenu>
@@ -437,8 +437,8 @@ export const WithDisabledActions: Story = {
 export const DifferentSizes: Story = {
   render: () => (
     <Layout bg="white" padding={6}>
-      <VStack gap={4}>
-        <HStack gap={3} align="center">
+      <VStack scroll="visible" gap={4}>
+        <HStack scroll="visible" gap={3} align="center">
           <ButtonMenu variant="normal" size="small" actions={defaultActions}>
             Small
           </ButtonMenu>
@@ -471,7 +471,7 @@ export const WithManyActions: Story = {
 
     return (
       <Layout bg="white" padding={6}>
-        <VStack gap={4}>
+        <VStack scroll="visible" gap={4}>
           <div>
             <p className="text-sm text-grey-stronger mb-2">
               Menu avec hauteur limitée à 40vh et scroll automatique
@@ -489,7 +489,7 @@ export const WithManyActions: Story = {
 export const DebugMode: Story = {
   render: () => (
     <Layout bg="white" padding={6}>
-      <VStack gap={4}>
+      <VStack scroll="visible" gap={4}>
         <p className="text-sm text-grey-stronger">
           Ouvrez la console pour voir les logs de debug
         </p>
@@ -504,7 +504,7 @@ export const DebugMode: Story = {
 export const MenuPositioning: Story = {
   render: () => (
     <Layout bg="white" padding={6}>
-      <VStack gap={8}>
+      <VStack scroll="visible" gap={8}>
         <div>
           <h3 className="gs-typo-h3 mb-4">Position par défaut (bottom, start)</h3>
           <ButtonMenu variant="normal" actions={defaultActions}>
@@ -635,7 +635,7 @@ export const MultiSelect: Story = {
 
     return (
       <Layout bg="white" padding={6}>
-        <VStack gap={4}>
+        <VStack scroll="visible" gap={4}>
           <div>
             <h3 className="gs-typo-h3 mb-2">Mode Multi-sélection</h3>
             <p className="text-sm text-grey-stronger mb-4">
@@ -684,7 +684,7 @@ export const MultiSelectWithIcons: Story = {
 
     return (
       <Layout bg="white" padding={6}>
-        <VStack gap={4}>
+        <VStack scroll="visible" gap={4}>
           <div>
             <h3 className="gs-typo-h3 mb-2">Multi-sélection avec icônes</h3>
             <p className="text-sm text-grey-stronger mb-4">

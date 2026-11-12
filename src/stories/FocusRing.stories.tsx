@@ -27,6 +27,8 @@ Anneau de focus clavier de la librairie (\`focus-visible:ring-ring\`), à vérif
 | sans contexte (popovers, menus portés) | \`#292828\` | \`#ffffff\` |
 
 L'écart (\`ring-offset-2\` + \`ring-offset-context\`) prend la couleur du fond du contexte : l'anneau paraît détaché du contrôle au lieu de former, sur fond noir, une bordure blanche pleine de 4px.
+
+Un conteneur qui scrolle (\`overflow-auto\`, défaut de \`Layout\`/\`HStack\`/\`VStack\`) rogne l'anneau d'un contrôle collé à son bord : passez-lui \`scroll="visible"\` (comme ici) ou un padding intérieur.
         `,
       },
     },
@@ -38,7 +40,7 @@ type Story = StoryObj;
 
 function Controls({ id }: { id: string }) {
   return (
-    <VStack gap={4} align="start">
+    <VStack scroll="visible" gap={4} align="start">
       <Button>Button</Button>
       <label className="flex items-center gap-2">
         <Checkbox id={`${id}-checkbox`} />
@@ -65,7 +67,7 @@ function Controls({ id }: { id: string }) {
 function Column({ bg }: { bg: Bg }) {
   return (
     <Layout bg={bg} padding={6} scroll="none" className={bg === "black" ? "text-white" : undefined}>
-      <VStack gap={4}>
+      <VStack scroll="visible" gap={4}>
         <p className="font-bold">data-bg="{bg}"</p>
         <Controls id={bg} />
       </VStack>
@@ -81,7 +83,7 @@ export const AllBackgrounds: Story = {
       <Column bg="grey" />
       <Column bg="black" />
       <Layout padding={6} scroll="none">
-        <VStack gap={4}>
+        <VStack scroll="visible" gap={4}>
           <p className="font-bold">sans data-bg</p>
           <Controls id="none" />
         </VStack>

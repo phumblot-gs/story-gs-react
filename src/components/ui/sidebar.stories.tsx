@@ -95,10 +95,10 @@ function Example({ reference = false, ...args }: SidebarProps & { reference?: bo
       <Layout padding={6} bg="white">
         <Text as="h2" className="gs-typo-h2">{t(page)}</Text>
         <Text as="p" aria-live="polite">{action}</Text>
-        {reference && <VStack gap={4}>
+        {reference && <VStack scroll="visible" gap={4}>
           <Text as="p">Unwrapped GS controls, using the same background context as the Sidebar.</Text>
           <Layout bg={args.bg ?? "black"} padding={2}>
-            <HStack gap={2} wrap align="center">
+            <HStack scroll="visible" gap={2} wrap align="center">
               <Button variant="normal">Normal</Button><Button variant="secondary">Secondary</Button>
               <Button variant="ghost"><IconProvider icon="Folder" />Productions</Button>
               <Button variant="outline">Outline</Button>

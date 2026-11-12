@@ -235,7 +235,7 @@ Shows how to mark a required field with an asterisk (*).
 
 export const WithCheckbox: Story = {
   render: () => (
-    <VStack gap={4} className="w-[300px]">
+    <VStack scroll="visible" gap={4} className="w-[300px]">
       <div className="flex items-center space-x-2">
         <Checkbox id="terms" />
         <Label htmlFor="terms">Accept terms and conditions</Label>

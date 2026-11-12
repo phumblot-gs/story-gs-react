@@ -358,12 +358,12 @@ export const Clickable: Story = {
 export const DebugMode: Story = {
   render: () => (
     <Layout bg="white" padding={6}>
-      <VStack gap={4}>
+      <VStack scroll="visible" gap={4}>
         <h3 className="gs-typo-h3">Mode Debug</h3>
         <p className="text-sm text-grey-stronger">
           Le mode debug affiche un border rose et log les clics dans la console
         </p>
-        <HStack gap={3}>
+        <HStack scroll="visible" gap={3}>
           <Icon
             name="Plus"
             size={16}

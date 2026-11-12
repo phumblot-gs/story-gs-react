@@ -201,13 +201,13 @@ export const Default: Story = {
     return (
       <>
         <Layout bg="grey" padding={8} className="min-h-screen pb-20">
-          <VStack gap={6}>
+          <VStack scroll="visible" gap={6}>
             <h2 className="gs-typo-h1">ActionBar Example</h2>
             <p className="text-sm text-grey-stronger">
               Select items to see the ActionBar appear at the bottom.
               Use the controls below to modify the ActionBar props.
             </p>
-            <HStack gap={4}>
+            <HStack scroll="visible" gap={4}>
               <Button onClick={() => {
                 const newCount = selectedCount + 1;
                 setSelectedCount(newCount);
@@ -251,12 +251,12 @@ export const WithMultipleActions: Story = {
     return (
       <>
         <Layout bg="grey" padding={8} className="min-h-screen pb-20">
-          <VStack gap={6}>
+          <VStack scroll="visible" gap={6}>
             <h2 className="gs-typo-h1">Multiple Actions</h2>
             <p className="text-sm text-grey-stronger">
               ActionBar with multiple action buttons.
             </p>
-            <HStack gap={4}>
+            <HStack scroll="visible" gap={4}>
               <Button onClick={() => setSelectedCount(prev => prev + 1)}>
                 Select Item
               </Button>
@@ -309,12 +309,12 @@ export const WithoutSelectionInfo: Story = {
     return (
       <>
         <Layout bg="grey" padding={8} className="min-h-screen pb-20">
-          <VStack gap={6}>
+          <VStack scroll="visible" gap={6}>
             <h2 className="gs-typo-h1">Without Selection Info</h2>
             <p className="text-sm text-grey-stronger">
               ActionBar without the selection counter and deselect button.
             </p>
-            <HStack gap={4}>
+            <HStack scroll="visible" gap={4}>
               <Button onClick={() => setSelectedCount(prev => prev + 1)}>
                 Select Item
               </Button>
@@ -344,15 +344,15 @@ export const MultipleActionBars: Story = {
     return (
       <>
         <Layout bg="grey" padding={8} className="min-h-screen pb-20">
-          <VStack gap={6}>
+          <VStack scroll="visible" gap={6}>
             <h2 className="gs-typo-h1">Multiple ActionBars</h2>
             <p className="text-sm text-grey-stronger">
               Multiple ActionBar instances - only the last modified one is visible.
             </p>
-            <VStack gap={4}>
+            <VStack scroll="visible" gap={4}>
               <div>
                 <h3 className="text-sm font-semibold mb-2">Files</h3>
-                <HStack gap={2}>
+                <HStack scroll="visible" gap={2}>
                   <Button onClick={() => setFileSelection(prev => prev + 1)}>
                     Select File
                   </Button>
@@ -364,7 +364,7 @@ export const MultipleActionBars: Story = {
               </div>
               <div>
                 <h3 className="text-sm font-semibold mb-2">Images</h3>
-                <HStack gap={2}>
+                <HStack scroll="visible" gap={2}>
                   <Button onClick={() => setImageSelection(prev => prev + 1)}>
                     Select Image
                   </Button>
@@ -405,12 +405,12 @@ export const CustomStyling: Story = {
     return (
       <>
         <Layout bg="grey" padding={8} className="min-h-screen pb-20">
-          <VStack gap={6}>
+          <VStack scroll="visible" gap={6}>
             <h2 className="gs-typo-h1">Custom Styling</h2>
             <p className="text-sm text-grey-stronger">
               ActionBar with custom height and padding.
             </p>
-            <HStack gap={4}>
+            <HStack scroll="visible" gap={4}>
               <Button onClick={() => setSelectedCount(prev => prev + 1)}>
                 Select Item
               </Button>
@@ -462,12 +462,12 @@ export const WithMenuComponents: Story = {
     return (
       <>
         <Layout bg="grey" padding={8} className="min-h-screen pb-20">
-          <VStack gap={6}>
+          <VStack scroll="visible" gap={6}>
             <h2 className="gs-typo-h1">ActionBar with Menu Components</h2>
             <p className="text-sm text-grey-stronger">
               ActionBar avec ButtonMenuStatus, ButtonMenu et ButtonMenuSmall dans la partie droite.
             </p>
-            <HStack gap={4}>
+            <HStack scroll="visible" gap={4}>
               <Button onClick={() => setSelectedCount(prev => prev + 1)}>
                 Select Item
               </Button>

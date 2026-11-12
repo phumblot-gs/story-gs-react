@@ -209,7 +209,7 @@ export const WithComments: Story = {
     ])
     return (
       <Layout bg="white" padding={6}>
-        <VStack gap={4}>
+        <VStack scroll="visible" gap={4}>
           <p className="text-sm text-grey-stronger">
             Ce bouton a {comments.filter(c => c.type === "Comment").length} commentaire(s) de type "Comment"
           </p>
@@ -299,8 +299,8 @@ export const AllVariants: Story = {
       <VStack gap={6} padding={6}>
         <VStack as={Layout} bg="white" padding={6} gap={4} className="border border-grey rounded">
           <h3 className="gs-typo-h3">Background White</h3>
-          <HStack gap={3}>
-            <VStack gap={2} align="center">
+          <HStack scroll="visible" gap={3}>
+            <VStack scroll="visible" gap={2} align="center">
               <ButtonThumbnailComments
                 variant="normal"
                 value={comments.normal}
@@ -311,7 +311,7 @@ export const AllVariants: Story = {
               />
               <span className="text-xs text-grey-stronger">Normal</span>
             </VStack>
-            <VStack gap={2} align="center">
+            <VStack scroll="visible" gap={2} align="center">
               <ButtonThumbnailComments
                 variant="secondary"
                 value={comments.secondary}
@@ -322,7 +322,7 @@ export const AllVariants: Story = {
               />
               <span className="text-xs text-grey-stronger">Secondary</span>
             </VStack>
-            <VStack gap={2} align="center">
+            <VStack scroll="visible" gap={2} align="center">
               <ButtonThumbnailComments
                 variant="ghost"
                 value={comments.ghost}
@@ -333,7 +333,7 @@ export const AllVariants: Story = {
               />
               <span className="text-xs text-grey-stronger">Ghost</span>
             </VStack>
-            <VStack gap={2} align="center">
+            <VStack scroll="visible" gap={2} align="center">
               <ButtonThumbnailComments
                 variant="outline"
                 value={comments.outline}
@@ -349,8 +349,8 @@ export const AllVariants: Story = {
 
         <VStack as={Layout} bg="grey" padding={6} gap={4} className="border border-grey rounded">
           <h3 className="gs-typo-h3">Background Grey</h3>
-          <HStack gap={3}>
-            <VStack gap={2} align="center">
+          <HStack scroll="visible" gap={3}>
+            <VStack scroll="visible" gap={2} align="center">
               <ButtonThumbnailComments
                 variant="normal"
                 value={comments.normal}
@@ -361,7 +361,7 @@ export const AllVariants: Story = {
               />
               <span className="text-xs text-grey-stronger">Normal</span>
             </VStack>
-            <VStack gap={2} align="center">
+            <VStack scroll="visible" gap={2} align="center">
               <ButtonThumbnailComments
                 variant="secondary"
                 value={comments.secondary}
@@ -372,7 +372,7 @@ export const AllVariants: Story = {
               />
               <span className="text-xs text-grey-stronger">Secondary</span>
             </VStack>
-            <VStack gap={2} align="center">
+            <VStack scroll="visible" gap={2} align="center">
               <ButtonThumbnailComments
                 variant="ghost"
                 value={comments.ghost}
@@ -383,7 +383,7 @@ export const AllVariants: Story = {
               />
               <span className="text-xs text-grey-stronger">Ghost</span>
             </VStack>
-            <VStack gap={2} align="center">
+            <VStack scroll="visible" gap={2} align="center">
               <ButtonThumbnailComments
                 variant="outline"
                 value={comments.outline}
@@ -399,8 +399,8 @@ export const AllVariants: Story = {
 
         <VStack as={Layout} bg="black" padding={6} gap={4} className="border border-grey rounded">
           <h3 className="gs-typo-h3 text-white">Background Black</h3>
-          <HStack gap={3}>
-            <VStack gap={2} align="center">
+          <HStack scroll="visible" gap={3}>
+            <VStack scroll="visible" gap={2} align="center">
               <ButtonThumbnailComments
                 variant="normal"
                 value={comments.normal}
@@ -411,7 +411,7 @@ export const AllVariants: Story = {
               />
               <span className="text-xs text-white">Normal</span>
             </VStack>
-            <VStack gap={2} align="center">
+            <VStack scroll="visible" gap={2} align="center">
               <ButtonThumbnailComments
                 variant="secondary"
                 value={comments.secondary}
@@ -422,7 +422,7 @@ export const AllVariants: Story = {
               />
               <span className="text-xs text-white">Secondary</span>
             </VStack>
-            <VStack gap={2} align="center">
+            <VStack scroll="visible" gap={2} align="center">
               <ButtonThumbnailComments
                 variant="ghost"
                 value={comments.ghost}
@@ -433,7 +433,7 @@ export const AllVariants: Story = {
               />
               <span className="text-xs text-white">Ghost</span>
             </VStack>
-            <VStack gap={2} align="center">
+            <VStack scroll="visible" gap={2} align="center">
               <ButtonThumbnailComments
                 variant="outline"
                 value={comments.outline}
@@ -463,9 +463,9 @@ export const DifferentSizes: Story = {
     })
     return (
       <Layout bg="white" padding={6}>
-        <VStack gap={4}>
-          <HStack gap={3} align="center">
-            <VStack gap={2} align="center">
+        <VStack scroll="visible" gap={4}>
+          <HStack scroll="visible" gap={3} align="center">
+            <VStack scroll="visible" gap={2} align="center">
               <ButtonThumbnailComments
                 variant="normal"
                 size="small"
@@ -477,7 +477,7 @@ export const DifferentSizes: Story = {
               />
               <span className="text-xs text-grey-stronger">Small</span>
             </VStack>
-            <VStack gap={2} align="center">
+            <VStack scroll="visible" gap={2} align="center">
               <ButtonThumbnailComments
                 variant="normal"
                 size="medium"
@@ -489,7 +489,7 @@ export const DifferentSizes: Story = {
               />
               <span className="text-xs text-grey-stronger">Medium</span>
             </VStack>
-            <VStack gap={2} align="center">
+            <VStack scroll="visible" gap={2} align="center">
               <ButtonThumbnailComments
                 variant="normal"
                 size="large"
@@ -535,7 +535,7 @@ export const Controlled: Story = {
     const [open, setOpen] = useState(false)
     return (
       <Layout bg="white" padding={6}>
-        <VStack gap={4}>
+        <VStack scroll="visible" gap={4}>
           <div>
             <p className="text-sm text-grey-stronger mb-2">
               Nombre de commentaires: {comments.filter(c => c.type === "Comment").length}
@@ -565,7 +565,7 @@ export const DebugMode: Story = {
     const [comments, setComments] = useState<CommentData[]>([createComment("Comment", "test")])
     return (
       <Layout bg="white" padding={6}>
-        <VStack gap={4}>
+        <VStack scroll="visible" gap={4}>
           <p className="text-sm text-grey-stronger">
             Ouvrez la console pour voir les logs de debug
           </p>
@@ -600,10 +600,10 @@ export const IndicatorBehavior: Story = {
     ])
     return (
       <Layout bg="white" padding={6}>
-        <VStack gap={4}>
+        <VStack scroll="visible" gap={4}>
           <h3 className="gs-typo-h3">Comportement de l'indicateur</h3>
-          <VStack gap={3}>
-            <HStack gap={3} align="center">
+          <VStack scroll="visible" gap={3}>
+            <HStack scroll="visible" gap={3} align="center">
               <ButtonThumbnailComments
                 value={comments1}
                 onAddComment={(comment) => {
@@ -615,7 +615,7 @@ export const IndicatorBehavior: Story = {
                 Aucun commentaire - pas d'indicateur
               </span>
             </HStack>
-            <HStack gap={3} align="center">
+            <HStack scroll="visible" gap={3} align="center">
               <ButtonThumbnailComments
                 value={comments2}
                 onAddComment={(comment) => {
@@ -627,7 +627,7 @@ export const IndicatorBehavior: Story = {
                 Seulement Technical - pas d'indicateur
               </span>
             </HStack>
-            <HStack gap={3} align="center">
+            <HStack scroll="visible" gap={3} align="center">
               <ButtonThumbnailComments
                 value={comments3}
                 onAddComment={(comment) => {
@@ -639,7 +639,7 @@ export const IndicatorBehavior: Story = {
                 1 commentaire type "Comment" - indicateur visible
               </span>
             </HStack>
-            <HStack gap={3} align="center">
+            <HStack scroll="visible" gap={3} align="center">
               <ButtonThumbnailComments
                 value={comments4}
                 onAddComment={(comment) => {
@@ -670,7 +670,7 @@ export const MenuPositioning: Story = {
     })
     return (
       <Layout bg="white" padding={6}>
-        <VStack gap={8}>
+        <VStack scroll="visible" gap={8}>
           <div>
             <h3 className="gs-typo-h3 mb-4">Position par défaut (bottom, start)</h3>
             <ButtonThumbnailComments

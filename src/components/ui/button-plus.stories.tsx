@@ -104,7 +104,7 @@ export const AllBackgrounds: Story = {
     <VStack gap={6} padding={6}>
       <VStack as={Layout} bg="white" padding={6} gap={4} className="border border-grey rounded">
         <h3 className="gs-typo-h3">Background White</h3>
-        <HStack gap={3}>
+        <HStack scroll="visible" gap={3}>
           <ButtonPlus label="Load images" onClick={action("clicked")} />
           <ButtonPlus label="Create production" onClick={action("clicked")} />
           <ButtonPlus label="Add new item" onClick={action("clicked")} />
@@ -113,7 +113,7 @@ export const AllBackgrounds: Story = {
 
       <VStack as={Layout} bg="grey" padding={6} gap={4} className="border border-grey rounded">
         <h3 className="gs-typo-h3">Background Grey</h3>
-        <HStack gap={3}>
+        <HStack scroll="visible" gap={3}>
           <ButtonPlus label="Load images" onClick={action("clicked")} />
           <ButtonPlus label="Create production" onClick={action("clicked")} />
           <ButtonPlus label="Add new item" onClick={action("clicked")} />
@@ -122,7 +122,7 @@ export const AllBackgrounds: Story = {
 
       <VStack as={Layout} bg="black" padding={6} gap={4} className="border border-grey rounded">
         <h3 className="gs-typo-h3 text-white">Background Black</h3>
-        <HStack gap={3}>
+        <HStack scroll="visible" gap={3}>
           <ButtonPlus label="Load images" onClick={action("clicked")} />
           <ButtonPlus label="Create production" onClick={action("clicked")} />
           <ButtonPlus label="Add new item" onClick={action("clicked")} />
@@ -138,8 +138,8 @@ export const AllBackgrounds: Story = {
 export const Disabled: Story = {
   render: () => (
     <Layout bg="white" padding={6}>
-      <VStack gap={4}>
-        <HStack gap={3}>
+      <VStack scroll="visible" gap={4}>
+        <HStack scroll="visible" gap={3}>
           <ButtonPlus label="Enabled" onClick={action("clicked")} />
           <ButtonPlus label="Disabled" disabled onClick={action("clicked")} />
         </HStack>
@@ -151,8 +151,8 @@ export const Disabled: Story = {
 export const WithLongLabels: Story = {
   render: () => (
     <Layout bg="white" padding={6}>
-      <VStack gap={4}>
-        <HStack gap={3}>
+      <VStack scroll="visible" gap={4}>
+        <HStack scroll="visible" gap={3}>
           <ButtonPlus label="Load new images" onClick={action("clicked")} />
           <ButtonPlus label="Create a new production" onClick={action("clicked")} />
           <ButtonPlus label="Add multiple items to the collection" onClick={action("clicked")} />
@@ -165,7 +165,7 @@ export const WithLongLabels: Story = {
 export const IconAnimation: Story = {
   render: () => (
     <Layout bg="white" padding={6}>
-      <VStack gap={4}>
+      <VStack scroll="visible" gap={4}>
         <div>
           <p className="text-sm text-grey-stronger mb-2">
             Hover over the button to see the Plus icon rotate 90° clockwise
@@ -180,7 +180,7 @@ export const IconAnimation: Story = {
 export const DebugMode: Story = {
   render: () => (
     <Layout bg="white" padding={6}>
-      <VStack gap={4}>
+      <VStack scroll="visible" gap={4}>
         <p className="text-sm text-grey-stronger">
           Open the console to see debug logs
         </p>

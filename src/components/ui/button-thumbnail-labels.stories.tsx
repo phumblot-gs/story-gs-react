@@ -251,11 +251,11 @@ export const AllColors: Story = {
     const [selectedColors, setSelectedColors] = useState<LabelColor[]>(colors)
     return (
       <Layout bg="white" padding={6}>
-        <VStack gap={4}>
+        <VStack scroll="visible" gap={4}>
           <h3 className="gs-typo-h3">Toutes les couleurs possibles</h3>
-          <HStack gap={3} align="center" wrap>
+          <HStack scroll="visible" gap={3} align="center" wrap>
             {colors.map((color, index) => (
-              <VStack key={color ?? "transparent"} gap={2} align="center">
+              <VStack scroll="visible" key={color ?? "transparent"} gap={2} align="center">
                 <ButtonThumbnailLabels
                   value={selectedColors[index]}
                   onClick={(value) => {
@@ -288,8 +288,8 @@ export const AllVariants: Story = {
       <VStack gap={6} padding={6}>
         <VStack as={Layout} bg="white" padding={6} gap={4} className="border border-grey rounded">
           <h3 className="gs-typo-h3">Background White</h3>
-          <HStack gap={3}>
-            <VStack gap={2} align="center">
+          <HStack scroll="visible" gap={3}>
+            <VStack scroll="visible" gap={2} align="center">
               <ButtonThumbnailLabels
                 variant="normal"
                 value={colors.normal}
@@ -297,7 +297,7 @@ export const AllVariants: Story = {
               />
               <span className="text-xs text-grey-stronger">Normal</span>
             </VStack>
-            <VStack gap={2} align="center">
+            <VStack scroll="visible" gap={2} align="center">
               <ButtonThumbnailLabels
                 variant="secondary"
                 value={colors.secondary}
@@ -305,7 +305,7 @@ export const AllVariants: Story = {
               />
               <span className="text-xs text-grey-stronger">Secondary</span>
             </VStack>
-            <VStack gap={2} align="center">
+            <VStack scroll="visible" gap={2} align="center">
               <ButtonThumbnailLabels
                 variant="ghost"
                 value={colors.ghost}
@@ -313,7 +313,7 @@ export const AllVariants: Story = {
               />
               <span className="text-xs text-grey-stronger">Ghost</span>
             </VStack>
-            <VStack gap={2} align="center">
+            <VStack scroll="visible" gap={2} align="center">
               <ButtonThumbnailLabels
                 variant="outline"
                 value={colors.outline}
@@ -326,8 +326,8 @@ export const AllVariants: Story = {
 
         <VStack as={Layout} bg="grey" padding={6} gap={4} className="border border-grey rounded">
           <h3 className="gs-typo-h3">Background Grey</h3>
-          <HStack gap={3}>
-            <VStack gap={2} align="center">
+          <HStack scroll="visible" gap={3}>
+            <VStack scroll="visible" gap={2} align="center">
               <ButtonThumbnailLabels
                 variant="normal"
                 value={colors.normal}
@@ -335,7 +335,7 @@ export const AllVariants: Story = {
               />
               <span className="text-xs text-grey-stronger">Normal</span>
             </VStack>
-            <VStack gap={2} align="center">
+            <VStack scroll="visible" gap={2} align="center">
               <ButtonThumbnailLabels
                 variant="secondary"
                 value={colors.secondary}
@@ -343,7 +343,7 @@ export const AllVariants: Story = {
               />
               <span className="text-xs text-grey-stronger">Secondary</span>
             </VStack>
-            <VStack gap={2} align="center">
+            <VStack scroll="visible" gap={2} align="center">
               <ButtonThumbnailLabels
                 variant="ghost"
                 value={colors.ghost}
@@ -351,7 +351,7 @@ export const AllVariants: Story = {
               />
               <span className="text-xs text-grey-stronger">Ghost</span>
             </VStack>
-            <VStack gap={2} align="center">
+            <VStack scroll="visible" gap={2} align="center">
               <ButtonThumbnailLabels
                 variant="outline"
                 value={colors.outline}
@@ -364,8 +364,8 @@ export const AllVariants: Story = {
 
         <VStack as={Layout} bg="black" padding={6} gap={4} className="border border-grey rounded">
           <h3 className="gs-typo-h3 text-white">Background Black</h3>
-          <HStack gap={3}>
-            <VStack gap={2} align="center">
+          <HStack scroll="visible" gap={3}>
+            <VStack scroll="visible" gap={2} align="center">
               <ButtonThumbnailLabels
                 variant="normal"
                 value={colors.normal}
@@ -373,7 +373,7 @@ export const AllVariants: Story = {
               />
               <span className="text-xs text-white">Normal</span>
             </VStack>
-            <VStack gap={2} align="center">
+            <VStack scroll="visible" gap={2} align="center">
               <ButtonThumbnailLabels
                 variant="secondary"
                 value={colors.secondary}
@@ -381,7 +381,7 @@ export const AllVariants: Story = {
               />
               <span className="text-xs text-white">Secondary</span>
             </VStack>
-            <VStack gap={2} align="center">
+            <VStack scroll="visible" gap={2} align="center">
               <ButtonThumbnailLabels
                 variant="ghost"
                 value={colors.ghost}
@@ -389,7 +389,7 @@ export const AllVariants: Story = {
               />
               <span className="text-xs text-white">Ghost</span>
             </VStack>
-            <VStack gap={2} align="center">
+            <VStack scroll="visible" gap={2} align="center">
               <ButtonThumbnailLabels
                 variant="outline"
                 value={colors.outline}
@@ -416,9 +416,9 @@ export const DifferentSizes: Story = {
     })
     return (
       <Layout bg="white" padding={6}>
-        <VStack gap={4}>
-          <HStack gap={3} align="center">
-            <VStack gap={2} align="center">
+        <VStack scroll="visible" gap={4}>
+          <HStack scroll="visible" gap={3} align="center">
+            <VStack scroll="visible" gap={2} align="center">
               <ButtonThumbnailLabels
                 variant="normal"
                 size="small"
@@ -427,7 +427,7 @@ export const DifferentSizes: Story = {
               />
               <span className="text-xs text-grey-stronger">Small</span>
             </VStack>
-            <VStack gap={2} align="center">
+            <VStack scroll="visible" gap={2} align="center">
               <ButtonThumbnailLabels
                 variant="normal"
                 size="medium"
@@ -436,7 +436,7 @@ export const DifferentSizes: Story = {
               />
               <span className="text-xs text-grey-stronger">Medium</span>
             </VStack>
-            <VStack gap={2} align="center">
+            <VStack scroll="visible" gap={2} align="center">
               <ButtonThumbnailLabels
                 variant="normal"
                 size="large"
@@ -483,7 +483,7 @@ export const Controlled: Story = {
     const [open, setOpen] = useState(false)
     return (
       <Layout bg="white" padding={6}>
-        <VStack gap={4}>
+        <VStack scroll="visible" gap={4}>
           <div>
             <p className="text-sm text-grey-stronger mb-2">
               Couleur actuelle: {color === null ? "Transparent" : color}
@@ -512,7 +512,7 @@ export const DebugMode: Story = {
     const [color, setColor] = useState<LabelColor>("green")
     return (
       <Layout bg="white" padding={6}>
-        <VStack gap={4}>
+        <VStack scroll="visible" gap={4}>
           <p className="text-sm text-grey-stronger">
             Ouvrez la console pour voir les logs de debug
           </p>
@@ -535,7 +535,7 @@ export const NormalMenu: Story = {
     const [color, setColor] = useState<LabelColor>("orange")
     return (
       <Layout bg="white" padding={6}>
-        <VStack gap={4}>
+        <VStack scroll="visible" gap={4}>
           <p className="text-sm text-grey-stronger">
             Menu normal (par défaut) avec labels traduits
           </p>
@@ -555,7 +555,7 @@ export const CompactMenu: Story = {
     const [color, setColor] = useState<LabelColor>("orange")
     return (
       <Layout bg="white" padding={6}>
-        <VStack gap={4}>
+        <VStack scroll="visible" gap={4}>
           <p className="text-sm text-grey-stronger">
             Menu compact (grille 3x3 sans labels)
           </p>
@@ -589,7 +589,7 @@ export const Internationalization: Story = {
     
     return (
       <Layout bg="white" padding={6}>
-        <VStack gap={4}>
+        <VStack scroll="visible" gap={4}>
           <div>
             <p className="text-sm text-grey-stronger mb-2">
               Langue actuelle: {lang}
@@ -684,7 +684,7 @@ export const MenuPositioning: Story = {
     })
     return (
       <Layout bg="white" padding={6}>
-        <VStack gap={8}>
+        <VStack scroll="visible" gap={8}>
           <div>
             <h3 className="gs-typo-h3 mb-4">Position par défaut (bottom, start)</h3>
             <ButtonThumbnailLabels
@@ -793,9 +793,9 @@ export const NeutralButtonDisplay: Story = {
       <VStack gap={0}>
         {(["white", "grey", "black"] as const).map((bg) => (
           <Layout key={bg} bg={bg} padding={6}>
-            <VStack gap={4}>
+            <VStack scroll="visible" gap={4}>
               <h3 className="gs-typo-h3">Fond {bg} — côte à côte avec ButtonMenuStatus</h3>
-              <HStack gap={2} align="center">
+              <HStack scroll="visible" gap={2} align="center">
                 <ButtonMenuStatus
                   variant="secondary"
                   currentStatus={MediaStatus.SELECTED}
@@ -816,12 +816,12 @@ export const NeutralButtonDisplay: Story = {
         ))}
 
         <Layout bg="white" padding={6}>
-          <VStack gap={4}>
+          <VStack scroll="visible" gap={4}>
             <h3 className="gs-typo-h3">Les trois tailles, appariées</h3>
-            <HStack gap={6} align="start">
+            <HStack scroll="visible" gap={6} align="start">
               {(["small", "medium", "large"] as const).map((size) => (
-                <VStack key={size} gap={2} align="center">
-                  <HStack gap={2} align="center">
+                <VStack scroll="visible" key={size} gap={2} align="center">
+                  <HStack scroll="visible" gap={2} align="center">
                     <ButtonMenuStatus
                       variant="secondary"
                       size={size}
@@ -845,8 +845,8 @@ export const NeutralButtonDisplay: Story = {
         <Layout bg="white" padding={6}>
           <VStack gap={4}>
             <h3 className="gs-typo-h3">Le défaut n'a pas changé</h3>
-            <HStack gap={6} align="start">
-              <VStack gap={2} align="center">
+            <HStack scroll="visible" gap={6} align="start">
+              <VStack scroll="visible" gap={2} align="center">
                 <ButtonThumbnailLabels
                   value={colors.value}
                   onClick={setColor("value")}
@@ -855,7 +855,7 @@ export const NeutralButtonDisplay: Story = {
                   défaut (`buttonDisplay="value"`) : la couleur est sur le bouton
                 </span>
               </VStack>
-              <VStack gap={2} align="center">
+              <VStack scroll="visible" gap={2} align="center">
                 <ButtonThumbnailLabels
                   buttonDisplay="neutral"
                   value={colors.neutral}

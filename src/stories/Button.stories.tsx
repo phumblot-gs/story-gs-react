@@ -204,7 +204,7 @@ export const AllVariants: Story = {
     <VStack gap={6} padding={6}>
       <VStack as={Layout} bg="white" padding={6} gap={4} className="border border-grey rounded">
         <h3 className="gs-typo-h3">Background White</h3>
-        <HStack gap={3}>
+        <HStack scroll="visible" gap={3}>
           <Button variant="normal">Normal</Button>
           <Button variant="secondary">Secondary</Button>
           <Button variant="ghost">Ghost</Button>
@@ -217,7 +217,7 @@ export const AllVariants: Story = {
 
       <VStack as={Layout} bg="grey" padding={6} gap={4} className="border border-grey rounded">
         <h3 className="gs-typo-h3">Background Grey</h3>
-        <HStack gap={3}>
+        <HStack scroll="visible" gap={3}>
           <Button variant="normal">Normal</Button>
           <Button variant="secondary">Secondary</Button>
           <Button variant="ghost">Ghost</Button>
@@ -230,7 +230,7 @@ export const AllVariants: Story = {
 
       <VStack as={Layout} bg="black" padding={6} gap={4} className="border border-grey rounded">
         <h3 className="gs-typo-h3 text-white">Background Black</h3>
-        <HStack gap={3}>
+        <HStack scroll="visible" gap={3}>
           <Button variant="normal">Normal</Button>
           <Button variant="secondary">Secondary</Button>
           <Button variant="ghost">Ghost</Button>
@@ -250,7 +250,7 @@ export const AllVariants: Story = {
 export const WithIcon: Story = {
   render: () => (
     <Layout bg="white" padding={6}>
-      <VStack gap={6}>
+      <VStack scroll="visible" gap={6}>
         <div>
           <h3 className="gs-typo-h3 mb-2">Boutons avec icônes</h3>
           <p className="text-sm text-grey-stronger mb-4">
@@ -266,10 +266,10 @@ export const WithIcon: Story = {
           </div>
         </div>
 
-        <VStack gap={4}>
+        <VStack scroll="visible" gap={4}>
           <div>
             <h4 className="text-sm font-medium mb-2">Taille Medium (défaut) - Icon size={14} (test)</h4>
-            <HStack gap={3}>
+            <HStack scroll="visible" gap={3}>
               <Button variant="normal">
                 <Icon name="Plus" size={14} />
                 Ajouter
@@ -287,7 +287,7 @@ export const WithIcon: Story = {
 
           <div>
             <h4 className="text-sm font-medium mb-2">Taille Small - Icon size={10}</h4>
-            <HStack gap={3}>
+            <HStack scroll="visible" gap={3}>
               <Button variant="normal" size="small">
                 <Icon name="Plus" size={10} />
                 Ajouter
@@ -305,7 +305,7 @@ export const WithIcon: Story = {
 
           <div>
             <h4 className="text-sm font-medium mb-2">Taille Large - Icon size={14}</h4>
-            <HStack gap={3}>
+            <HStack scroll="visible" gap={3}>
               <Button variant="normal" size="large">
                 <Icon name="Plus" size={14} />
                 Ajouter
@@ -329,7 +329,7 @@ export const WithIcon: Story = {
 export const IconsOnly: Story = {
   render: () => (
     <Layout bg="white" padding={6}>
-      <VStack gap={6}>
+      <VStack scroll="visible" gap={6}>
         <div>
           <h3 className="gs-typo-h3 mb-2">Boutons icône uniquement</h3>
           <p className="text-sm text-grey-stronger mb-3">
@@ -346,9 +346,9 @@ export const IconsOnly: Story = {
         </div>
 
         {/* Size Medium */}
-        <VStack gap={3}>
+        <VStack scroll="visible" gap={3}>
           <h4 className="text-sm font-medium">Size Medium (défaut) - Recommandé : className="p-0 w-6 h-6" + Icon size={14} (test)</h4>
-          <HStack gap={3} align="center">
+          <HStack scroll="visible" gap={3} align="center">
             <Button variant="normal" className="p-0 w-6 h-6"><Icon name="Plus" size={14} /></Button>
             <Button variant="secondary" className="p-0 w-6 h-6"><Icon name="Settings" size={14} /></Button>
             <Button variant="ghost" className="p-0 w-6 h-6"><Icon name="Trash" size={14} /></Button>
@@ -358,9 +358,9 @@ export const IconsOnly: Story = {
         </VStack>
 
         {/* Size Large */}
-        <VStack gap={3}>
+        <VStack scroll="visible" gap={3}>
           <h4 className="text-sm font-medium">Size Large - Recommandé : className="p-0 w-8 h-8"</h4>
-          <HStack gap={3} align="center">
+          <HStack scroll="visible" gap={3} align="center">
             <Button variant="normal" size="large" className="p-0 w-8 h-8"><Icon name="Plus" size={14} /></Button>
             <Button variant="secondary" size="large" className="p-0 w-8 h-8"><Icon name="Settings" size={14} /></Button>
             <Button variant="ghost" size="large" className="p-0 w-8 h-8"><Icon name="Trash" size={14} /></Button>
@@ -373,9 +373,9 @@ export const IconsOnly: Story = {
         </VStack>
 
         {/* Size Small */}
-        <VStack gap={3}>
+        <VStack scroll="visible" gap={3}>
           <h4 className="text-sm font-medium">Size Small - Recommandé : className="p-1 w-4 h-4"</h4>
-          <HStack gap={3} align="center">
+          <HStack scroll="visible" gap={3} align="center">
             <Button variant="normal" size="small" className="p-1 w-4 h-4"><Icon name="Plus" size={10} /></Button>
             <Button variant="secondary" size="small" className="p-1 w-4 h-4"><Icon name="Settings" size={10} /></Button>
             <Button variant="ghost" size="small" className="p-1 w-4 h-4"><Icon name="Trash" size={10} /></Button>
@@ -385,9 +385,9 @@ export const IconsOnly: Story = {
         </VStack>
 
         {/* Avec Indicator */}
-        <VStack gap={3}>
+        <VStack scroll="visible" gap={3}>
           <h4 className="text-sm font-medium">Avec Indicator (notifications, alertes)</h4>
-          <HStack gap={3} align="center">
+          <HStack scroll="visible" gap={3} align="center">
             <Button variant="normal" indicator className="p-0 w-6 h-6"><Icon name="Bell" size={14} /></Button>
             <Button variant="secondary" indicator className="p-0 w-6 h-6"><Icon name="Mail" size={14} /></Button>
             <Button variant="ghost" indicator size="small" className="p-1 w-4 h-4"><Icon name="Bell" size={10} /></Button>
@@ -411,19 +411,19 @@ export const IconsOnly: Story = {
           <h4 className="text-sm font-medium">Sur différents backgrounds</h4>
           <HStack gap={4}>
             <Layout bg="white" padding={3} className="border border-grey rounded">
-              <HStack gap={2}>
+              <HStack scroll="visible" gap={2}>
                 <Button variant="normal" className="p-0 w-6 h-6"><Icon name="Plus" size={14} /></Button>
                 <Button variant="ghost" className="p-0 w-6 h-6"><Icon name="Settings" size={14} /></Button>
               </HStack>
             </Layout>
             <Layout bg="grey" padding={3} className="border border-grey rounded">
-              <HStack gap={2}>
+              <HStack scroll="visible" gap={2}>
                 <Button variant="normal" className="p-0 w-6 h-6"><Icon name="Plus" size={14} /></Button>
                 <Button variant="ghost" className="p-0 w-6 h-6"><Icon name="Settings" size={14} /></Button>
               </HStack>
             </Layout>
             <Layout bg="black" padding={3} className="border border-grey rounded">
-              <HStack gap={2}>
+              <HStack scroll="visible" gap={2}>
                 <Button variant="normal" className="p-0 w-6 h-6"><Icon name="Plus" size={14} /></Button>
                 <Button variant="ghost" className="p-0 w-6 h-6"><Icon name="Settings" size={14} /></Button>
               </HStack>
@@ -438,7 +438,7 @@ export const IconsOnly: Story = {
 export const WithIndicator: Story = {
   render: () => (
     <Layout bg="white" padding={6}>
-      <HStack gap={3}>
+      <HStack scroll="visible" gap={3}>
         <Button variant="normal" indicator>
           Normal
         </Button>
@@ -465,7 +465,7 @@ export const HasActiveElement: Story = {
 
       <VStack as={Layout} bg="white" padding={6} gap={4} className="border border-grey rounded">
         <h4 className="text-sm font-medium">Background White</h4>
-        <HStack gap={3}>
+        <HStack scroll="visible" gap={3}>
           <Button variant="normal" hasActiveElement>Normal actif</Button>
           <Button variant="secondary" hasActiveElement>Secondary actif</Button>
           <Button variant="ghost" hasActiveElement>Ghost actif</Button>
@@ -479,7 +479,7 @@ export const HasActiveElement: Story = {
 
       <VStack as={Layout} bg="grey" padding={6} gap={4} className="border border-grey rounded">
         <h4 className="text-sm font-medium">Background Grey</h4>
-        <HStack gap={3}>
+        <HStack scroll="visible" gap={3}>
           <Button variant="normal" hasActiveElement>Normal actif</Button>
           <Button variant="ghost" hasActiveElement>Ghost actif</Button>
           <Button variant="ghost" hasActiveElement>
@@ -491,7 +491,7 @@ export const HasActiveElement: Story = {
 
       <VStack as={Layout} bg="black" padding={6} gap={4} className="border border-grey rounded">
         <h4 className="text-sm font-medium text-white">Background Black</h4>
-        <HStack gap={3}>
+        <HStack scroll="visible" gap={3}>
           <Button variant="normal" hasActiveElement>Normal actif</Button>
           <Button variant="ghost" hasActiveElement>Ghost actif</Button>
           <Button variant="ghost" hasActiveElement>
@@ -510,7 +510,7 @@ export const HasActiveElement: Story = {
 export const AsChild: Story = {
   render: () => (
     <Layout bg="white" padding={6}>
-      <VStack gap={6}>
+      <VStack scroll="visible" gap={6}>
         <div>
           <h3 className="gs-typo-h3 mb-2">Utilisation de asChild</h3>
           <p className="text-sm text-grey-stronger mb-4">
@@ -520,7 +520,7 @@ export const AsChild: Story = {
           </p>
         </div>
 
-        <VStack gap={4}>
+        <VStack scroll="visible" gap={4}>
           <div>
             <h4 className="text-sm font-medium mb-2">Bouton normal (sans asChild)</h4>
             <p className="text-xs text-grey-stronger mb-2">Résultat : &lt;button&gt;</p>
@@ -540,7 +540,7 @@ export const AsChild: Story = {
           <div>
             <h4 className="text-sm font-medium mb-2">Comparaison visuelle</h4>
             <p className="text-xs text-grey-stronger mb-2">Les deux boutons ont le même style, mais des éléments HTML différents</p>
-            <HStack gap={3}>
+            <HStack scroll="visible" gap={3}>
               <Button variant="secondary">Bouton standard</Button>
               <Button asChild variant="secondary">
                 <a href="#example">Lien stylisé</a>
@@ -566,7 +566,7 @@ export const AsChild: Story = {
 export const Small: Story = {
   render: () => (
     <Layout bg="white" padding={6}>
-      <HStack gap={3} align="center">
+      <HStack scroll="visible" gap={3} align="center">
         <Button size="small">Small Button</Button>
         <Button size="small">
           <Icon name="Plus" size={10} />
@@ -580,7 +580,7 @@ export const Small: Story = {
 export const Medium: Story = {
   render: () => (
     <Layout bg="white" padding={6}>
-      <HStack gap={3} align="center">
+      <HStack scroll="visible" gap={3} align="center">
         <Button size="medium">Medium Button</Button>
         <Button size="medium">
           <Icon name="Plus" size={14} />
@@ -594,7 +594,7 @@ export const Medium: Story = {
 export const Large: Story = {
   render: () => (
     <Layout bg="white" padding={6}>
-      <HStack gap={3} align="center">
+      <HStack scroll="visible" gap={3} align="center">
         <Button size="large">Large Button</Button>
         <Button size="large">
           <Icon name="Plus" size={14} />
@@ -608,13 +608,13 @@ export const Large: Story = {
 export const States: Story = {
   render: () => (
     <Layout bg="white" padding={6}>
-      <VStack gap={4}>
-        <HStack gap={3}>
+      <VStack scroll="visible" gap={4}>
+        <HStack scroll="visible" gap={3}>
           <Button variant="normal">Default</Button>
           <Button variant="normal" className="hover">Hover (forcé)</Button>
           <Button variant="normal" disabled>Disabled</Button>
         </HStack>
-        <HStack gap={3}>
+        <HStack scroll="visible" gap={3}>
           <Button variant="destructive">Default</Button>
           <Button variant="destructive" disabled>Disabled</Button>
         </HStack>
@@ -626,9 +626,9 @@ export const States: Story = {
 export const ShadcnCompatibility: Story = {
   render: () => (
     <Layout bg="white" padding={6}>
-      <VStack gap={4}>
+      <VStack scroll="visible" gap={4}>
         <p className="text-sm text-grey-stronger">Test de compatibilité shadcn (mapping automatique)</p>
-        <HStack gap={3}>
+        <HStack scroll="visible" gap={3}>
           <Button variant="default">Default (→ normal)</Button>
           <Button variant="secondary">Secondary</Button>
           <Button variant="ghost">Ghost</Button>
@@ -637,7 +637,7 @@ export const ShadcnCompatibility: Story = {
           <Button variant="link">Link</Button>
           <Button variant="inverse">Inverse</Button>
         </HStack>
-        <HStack gap={3}>
+        <HStack scroll="visible" gap={3}>
           <Button size="sm">Small (sm)</Button>
           <Button size="medium">Medium</Button>
           <Button size="lg">Medium (lg - compatibilité shadcn)</Button>
@@ -656,27 +656,27 @@ export const NestedLayouts: Story = {
 
       {/* Niveau 1: White */}
       <Layout bg="white" padding={4} className="border-2 border-blue">
-        <VStack gap={3}>
+        <VStack scroll="visible" gap={3}>
           <p className="text-sm font-medium">Layout bg="white" (niveau 1)</p>
-          <HStack gap={2}>
+          <HStack scroll="visible" gap={2}>
             <Button variant="normal">Normal</Button>
             <Button variant="ghost">Ghost</Button>
           </HStack>
 
           {/* Niveau 2: Grey - écrase white */}
           <Layout bg="grey" padding={4} className="border-2 border-green">
-            <VStack gap={3}>
+            <VStack scroll="visible" gap={3}>
               <p className="text-sm font-medium">Layout bg="grey" (niveau 2 - écrase white)</p>
-              <HStack gap={2}>
+              <HStack scroll="visible" gap={2}>
                 <Button variant="normal">Normal</Button>
                 <Button variant="ghost">Ghost</Button>
               </HStack>
 
               {/* Niveau 3: Black - écrase grey */}
               <Layout bg="black" padding={4} className="border-2 border-yellow">
-                <VStack gap={3}>
+                <VStack scroll="visible" gap={3}>
                   <p className="text-sm font-medium text-white">Layout bg="black" (niveau 3 - écrase grey)</p>
-                  <HStack gap={2}>
+                  <HStack scroll="visible" gap={2}>
                     <Button variant="normal">Normal (styles black)</Button>
                     <Button variant="ghost">Ghost (styles black)</Button>
                   </HStack>
@@ -710,7 +710,7 @@ export const NestedLayouts: Story = {
 export const DebugMode: Story = {
   render: () => (
     <Layout bg="white" padding={6}>
-      <VStack gap={6}>
+      <VStack scroll="visible" gap={6}>
         <div>
           <h3 className="gs-typo-h3 mb-3">Mode Debug</h3>
           <p className="text-sm text-grey-stronger mb-4">
@@ -718,8 +718,8 @@ export const DebugMode: Story = {
           </p>
         </div>
 
-        <VStack gap={4}>
-          <HStack gap={3}>
+        <VStack scroll="visible" gap={4}>
+          <HStack scroll="visible" gap={3}>
             <Button variant="normal" size="medium" debug onClick={() => alert('Clicked!')}>
               Normal Medium
             </Button>
