@@ -78,7 +78,8 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
   rétrécir, rogne toujours l'anneau de son contenu ; contournement : `leftContentMaxWidth='max-w-none overflow-visible'`,
   comme le fait gs_w.
 - `Slider` : l'anneau du thumb s'affiche au focus clavier (Tab). Après un appui souris ou tactile,
-  sur le thumb comme sur la piste, il reste masqué et s'affiche dès que l'utilisateur presse une touche (flèche,
+  sur le thumb comme sur la piste, quand cet appui donne le focus au thumb, il reste masqué et s'affiche dès que
+  l'utilisateur presse une touche (flèche,
   Home/End, PageUp/PageDown…), comme les autres composants de la librairie et le `:focus-visible` natif de Chromium.
   Radix focalise le thumb par script pendant l'appui et Chromium le fait alors correspondre à `:focus-visible` :
   l'anneau, désormais rendu (voir le premier point), serait apparu au clic, au tap ou au drag. Un thumb au
