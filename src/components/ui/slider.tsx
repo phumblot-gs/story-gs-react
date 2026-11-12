@@ -30,6 +30,7 @@ export interface SliderProps
    * `-1` le retire de l'ordre de tabulation sans toucher au drag souris/tactile
    * ni aux flèches après un clic (Radix focalise le thumb au pointerdown).
    * Ignoré quand le slider est `disabled`. Négatif : le thumb n'affiche aucun anneau de focus.
+   * Sinon l'anneau ne s'affiche qu'au focus clavier (Tab), jamais après un pointerdown, jusqu'au blur du thumb.
    */
   thumbTabIndex?: number
 }
@@ -37,8 +38,17 @@ export interface SliderProps
 const Slider = React.forwardRef<
   React.ElementRef<typeof SliderPrimitive.Root>,
   SliderProps
->(({ className, labelMin, labelMax, labelCurrent, debug, disabled, onValueChange, steps, thumbTabIndex, value, defaultValue, min, max, step, ...props }, ref) => {
+>(({ className, labelMin, labelMax, labelCurrent, debug, disabled, onValueChange, steps, thumbTabIndex, value, defaultValue, min, max, step, onPointerDown, ...props }, ref) => {
   const bg = useBgContext()
+  const [pointerFocused, setPointerFocused] = React.useState(false)
+
+  const handlePointerDown = React.useCallback(
+    (event: Parameters<NonNullable<SliderProps["onPointerDown"]>>[0]) => {
+      onPointerDown?.(event)
+      if (!disabled) setPointerFocused(true)
+    },
+    [onPointerDown, disabled]
+  )
 
   // Mode "paliers discrets" : on pilote Radix sur des index (0..n-1) et on
   // mappe vers/depuis les valeurs réelles du tableau `steps`.
@@ -240,6 +250,7 @@ const Slider = React.forwardRef<
         value={rootValue}
         defaultValue={rootDefaultValue}
         onValueChange={handleValueChange}
+        onPointerDown={handlePointerDown}
         {...props}
       >
         <SliderPrimitive.Track
@@ -257,6 +268,7 @@ const Slider = React.forwardRef<
           aria-labelledby={props["aria-labelledby"]}
           // Radix spreads thumb props over its own tabIndex: passing undefined would drop the default 0.
           {...(thumbTabIndex !== undefined && !disabled ? { tabIndex: thumbTabIndex } : {})}
+          onBlur={() => setPointerFocused(false)}
           className={cn(
             "block h-[10px] w-[10px] rounded-full border-0 transition-colors",
             "absolute top-1/2 -translate-x-1/2 -translate-y-1/2",
@@ -265,8 +277,8 @@ const Slider = React.forwardRef<
             // thumb de 10px tout autour.
             "before:content-[''] before:absolute before:-inset-[10px]",
             "focus-visible:outline-none",
-            // Out of the Tab order, the thumb is only focused by Radix on pointerdown, where Chromium still matches :focus-visible.
-            (thumbTabIndex ?? 0) >= 0 && "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-context",
+            // Radix focuses the thumb by script on pointerdown, where Chromium still matches :focus-visible.
+            (thumbTabIndex ?? 0) >= 0 && !pointerFocused && "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-context",
             "disabled:pointer-events-none disabled:opacity-50",
             styles.thumb,
             debug && "before:bg-pink/20"

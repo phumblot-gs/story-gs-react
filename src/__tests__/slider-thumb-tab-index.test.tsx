@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
+import { StrictMode } from "react";
 
 import { Slider } from "@/components/ui/slider";
 
@@ -70,5 +71,70 @@ describe("Slider thumbTabIndex", () => {
     const thumb = screen.getByRole("slider");
     expect(ringClasses(thumb)).toEqual([]);
     expect(thumb).toHaveClass("focus-visible:outline-none", "h-[10px]", "w-[10px]", "rounded-full");
+  });
+
+  // CR-1151 (option B): with the default thumb, the ring shows on Tab only, never after a mouse or touch press.
+  describe("thumb par défaut : anneau au clavier seulement", () => {
+    const setup = (onValueChange = vi.fn()) => {
+      render(
+        <StrictMode>
+          <button>Avant</button>
+          <Slider aria-label="Images par ligne" defaultValue={[3]} min={1} max={7} step={1} onValueChange={onValueChange} />
+        </StrictMode>,
+      );
+      const thumb = screen.getByRole("slider");
+      thumb.setPointerCapture = vi.fn();
+      return { thumb, onValueChange };
+    };
+
+    it("pointerdown sur le thumb : focalisé, sans anneau ; les flèches changent la valeur sans le rendre", () => {
+      const { thumb, onValueChange } = setup();
+      fireEvent.pointerDown(thumb, { pointerId: 1, button: 0 });
+      expect(thumb).toHaveFocus();
+      expect(ringClasses(thumb)).toEqual([]);
+
+      fireEvent.keyDown(thumb, { key: "ArrowRight" });
+      expect(onValueChange).toHaveBeenLastCalledWith([4]);
+      expect(ringClasses(thumb)).toEqual([]);
+    });
+
+    it("pointerdown sur la piste : le thumb est focalisé, sans anneau", () => {
+      const { thumb } = setup();
+      const track = document.querySelector<HTMLElement>(".h-\\[2px\\]")!;
+      track.setPointerCapture = vi.fn();
+      fireEvent.pointerDown(track, { pointerId: 1, button: 0, clientX: 0 });
+      expect(thumb).toHaveFocus();
+      expect(ringClasses(thumb)).toEqual([]);
+    });
+
+    it("après le blur, un nouveau focus clavier rend l'anneau, conservé avec les flèches", () => {
+      const { thumb } = setup();
+      fireEvent.pointerDown(thumb, { pointerId: 1, button: 0 });
+      expect(ringClasses(thumb)).toEqual([]);
+
+      fireEvent.blur(thumb);
+      screen.getByRole("button", { name: "Avant" }).focus();
+      thumb.focus();
+      expect(ringClasses(thumb)).toContain("focus-visible:ring-2");
+
+      fireEvent.keyDown(thumb, { key: "ArrowRight" });
+      expect(ringClasses(thumb)).toContain("focus-visible:ring-2");
+    });
+
+    it("disabled : un pointerdown ne masque pas l'anneau une fois réactivé", () => {
+      const { rerender } = render(<Slider aria-label="Images par ligne" defaultValue={[3]} disabled />);
+      fireEvent.pointerDown(screen.getByRole("slider"), { pointerId: 1, button: 0 });
+      rerender(<Slider aria-label="Images par ligne" defaultValue={[3]} />);
+      expect(ringClasses(screen.getByRole("slider"))).toContain("focus-visible:ring-2");
+    });
+
+    it("transmet le onPointerDown du consommateur", () => {
+      const onPointerDown = vi.fn();
+      render(<Slider aria-label="Images par ligne" defaultValue={[3]} onPointerDown={onPointerDown} />);
+      const thumb = screen.getByRole("slider");
+      thumb.setPointerCapture = vi.fn();
+      fireEvent.pointerDown(thumb, { pointerId: 1, button: 0 });
+      expect(onPointerDown).toHaveBeenCalledTimes(1);
+    });
   });
 });
