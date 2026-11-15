@@ -223,7 +223,7 @@ export const AllBackgrounds: Story = {
     <VStack gap={6} padding={6}>
       <VStack as={Layout} bg="white" padding={6} gap={4} className="border border-grey rounded">
         <h3 className="gs-typo-h3">Background White</h3>
-        <HStack gap={3}>
+        <HStack scroll="visible" gap={3}>
           <ButtonMenuSmall variant="normal" actions={defaultActions}>
             Normal
           </ButtonMenuSmall>
@@ -235,7 +235,7 @@ export const AllBackgrounds: Story = {
 
       <VStack as={Layout} bg="grey" padding={6} gap={4} className="border border-grey rounded">
         <h3 className="gs-typo-h3">Background Grey</h3>
-        <HStack gap={3}>
+        <HStack scroll="visible" gap={3}>
           <ButtonMenuSmall variant="normal" actions={defaultActions}>
             Normal
           </ButtonMenuSmall>
@@ -247,7 +247,7 @@ export const AllBackgrounds: Story = {
 
       <VStack as={Layout} bg="black" padding={6} gap={4} className="border border-grey rounded">
         <h3 className="gs-typo-h3 text-white">Background Black</h3>
-        <HStack gap={3}>
+        <HStack scroll="visible" gap={3}>
           <ButtonMenuSmall variant="normal" actions={defaultActions}>
             Normal
           </ButtonMenuSmall>
@@ -266,8 +266,8 @@ export const AllBackgrounds: Story = {
 export const WithIcon: Story = {
   render: () => (
     <Layout bg="white" padding={6}>
-      <VStack gap={4}>
-        <HStack gap={3}>
+      <VStack scroll="visible" gap={4}>
+        <HStack scroll="visible" gap={3}>
           <ButtonMenuSmall variant="normal" size="small" actions={defaultActions} className="p-1 w-4 h-4">
             <Icon name="MoreVertical" size={10} />
           </ButtonMenuSmall>
@@ -293,7 +293,7 @@ export const Disabled: Story = {
 
     return (
       <Layout bg="white" padding={6}>
-        <VStack gap={4}>
+        <VStack scroll="visible" gap={4}>
           <ButtonMenuSmall variant="normal" actions={actionsWithDisabled}>
             Actions avec éléments désactivés
           </ButtonMenuSmall>
@@ -309,7 +309,7 @@ export const Disabled: Story = {
 export const DebugMode: Story = {
   render: () => (
     <Layout bg="white" padding={6}>
-      <VStack gap={4}>
+      <VStack scroll="visible" gap={4}>
         <p className="text-sm text-grey-stronger">
           Open the console to see debug logs
         </p>
@@ -335,7 +335,7 @@ export const WithSeparators: Story = {
 
     return (
       <Layout bg="white" padding={6}>
-        <VStack gap={4}>
+        <VStack scroll="visible" gap={4}>
           <div>
             <p className="text-sm text-grey-stronger mb-2">
               Menu avec séparateurs entre les groupes d'actions
@@ -353,7 +353,7 @@ export const WithSeparators: Story = {
 export const MenuPositioning: Story = {
   render: () => (
     <Layout bg="white" padding={6}>
-      <VStack gap={8}>
+      <VStack scroll="visible" gap={8}>
         <div>
           <h3 className="gs-typo-h3 mb-4">Position par défaut (bottom, start)</h3>
           <ButtonMenuSmall variant="normal" actions={defaultActions}>

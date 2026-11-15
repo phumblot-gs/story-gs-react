@@ -102,6 +102,10 @@ module.exports = {
         avenir: ["AvenirNextLTPro", "sans-serif"],
         mono: ["var(--gs-font-mono)", "ui-monospace", "monospace"],
       },
+      // Focus ring offset painted with the context background (--ring-offset, per data-bg).
+      ringOffsetColor: {
+        context: "var(--ring-offset, #fff)",
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

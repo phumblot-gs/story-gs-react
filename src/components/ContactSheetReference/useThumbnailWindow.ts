@@ -103,9 +103,12 @@ export function useThumbnailWindow({ enabled, counts, columns, cellWidth, gap, c
     const nodes = containersRef.current.flatMap((grid) =>
       grid ? Array.from(grid.querySelectorAll<HTMLElement>("[data-contact-sheet-cell]")) : []);
     if (!nodes.length) return;
+    // At a given cell width the row height only grows: if the measure went back down, the rows would move, other
+    // cells would mount, and a cell whose height depends on its state (image pending or loaded) could flip the
+    // measure back and forth until React stops the render loop (#185).
     const measure = () => {
       const height = Math.max(...nodes.map((node) => node.getBoundingClientRect().height));
-      if (height > 0) setMeasurement((old) => old.width === cellWidth && old.height === height
+      if (height > 0) setMeasurement((old) => old.width === cellWidth && old.height >= height
         ? old : { width: cellWidth ?? 0, height });
     };
     measure();

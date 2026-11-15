@@ -214,7 +214,7 @@ export const WithButton: Story = {
     };
 
     return (
-      <VStack gap={6}>
+      <VStack scroll="visible" gap={6}>
         <div>
           <h3 className="gs-typo-h3 mb-3">Avatar with Button</h3>
           <p className="text-sm text-grey-stronger mb-4">
@@ -233,7 +233,7 @@ export const WithButton: Story = {
             </label>
           </div>
         </div>
-        <VStack gap={4}>
+        <VStack scroll="visible" gap={4}>
           <div>
             <h4 className="text-sm font-medium mb-2">Small Avatar Button</h4>
             <Button 
@@ -317,15 +317,15 @@ export const WithButton: Story = {
 
 export const WithDifferentVariants: Story = {
   render: () => (
-    <VStack gap={6}>
+    <VStack scroll="visible" gap={6}>
       <div>
         <h3 className="gs-typo-h3 mb-3">Avatar Buttons with Different Variants</h3>
         <p className="text-sm text-grey-stronger mb-4">
           Avatar buttons can use different Button variants for different visual styles.
         </p>
       </div>
-      <HStack gap={4} align="center">
-        <VStack gap={2} align="center">
+      <HStack scroll="visible" gap={4} align="center">
+        <VStack scroll="visible" gap={2} align="center">
           <Button variant="ghost" className="p-0 w-6 h-6">
             <Avatar size="medium">
               <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
@@ -334,7 +334,7 @@ export const WithDifferentVariants: Story = {
           </Button>
           <span className="text-xs text-grey-stronger">Ghost</span>
         </VStack>
-        <VStack gap={2} align="center">
+        <VStack scroll="visible" gap={2} align="center">
           <Button variant="secondary" className="p-0 w-6 h-6">
             <Avatar size="medium">
               <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
@@ -343,7 +343,7 @@ export const WithDifferentVariants: Story = {
           </Button>
           <span className="text-xs text-grey-stronger">Secondary</span>
         </VStack>
-        <VStack gap={2} align="center">
+        <VStack scroll="visible" gap={2} align="center">
           <Button variant="outline" className="p-0 w-6 h-6">
             <Avatar size="medium">
               <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />

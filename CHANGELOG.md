@@ -5,6 +5,231 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.42.0] - 2026-11-15
+
+### Modifié
+
+- **Impact consommateurs (comportement, sans changement d'API)** — `PageFillLayout` / `usePageFirstScroll` : la molette
+  est symétrique. Vers le haut, au-dessus du panneau, quand la zone qui défile sous le pointeur (premier ancêtre en
+  `overflow-y: auto|scroll` qui déborde) est en haut et que la page ne l'est pas, le hook fait défiler la page (fenêtre
+  ou `scrollContainer`) : la partie haute se déplie **dans le même geste**. Avant, Chrome verrouillait le geste
+  trackpad sur la liste (*scroll latching*) et l'inertie s'y perdait : la page restait immobile jusqu'à 1 s puis
+  sautait au geste suivant. Une zone presque en haut consomme ce qui lui reste et l'excédent passe à la page dans le
+  même événement. Une zone qui peut encore monter garde le comportement natif.
+- `usePageFirstScroll`, vers le bas : l'excédent du dernier événement de repli (`delta − remaining`) passe à la zone
+  sous le pointeur au lieu d'être perdu ; la jonction page → liste ne marque plus d'image figée.
+- `usePageFirstScroll` : un cran de molette de souris intercepté (|deltaY| ≥ 50 px, hors série d'événements à moins de
+  50 ms) est animé sur ~120 ms au lieu d'un saut d'un cran entier ; les crans suivants d'une molette tournée vite
+  prolongent l'animation. Les événements du trackpad restent appliqués tels quels.
+- `usePageFirstScroll` : une zone en `overscroll-behavior: contain` (ou `none`) entre la cible et le panneau ne reporte
+  pas sa molette vers la page. Exclusions inchangées : `[data-native-scroll]`, Ctrl + molette, défilement horizontal
+  dominant, événement déjà annulé.
+- Story `Layout/PageFillLayout` → `Long content` (grille de 600 vignettes et liste en `overscroll-contain`) ; notes de
+  la story mises à jour.
+
+## [1.41.0] - 2026-11-12
+
+### Ajouté
+
+- `Slider` : prop `thumbTabIndex`, transmise au thumb comme `tabIndex`. `thumbTabIndex={-1}` retire le thumb de l'ordre de
+  tabulation ; le drag souris/tactile reste identique et, après un clic, les flèches déplacent toujours la valeur (Radix
+  focalise le thumb au pointerdown). Sans la prop, rien ne change (tabIndex 0 de Radix) ; ignorée quand le slider est
+  `disabled`. Story `UI/Slider` → `OutOfTabOrder`. Besoin : curseur « images par ligne » de l'écran de validation
+  gs_w (CR-1151).
+- `Layout`, `HStack`, `VStack` : nouvelle valeur `scroll="visible"` (`overflow-visible`) : ni scroll ni rognage, pour
+  qu'une rangée de boutons laisse déborder leur anneau de focus. Les valeurs existantes et le défaut (`"auto"`) sont
+  inchangés. Story `Layout/HStack` → `scroll="visible" (focus ring)`.
+- `ActionBar` : prop `contentOverflow` (`"auto"` par défaut, inchangé ; `"visible"`), appliquée à la rangée des
+  actions (`children`). Avec `"visible"`, l'anneau de focus de ses boutons n'est plus rogné ; en contrepartie, la rangée
+  garde la largeur de son contenu au lieu de rétrécir et défiler quand la barre est trop étroite. Opt-in parce que la
+  même place gagnée sans changement de mise en page (voir `PageSearch`/`PageHeader` plus bas) ajoute un scroll vertical
+  à la barre de 50 px dès que la rangée dépasse 40 px. Story `Components/ActionBar` → `contentOverflow="visible"
+  (focus ring)`.
+- Token `--ring-offset` (couleur de l'écart de l'anneau de focus), généré par contexte `data-bg` à partir du fond :
+  `#ffffff` sur white, `var(--color-grey-light)` (`#efefef`) sur grey, `#292828` sur black ; `#ffffff` sans contexte
+  (`:root`). Le preset Tailwind expose `ringOffsetColor.context` (classe `ring-offset-context`).
+- Story `Design System/Focus ring` : `Button`, `Checkbox`, `Switch`, `Slider` et `RadioGroup` sur fond white, grey,
+  black et sans `data-bg`, à parcourir à la touche Tab ; elle documente la couleur de l'anneau et de l'écart par fond.
+
+### Corrigé
+
+- **Impact consommateurs (visible)** — l'anneau de focus clavier de la librairie (`focus-visible:ring-ring`) s'affiche
+  enfin. Tailwind lit `hsl(var(--ring))`, or `--ring` valait un hex dans les contextes `data-bg` (`hsl(#292828)`,
+  invalide) : aucun anneau ne s'affichait. `--ring` est désormais un triplet HSL, généré à la source
+  (`scripts/generate-css-tokens.cjs`), avec les mêmes couleurs : `#292828` sur fond white et grey, `#ffffff` sur fond
+  black. Les composants concernés (`Button`, `ButtonPlus`, `Checkbox`, `RadioGroup`, `Switch`, `Slider`,
+  `SegmentedControl`, `TagCross`, `ResizableHandle`, `Dialog`, `Badge`…) montrent donc un anneau au focus clavier là
+  où il n'y en avait pas. Les consommateurs qui ajoutaient leur propre `outline` au `:focus-visible` sur ces composants
+  auront deux indicateurs superposés tant qu'ils ne l'ont pas retiré. Un conteneur qui rogne (`overflow` autre que
+  `visible`, y compris un `Layout`/`HStack`/`VStack` au `scroll="auto"` par défaut) coupe l'anneau (2 px d'écart + 2 px
+  d'anneau) d'un contrôle collé à son bord : passer `scroll="visible"` à ce conteneur ou lui donner de la marge
+  intérieure. Aucun changement d'API.
+- **Impact consommateurs (visible)** — l'écart de l'anneau prend la couleur du fond du contexte (`ring-offset-context`,
+  token `--ring-offset`) sur `Button`, `ButtonBase`, `ButtonPlus`, `Checkbox`, `RadioGroupItem`, `SegmentedControl`
+  (onglets et contenu), thumb de `Slider`, bouton de fermeture de `Dialog`, `Badge` et `ResizableHandle` : sur fond
+  black, l'écart blanc par défaut de Tailwind et l'anneau blanc formaient une bordure blanche pleine de 4 px ; l'écart
+  est désormais `#292828` sur black, `#efefef` sur grey, blanc sur white et sans contexte (inchangé hors `data-bg`, sauf
+  `.dark`, voir plus bas). Couleurs de l'anneau inchangées.
+- **Impact consommateurs (visible)** — `--ring` par défaut (`:root`, composants sans contexte `data-bg`, par ex.
+  popovers et menus portés) passe du bleu pâle `195 100% 90%` au noir de la charte `#292828`, comme les fonds white et
+  grey. `--ring` de `.dark` inchangé.
+- `ButtonBase`, `Checkbox`, `RadioGroupItem`, `SegmentedControlContent`, bouton de fermeture de `Dialog` : la classe
+  `ring-offset-background` (`hsl(var(--background))`, invalide sous `data-bg` où `--background` est un hex) annulait
+  toute l'ombre, anneau compris. Elle est remplacée par `ring-offset-context` (ci-dessus). Sous `.dark`, hors
+  `data-bg`, l'écart de ces composants devient blanc (il était sombre, `--background` de `.dark`) : `.dark` ne redéfinit
+  pas `--ring-offset`, comme `Button`, `ButtonPlus` et `Slider` qui avaient déjà l'écart blanc. `select-old.tsx`
+  (ancien `Select`, laissé tel quel pour d'éventuels projets externes) garde `ring-offset-background`.
+- **Impact consommateurs (visible)** — `InputOTP` : la case active n'a plus d'anneau (`ring-2 ring-ring` et `z-10`
+  retirés). Il suivait la case active, souris comprise ; le curseur clignotant la signale déjà. Il était invisible sous
+  `data-bg` ; hors `data-bg`, l'anneau bleu pâle de la case active disparaît aussi.
+- `ClippingEditor` : pas d'anneau sur la racine de l'éditeur. Elle se focalise au survol de la souris
+  (`onPointerEnter`) pour recevoir ses raccourcis clavier, ce qui la fait correspondre à `:focus-visible` sans aucune
+  frappe : l'anneau, désormais visible, aurait encadré tout l'éditeur au simple survol. Le focus et les raccourcis sont
+  inchangés ; rendu identique à 1.40.1.
+- **Impact consommateurs (visible au focus clavier seulement)** — `PageSearch` (rangée `rightContent`) et
+  `PageHeader` (rangées `rightContent` et `leftContent`, zone du titre, titre) : ces rangées internes, en `overflow`
+  auto ou hidden, rognaient l'anneau de focus de leurs boutons. Les rangées `rightContent` et `leftContent`, qui ne
+  rétrécissent jamais (`flex-shrink-0`) et ne pouvaient donc pas défiler, passent en `scroll="visible"` ; le titre
+  (`PageTitle`) passe en `overflow-visible`, sans marge intérieure, son trait de séparation gauche garde ses 30 px. Seule
+  la zone du titre, qui doit continuer à rétrécir et à rogner, reçoit `p-1 -m-1` (4 px de place compensés par une marge
+  négative égale). Rendu au repos identique pixel à pixel à 1.40.1 dans Storybook (1280 et 420 px), y compris avec un
+  `className="p-0"` sur `PageSearch`. Un descendant positionné (`absolute`) qui déborderait d'une rangée
+  `rightContent`/`leftContent` en se rattachant à un élément positionné de la rangée n'est plus rogné par elle (aucun cas
+  dans la librairie ni chez les consommateurs actuels). Aucun changement d'API. Le contenu passé par le consommateur
+  reste soumis à ses propres conteneurs (voir le premier point). La rangée `leftContent` de `PageSearch`, qui doit
+  rétrécir, rogne toujours l'anneau de son contenu ; contournement : `leftContentMaxWidth='max-w-none overflow-visible'`,
+  comme le fait gs_w.
+- `Slider` : l'anneau du thumb s'affiche au focus clavier (Tab). Après un appui souris ou tactile,
+  sur le thumb comme sur la piste, quand cet appui donne le focus au thumb, il reste masqué et s'affiche dès que
+  l'utilisateur presse une touche (flèche,
+  Home/End, PageUp/PageDown…), comme les autres composants de la librairie et le `:focus-visible` natif de Chromium.
+  Radix focalise le thumb par script pendant l'appui et Chromium le fait alors correspondre à `:focus-visible` :
+  l'anneau, désormais rendu (voir le premier point), serait apparu au clic, au tap ou au drag. Un thumb au
+  `thumbTabIndex` négatif n'affiche jamais d'anneau, même après une touche. Au repos, rendu identique à 1.40.1. Le
+  `onPointerDown` passé au `Slider` reste transmis.
+- Preset Tailwind : `ringOffsetColor.context` vaut `var(--ring-offset, #fff)`, pour qu'un consommateur qui utilise le
+  preset sans `lib.css` (où `--ring-offset` est défini) n'obtienne pas un `box-shadow` invalide.
+- Bouton de fermeture de `Dialog` et `Badge` : `focus:ring-*` devient `focus-visible:ring-*`. L'anneau ne s'affiche
+  plus au clic souris ni à l'auto-focus d'ouverture de la modale ; il reste au clavier.
+
+## [1.40.1] - 2026-11-02
+
+### Corrigé
+
+- Icônes `Broadcast` et `Restore` : elles paraissaient plus petites que `Check` et `X` dans les boutons de statut
+  (planche contact de gs_w). Leur viewBox carrée était calée sur la largeur du glyphe, plus large que haut ; elle est
+  désormais calée sur sa hauteur, remplie à 100 % (`124.5 208 584 584` et `104.5 209 541 541`), un peu au-dessus de
+  `X` (85 %) à la demande du produit, et le glyphe déborde latéralement de sa boîte sans être rogné
+  (`overflow="visible"`). La correction vaut pour tous les rendus
+  (`ButtonStatus`, `statusButtons` de `Thumbnail`, `Icon`). Aucun changement d'API. Story `UI/ButtonStatus` →
+  `IconWeightBySize`.
+
+## [1.40.0] - 2026-10-30
+
+### Modifié
+
+- **Impact consommateurs** — `ContactSheetReference` : le titre de la référence est désormais son `smalltext` sans
+  les espaces de début et de fin s'il n'est pas vide, sinon son `ref` (gs_w appliquait `smalltext || ref`, sans retirer
+  les espaces). Quiconque passe déjà `smalltext` dans
+  `reference` voit ce libellé en titre au lieu du `ref` ; le `ref` reste visible comme attribut s'il est configuré dans
+  `attributes`. La même valeur sert à l'infobulle du titre (`« smalltext — ref »` quand les deux diffèrent), au libellé
+  accessible de la case de sélection (`contactSheet.selectReference`) et au titre du formulaire Modifier. Sans
+  `smalltext`, rien ne change. `ReferenceEditModal` utilisé seul suit la même règle (nouvelle prop `displayName` pour la
+  surcharger).
+- **Impact TypeScript** — `ContactSheetReferenceProps["reference"]` devient `ReferenceData | null` : un code TS qui lit
+  `props.reference.ref` sur ce type obtient TS18047 et doit tester `null`.
+- **Impact consommateurs** — `HoverCardContent` adopte la charte par défaut et est portalé dans `document.body` :
+  surface claire (fond blanc, bordure 1px grey-strong, texte noir), rayon 2px (`rounded-sm`), padding 10px (`p-2`),
+  `shadow-md`, `sideOffset` 5, largeur selon le contenu (plus de `w-64`). Avant, sous un `Layout bg`, la carte était
+  transparente, avec un rayon de 6px et un padding de 20px. Nouvelle prop `surface` (`"light"` par défaut, `"dark"`),
+  sur le modèle de `Tooltip` ; le contenu reçoit la surface comme contexte `bg`. Un `className` passé reste prioritaire.
+  `portal={false}` la rend sur place et `container` change la cible du portail. Seul consommateur connu :
+  `MediaVedette` de gs_w. Stories `UI/HoverCard` et `TitleContent` (sans surcharge).
+
+### Ajouté
+
+- `getReferenceDisplayName(reference)`, exporté : `smalltext` sans espaces de bord s'il n'est pas vide, sinon `ref`. `ReferenceData` déclare
+  `smalltext?: string | null`.
+- `ContactSheetReference` : props `title` (remplace le titre, tout `ReactNode`) et `titleText` (son texte, pour
+  l'infobulle, la case et le formulaire quand `title` n'est pas une chaîne). Story `ReferenceDisplayName`.
+- `ContactSheetReference` : `reference={null}` affiche le bloc des images sans référence. Le titre devient un badge
+  d'erreur « Référence manquante » (`contactSheet.missingReference`, EN/FR/ES/IT/DE) ; ni urgence, ni bouton Modifier, ni
+  attributs (`openEdit` ne fait rien). Vignettes, sélection et exports fonctionnent comme d'habitude ; la case est nommée
+  `contactSheet.selectMissingReference`. `title` remplace le badge si fourni. Story `MissingReference`.
+- `ContactSheetReference` : prop `titleContent`, rendue juste après le titre et avant le grade et les actions (ex. un
+  `VedetteIndicator` avec aperçu au survol dans un `HoverCard`), sur le modèle de `PageHeader.titleContent`. Sans la
+  prop, rien ne change. Story `TitleContent`. Le titre, le badge « Référence manquante » et `titleContent` sont hors de
+  la grille : même rendu qu'elle soit virtualisée (`"auto"` au-delà de 100 vignettes) ou non.
+- `ButtonStatus.icon` et `ThumbnailStatusButton.icon` acceptent toute icône de la librairie (`IconName`), plus seulement
+  `"Check"` | `"X"` : sur-ensemble, rien ne change pour l'existant. Pour une autre icône, le libellé accessible par défaut
+  est « Statut du média : {nom du statut} » (et non plus « Reject - … ») : passer `label` (vignette) ou `aria-label`
+  (`ButtonStatus`). Check / X gardent « Approve / Reject - {statut} ». Usage diffusion, glyphes de la validation legacy :
+  `"Broadcast"` pour diffuser (statut 51) et, actif et désactivé, pour les états 51, 55 et 52 ; `"Restore"` pour
+  restaurer (statut 1). La doc
+  de `statusButtons` ne fixe plus « 0, 1 ou 2 » : tous les boutons sont rendus sur une ligne centrée, 2 est le cas courant
+  et 3 tiennent sur une vignette de 100px. Stories `Thumbnail/BroadcastAndRestoreButtons`,
+  `ContactSheetReference/BroadcastStatusButtons`, `ButtonStatus/OtherIcons`.
+- Icônes `Broadcast` et `Restore`, ajoutées à `AVAILABLE_ICONS` et au catalogue `Icon/AllIcons` : glyphes
+  `typcn-cloud-storage` (`\e04b`) et `typcn-arrow-loop` (`\e010`) de la validation gs_node, convertis en SVG. Typicons
+  2.0.3 par Stephen Hutchings, dessins sous licence CC BY-SA 3.0 (https://creativecommons.org/licenses/by-sa/3.0/) ;
+  attribution conservée dans le bundle (commentaire `@license`) et dans `THIRD_PARTY_NOTICES.md`, publié avec le
+  paquet. **Provisoires**, en attendant des icônes maison de la charte.
+
+### Corrigé
+
+- Jetons : sous `[data-bg="white|grey|black"]`, `--popover` et `--popover-foreground` étaient émis en hexadécimal alors
+  que Tailwind attend des composantes HSL (`hsl(var(--popover))`) : `bg-popover` et `text-popover-foreground` ne
+  donnaient rien dans un `Layout bg`. Corrigé à la source (`scripts/generate-css-tokens.cjs`, liste
+  `SHADCN_TOKENS_FORCE_HSL`). **Visible** pour un composant non portalé qui garde `bg-popover` sous un `Layout bg`
+  (`Command`, la vue de `NavigationMenu`) : fond transparent avant, surface sombre de la charte après (#292828,
+  #3a3a3a sur fond noir), texte blanc. Les menus et popovers de la librairie (portalés, fond surchargé) ne changent pas
+  visuellement ; seule la couleur héritée de leur conteneur change, sans texte qui en dépende (vérifié sur
+  `ButtonMenu` et `ButtonMenuSmall`, tous fonds).
+- Documentation de `ReorderDetails.viewChanges` (`ContactSheetReference`, `onReorder`) : elle ne liste que les médias
+  dont le code de vue a changé, et non tous ceux qui ont changé de position (un média déplacé entre deux emplacements de
+  même vue n'y figure pas). Pour les simples changements de position, utiliser `slots` (ou `pictureIds`) et
+  `movedPictureIds`. Comportement inchangé.
+- `ButtonThumbnailComments` (menu commentaires de `Thumbnail`) : si `onAddComment` renvoie une promesse, le champ et le
+  bouton restent désactivés jusqu'à son issue. Résolue : le champ est vidé et le menu se ferme, comme avant. Rejetée : le
+  texte saisi et le menu restent, avec un message d'erreur (`thumbnail.commentError`) ; la rejection n'est plus perdue
+  (plus d'« unhandled rejection ») et le focus revient dans le champ. **Impact consommateurs** : `Thumbnail.onCommentAdd`
+  était déjà typé `=> Promise<void>`, donc tout consommateur qui renvoie une promesse passe dans ce mode : le champ est
+  verrouillé jusqu'à son issue, et une application qui affiche déjà un toast en cas d'erreur API affichera aussi l'erreur
+  dans le menu (faire résoudre la promesse pour l'éviter). Seul un callback qui ne renvoie rien garde exactement
+  l'ancien comportement (vidé et fermé tout de suite). Dans `ContactSheetReference` comme dans
+  `ContactSheetPicture`, la promesse renvoyée par `onThumbnailChange` pour un changement `comment` remonte jusqu'au
+  champ. `Thumbnail.onCommentAdd` est typé `(comment) => void | Promise<void>`. Story `AsyncSaveFailure`. Exception
+  d'une grille virtualisée : une vignette sortie de la fenêtre avant l'issue de la promesse est démontée et perd le
+  texte saisi et l'erreur (passer `virtualized={false}` pour les garder).
+
+## [1.39.2] - 2026-10-30
+
+### Corrigé
+
+- `Thumbnail` : un média (`picture_id`) sans `src`, ni en chargement ni en attente, affichait un cadre blanc muet. Il
+  affiche maintenant, comme une image en erreur (`hasError`), l'icône de fichier cassé, avec l'infobulle « Aperçu
+  indisponible » (traduite, clé `thumbnail.previewUnavailable`) sur toute la zone image et sans loupe au survol.
+  L'erreur s'affiche aussi sans `src`.
+- `ContactSheetReference` et `ContactSheetPicture` : un clic sur une vignette sans aperçu (pas de `src`, ou image en
+  erreur) émet le changement `open`, même quand `thumbnailFeatures.open` est désactivé, pour que l'application puisse
+  redemander la vignette. Les autres vignettes ne changent pas.
+- Storybook : stories `Thumbnail › PreviewUnavailable` et `ContactSheetReference › PreviewUnavailable`, story `Error`
+  et documentation des planches contact mises à jour.
+
+## [1.39.1] - 2026-10-30
+
+### Corrigé
+
+- `ContactSheetReference` et `ContactSheetPicture` virtualisées (plus de 100 vignettes) : un défilement rapide
+  pouvait figer l'application sur une page blanche (« Maximum update depth exceeded », erreur React #185). Une
+  vignette dont l'image était chargée mesurait 2 px de plus qu'une vignette en attente (les bordures du cadre
+  s'ajoutaient à l'image), et la grille, qui mesure la hauteur de ses lignes, oscillait entre les deux valeurs.
+- `Thumbnail` en taille fixe (`small`, `large` ou une taille comme `"239px"`) : le cadre de l'image a exactement
+  cette hauteur, bordures comprises, que l'image soit en attente, en chargement, affichée, en erreur ou absente (vue
+  vide). L'image tient dans le cadre (2 px de moins qu'avant). La taille `auto` ne change pas.
+- Grille virtualisée : à largeur de cellule égale, la hauteur de ligne mesurée ne fait plus que croître, ce qui
+  empêche toute oscillation de ce type.
+
 ## [1.39.0] - 2026-10-29
 
 ### Modifié

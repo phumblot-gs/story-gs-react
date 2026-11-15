@@ -7,6 +7,7 @@ import { PageFillLayout } from "@/components/layout/PageFillLayout";
 import { ScrollContainerProvider } from "@/components/layout/ScrollContainerContext";
 import { FullFrame } from "@/components/layout/FullFrame";
 import { SCROLLBAR_HIDDEN_CLASS, PAGE_SCROLLBAR_HIDDEN_CLASS } from "@/hooks/usePageFirstScroll";
+import { mockAnimationFrames } from "./helpers/animation-frames";
 
 /**
  * Conteneur simulé : zone visible de 500px dont le haut est à 60px dans la
@@ -22,11 +23,13 @@ const containerScrollBy = vi.fn((options: ScrollToOptions) => {
   scrollTop += options.top ?? 0;
 });
 const windowScrollBy = vi.fn();
+let frames: ReturnType<typeof mockAnimationFrames>;
 
 beforeEach(() => {
   scrollTop = 0;
   containerScrollBy.mockClear();
   windowScrollBy.mockClear();
+  frames = mockAnimationFrames();
   window.scrollBy = windowScrollBy as unknown as typeof window.scrollBy;
   vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockImplementation(function (this: HTMLElement) {
     let top = 0;
@@ -59,9 +62,9 @@ function Container({ children, padding = 0 }: { children: React.ReactNode; paddi
 }
 
 const panel = () => document.querySelector("[data-page-fill-panel]") as HTMLElement;
-const wheel = (deltaY = 120) => {
+const wheel = (deltaY = 120, target: Element = panel()) => {
   const event = new WheelEvent("wheel", { deltaY, bubbles: true, cancelable: true });
-  panel().dispatchEvent(event);
+  target.dispatchEvent(event);
   return event;
 };
 
@@ -74,7 +77,8 @@ describe("PageFillLayout dans un conteneur de défilement", () => {
     );
     const event = wheel();
     expect(event.defaultPrevented).toBe(true);
-    expect(containerScrollBy).toHaveBeenCalledWith({ top: 120, behavior: "instant" });
+    frames.flushFrames();
+    expect(scrollTop).toBe(120);
     expect(windowScrollBy).not.toHaveBeenCalled();
   });
 
@@ -86,8 +90,30 @@ describe("PageFillLayout dans un conteneur de défilement", () => {
     );
     scrollTop = 250;
     wheel();
-    expect(containerScrollBy).toHaveBeenLastCalledWith({ top: 50, behavior: "instant" });
+    frames.flushFrames();
+    expect(scrollTop).toBe(300);
     expect(wheel().defaultPrevented).toBe(false);
+  });
+
+  it("vers le haut, liste en haut : le conteneur déplie la partie haute, pas la fenêtre", () => {
+    render(
+      <Container>
+        <PageFillLayout collapsible={<div>Top</div>}>
+          <div data-testid="list" style={{ overflowY: "auto" }}>
+            <span data-testid="item">item</span>
+          </div>
+        </PageFillLayout>
+      </Container>,
+    );
+    const list = screen.getByTestId("list");
+    Object.defineProperty(list, "clientHeight", { value: 300, configurable: true });
+    Object.defineProperty(list, "scrollHeight", { value: 1000, configurable: true });
+    scrollTop = 300;
+    expect(wheel(-40, screen.getByTestId("item")).defaultPrevented).toBe(true);
+    expect(scrollTop).toBe(260);
+    expect(windowScrollBy).not.toHaveBeenCalled();
+    scrollTop = 0;
+    expect(wheel(-40, screen.getByTestId("item")).defaultPrevented).toBe(false);
   });
 
   it("panneau déjà passé au-dessus du haut du conteneur : comportement natif", () => {

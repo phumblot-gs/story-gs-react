@@ -14,6 +14,7 @@ import { ButtonThumbnailComments } from "@/components/ui/button-thumbnail-commen
 import { ButtonStatus } from "@/components/ButtonStatus";
 import MediaStatus from "@/components/MediaStatus";
 import { MediaStatus as MediaStatusEnum } from "@/utils/mediaStatus";
+import type { IconName } from "@/components/ui/icons/types";
 import type { TagsData } from "@/components/ui/button-thumbnail-tags";
 import type { CommentData } from "@/components/ui/button-thumbnail-comments";
 import {
@@ -68,7 +69,11 @@ export type ThumbnailSize = ThumbnailPresetSize | (string & {});
 export interface ThumbnailStatusButton {
   /** Identifiant renvoyé au clic ("select", "validate", "refuse"…). Unique dans la vignette. */
   key: string;
-  icon: "Check" | "X";
+  /**
+   * Any library icon: "Check" / "X" for select, validate, refuse; e.g. "Broadcast" to
+   * broadcast, "Restore" to restore. Give a `label` for icons other than Check / X.
+   */
+  icon: IconName;
   /** Statut dont le bouton prend la couleur (MediaStatus : 30, 31, 50…). */
   status: MediaStatusEnum;
   /** Bouton du statut courant (fond plein). Peut rester cliquable. */
@@ -84,7 +89,7 @@ export interface ThumbnailStatusButton {
 /** Bouton de statut prêt à rendre : nouveau mode ou ancien mode (onValidate / onReject). */
 interface ResolvedStatusButton {
   key: string;
-  icon: "Check" | "X";
+  icon: IconName;
   status: MediaStatusEnum;
   isActive: boolean;
   disabled: boolean;
@@ -111,7 +116,10 @@ export interface ThumbnailProps {
   // Image data
   /** ID de la photo */
   picture_id?: number;
-  /** URL de l'image thumbnail */
+  /**
+   * URL de l'image thumbnail. Absente sur un média (`picture_id`) qui n'est ni en chargement ni en attente : aperçu
+   * indisponible (icône de fichier cassé, infobulle « Aperçu indisponible », pas de loupe).
+   */
   src?: string;
   /** Texte alternatif de l'image */
   alt?: string;
@@ -215,7 +223,7 @@ export interface ThumbnailProps {
   // Loading states
   /** État de chargement de l'image */
   isLoading?: boolean;
-  /** Erreur de chargement de l'image */
+  /** Erreur de chargement de l'image : aperçu indisponible (icône de fichier cassé, infobulle « Aperçu indisponible »). */
   hasError?: boolean;
   /**
    * Image en attente, pilotée par le parent (chargement groupé de la planche
@@ -247,14 +255,19 @@ export interface ThumbnailProps {
   onTagAdd?: (tag: string) => void;
   /** Callback de suppression de tag */
   onTagRemove?: (tag: string) => void;
-  /** Callback d'ajout de commentaire */
-  onCommentAdd?: (comment: string) => Promise<void>;
   /**
-   * Boutons de statut sous la vignette, dans l'ordre d'affichage (0, 1 ou 2).
-   * Défini (même `[]`), il remplace entièrement onValidate / onReject /
-   * validateDisabled / rejectDisabled. Avec `[]`, la ligne est vide mais garde
-   * sa hauteur (alignement de grille). Aucune règle de statut n'est appliquée :
-   * `isActive` et `disabled` viennent de l'application.
+   * Comment submitted from the comment menu. While the returned promise is pending the
+   * field is disabled; if it rejects, the typed text and the menu stay open with an error.
+   */
+  onCommentAdd?: (comment: string) => void | Promise<void>;
+  /**
+   * Status buttons under the thumbnail, in display order. Every button is rendered
+   * on one centred line, without wrapping: 2 is the usual case, 3 still fit a 100px
+   * thumbnail; more is the application's responsibility.
+   * When defined (even `[]`), it fully replaces onValidate / onReject /
+   * validateDisabled / rejectDisabled. With `[]`, the row is empty but keeps its
+   * height (grid alignment). No status rule is applied: `isActive` and `disabled`
+   * come from the application.
    */
   statusButtons?: ThumbnailStatusButton[];
   /** Clic sur un bouton de statut ; `reason` = motif choisi dans le menu des motifs de refus. */
@@ -905,6 +918,20 @@ const ThumbnailBase: React.FC<ThumbnailProps> = ({
     "relative flex items-center justify-center border-[0.25px] border-white",
     isEmptyView ? ' bg-grey-middle' : !viewportBgColor && 'bg-white'
   );
+  // Un média sans aperçu (image en erreur, ou pas d'URL et rien en cours) : fichier cassé et infobulle
+  // « Aperçu indisponible » sur toute la zone image. Sans URL, le cadre restait blanc, sans explication.
+  const previewUnavailable = !!picture_id && picture_id !== -1 && (hasError || (!src && !isLoading && !imagePending));
+  const withPreviewUnavailableTooltip = (node: React.ReactElement) =>
+    previewUnavailable ? (
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>{node}</TooltipTrigger>
+          <TooltipContent side="bottom">{t("thumbnail.previewUnavailable")}</TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    ) : (
+      node
+    );
 
   return (
     <DeferredOverlaysProvider value={overlays.value}>
@@ -935,7 +962,11 @@ const ThumbnailBase: React.FC<ThumbnailProps> = ({
               : isLoading || (imagePending && !hasError)
               ? placeholderMinHeight
               : config.imageMinHeight,
-            ...(config.isAuto ? { height: "stretch" } : {}),
+            // Taille fixe : le cadre a exactement cette hauteur, bordures comprises, que l'image soit en attente,
+            // en chargement, affichée, en erreur ou absente (vue vide) : l'image et les placeholders tiennent dans le
+            // cadre. Sinon une image chargée ajoutait les 2 px des bordures, et une grille virtualisée qui mesure ses
+            // lignes oscillait jusqu'à la boucle de rendu (React #185).
+            ...(config.isAuto ? { height: "stretch" } : config.imageMinHeight ? { height: config.imageMinHeight } : {}),
             ...(viewportBgColor && !isEmptyView ? { backgroundColor: viewportBgColor } : {}),
           }}
         >
@@ -964,7 +995,7 @@ const ThumbnailBase: React.FC<ThumbnailProps> = ({
           )}
 
           {/* Shadow layer with hover effects */}
-          {!isLoading && picture_id && (
+          {!isLoading && picture_id && withPreviewUnavailableTooltip(
             <div
               className={cn(
                 "absolute inset-0 z-10 bg-black/0 transition-colors cursor-pointer",
@@ -1007,10 +1038,12 @@ const ThumbnailBase: React.FC<ThumbnailProps> = ({
                 </div>
               )}
 
-              {/* Search icon */}
-              <span className="search-icon flex absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white opacity-0 transition-opacity">
-                <Icon name="ZoomIn" size={config.iconSize} />
-              </span>
+              {/* Search icon (pas de loupe sans aperçu à agrandir) */}
+              {!previewUnavailable && (
+                <span className="search-icon flex absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white opacity-0 transition-opacity">
+                  <Icon name="ZoomIn" size={config.iconSize} />
+                </span>
+              )}
             </div>
           )}
 
@@ -1029,24 +1062,26 @@ const ThumbnailBase: React.FC<ThumbnailProps> = ({
                 imageFadeIn && "animate-in fade-in-0 duration-150 ease-out motion-reduce:animate-none"
               )}
               style={{
-                maxHeight: config.imageMaxHeight,
+                maxHeight: config.isAuto ? config.imageMaxHeight : "100%",
                 backgroundColor: imageBgColor,
               }}
             />
           )}
-          {hasError && src && (
+          {previewUnavailable && (
             <div
-              className="w-full flex items-center justify-center bg-grey-middle"
-              style={{ minHeight: placeholderMinHeight }}
+              className="w-full self-stretch flex items-center justify-center bg-grey-middle"
+              style={{ minHeight: config.isAuto ? placeholderMinHeight : undefined }}
               data-image-error=""
+              role="img"
+              aria-label={t("thumbnail.previewUnavailable")}
             >
               <Icon name="BrokenFile" size={20} className="text-white" />
             </div>
           )}
           {(!picture_id || picture_id === -1) && view && (
             <div
-              className="flex items-center justify-center w-full"
-              style={{ minHeight: placeholderMinHeight }}
+              className="flex items-center justify-center w-full self-stretch"
+              style={{ minHeight: config.isAuto ? placeholderMinHeight : undefined }}
             >
               <Icon name="EmptyFile" size={30} className="text-white" />
             </div>

@@ -171,7 +171,7 @@ const SegmentedControlTrigger = React.forwardRef<
         // trigger itself, so the bg here is always transparent. Only the
         // text colour changes between active / inactive.
         "relative z-10 inline-flex h-full items-center justify-center whitespace-nowrap rounded-full font-medium transition-colors duration-200",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-context",
         "disabled:pointer-events-none disabled:opacity-50",
         triggerSizeClasses[size],
         // White parent → active text white (on the black pill), inactive black.
@@ -205,7 +205,7 @@ const SegmentedControlContent = React.forwardRef<
   <TabsPrimitive.Content
     ref={ref}
     className={cn(
-      "mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+      "mt-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-context",
       className
     )}
     {...props}

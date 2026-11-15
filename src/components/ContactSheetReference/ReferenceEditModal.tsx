@@ -7,12 +7,15 @@ import { Label } from "@/components/ui/label";
 import { TagText } from "@/components/ui/tag-text";
 import { useTranslationSafe, type TranslationMap } from "@/contexts/TranslationContext";
 import { formatAttributeValue, getAttributeValue } from "./attribute-values";
+import { getReferenceDisplayName } from "./reference-name";
 import type { ReferenceAttributeConfig, ReferenceData, ReferenceUpdate } from "./types";
 
 export interface ReferenceEditModalProps {
   isOpen: boolean;
   onClose: () => void;
   reference: ReferenceData;
+  /** Name shown in the modal title; defaults to `getReferenceDisplayName(reference)`. */
+  displayName?: string;
   /** Attributs modifiables, dans l'ordre d'affichage du formulaire. */
   attributes: ReferenceAttributeConfig[];
   /** Affiche l'éditeur de tags. */
@@ -38,6 +41,7 @@ export const ReferenceEditModal: React.FC<ReferenceEditModalProps> = ({
   isOpen,
   onClose,
   reference,
+  displayName,
   attributes,
   editableTags = true,
   onSubmit,
@@ -45,6 +49,7 @@ export const ReferenceEditModal: React.FC<ReferenceEditModalProps> = ({
   translations,
 }) => {
   const { t } = useTranslationSafe(translations, language);
+  const modalTitle = t("contactSheet.editTitle", { ref: displayName ?? getReferenceDisplayName(reference) });
   const [values, setValues] = React.useState<Record<string, string>>({});
   const [tags, setTags] = React.useState<string[]>([]);
   const [newTag, setNewTag] = React.useState("");
@@ -99,12 +104,8 @@ export const ReferenceEditModal: React.FC<ReferenceEditModalProps> = ({
       onClose={() => !saving && onClose()}
       maxWidth="min(90vw, 520px)"
       className="w-full"
-      title={t("contactSheet.editTitle", { ref: reference.ref })}
-      header={
-        <h2 className="text-base font-bold m-0">
-          {t("contactSheet.editTitle", { ref: reference.ref })}
-        </h2>
-      }
+      title={modalTitle}
+      header={<h2 className="text-base font-bold m-0">{modalTitle}</h2>}
       footer={
         <>
           <Button variant="secondary" onClick={onClose} disabled={saving}>

@@ -32,8 +32,13 @@ export interface CommentData {
 export interface ButtonThumbnailCommentsProps extends Omit<ToggleProps, "onClick" | "isActive" | "value" | "hasAnnotations"> {
   /** Tableau des commentaires */
   value?: CommentData[]
-  /** Callback appelé lorsqu'un commentaire est ajouté */
-  onAddComment?: (comment: string) => void
+  /**
+   * Called when a comment is submitted.
+   * Returning a promise keeps the field disabled until it settles: resolved, the
+   * field is cleared and the menu closes; rejected, the text and the menu stay and
+   * an error is shown. A synchronous callback clears and closes right away.
+   */
+  onAddComment?: (comment: string) => void | Promise<void>
   /** Titre optionnel affiché dans le menu */
   title?: string
   /** Callback appelé lorsque le bouton reçoit le focus */
@@ -105,6 +110,9 @@ export interface ButtonThumbnailCommentsProps extends Omit<ToggleProps, "onClick
   hasAnnotations?: boolean
 }
 
+const isPromiseLike = (value: unknown): value is PromiseLike<unknown> =>
+  typeof (value as PromiseLike<unknown> | null)?.then === "function"
+
 export const ButtonThumbnailComments = React.forwardRef<HTMLButtonElement, ButtonThumbnailCommentsProps>(
   (
     {
@@ -133,6 +141,14 @@ export const ButtonThumbnailComments = React.forwardRef<HTMLButtonElement, Butto
     const { t } = useTranslationSafe()
     const [internalOpen, setInternalOpen] = React.useState(defaultOpen)
     const [newComment, setNewComment] = React.useState("")
+    const [pending, setPending] = React.useState(false)
+    const [failed, setFailed] = React.useState(false)
+    const textareaRef = React.useRef<HTMLTextAreaElement>(null)
+
+    // Disabled while pending, the field lost focus: give it back so the user can fix and resend.
+    React.useEffect(() => {
+      if (failed) textareaRef.current?.focus()
+    }, [failed])
     
     // Extraire size de buttonProps
     const size = buttonProps.size || "medium"
@@ -140,9 +156,12 @@ export const ButtonThumbnailComments = React.forwardRef<HTMLButtonElement, Butto
     // Mode contrôlé si open est fourni, sinon mode non-contrôlé
     const isControlled = openProp !== undefined
     const isOpen = isControlled ? openProp : internalOpen
+    const isOpenRef = React.useRef(isOpen)
+    isOpenRef.current = isOpen
 
     const handleOpenChange = React.useCallback(
       (open: boolean) => {
+        if (open) setFailed(false)
         if (!isControlled) {
           setInternalOpen(open)
         }
@@ -195,16 +214,33 @@ export const ButtonThumbnailComments = React.forwardRef<HTMLButtonElement, Butto
         e.preventDefault()
         e.stopPropagation()
         const trimmedComment = newComment.trim()
-        if (trimmedComment && onAddComment) {
+        if (trimmedComment && onAddComment && !pending) {
           if (debug) {
             console.log("[ButtonThumbnailComments] Comment added:", trimmedComment)
           }
-          onAddComment(trimmedComment)
-          setNewComment("")
-          handleOpenChange(false)
+          const result = onAddComment(trimmedComment)
+          if (!isPromiseLike(result)) {
+            setNewComment("")
+            handleOpenChange(false)
+            return
+          }
+          setPending(true)
+          setFailed(false)
+          Promise.resolve(result).then(
+            () => {
+              setPending(false)
+              setNewComment("")
+              // The user may have closed this menu and opened another one meanwhile.
+              if (isOpenRef.current) handleOpenChange(false)
+            },
+            () => {
+              setPending(false)
+              setFailed(true)
+            }
+          )
         }
       },
-      [newComment, debug, onAddComment, handleOpenChange]
+      [newComment, pending, debug, onAddComment, handleOpenChange]
     )
 
     // Contenu du bouton (menu fermé)
@@ -275,17 +311,22 @@ export const ButtonThumbnailComments = React.forwardRef<HTMLButtonElement, Butto
 
             {/* Formulaire pour ajouter un commentaire */}
             {onAddComment && (
-              <form 
-                onSubmit={handleAddComment} 
+              <form
+                onSubmit={handleAddComment}
                 className={cn("mt-1", title ? "" : "pt-1")}
                 onClick={(e) => e.stopPropagation()}
+                aria-busy={pending || undefined}
               >
                 <VStack gap={2} align="end">
                   <Textarea
+                    ref={textareaRef}
                     value={newComment}
-                    onChange={(e) => setNewComment(e.target.value)}
+                    onChange={(e) => {
+                      setNewComment(e.target.value)
+                      setFailed(false)
+                    }}
                     placeholder={t("thumbnail.addComment")}
-                    disabled={disabled}
+                    disabled={disabled || pending}
                     className="flex-1"
                     onClick={(e) => e.stopPropagation()}
                   />
@@ -293,11 +334,16 @@ export const ButtonThumbnailComments = React.forwardRef<HTMLButtonElement, Butto
                     type="submit"
                     size="small"
                     variant="normal"
-                    disabled={disabled || !newComment.trim()}
+                    disabled={disabled || pending || !newComment.trim()}
                     onClick={(e) => e.stopPropagation()}
                   >
                     {t("thumbnail.validate")}
                   </Button>
+                  {failed && (
+                    <p role="alert" className="self-stretch text-sm text-red-strong m-0">
+                      {t("thumbnail.commentError")}
+                    </p>
+                  )}
                 </VStack>
               </form>
             )}

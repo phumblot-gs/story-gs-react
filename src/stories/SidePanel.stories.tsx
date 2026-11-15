@@ -526,7 +526,7 @@ export const WithContextAwareComponents: Story = {
       <>
         {!isOpenWhite && !isOpenBlack && (
           <div className="fixed inset-0 flex items-center justify-center bg-grey">
-            <VStack gap={4} align="center">
+            <VStack scroll="visible" gap={4} align="center">
               <Button onClick={() => setIsOpenWhite(true)}>
                 Ouvrir SidePanel blanc
               </Button>

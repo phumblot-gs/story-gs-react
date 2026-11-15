@@ -65,6 +65,10 @@ export const renderIcon = (
       return <CustomIcons.CustomLogoutIcon size={size} strokeWidth={strokeWidth} />;
     case "Refresh":
       return <CustomIcons.CustomRefreshIcon size={size} strokeWidth={strokeWidth} />;
+    case "Broadcast":
+      return <CustomIcons.CustomBroadcastIcon size={size} />;
+    case "Restore":
+      return <CustomIcons.CustomRestoreIcon size={size} />;
     case "Search":
       return <LucideIcons.Search size={size} strokeWidth={strokeWidth} />;
     case "ZoomIn":

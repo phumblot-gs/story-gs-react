@@ -204,11 +204,11 @@ export const AllRatings: Story = {
     const [ratings, setRatings] = useState([0, 1, 2, 3, 4, 5])
     return (
       <Layout bg="white" padding={6}>
-        <VStack gap={4}>
+        <VStack scroll="visible" gap={4}>
           <h3 className="gs-typo-h3">Toutes les valeurs possibles</h3>
-          <HStack gap={3} align="center">
+          <HStack scroll="visible" gap={3} align="center">
             {ratings.map((rating, index) => (
-              <VStack key={rating} gap={2} align="center">
+              <VStack scroll="visible" key={rating} gap={2} align="center">
                 <ButtonThumbnailStars
                   value={rating}
                   onClick={(value) => {
@@ -239,8 +239,8 @@ export const AllVariants: Story = {
       <VStack gap={6} padding={6}>
         <VStack as={Layout} bg="white" padding={6} gap={4} className="border border-grey rounded">
           <h3 className="gs-typo-h3">Background White</h3>
-          <HStack gap={3}>
-            <VStack gap={2} align="center">
+          <HStack scroll="visible" gap={3}>
+            <VStack scroll="visible" gap={2} align="center">
               <ButtonThumbnailStars
                 variant="normal"
                 value={ratings.normal}
@@ -248,7 +248,7 @@ export const AllVariants: Story = {
               />
               <span className="text-xs text-grey-stronger">Normal</span>
             </VStack>
-            <VStack gap={2} align="center">
+            <VStack scroll="visible" gap={2} align="center">
               <ButtonThumbnailStars
                 variant="secondary"
                 value={ratings.secondary}
@@ -256,7 +256,7 @@ export const AllVariants: Story = {
               />
               <span className="text-xs text-grey-stronger">Secondary</span>
             </VStack>
-            <VStack gap={2} align="center">
+            <VStack scroll="visible" gap={2} align="center">
               <ButtonThumbnailStars
                 variant="ghost"
                 value={ratings.ghost}
@@ -264,7 +264,7 @@ export const AllVariants: Story = {
               />
               <span className="text-xs text-grey-stronger">Ghost</span>
             </VStack>
-            <VStack gap={2} align="center">
+            <VStack scroll="visible" gap={2} align="center">
               <ButtonThumbnailStars
                 variant="outline"
                 value={ratings.outline}
@@ -277,8 +277,8 @@ export const AllVariants: Story = {
 
         <VStack as={Layout} bg="grey" padding={6} gap={4} className="border border-grey rounded">
           <h3 className="gs-typo-h3">Background Grey</h3>
-          <HStack gap={3}>
-            <VStack gap={2} align="center">
+          <HStack scroll="visible" gap={3}>
+            <VStack scroll="visible" gap={2} align="center">
               <ButtonThumbnailStars
                 variant="normal"
                 value={ratings.normal}
@@ -286,7 +286,7 @@ export const AllVariants: Story = {
               />
               <span className="text-xs text-grey-stronger">Normal</span>
             </VStack>
-            <VStack gap={2} align="center">
+            <VStack scroll="visible" gap={2} align="center">
               <ButtonThumbnailStars
                 variant="secondary"
                 value={ratings.secondary}
@@ -294,7 +294,7 @@ export const AllVariants: Story = {
               />
               <span className="text-xs text-grey-stronger">Secondary</span>
             </VStack>
-            <VStack gap={2} align="center">
+            <VStack scroll="visible" gap={2} align="center">
               <ButtonThumbnailStars
                 variant="ghost"
                 value={ratings.ghost}
@@ -302,7 +302,7 @@ export const AllVariants: Story = {
               />
               <span className="text-xs text-grey-stronger">Ghost</span>
             </VStack>
-            <VStack gap={2} align="center">
+            <VStack scroll="visible" gap={2} align="center">
               <ButtonThumbnailStars
                 variant="outline"
                 value={ratings.outline}
@@ -315,8 +315,8 @@ export const AllVariants: Story = {
 
         <VStack as={Layout} bg="black" padding={6} gap={4} className="border border-grey rounded">
           <h3 className="gs-typo-h3 text-white">Background Black</h3>
-          <HStack gap={3}>
-            <VStack gap={2} align="center">
+          <HStack scroll="visible" gap={3}>
+            <VStack scroll="visible" gap={2} align="center">
               <ButtonThumbnailStars
                 variant="normal"
                 value={ratings.normal}
@@ -324,7 +324,7 @@ export const AllVariants: Story = {
               />
               <span className="text-xs text-white">Normal</span>
             </VStack>
-            <VStack gap={2} align="center">
+            <VStack scroll="visible" gap={2} align="center">
               <ButtonThumbnailStars
                 variant="secondary"
                 value={ratings.secondary}
@@ -332,7 +332,7 @@ export const AllVariants: Story = {
               />
               <span className="text-xs text-white">Secondary</span>
             </VStack>
-            <VStack gap={2} align="center">
+            <VStack scroll="visible" gap={2} align="center">
               <ButtonThumbnailStars
                 variant="ghost"
                 value={ratings.ghost}
@@ -340,7 +340,7 @@ export const AllVariants: Story = {
               />
               <span className="text-xs text-white">Ghost</span>
             </VStack>
-            <VStack gap={2} align="center">
+            <VStack scroll="visible" gap={2} align="center">
               <ButtonThumbnailStars
                 variant="outline"
                 value={ratings.outline}
@@ -367,9 +367,9 @@ export const DifferentSizes: Story = {
     })
     return (
       <Layout bg="white" padding={6}>
-        <VStack gap={4}>
-          <HStack gap={3} align="center">
-            <VStack gap={2} align="center">
+        <VStack scroll="visible" gap={4}>
+          <HStack scroll="visible" gap={3} align="center">
+            <VStack scroll="visible" gap={2} align="center">
               <ButtonThumbnailStars
                 variant="normal"
                 size="small"
@@ -378,7 +378,7 @@ export const DifferentSizes: Story = {
               />
               <span className="text-xs text-grey-stronger">Small</span>
             </VStack>
-            <VStack gap={2} align="center">
+            <VStack scroll="visible" gap={2} align="center">
               <ButtonThumbnailStars
                 variant="normal"
                 size="medium"
@@ -387,7 +387,7 @@ export const DifferentSizes: Story = {
               />
               <span className="text-xs text-grey-stronger">Medium</span>
             </VStack>
-            <VStack gap={2} align="center">
+            <VStack scroll="visible" gap={2} align="center">
               <ButtonThumbnailStars
                 variant="normal"
                 size="large"
@@ -434,7 +434,7 @@ export const Controlled: Story = {
     const [open, setOpen] = useState(false)
     return (
       <Layout bg="white" padding={6}>
-        <VStack gap={4}>
+        <VStack scroll="visible" gap={4}>
           <div>
             <p className="text-sm text-grey-stronger mb-2">
               Rating actuel: {rating} étoile{rating > 1 ? 's' : ''}
@@ -463,7 +463,7 @@ export const DebugMode: Story = {
     const [rating, setRating] = useState(3)
     return (
       <Layout bg="white" padding={6}>
-        <VStack gap={4}>
+        <VStack scroll="visible" gap={4}>
           <p className="text-sm text-grey-stronger">
             Ouvrez la console pour voir les logs de debug
           </p>
@@ -486,7 +486,7 @@ export const NormalMenu: Story = {
     const [rating, setRating] = useState(3)
     return (
       <Layout bg="white" padding={6}>
-        <VStack gap={4}>
+        <VStack scroll="visible" gap={4}>
           <p className="text-sm text-grey-stronger">
             Menu normal (par défaut) avec labels
           </p>
@@ -506,7 +506,7 @@ export const CompactMenu: Story = {
     const [rating, setRating] = useState(3)
     return (
       <Layout bg="white" padding={6}>
-        <VStack gap={4}>
+        <VStack scroll="visible" gap={4}>
           <p className="text-sm text-grey-stronger">
             Menu compact (grille 2x3 sans labels)
           </p>
@@ -568,7 +568,7 @@ export const MenuPositioning: Story = {
     })
     return (
       <Layout bg="white" padding={6}>
-        <VStack gap={8}>
+        <VStack scroll="visible" gap={8}>
           <div>
             <h3 className="gs-typo-h3 mb-4">Position par défaut (bottom, start)</h3>
             <ButtonThumbnailStars
@@ -670,9 +670,9 @@ export const NeutralButtonDisplay: Story = {
       <VStack gap={0}>
         {(["white", "grey", "black"] as const).map((bg) => (
           <Layout key={bg} bg={bg} padding={6}>
-            <VStack gap={4}>
+            <VStack scroll="visible" gap={4}>
               <h3 className="gs-typo-h3">Fond {bg} — côte à côte avec ButtonMenuStatus</h3>
-              <HStack gap={2} align="center">
+              <HStack scroll="visible" gap={2} align="center">
                 <ButtonMenuStatus
                   variant="secondary"
                   currentStatus={MediaStatus.SELECTED}
@@ -692,12 +692,12 @@ export const NeutralButtonDisplay: Story = {
         ))}
 
         <Layout bg="white" padding={6}>
-          <VStack gap={4}>
+          <VStack scroll="visible" gap={4}>
             <h3 className="gs-typo-h3">Les trois tailles, appariées</h3>
-            <HStack gap={6} align="start">
+            <HStack scroll="visible" gap={6} align="start">
               {(["small", "medium", "large"] as const).map((size) => (
-                <VStack key={size} gap={2} align="center">
-                  <HStack gap={2} align="center">
+                <VStack scroll="visible" key={size} gap={2} align="center">
+                  <HStack scroll="visible" gap={2} align="center">
                     <ButtonMenuStatus
                       variant="secondary"
                       size={size}
@@ -721,8 +721,8 @@ export const NeutralButtonDisplay: Story = {
         <Layout bg="white" padding={6}>
           <VStack gap={4}>
             <h3 className="gs-typo-h3">Le défaut n'a pas changé</h3>
-            <HStack gap={6} align="start">
-              <VStack gap={2} align="center">
+            <HStack scroll="visible" gap={6} align="start">
+              <VStack scroll="visible" gap={2} align="center">
                 <ButtonThumbnailStars
                   value={ratings.value}
                   onClick={setRating("value")}
@@ -731,7 +731,7 @@ export const NeutralButtonDisplay: Story = {
                   défaut (`buttonDisplay="value"`) : la note est sur le bouton
                 </span>
               </VStack>
-              <VStack gap={2} align="center">
+              <VStack scroll="visible" gap={2} align="center">
                 <ButtonThumbnailStars
                   buttonDisplay="neutral"
                   value={ratings.neutral}

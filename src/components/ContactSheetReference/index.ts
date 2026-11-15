@@ -13,6 +13,7 @@ export type { ReferenceEditModalProps } from "./ReferenceEditModal";
 
 export { isEmptySlot } from "./types";
 export type { ContactSheetImageCache } from "@/lib/grouped-image-loading";
+export { getReferenceDisplayName } from "./reference-name";
 
 export type {
   ReferenceData,

@@ -1,9 +1,12 @@
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect, fn, userEvent, within } from "storybook/test";
 import { Layout } from "@/components/layout";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icons";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
+import { VedetteIndicator } from "@/components/Thumbnail/VedetteIndicator";
 import { MediaStatus } from "@/utils/mediaStatus";
 import { ContactSheetReference, type ContactSheetReferenceProps } from "./ContactSheetReference";
 import type { ThumbnailStatusButton } from "@/components/Thumbnail/Thumbnail";
@@ -28,6 +31,12 @@ attributes, export badges and thumbnails.
 
 The component is **controlled**: it keeps no copy of its data. Any new \`reference\` or \`exports\`
 value (status, tags, order…) is rendered immediately — update your state, pass it back, done.
+
+### Thumbnails without a preview
+
+A media with no \`src\` (thumbnail not generated yet) or whose image fails shows the BrokenFile icon with the
+"Preview unavailable" tooltip. A click on it sends the \`open\` change even when \`thumbnailFeatures.open\` is off:
+fetch the thumbnail again and pass the new \`src\` back (**PreviewUnavailable** story).
 
 ### Memory during long sessions
 
@@ -173,8 +182,9 @@ view code of the position it lands on — the sequence of view codes of the expo
 - \`slots\` — complete final state of the export (\`{ picture_id?, view }\` per slot, empty slots
   included): the source of truth to rebuild \`exports\`;
 - \`details.movedPictureIds\` — the group that was moved;
-- \`details.viewChanges\` — \`{ picture_id, previousView, view }\` for each media whose view changed,
-  i.e. every image that changed position.
+- \`details.viewChanges\` — \`{ picture_id, previousView, view }\` for each media whose view code
+  changed, only: a media moved between two slots with the same view code is not listed. Use \`slots\`
+  (or \`pictureIds\`) and \`movedPictureIds\` to detect pure position changes.
 
 \`\`\`tsx
 const handleReorder: ReorderHandler = async (exportId, pictureIds, slots, details) => {
@@ -567,6 +577,34 @@ export const ManyThumbnails: Story = {
   render: () => <Playground count={17} thumbnailsPerRow={8} />,
 };
 
+/**
+ * Thumbnails without a preview: media with no `src` (a version whose thumbnail the server has not generated yet), or
+ * whose image fails (`hasError`). They show the BrokenFile icon with the "Preview unavailable" tooltip instead of a
+ * blank frame. A click on one sends the `open` change even with the `open` feature off: here the application "fetches"
+ * the thumbnail again and passes it back after one second.
+ */
+export const PreviewUnavailable: Story = {
+  render: () => {
+    const Unavailable = () => {
+      const [thumbnails, setThumbnails] = useState<ContactSheetThumbnail[]>(() =>
+        makeThumbnails("5238694", 6).map((t, i) => (i === 1 || i === 4 ? { ...t, src: undefined } : t)));
+      const onThumbnailChange = (change: ThumbnailChange) => {
+        console.log("[onThumbnailChange]", change);
+        if (change.type !== "open") return;
+        setTimeout(() => setThumbnails((all) => all.map((t) => (t.picture_id === change.pictureId
+          ? { ...t, src: `https://picsum.photos/seed/refetched-${change.pictureId}/600/750` } : t))), 1000);
+      };
+      return (
+        <Layout bg="grey" className="min-h-screen">
+          <ContactSheetReference reference={{ reference_id: 3, ref: "5238694" }} exports={[{ id: "e", thumbnails }]}
+            onThumbnailChange={onThumbnailChange} thumbnailFeatures={{ selection: true, open: false }} />
+        </Layout>
+      );
+    };
+    return <Unavailable />;
+  },
+};
+
 /** No attribute configured and an unnamed export: only the title and the thumbnails remain. */
 export const Minimal: Story = {
   render: () => {
@@ -582,6 +620,193 @@ export const Minimal: Story = {
       );
     };
     return <Minimal />;
+  },
+};
+
+/**
+ * Reference title: trimmed `smalltext` when non-empty, otherwise `ref` (`getReferenceDisplayName`).
+ * Hover the title for "smalltext — ref". `ref` stays visible as an
+ * attribute. `title` replaces the title with any node; `titleText` then gives its text for the
+ * tooltip, the checkbox label and the Edit form title.
+ */
+export const ReferenceDisplayName: Story = {
+  args: { onSelectionChange: fn() },
+  render: (args) => {
+    const thumbnails = (ref: string) => [{ id: "e", thumbnails: makeThumbnails(ref, 3) }];
+    return (
+      <Layout bg="grey" className="min-h-screen">
+        <ContactSheetReference
+          reference={{ reference_id: 11, ref: "5238694", smalltext: "Hydration heroes set" }}
+          attributes={[{ key: "ref", label: "Reference" }]}
+          exports={thumbnails("5238694")}
+          onSelectionChange={args.onSelectionChange}
+        />
+        <ContactSheetReference
+          reference={{ reference_id: 12, ref: "7e0125de91", smalltext: "  " }}
+          attributes={[{ key: "ref", label: "Reference" }]}
+          exports={thumbnails("7e0125de91")}
+          onSelectionChange={args.onSelectionChange}
+        />
+        <ContactSheetReference
+          reference={{ reference_id: 13, ref: "7e0127dr0x", smalltext: "Repair shampoo" }}
+          title={
+            <>
+              Repair shampoo <span className="font-normal normal-case">(200 ml)</span>
+            </>
+          }
+          titleText="Repair shampoo (200 ml)"
+          attributes={[{ key: "ref", label: "Reference" }]}
+          exports={thumbnails("7e0127dr0x")}
+          onSelectionChange={args.onSelectionChange}
+        />
+      </Layout>
+    );
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const [withSmalltext, withoutSmalltext, custom] = canvas.getAllByRole("heading", { level: 3 });
+    await expect(withSmalltext).toHaveTextContent("Hydration heroes set");
+    await expect(withSmalltext).toHaveAttribute("title", "Hydration heroes set — 5238694");
+    await expect(withoutSmalltext).toHaveTextContent("7e0125de91");
+    await expect(withoutSmalltext).toHaveAttribute("title", "7e0125de91");
+    await expect(custom).toHaveAttribute("title", "Repair shampoo (200 ml)");
+    await userEvent.click(canvas.getByRole("checkbox", { name: /Hydration heroes set/ }));
+    await expect(args.onSelectionChange).toHaveBeenCalledWith(true, [1, 2, 3]);
+  },
+};
+
+/**
+ * Pictures without a reference: pass `reference={null}`. The title becomes a "Missing reference"
+ * error badge; there is no urgent toggle, Edit button nor attribute grid, since they all need a
+ * reference. Thumbnails, selection and exports work as usual.
+ */
+export const MissingReference: Story = {
+  args: { onSelectionChange: fn(), onUrgentChange: fn(), onReferenceUpdate: fn(), onThumbnailChange: fn() },
+  render: (args) => (
+    <Layout bg="grey" className="min-h-screen">
+      <ContactSheetReference
+        {...args}
+        reference={null}
+        attributes={ATTRIBUTES}
+        exports={[{ id: "e", name: "Place des tendances", thumbnails: makeThumbnails("orphan", 4) }]}
+      />
+      <ContactSheetReference
+        {...args}
+        reference={makeReference("7e0125de91", 21)}
+        attributes={ATTRIBUTES}
+        exports={[{ id: "e", name: "Place des tendances", thumbnails: makeThumbnails("7e0125de91", 4, 10) }]}
+      />
+    </Layout>
+  ),
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByRole("heading", { level: 3, name: "Missing reference" })).toBeInTheDocument();
+    await expect(canvas.getAllByRole("button", { name: /Edit/ })).toHaveLength(1);
+    await userEvent.click(canvas.getByRole("checkbox", { name: "Select pictures without reference" }));
+    await expect(args.onSelectionChange).toHaveBeenCalledWith(true, [1, 2, 3, 4]);
+  },
+};
+
+/**
+ * `titleContent` is rendered right after the title, before the grade and the actions. Here, the
+ * featured ("vedette") indicator: hover or focus it, and after `openDelay` (150ms) a HoverCard
+ * previews the featured picture. The card uses the library defaults (white surface, grey-strong
+ * border, 2px radius, 10px padding, 5px offset), with no style override.
+ */
+export const TitleContent: Story = {
+  render: () => {
+    const TitleContentStory = () => {
+      const props = useReferenceState({
+        reference: makeReference("7e0125de91", 31),
+        exports: [{ id: "e", name: "Place des tendances", thumbnails: makeThumbnails("7e0125de91", 6) }],
+      });
+      return (
+        <Layout bg="grey" className="min-h-screen">
+          <ContactSheetReference
+            {...props}
+            reference={props.reference!}
+            attributes={ATTRIBUTES}
+            grade="B"
+            titleContent={
+              <HoverCard openDelay={150}>
+                <HoverCardTrigger asChild>
+                  <button type="button" aria-label="Featured picture" className="flex rounded-sm">
+                    <VedetteIndicator />
+                  </button>
+                </HoverCardTrigger>
+                <HoverCardContent side="bottom" align="start">
+                  <img
+                    src="https://picsum.photos/seed/7e0125de91-0/600/750"
+                    alt="Featured picture of 7e0125de91"
+                    className="block w-40 h-auto rounded-sm"
+                  />
+                </HoverCardContent>
+              </HoverCard>
+            }
+          />
+        </Layout>
+      );
+    };
+    return <TitleContentStory />;
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const title = canvas.getByRole("heading", { level: 3 });
+    const vedette = canvas.getByRole("button", { name: "Featured picture" });
+    await expect(title.compareDocumentPosition(vedette) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    await userEvent.hover(vedette);
+    // Opens after openDelay; the card is portalled to document.body, outside the story canvas.
+    await expect(await within(document.body).findByAltText("Featured picture of 7e0125de91")).toBeInTheDocument();
+  },
+};
+
+/**
+ * Broadcast and restore buttons in a contact sheet: `statusButtons` take any library icon. "Broadcast"
+ * (status 51 colour) broadcasts a validated image, the same icon active + disabled shows the
+ * broadcast state (51, 55, 52 in red), "Restore" restores an ignored image. A click arrives as
+ * a `statusButton` change with the button key.
+ */
+export const BroadcastStatusButtons: Story = {
+  args: { onThumbnailChange: fn() },
+  render: (args) => {
+    const state = (status: MediaStatus, label: string): ThumbnailStatusButton => ({
+      key: "broadcast-state",
+      icon: "Broadcast",
+      status,
+      label,
+      isActive: true,
+      disabled: true,
+    });
+    const rows: [MediaStatus, ThumbnailStatusButton[]][] = [
+      [MediaStatus.VALIDATED, [{ key: "broadcast", icon: "Broadcast", status: MediaStatus.READY_TO_BROADCAST, label: "Broadcast" }]],
+      [MediaStatus.READY_TO_BROADCAST, [state(MediaStatus.READY_TO_BROADCAST, "To broadcast")]],
+      [MediaStatus.BROADCAST, [state(MediaStatus.BROADCAST, "Broadcasted")]],
+      [MediaStatus.ERROR_DURING_BROADCAST, [state(MediaStatus.ERROR_DURING_BROADCAST, "Broadcast error")]],
+      [MediaStatus.IGNORED, [{ key: "restore", icon: "Restore", status: MediaStatus.NOT_SELECTED, label: "Restore" }]],
+    ];
+    const thumbnails = makeThumbnails("7e0125de91", rows.length).map((t, i) => ({
+      ...t,
+      status: rows[i][0],
+      statusButtons: rows[i][1],
+    }));
+    return (
+      <Layout bg="grey" className="min-h-screen">
+        <ContactSheetReference
+          reference={makeReference("7e0125de91", 41)}
+          exports={[{ id: "e", name: "Place des tendances", thumbnails }]}
+          thumbnailsPerRow={5}
+          onThumbnailChange={args.onThumbnailChange}
+        />
+      </Layout>
+    );
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole("button", { name: "Broadcast" }));
+    await expect(args.onThumbnailChange).toHaveBeenCalledWith(
+      expect.objectContaining({ type: "statusButton", key: "broadcast", pictureId: 1, exportId: "e" }),
+    );
+    await expect(canvas.getByRole("button", { name: "To broadcast" })).toBeDisabled();
   },
 };
 

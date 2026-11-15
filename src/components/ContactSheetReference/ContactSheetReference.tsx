@@ -4,6 +4,7 @@ import { Layout } from "@/components/layout";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Toggle } from "@/components/ui/toggle";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Icon } from "@/components/ui/icons";
 import { Grade, type GradeValue } from "@/components/ui/grade";
 import type { ThumbnailBench } from "@/components/Thumbnail/Thumbnail";
@@ -11,6 +12,7 @@ import { useTranslationSafe, type TranslationMap } from "@/contexts/TranslationC
 import { ReferenceAttributes } from "./ReferenceAttributes";
 import { ReferenceEditModal } from "./ReferenceEditModal";
 import { ContactSheetThumbnailGrid } from "./ContactSheetThumbnailGrid";
+import { getReferenceDisplayName, getReferenceTooltip } from "./reference-name";
 import type {
   ContactSheetExport,
   ReferenceAttributeConfig,
@@ -33,8 +35,27 @@ export interface ContactSheetReferenceProps {
    * mounts everything (browser find, printing, scrolling to a picture's DOM node,
    * tests without layout). */
   virtualized?: boolean | "auto";
-  /** Reference data (`/reference` endpoint). */
-  reference: ReferenceData;
+  /**
+   * Reference data (`/reference` endpoint). `null` renders the block of pictures
+   * without a reference: a "Missing reference" badge as title, no attributes, no
+   * urgent toggle nor Edit form. Thumbnails, selection and exports work as usual.
+   */
+  reference: ReferenceData | null;
+  /**
+   * Replaces the title. By default the title is `getReferenceDisplayName(reference)`:
+   * `smalltext` when not blank, otherwise `ref`.
+   */
+  title?: React.ReactNode;
+  /**
+   * Text version of the title, for its tooltip, the checkbox label and the Edit
+   * form title. Needed when `title` is not a string.
+   */
+  titleText?: string;
+  /**
+   * Rendered right after the title, before the grade and the actions (e.g. a
+   * VedetteIndicator with a HoverCard preview).
+   */
+  titleContent?: React.ReactNode;
   /**
    * Attributes displayed under the title, in this order. Independent from the
    * data: an attribute missing from `reference` is rendered empty. No attribute
@@ -91,7 +112,11 @@ export interface ContactSheetReferenceProps {
   headerActions?: React.ReactNode | ((helpers: { openEdit: () => void }) => React.ReactNode);
 
   // Vignettes
-  /** Any change requested on a thumbnail (selection, rating, status…). */
+  /**
+   * Any change requested on a thumbnail (selection, rating, status…). For a
+   * `comment` change, a returned promise is awaited by the comment menu (see
+   * `ThumbnailChange`).
+   */
   onThumbnailChange?: (change: ThumbnailChange) => void | Promise<void>;
   /** Interactions enabled on the thumbnails (all by default). */
   thumbnailFeatures?: ThumbnailFeatures;
@@ -135,6 +160,9 @@ export interface ContactSheetReferenceProps {
  */
 export const ContactSheetReference: React.FC<ContactSheetReferenceProps> = ({
   reference,
+  title,
+  titleText,
+  titleContent,
   attributes = [],
   exports = [],
   thumbnailsPerRow = 6,
@@ -166,9 +194,14 @@ export const ContactSheetReference: React.FC<ContactSheetReferenceProps> = ({
   const [hoveredExportId, setHoveredExportId] = React.useState<string | number | null>(null);
   // Sans onReferenceUpdate il n'y a pas de formulaire : openEdit ne fait rien.
   const openEdit = React.useCallback(() => {
-    if (onReferenceUpdate) setEditing(true);
-  }, [onReferenceUpdate]);
+    if (reference !== null && onReferenceUpdate) setEditing(true);
+  }, [reference, onReferenceUpdate]);
   const actions = typeof headerActions === "function" ? headerActions({ openEdit }) : headerActions;
+  const missing = reference === null;
+  const titleString = titleText ?? (typeof title === "string" ? title : undefined);
+  const displayName = titleString ?? (missing ? t("contactSheet.missingReference") : getReferenceDisplayName(reference));
+  const titleTooltip = titleString ?? (missing ? displayName : getReferenceTooltip(reference));
+  const editable = !missing && !!onReferenceUpdate;
 
   // Seuls les médias comptent : les emplacements vides ne se sélectionnent pas.
   const media = exports.flatMap((e) => e.thumbnails.filter((th) => !isEmptySlot(th)));
@@ -245,7 +278,11 @@ export const ContactSheetReference: React.FC<ContactSheetReferenceProps> = ({
             <Checkbox
               checked={checkState}
               onCheckedChange={(checked) => onSelectionChange(checked === true, pictureIds)}
-              aria-label={t("contactSheet.selectReference", { ref: reference.ref })}
+              aria-label={
+                missing && titleString === undefined
+                  ? t("contactSheet.selectMissingReference")
+                  : t("contactSheet.selectReference", { ref: displayName })
+              }
             />
           </div>
         )}
@@ -261,7 +298,7 @@ export const ContactSheetReference: React.FC<ContactSheetReferenceProps> = ({
         data-testid="reference-content"
       >
         <div className="flex items-center gap-2 min-w-0 h-6">
-          {onUrgentChange && (
+          {onUrgentChange && !missing && (
             <Toggle
               variant="secondary"
               size="small"
@@ -279,13 +316,24 @@ export const ContactSheetReference: React.FC<ContactSheetReferenceProps> = ({
               <Icon name="Urgent" size={10} />
             </Toggle>
           )}
-          <h3 className="m-0 text-base font-bold uppercase truncate" title={reference.ref}>
-            {reference.ref}
-          </h3>
+          {missing && title === undefined ? (
+            <h3 className="flex m-0 min-w-0 text-base" title={titleTooltip} data-missing-reference="">
+              <Badge variant="destructive">{displayName}</Badge>
+            </h3>
+          ) : (
+            <h3 className="m-0 text-base font-bold uppercase truncate" title={titleTooltip}>
+              {title ?? getReferenceDisplayName(reference)}
+            </h3>
+          )}
+          {titleContent ? (
+            <div className="flex items-center shrink-0" data-title-content="">
+              {titleContent}
+            </div>
+          ) : null}
           {grade && <Grade value={grade} size="medium" />}
-          {((onReferenceUpdate && showEditButton) || actions) && (
+          {((editable && showEditButton) || actions) && (
             <div className="flex items-center gap-1 shrink-0">
-              {onReferenceUpdate && showEditButton && (
+              {editable && showEditButton && (
                 <Button variant="ghost" size="small" onClick={openEdit}>
                   <Icon name="Pencil" size={12} />
                   {t("contactSheet.edit")}
@@ -296,7 +344,7 @@ export const ContactSheetReference: React.FC<ContactSheetReferenceProps> = ({
           )}
         </div>
 
-        <ReferenceAttributes reference={reference} attributes={attributes} className="mt-4" />
+        {reference && <ReferenceAttributes reference={reference} attributes={attributes} className="mt-4" />}
 
         {separated ? (
           // Exports séparés : chaque section porte son badge (rendu par la grille).
@@ -313,11 +361,12 @@ export const ContactSheetReference: React.FC<ContactSheetReferenceProps> = ({
         )}
       </div>
 
-      {onReferenceUpdate && (
+      {editable && reference && (
         <ReferenceEditModal
           isOpen={editing}
           onClose={() => setEditing(false)}
           reference={reference}
+          displayName={displayName}
           attributes={editableAttributes}
           editableTags={editableTags}
           onSubmit={onReferenceUpdate}

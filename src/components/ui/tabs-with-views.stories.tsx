@@ -166,7 +166,7 @@ const Playground: React.FC = () => {
 
   return (
     <Layout bg="white" padding={6} className="min-h-screen">
-      <VStack gap={6}>
+      <VStack scroll="visible" gap={6}>
         <div>
           <h3 className="gs-typo-h3 mb-2">TabsWithViews — Playground</h3>
           <p className="text-sm text-grey-stronger">
@@ -330,7 +330,7 @@ export const EnglishLocale: Story = {
 
     return (
       <Layout bg="white" padding={6}>
-        <VStack gap={4}>
+        <VStack scroll="visible" gap={4}>
           <p className="text-sm text-grey-stronger">Same component, English translations.</p>
           <TabsWithViews
             fixedTabs={[

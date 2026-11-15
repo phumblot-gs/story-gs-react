@@ -10,6 +10,8 @@ import type { LabelColor } from "@/components/ui/button-thumbnail-labels";
 export interface ReferenceData {
   reference_id: number;
   ref: string;
+  /** Short label of the reference; when not blank, it is the displayed title (see `getReferenceDisplayName`). */
+  smalltext?: string | null;
   tags?: string[];
   [key: string]: unknown;
 }
@@ -38,8 +40,8 @@ export interface ReferenceAttributeConfig {
  *
  * `imagePending` / `imageFadeIn` are driven by the grid (`imageLoading="grouped"`).
  *
- * `statusButtons` (the ✗ / ✓ buttons under the thumbnail) is passed per thumbnail:
- * 0, 1 or 2 buttons depending on the image state, decided by the application. A
+ * `statusButtons` (the buttons under the thumbnail: ✗ / ✓, broadcast, restore…) is
+ * passed per thumbnail, usually 0 to 2 (3 still fit), decided by the application. A
  * click is reported as a `statusButton` change. As soon as one thumbnail of the
  * reference has `statusButtons`, the button row is reserved for all of them so
  * that the rows stay aligned.
@@ -81,7 +83,11 @@ export interface ReorderViewChange {
 export interface ReorderDetails {
   /** Media moved by the user (the grabbed group), in display order. */
   movedPictureIds: number[];
-  /** Media whose view changed, i.e. every media that changed position. */
+  /**
+   * Media whose view code changed, only. A media moved between two slots carrying the
+   * same view code is not listed: to detect pure position changes, compare `slots` (or
+   * `pictureIds`) with the previous order, or use `movedPictureIds`.
+   */
   viewChanges: ReorderViewChange[];
 }
 
@@ -172,6 +178,11 @@ export type ThumbnailChange = { pictureId: number; exportId: string | number } &
   | { type: "label"; label: LabelColor }
   | { type: "tagAdd"; tag: string }
   | { type: "tagRemove"; tag: string }
+  /**
+   * Comment typed in the thumbnail's comment menu. Return a promise from
+   * `onThumbnailChange` to keep the field disabled until it settles: if it
+   * rejects, the text and the menu stay open with an error message.
+   */
   | { type: "comment"; comment: string }
   /** Click on a status button (`statusButtons`); `reason` = rejection reason picked in the menu. */
   | { type: "statusButton"; key: string; reason?: string }
@@ -179,6 +190,10 @@ export type ThumbnailChange = { pictureId: number; exportId: string | number } &
   | { type: "validate" }
   /** @deprecated Legacy reject button; use `statusButtons` and the `statusButton` change. */
   | { type: "reject"; reason?: string }
+  /**
+   * Click on the image (`features.open`). Also sent, whatever `features.open`, by a click on a thumbnail without a
+   * preview (no `src`, or image in error): the application can fetch the thumbnail again.
+   */
   | { type: "open" }
 );
 

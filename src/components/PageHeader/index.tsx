@@ -73,8 +73,9 @@ const PageHeader = React.forwardRef<HTMLDivElement, PageHeaderProps>(({
         className="gs-page-header-content px-4 py-2"
       >
         {/* Left Side - with flex-shrink to allow truncation */}
-        <HStack gap={4} align="center" className="flex-shrink overflow-hidden">
-          {leftContent && <HStack gap={2} align="center" className="flex-shrink-0">{leftContent}</HStack>}
+        {/* p-1 -m-1: room for the 4px focus ring inside this clipping row, which must keep shrinking; same footprint. */}
+        <HStack gap={4} align="center" className="flex-shrink overflow-hidden p-1 -m-1">
+          {leftContent && <HStack gap={2} align="center" scroll="visible" className="flex-shrink-0">{leftContent}</HStack>}
           {showLogo && (() => {
             // <span class="block"> et non <div> : le modele de contenu de <button>
             // n'accepte que du phrasing content, et cette zone est enveloppee dans
@@ -103,7 +104,7 @@ const PageHeader = React.forwardRef<HTMLDivElement, PageHeaderProps>(({
             buttonIcon={titleButtonIcon}
             onButtonClick={onTitleButtonClick}
             featured={true}
-            className="flex-shrink min-w-0"
+            className="flex-shrink min-w-0 overflow-visible"
             showBackButton={showBackButton}
             onBackButtonClick={onBackButtonClick}
             titleContent={titleContent}
@@ -120,7 +121,7 @@ const PageHeader = React.forwardRef<HTMLDivElement, PageHeaderProps>(({
 
         {/* Right Side */}
         {rightContent && (
-          <HStack gap={2} align="center" className="flex-shrink-0">
+          <HStack gap={2} align="center" scroll="visible" className="flex-shrink-0">
             {rightContent}
           </HStack>
         )}

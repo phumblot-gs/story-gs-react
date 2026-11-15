@@ -258,7 +258,7 @@ export const ControlledState: Story = {
     
     return (
       <Layout bg="white" padding={6}>
-        <VStack gap={6}>
+        <VStack scroll="visible" gap={6}>
           <div>
             <h3 className="gs-typo-h3 mb-2">Controlled State</h3>
             <p className="text-sm text-grey-stronger mb-4">
@@ -309,7 +309,7 @@ export const CustomLabels: Story = {
     
     return (
       <Layout bg="white" padding={6}>
-        <VStack gap={6}>
+        <VStack scroll="visible" gap={6}>
           <div>
             <h3 className="gs-typo-h3 mb-2">Custom Labels</h3>
             <p className="text-sm text-grey-stronger mb-4">
@@ -422,7 +422,7 @@ export const Examples: Story = {
     
     return (
       <Layout bg="white" padding={6}>
-        <VStack gap={6}>
+        <VStack scroll="visible" gap={6}>
           <div>
             <h3 className="gs-typo-h3 mb-2">Real-World Examples</h3>
             <p className="text-sm text-grey-stronger mb-4">
@@ -471,7 +471,7 @@ export const DebugMode: Story = {
     
     return (
       <Layout bg="white" padding={6}>
-        <VStack gap={6}>
+        <VStack scroll="visible" gap={6}>
           <div>
             <h3 className="gs-typo-h3 mb-3">Debug Mode</h3>
             <p className="text-sm text-grey-stronger mb-4">
@@ -479,7 +479,7 @@ export const DebugMode: Story = {
             </p>
           </div>
 
-          <VStack gap={4}>
+          <VStack scroll="visible" gap={4}>
             <Switch
               value={value}
               onValueChange={setValue}
@@ -515,19 +515,19 @@ export const NestedLayouts: Story = {
 
       {/* Level 1: White */}
       <Layout bg="white" padding={4} className="border-2 border-blue">
-        <VStack gap={3}>
+        <VStack scroll="visible" gap={3}>
           <p className="text-sm font-medium">Layout bg="white" (level 1)</p>
           <Switch value={true} />
 
           {/* Level 2: Grey - overrides white */}
           <Layout bg="grey" padding={4} className="border-2 border-green">
-            <VStack gap={3}>
+            <VStack scroll="visible" gap={3}>
               <p className="text-sm font-medium">Layout bg="grey" (level 2 - overrides white)</p>
               <Switch value={true} />
 
               {/* Level 3: Black - overrides grey */}
               <Layout bg="black" padding={4} className="border-2 border-yellow">
-                <VStack gap={3}>
+                <VStack scroll="visible" gap={3}>
                   <p className="text-sm font-medium text-white">Layout bg="black" (level 3 - overrides grey)</p>
                   <Switch value={true} />
                 </VStack>

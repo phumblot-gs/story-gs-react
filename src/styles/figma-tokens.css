@@ -1,7 +1,7 @@
 /**
  * Variables CSS générées automatiquement depuis les tokens Figma
  * NE PAS MODIFIER DIRECTEMENT - Généré par scripts/generate-css-tokens.cjs
- * Date: 2026-10-20T23:17:53.788Z
+ * Date: 2026-11-10T12:01:46.436Z
  */
 
 :root {
@@ -893,8 +893,8 @@
   --card-foreground: #292828;
   --muted: #f3f3f3;
   --muted-foreground: #c1c1c1;
-  --popover: #292828;
-  --popover-foreground: #ffffff;
+  --popover: 0 1% 16%;
+  --popover-foreground: 0 0% 100%;
   --primary: #cdedff;
   --primary-foreground: #292828;
   --secondary: #292828;
@@ -903,9 +903,10 @@
   --accent-foreground: #cdedff;
   --destructive: #dd3733;
   --desctructive-foreground: #ffffff;
-  --ring: #292828;
+  --ring: 0 1% 16%;
   --border: 0 3% 85%;
   --input: 0 3% 85%;
+  --ring-offset: #ffffff;
 }
 
 [data-bg="grey"] {
@@ -915,8 +916,8 @@
   --card-foreground: #292828;
   --muted: #ffffff;
   --muted-foreground: #c1c1c1;
-  --popover: #292828;
-  --popover-foreground: #ffffff;
+  --popover: 0 1% 16%;
+  --popover-foreground: 0 0% 100%;
   --primary: #cdedff;
   --primary-foreground: #292828;
   --secondary: #292828;
@@ -925,9 +926,10 @@
   --accent-foreground: #cdedff;
   --destructive: #dd3733;
   --desctructive-foreground: #ffffff;
-  --ring: #292828;
+  --ring: 0 1% 16%;
   --border: 0 3% 85%;
   --input: 0 3% 85%;
+  --ring-offset: var(--color-grey-light);
 }
 
 [data-bg="black"] {
@@ -937,8 +939,8 @@
   --card-foreground: #ffffff;
   --muted: #3a3a3a;
   --muted-foreground: #c1c1c1;
-  --popover: #3a3a3a;
-  --popover-foreground: #ffffff;
+  --popover: 0 0% 23%;
+  --popover-foreground: 0 0% 100%;
   --primary: #cdedff;
   --primary-foreground: #292828;
   --secondary: #ffffff;
@@ -946,9 +948,10 @@
   --accent-foreground: #cdedff;
   --destructive: #dd3733;
   --desctructive-foreground: #ffffff;
-  --ring: #ffffff;
+  --ring: 0 0% 100%;
   --border: 0 3% 85%;
   --input: 0 3% 85%;
+  --ring-offset: #292828;
 }
 
 /* Classes Button contextuelles */

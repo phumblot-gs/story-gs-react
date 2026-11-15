@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { HStack } from '../components/layout';
+import { HStack, VStack } from '../components/layout';
+import { Button } from '../components/ui/button';
 
 const meta = {
   title: 'Layout/HStack',
@@ -175,6 +176,11 @@ Use the \`wrap\` prop to allow items to wrap to the next line on smaller screens
       control: 'select',
       options: [0, 1, 2, 3, 4, 5, 6, 8, 10, 12, 16, 20, 24, 28, 30, 32, 36, 40, 44, 48, 50, 52, 56, 60, 64, 68, 70, 72, 80, 90, 100],
       description: 'Padding value (uses spacing primitives: 0-100)',
+    },
+    scroll: {
+      control: 'select',
+      options: ['none', 'auto', 'always', 'vertical', 'horizontal', 'both', 'visible'],
+      description: 'Scroll behavior for overflow content. Default: auto, which also clips the children focus ring at the edge. `visible`: no clipping (overflow-visible)',
     },
     wrap: {
       control: 'boolean',
@@ -430,5 +436,32 @@ export const ButtonGroup: Story = {
         Confirmer
       </button>
     </HStack>
+  ),
+};
+
+export const ScrollVisible: StoryObj = {
+  name: 'scroll="visible" (focus ring)',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Press **Tab** on the buttons. With the default `scroll="auto"`, the HStack clips the 4px focus ring of the buttons at its edge; ' +
+          'with `scroll="visible"` (`overflow-visible`) the ring overflows. Same size and position in both rows.',
+      },
+    },
+  },
+  render: () => (
+    <VStack gap={4} bg="grey" padding={4}>
+      <span className="text-sm">scroll="auto" (default)</span>
+      <HStack gap={2}>
+        <Button variant="secondary">Annuler</Button>
+        <Button>Confirmer</Button>
+      </HStack>
+      <span className="text-sm">scroll="visible"</span>
+      <HStack gap={2} scroll="visible">
+        <Button variant="secondary">Annuler</Button>
+        <Button>Confirmer</Button>
+      </HStack>
+    </VStack>
   ),
 };

@@ -99,7 +99,7 @@ export const AllIcons: Story = {
   render: () => {
     // Organiser les icônes par catégories selon icon-renderer.tsx
     const statusIcons: IconName[] = ["Check", "X", "Alert", "Status", "Urgent"];
-    const actionIcons: IconName[] = ["Plus", "Pencil", "Sort", "Filter", "Eye", "Logout", "Refresh", "Search", "Flag", "FlagEmpty", "Switch", "Scroll"];
+    const actionIcons: IconName[] = ["Plus", "Pencil", "Sort", "Filter", "Eye", "Logout", "Refresh", "Broadcast", "Restore", "Search", "Flag", "FlagEmpty", "Switch", "Scroll"];
     const itemIcons: IconName[] = ["Tag", "Bell", "Star", "Vedette", "Comment", "FolderOpened", "FolderMoved", "EmptyElement", "EmptyFile", "EmptySearch", "BrokenFile"];
     const navigationIcons: IconName[] = ["ArrowRight", "ArrowLeft", "ArrowUp", "ArrowDown"];
     const utilityIcons: IconName[] = ["Help", "Settings", "User"];
@@ -358,12 +358,12 @@ export const Clickable: Story = {
 export const DebugMode: Story = {
   render: () => (
     <Layout bg="white" padding={6}>
-      <VStack gap={4}>
+      <VStack scroll="visible" gap={4}>
         <h3 className="gs-typo-h3">Mode Debug</h3>
         <p className="text-sm text-grey-stronger">
           Le mode debug affiche un border rose et log les clics dans la console
         </p>
-        <HStack gap={3}>
+        <HStack scroll="visible" gap={3}>
           <Icon
             name="Plus"
             size={16}

@@ -1166,6 +1166,12 @@ export const componentTranslations: TranslationMap = {
   "contactSheet.selectReference": {
     EN: "Select reference {ref}", FR: "Sélectionner la référence {ref}", ES: "Seleccionar la referencia {ref}", IT: "Seleziona il riferimento {ref}", DE: "Referenz {ref} auswählen"
   },
+  "contactSheet.missingReference": {
+    EN: "Missing reference", FR: "Référence manquante", ES: "Referencia ausente", IT: "Riferimento mancante", DE: "Referenz fehlt"
+  },
+  "contactSheet.selectMissingReference": {
+    EN: "Select pictures without reference", FR: "Sélectionner les images sans référence", ES: "Seleccionar las imágenes sin referencia", IT: "Seleziona le immagini senza riferimento", DE: "Bilder ohne Referenz auswählen"
+  },
   "contactSheet.markUrgent": {
     EN: "Mark as urgent", FR: "Marquer comme urgente", ES: "Marcar como urgente", IT: "Segna come urgente", DE: "Als dringend markieren"
   },
@@ -1229,6 +1235,13 @@ export const componentTranslations: TranslationMap = {
     IT: "Altro motivo",
     DE: "Anderer Grund"
   },
+  "thumbnail.commentError": {
+    EN: "The comment could not be saved",
+    FR: "Le commentaire n'a pas pu être enregistré",
+    ES: "No se pudo guardar el comentario",
+    IT: "Impossibile salvare il commento",
+    DE: "Der Kommentar konnte nicht gespeichert werden"
+  },
   "thumbnail.addComment": {
     EN: "Add a comment",
     FR: "Ajouter un commentaire",
@@ -1252,6 +1265,9 @@ export const componentTranslations: TranslationMap = {
   },
   "thumbnail.copied": {
     EN: "Copied", FR: "Copié", ES: "Copiado", IT: "Copiato", DE: "Kopiert"
+  },
+  "thumbnail.previewUnavailable": {
+    EN: "Preview unavailable", FR: "Aperçu indisponible", ES: "Vista previa no disponible", IT: "Anteprima non disponibile", DE: "Vorschau nicht verfügbar"
   },
   "thumbnail.add": {
     EN: "Add",

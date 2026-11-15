@@ -621,6 +621,9 @@ export const ContactSheetThumbnailGrid: React.FC<ContactSheetThumbnailGridProps>
     if (media) renderedThumbs.add(thumbId(exportId, thumb.picture_id as number));
     const handlers = media && enabled ? handlersFor(exportId, thumb.picture_id as number) : undefined;
     const image = media && thumb.src ? getImageState(thumb.picture_id as number, thumb.src) : undefined;
+    // Sans aperçu (pas d'URL, ou image en erreur), un clic émet `open` même sans la fonction `open` : l'application
+    // peut redemander la vignette.
+    const previewUnavailable = media && (!thumb.src || !!thumb.hasError || !!image?.error);
     return (
       <ContactSheetThumbnailView
         skipInitialFade={windowed}
@@ -654,7 +657,7 @@ export const ContactSheetThumbnailGrid: React.FC<ContactSheetThumbnailGridProps>
         onStatusButtonClick={onThumbnailChange ? handlers?.onStatusButtonClick : undefined}
         onValidate={enabled?.validation ? handlers?.onValidate : undefined}
         onReject={enabled?.validation ? handlers?.onReject : undefined}
-        onImageClick={enabled?.open ? handlers?.onImageClick : undefined}
+        onImageClick={enabled?.open || previewUnavailable ? handlers?.onImageClick : undefined}
       />
     );
   };

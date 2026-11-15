@@ -563,7 +563,7 @@ function ClippingEditorSession({
       <BgProvider value="white">
         <div
           ref={rootRef} tabIndex={0} data-bg="white" data-gs-clipping-editor
-          className={cn('gs-clipping-editor relative flex h-full w-full flex-col bg-white outline-none focus-visible:ring-2 focus-visible:ring-ring', className)}
+          className={cn('gs-clipping-editor relative flex h-full w-full flex-col bg-white outline-none', className)}
           onKeyDown={handleKeyDown} onKeyUp={handleKeyUp} onBlur={() => { setShiftHeld(false); setPeekOriginal(false); }}
           onPointerEnter={() => { if (!document.activeElement || document.activeElement === document.body) rootRef.current?.focus({ preventScroll: true }); }} {...props}
         >

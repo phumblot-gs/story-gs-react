@@ -119,6 +119,10 @@ const getEntryPoints = () => {
 };
 
 // https://vitejs.dev/config/
+const TYPICONS_NOTICE =
+  '/*! @license Broadcast and Restore icons: Typicons 2.0.3 by Stephen Hutchings, artwork licensed CC BY-SA 3.0 ' +
+  '(https://creativecommons.org/licenses/by-sa/3.0/), glyphs converted to SVG. See THIRD_PARTY_NOTICES.md. */';
+
 export default defineConfig({
   plugins: [
     react(),
@@ -183,6 +187,9 @@ export default defineConfig({
           "react-dom": "ReactDOM",
           "react/jsx-runtime": "jsxRuntime",
         },
+        // Terser drops the source /*! @license */ comment of action-icons in the CJS build: emit it as a banner.
+        banner: (chunk) =>
+          chunk.facadeModuleId?.endsWith('/src/components/ui/icons/action-icons.tsx') ? TYPICONS_NOTICE : '',
         // Force l'utilisation d'exports nommés uniquement pour éviter les warnings
         exports: 'named',
         // Préserver la structure des modules pour faciliter les imports
@@ -208,6 +215,10 @@ export default defineConfig({
       compress: {
         drop_console: false,
         drop_debugger: true,
+      },
+      // Keep third-party licence notices (/*! … */, @license) in both ES and CJS builds.
+      format: {
+        comments: /^!|@license|@preserve/i,
       },
     },
   },

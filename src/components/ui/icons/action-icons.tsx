@@ -180,3 +180,30 @@ export const CustomScrollIcon: React.FC<CustomIconProps> = ({ size = 12, strokeW
     <path d="M1 9H5" stroke="currentColor" strokeWidth={strokeWidth} strokeMiterlimit="10" strokeLinecap="round"/>
   </svg>
 )
+
+// Height-fitted to 100%, a touch above CustomXIcon (85%): the wider glyph overflows the square box sideways, hence overflow="visible".
+export const BROADCAST_ICON_VIEWBOX = "124.5 208 584 584";
+export const RESTORE_ICON_VIEWBOX = "104.5 209 541 541";
+
+/*! @license Broadcast and Restore icons: Typicons 2.0.3 by Stephen Hutchings, artwork licensed
+ * CC BY-SA 3.0 (https://creativecommons.org/licenses/by-sa/3.0/). Glyphs \e04b (cloud-storage) and
+ * \e010 (arrow-loop) converted to SVG. Temporary, until in-house charter icons replace them. */
+export const CustomBroadcastIcon: React.FC<CustomIconProps> = ({ size = 12 }) => (
+  <svg width={size} height={size} viewBox={BROADCAST_ICON_VIEWBOX} overflow="visible" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path
+      transform="translate(0 800) scale(1 -1)"
+      fill="currentColor"
+      d="M625 425q86 0 147 -61t61 -147t-61 -147.5t-147 -61.5h-167v191l54 -53q13 -13 30 -13q16 0 29 13q12 12 12 29t-12 29l-125 125q-11 11 -29 11.5t-30 -11.5l-125 -125q-12 -12 -12 -29t12 -29q13 -13 30 -13q16 0 29 13l54 53v-191h-208q-69 0 -118 49t-49 118q0 58 35 102.5t90 58.5v6q0 104 73.5 177t176.5 73q80 0 144.5 -46.5t90.5 -121.5z"
+    />
+  </svg>
+)
+
+export const CustomRestoreIcon: React.FC<CustomIconProps> = ({ size = 12 }) => (
+  <svg width={size} height={size} viewBox={RESTORE_ICON_VIEWBOX} overflow="visible" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path
+      transform="translate(0 800) scale(1 -1)"
+      fill="currentColor"
+      d="M562 467q77 0 132.5 -61.5t55.5 -147.5t-61 -147t-147 -61h-334q-86 0 -147 61t-61 147t61 147.5t147 61.5q17 0 29.5 -12.5t12.5 -29.5t-12.5 -29.5t-29.5 -12.5q-52 0 -88.5 -36.5t-36.5 -88.5t36.5 -88.5t88.5 -36.5h334q52 0 88.5 36.5t36.5 88.5t-31 88.5t-74 36.5h-86l53 -54q12 -12 12 -29t-12 -29q-13 -13 -29 -13t-29 13l-155 154l155 154q12 12 29 12t29 -12t12 -29t-12 -29l-53 -54h86z"
+    />
+  </svg>
+)

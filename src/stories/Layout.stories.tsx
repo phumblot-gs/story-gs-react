@@ -67,9 +67,10 @@ The \`scroll\` prop controls how overflow content is handled:
 <Layout scroll="auto">         {/* Auto (default) */}
 <Layout scroll="none">         {/* No scroll (hidden overflow) */}
 <Layout scroll="always">       {/* Always show scrollbar */}
+<Layout scroll="visible">      {/* No scroll, no clipping (overflow-visible): focus rings can overflow */}
 \`\`\`
 
-**Available scroll values:** \`none\`, \`auto\` (default), \`always\`, \`vertical\`, \`horizontal\`, \`both\`
+**Available scroll values:** \`none\`, \`auto\` (default), \`always\`, \`vertical\`, \`horizontal\`, \`both\`, \`visible\`
 
 ## Padding
 
@@ -181,8 +182,8 @@ This is handled automatically via the \`data-bg\` attribute system, ensuring con
     },
     scroll: {
       control: 'select',
-      options: ['none', 'auto', 'always', 'vertical', 'horizontal', 'both'],
-      description: 'Scroll behavior for overflow content. Default: auto',
+      options: ['none', 'auto', 'always', 'vertical', 'horizontal', 'both', 'visible'],
+      description: 'Scroll behavior for overflow content. Default: auto. `visible`: no scroll and no clipping (overflow-visible), so children focus rings are not cut',
     },
     padding: {
       control: 'select',

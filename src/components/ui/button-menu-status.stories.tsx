@@ -213,8 +213,8 @@ export const Default: Story = {
 export const AllSizes: Story = {
   render: () => (
     <Layout bg="white" padding={6}>
-      <VStack gap={4}>
-        <HStack gap={3} align="center">
+      <VStack scroll="visible" gap={4}>
+        <HStack scroll="visible" gap={3} align="center">
           <ButtonMenuStatus
             currentStatus={MediaStatus.SELECTED}
             statusOptions={allStatusOptions}
@@ -241,7 +241,7 @@ export const AllVariants: Story = {
     <VStack gap={6} padding={6}>
       <VStack as={Layout} bg="white" padding={6} gap={4} className="border border-grey rounded">
         <h3 className="gs-typo-h3">Background White</h3>
-        <HStack gap={3}>
+        <HStack scroll="visible" gap={3}>
           <ButtonMenuStatus
             currentStatus={MediaStatus.SELECTED}
             statusOptions={workflowStatusOptions}
@@ -267,7 +267,7 @@ export const AllVariants: Story = {
 
       <VStack as={Layout} bg="grey" padding={6} gap={4} className="border border-grey rounded">
         <h3 className="gs-typo-h3">Background Grey</h3>
-        <HStack gap={3}>
+        <HStack scroll="visible" gap={3}>
           <ButtonMenuStatus
             currentStatus={MediaStatus.VALIDATED}
             statusOptions={workflowStatusOptions}
@@ -293,7 +293,7 @@ export const AllVariants: Story = {
 
       <VStack as={Layout} bg="black" padding={6} gap={4} className="border border-grey rounded">
         <h3 className="gs-typo-h3 text-white">Background Black</h3>
-        <HStack gap={3}>
+        <HStack scroll="visible" gap={3}>
           <ButtonMenuStatus
             currentStatus={MediaStatus.BROADCAST}
             statusOptions={workflowStatusOptions}
@@ -326,7 +326,7 @@ export const AllVariants: Story = {
 export const WithManyStatuses: Story = {
   render: () => (
     <Layout bg="white" padding={6}>
-      <VStack gap={4}>
+      <VStack scroll="visible" gap={4}>
         <div>
           <p className="text-sm text-grey-stronger mb-2">
             Menu avec tous les statuts disponibles (hauteur limitée à 40vh)
@@ -345,7 +345,7 @@ export const WithManyStatuses: Story = {
 export const WorkflowSpecific: Story = {
   render: () => (
     <Layout bg="white" padding={6}>
-      <VStack gap={4}>
+      <VStack scroll="visible" gap={4}>
         <div>
           <p className="text-sm text-grey-stronger mb-2">
             Exemple avec statuts spécifiques à un workflow
@@ -371,7 +371,7 @@ export const WithDisabledStatuses: Story = {
 
     return (
       <Layout bg="white" padding={6}>
-        <VStack gap={4}>
+        <VStack scroll="visible" gap={4}>
           <ButtonMenuStatus
             currentStatus={MediaStatus.SELECTED}
             statusOptions={optionsWithDisabled}
@@ -390,7 +390,7 @@ export const WithDisabledStatuses: Story = {
 export const DebugMode: Story = {
   render: () => (
     <Layout bg="white" padding={6}>
-      <VStack gap={4}>
+      <VStack scroll="visible" gap={4}>
         <p className="text-sm text-grey-stronger">
           Ouvrez la console pour voir les logs de debug
         </p>
@@ -409,7 +409,7 @@ export const WithStatusChange: Story = {
     const [currentStatus, setCurrentStatus] = useState(MediaStatus.SELECTED)
     return (
       <Layout bg="white" padding={6}>
-        <VStack gap={4}>
+        <VStack scroll="visible" gap={4}>
           <div>
             <p className="text-sm text-grey-stronger mb-2">
               Status actuel: {workflowStatusOptions.find(opt => opt.status === currentStatus)?.label || "Inconnu"}
@@ -432,7 +432,7 @@ export const WithStatusChange: Story = {
 export const MenuPositioning: Story = {
   render: () => (
     <Layout bg="white" padding={6}>
-      <VStack gap={8}>
+      <VStack scroll="visible" gap={8}>
         <div>
           <h3 className="gs-typo-h3 mb-4">Position par défaut (bottom, start)</h3>
           <ButtonMenuStatus
@@ -522,7 +522,7 @@ export const CustomStatuses: Story = {
     ]
     return (
       <Layout bg="white" padding={6}>
-        <VStack gap={4}>
+        <VStack scroll="visible" gap={4}>
           <p className="text-sm text-grey-stronger">Picked: {picked}</p>
           <ButtonMenuStatus statusOptions={batchStatuses} onOptionSelect={(option) => setPicked(option.value ?? option.label)} />
         </VStack>

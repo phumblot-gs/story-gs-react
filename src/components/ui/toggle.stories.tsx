@@ -268,10 +268,10 @@ export const IsActive: Story = {
   render: () => {
     const [isActive, setIsActive] = React.useState(false);
     return (
-      <VStack gap={4} align="start">
+      <VStack scroll="visible" gap={4} align="start">
         <div>
           <h3 className="text-sm font-semibold mb-2">isActive controlled</h3>
-          <HStack gap={4} align="center">
+          <HStack scroll="visible" gap={4} align="center">
             <Toggle isActive={isActive} onClick={() => setIsActive(!isActive)}>
               Toggle {isActive ? "ON" : "OFF"}
             </Toggle>
@@ -290,10 +290,10 @@ export const IsActive: Story = {
 
 export const AllVariants: Story = {
   render: () => (
-    <VStack gap={4} align="start">
+    <VStack scroll="visible" gap={4} align="start">
       <div>
         <h3 className="text-sm font-semibold mb-2">All variants</h3>
-        <HStack gap={4} align="center">
+        <HStack scroll="visible" gap={4} align="center">
           <Toggle variant="normal">Normal</Toggle>
           <Toggle variant="secondary">Secondary</Toggle>
           <Toggle variant="ghost">Ghost</Toggle>
@@ -303,7 +303,7 @@ export const AllVariants: Story = {
       </div>
       <div>
         <h3 className="text-sm font-semibold mb-2">All variants (active)</h3>
-        <HStack gap={4} align="center">
+        <HStack scroll="visible" gap={4} align="center">
           <Toggle variant="normal" isActive>Normal</Toggle>
           <Toggle variant="secondary" isActive>Secondary</Toggle>
           <Toggle variant="ghost" isActive>Ghost</Toggle>
@@ -317,10 +317,10 @@ export const AllVariants: Story = {
 
 export const AllSizes: Story = {
   render: () => (
-    <VStack gap={4} align="start">
+    <VStack scroll="visible" gap={4} align="start">
       <div>
         <h3 className="text-sm font-semibold mb-2">All sizes</h3>
-        <HStack gap={4} align="center">
+        <HStack scroll="visible" gap={4} align="center">
           <Toggle size="small">Small</Toggle>
           <Toggle size="medium">Medium</Toggle>
           <Toggle size="large">Large</Toggle>
@@ -328,7 +328,7 @@ export const AllSizes: Story = {
       </div>
       <div>
         <h3 className="text-sm font-semibold mb-2">All sizes (active)</h3>
-        <HStack gap={4} align="center">
+        <HStack scroll="visible" gap={4} align="center">
           <Toggle size="small" isActive>Small</Toggle>
           <Toggle size="medium" isActive>Medium</Toggle>
           <Toggle size="large" isActive>Large</Toggle>
@@ -344,7 +344,7 @@ export const AllBackgrounds: Story = {
       <div>
         <h3 className="text-sm font-semibold mb-2">White background</h3>
         <Layout bg="white" padding={4}>
-          <HStack gap={4} align="center">
+          <HStack scroll="visible" gap={4} align="center">
             <Toggle>Toggle</Toggle>
             <Toggle isActive>Active</Toggle>
             <Toggle variant="secondary">Secondary</Toggle>
@@ -355,7 +355,7 @@ export const AllBackgrounds: Story = {
       <div>
         <h3 className="text-sm font-semibold mb-2">Grey background</h3>
         <Layout bg="grey" padding={4}>
-          <HStack gap={4} align="center">
+          <HStack scroll="visible" gap={4} align="center">
             <Toggle>Toggle</Toggle>
             <Toggle isActive>Active</Toggle>
             <Toggle variant="secondary">Secondary</Toggle>
@@ -366,7 +366,7 @@ export const AllBackgrounds: Story = {
       <div>
         <h3 className="text-sm font-semibold mb-2">Black background</h3>
         <Layout bg="black" padding={4}>
-          <HStack gap={4} align="center">
+          <HStack scroll="visible" gap={4} align="center">
             <Toggle>Toggle</Toggle>
             <Toggle isActive>Active</Toggle>
             <Toggle variant="secondary">Secondary</Toggle>
@@ -380,8 +380,8 @@ export const AllBackgrounds: Story = {
 
 export const DebugMode: Story = {
   render: () => (
-    <VStack gap={4} align="start">
-      <HStack gap={4} align="center">
+    <VStack scroll="visible" gap={4} align="start">
+      <HStack scroll="visible" gap={4} align="center">
         <Toggle debug>Debug</Toggle>
         <Toggle debug isActive>Debug Active</Toggle>
         <Toggle debug variant="secondary">Debug Secondary</Toggle>

@@ -25,13 +25,46 @@ export interface SliderProps
    * valeurs réelles ; ignore `min` / `max` / `step`.
    */
   steps?: number[]
+  /**
+   * `tabIndex` du thumb. Par défaut Radix le rend atteignable au Tab (0) ;
+   * `-1` le retire de l'ordre de tabulation sans toucher au drag souris/tactile
+   * ni aux flèches après un clic (Radix focalise le thumb au pointerdown).
+   * Ignoré quand le slider est `disabled`. Négatif : le thumb n'affiche aucun anneau de focus.
+   * Sinon l'anneau s'affiche au focus clavier, et après un appui souris/tactile dès la première touche pressée.
+   */
+  thumbTabIndex?: number
 }
+
+const PRESS_END_EVENTS = ["pointerup", "pointercancel", "keydown"] as const
 
 const Slider = React.forwardRef<
   React.ElementRef<typeof SliderPrimitive.Root>,
   SliderProps
->(({ className, labelMin, labelMax, labelCurrent, debug, disabled, onValueChange, steps, value, defaultValue, min, max, step, ...props }, ref) => {
+>(({ className, labelMin, labelMax, labelCurrent, debug, disabled, onValueChange, steps, thumbTabIndex, value, defaultValue, min, max, step, onPointerDown, ...props }, ref) => {
   const bg = useBgContext()
+  const [pointerFocused, setPointerFocused] = React.useState(false)
+  const pressingRef = React.useRef(false)
+  const endPressRef = React.useRef<(() => void) | null>(null)
+
+  React.useEffect(() => () => endPressRef.current?.(), [])
+
+  // Radix focuses the thumb on a press only if it hits the thumb or changes the value: the press is read at focus time.
+  const handlePointerDown = React.useCallback(
+    (event: React.PointerEvent<HTMLDivElement>) => {
+      onPointerDown?.(event)
+      if (disabled) return
+      pressingRef.current = true
+      if (endPressRef.current) return
+      const endPress = () => {
+        pressingRef.current = false
+        PRESS_END_EVENTS.forEach((type) => document.removeEventListener(type, endPress, true))
+        endPressRef.current = null
+      }
+      PRESS_END_EVENTS.forEach((type) => document.addEventListener(type, endPress, true))
+      endPressRef.current = endPress
+    },
+    [onPointerDown, disabled]
+  )
 
   // Mode "paliers discrets" : on pilote Radix sur des index (0..n-1) et on
   // mappe vers/depuis les valeurs réelles du tableau `steps`.
@@ -233,6 +266,7 @@ const Slider = React.forwardRef<
         value={rootValue}
         defaultValue={rootDefaultValue}
         onValueChange={handleValueChange}
+        onPointerDown={handlePointerDown}
         {...props}
       >
         <SliderPrimitive.Track
@@ -248,6 +282,14 @@ const Slider = React.forwardRef<
         <SliderPrimitive.Thumb
           aria-label={props["aria-label"]}
           aria-labelledby={props["aria-labelledby"]}
+          // Radix spreads thumb props over its own tabIndex: passing undefined would drop the default 0.
+          {...(thumbTabIndex !== undefined && !disabled ? { tabIndex: thumbTabIndex } : {})}
+          onFocus={() => {
+            setPointerFocused(pressingRef.current)
+            pressingRef.current = false
+          }}
+          onKeyDown={() => setPointerFocused(false)}
+          onBlur={() => setPointerFocused(false)}
           className={cn(
             "block h-[10px] w-[10px] rounded-full border-0 transition-colors",
             "absolute top-1/2 -translate-x-1/2 -translate-y-1/2",
@@ -255,7 +297,9 @@ const Slider = React.forwardRef<
             // drag : le pseudo-élément ::before étend la surface cliquable du
             // thumb de 10px tout autour.
             "before:content-[''] before:absolute before:-inset-[10px]",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+            "focus-visible:outline-none",
+            // Chromium matches :focus-visible on Radix's scripted focus after a press, so the ring waits for a key.
+            (thumbTabIndex ?? 0) >= 0 && !pointerFocused && "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-context",
             "disabled:pointer-events-none disabled:opacity-50",
             styles.thumb,
             debug && "before:bg-pink/20"

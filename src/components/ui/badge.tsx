@@ -31,7 +31,7 @@ import { useBgContext } from "@/components/layout/BgContext"
 // size="small", sans figer la hauteur : un consommateur qui surcharge le
 // padding (ex. `py-1`) reste libre de dépasser cette valeur.
 const badgeVariants = cva(
-  "inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-badge-label leading-tight font-normal transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 relative w-fit h-fit min-h-4",
+  "inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-badge-label leading-tight font-normal transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-context relative w-fit h-fit min-h-4",
   {
     variants: {
       variant: {

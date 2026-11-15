@@ -1,8 +1,8 @@
 import * as React from "react";
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { fn } from "storybook/test";
-import { Thumbnail } from "./Thumbnail";
+import { expect, fn, userEvent, within } from "storybook/test";
+import { Thumbnail, type ThumbnailStatusButton } from "./Thumbnail";
 import { MediaStatus } from "@/utils/mediaStatus";
 import { Layout, HStack, VStack } from "@/components/layout";
 import { Badge } from "@/components/ui/badge";
@@ -619,15 +619,31 @@ export const LoadingReducedMotion: Story = {
 };
 
 /**
- * Error state (broken/corrupted image)
- * Shows the BrokenFile icon when an image fails to load
+ * Error state (broken/corrupted image, `hasError`): the BrokenFile icon, with the "Preview unavailable" tooltip on the
+ * whole image area and no zoom icon on hover.
  */
 export const Error: Story = {
   args: {
     picture_id: 9,
+    src: sampleImageUrl,
     filename: "missing_photo.jpg",
     hasError: true,
     status: MediaStatus.REFUSED_1,
+  },
+};
+
+/**
+ * Media without a preview: a `picture_id` and no `src` (e.g. a version whose thumbnail the server has not generated
+ * yet), neither loading nor pending. Same rendering as an error: the BrokenFile icon and the "Preview unavailable"
+ * tooltip (translated), instead of a blank frame. `onImageClick` still fires: in a contact sheet, the click sends the
+ * `open` change even when the `open` feature is off, so that the application can fetch the thumbnail again.
+ */
+export const PreviewUnavailable: Story = {
+  args: {
+    picture_id: 10,
+    filename: "3340444646875_1.png",
+    view: "1",
+    status: MediaStatus.SELECTED,
   },
 };
 
@@ -1360,3 +1376,68 @@ export const StatusButtons: Story = {
   },
 };
 
+
+/**
+ * Status buttons take any library icon. Broadcast workflow, with the legacy validation glyphs: the
+ * "Broadcast" icon in the colour of status 51 to broadcast a validated image; then the same icon as a
+ * non-clickable indicator (`isActive` + `disabled`) for "to broadcast" (51), "broadcasted" (55) and
+ * "broadcast error" (52, red); "Restore" to restore an ignored image (status 1). Give a `label` (tooltip and accessible name) to any icon
+ * other than "Check" / "X".
+ */
+export const BroadcastAndRestoreButtons: Story = {
+  args: { onStatusButtonClick: fn() },
+  render: (args) => {
+    const indicator = (status: MediaStatus, label: string): ThumbnailStatusButton => ({
+      key: "broadcast-state",
+      icon: "Broadcast",
+      status,
+      label,
+      isActive: true,
+      disabled: true,
+    });
+    const cases: { title: string; status: MediaStatus; buttons: ThumbnailStatusButton[] }[] = [
+      {
+        title: "Validated: Broadcast (clickable)",
+        status: MediaStatus.VALIDATED,
+        buttons: [{ key: "broadcast", icon: "Broadcast", status: MediaStatus.READY_TO_BROADCAST, label: "Broadcast" }],
+      },
+      { title: "51: to broadcast", status: MediaStatus.READY_TO_BROADCAST, buttons: [indicator(MediaStatus.READY_TO_BROADCAST, "To broadcast")] },
+      { title: "55: broadcasted", status: MediaStatus.BROADCAST, buttons: [indicator(MediaStatus.BROADCAST, "Broadcasted")] },
+      { title: "52: broadcast error", status: MediaStatus.ERROR_DURING_BROADCAST, buttons: [indicator(MediaStatus.ERROR_DURING_BROADCAST, "Broadcast error")] },
+      {
+        title: "1: Restore (clickable)",
+        status: MediaStatus.IGNORED,
+        buttons: [{ key: "restore", icon: "Restore", status: MediaStatus.NOT_SELECTED, label: "Restore" }],
+      },
+    ];
+    return (
+      <Layout bg="grey" padding={4}>
+        <div className="grid grid-cols-5 gap-4">
+          {cases.map((c, i) => (
+            <VStack key={c.title} gap={1} className="items-center">
+              <Thumbnail
+                picture_id={i + 1}
+                src={[sampleImageUrl, sampleImageUrl2, sampleImageUrl3][i % 3]}
+                filename={`broadcast_${i + 1}.jpg`}
+                status={c.status}
+                size="200px"
+                statusButtons={c.buttons}
+                onStatusButtonClick={args.onStatusButtonClick}
+              />
+              <span className="text-xs text-center">{c.title}</span>
+            </VStack>
+          ))}
+        </div>
+      </Layout>
+    );
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole("button", { name: "Broadcast" }));
+    await expect(args.onStatusButtonClick).toHaveBeenCalledWith("broadcast", undefined);
+    await expect(canvas.getByRole("button", { name: "Broadcasted" })).toBeDisabled();
+    await expect(canvas.getByRole("button", { name: "Broadcast error" })).toBeDisabled();
+    await userEvent.click(canvas.getByRole("button", { name: "Restore" }));
+    await expect(args.onStatusButtonClick).toHaveBeenCalledWith("restore", undefined);
+  },
+};
