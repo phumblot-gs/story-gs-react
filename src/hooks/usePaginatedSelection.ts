@@ -25,6 +25,18 @@ export interface UsePaginatedSelectionOptions {
   resetKey?: unknown;
 }
 
+/**
+ * Selection change of a contact sheet (`ThumbnailChange` of type `"selection"`), or any
+ * change with the same shape. See `applySelectionChange` for the meaning of `mode`.
+ */
+export interface SelectionChangeLike {
+  mode?: "single" | "toggle" | "range" | "clear";
+  selected: boolean;
+  pictureId: number;
+  pictureIds: number[];
+  deselectPictureIds?: number[];
+}
+
 export interface PaginatedSelection<K> {
   /** Serializable state, to send to an API (`{ mode, keys }`). */
   value: PaginatedSelectionValue<K>;
@@ -44,6 +56,17 @@ export interface PaginatedSelection<K> {
   selectAll: () => void;
   /** Deselects everything. */
   clear: () => void;
+  /**
+   * Applies a contact sheet selection change: `single` keeps only the clicked item (or
+   * empties the selection if it was the only one), `toggle` adds or removes it, `range`
+   * adds the range and removes `deselectPictureIds`, `clear` empties everything.
+   * `toKey` maps a `picture_id` to a key (default: the id itself); `undefined` ignores it.
+   *
+   * ```tsx
+   * onThumbnailChange={(change) => change.type === "selection" && selection.applyChange(change)}
+   * ```
+   */
+  applyChange: (change: SelectionChangeLike, toKey?: (pictureId: number) => K | undefined) => void;
   /** Selection state of a page, for `CheckAll` / `CheckAllPages`. */
   pageState: (pageKeys: K[]) => { selectedCount: number; totalCount: number };
   /** Selected keys among `allKeys` — when every key is in memory. */
@@ -144,6 +167,45 @@ export function usePaginatedSelection<K = string>({
   const selectAll = React.useCallback(() => setState({ mode: "exclude", keys: new Set<K>() }), []);
   const clear = React.useCallback(() => setState(EMPTY()), []);
 
+  const totalCountRef = React.useRef(totalCount);
+  totalCountRef.current = totalCount;
+  const applyChange = React.useCallback(
+    (change: SelectionChangeLike, toKey: (pictureId: number) => K | undefined = (id) => id as unknown as K) => {
+      const keys = (ids: readonly number[] = []) => ids.map(toKey).filter((k): k is K => k !== undefined);
+      setState((current) => {
+        const isOn = (key: K) => (current.mode === "include" ? current.keys.has(key) : !current.keys.has(key));
+        const setOn = (next: Set<K>, key: K, on: boolean) => {
+          // include: the set holds selected keys; exclude: it holds deselected ones.
+          if ((current.mode === "include") === on) next.add(key);
+          else next.delete(key);
+        };
+        switch (change.mode) {
+          case "clear":
+            return EMPTY<K>();
+          case "single": {
+            const key = toKey(change.pictureId);
+            if (key === undefined) return current;
+            const count =
+              current.mode === "include" ? current.keys.size : totalCountRef.current - current.keys.size;
+            return count === 1 && isOn(key) ? EMPTY<K>() : { mode: "include", keys: new Set([key]) };
+          }
+          case "range": {
+            const next = new Set(current.keys);
+            keys(change.deselectPictureIds).forEach((key) => setOn(next, key, false));
+            keys(change.pictureIds).forEach((key) => setOn(next, key, true));
+            return { mode: current.mode, keys: next };
+          }
+          default: {
+            const next = new Set(current.keys);
+            keys(change.pictureIds).forEach((key) => setOn(next, key, change.selected));
+            return { mode: current.mode, keys: next };
+          }
+        }
+      });
+    },
+    [],
+  );
+
   const count =
     state.mode === "include" ? state.keys.size : Math.max(0, totalCount - state.keys.size);
 
@@ -173,6 +235,7 @@ export function usePaginatedSelection<K = string>({
     selectOnly,
     selectAll,
     clear,
+    applyChange,
     pageState,
     resolve,
   };

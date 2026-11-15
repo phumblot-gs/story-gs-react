@@ -51,6 +51,14 @@ export interface ContactSheetThumbnailGridProps {
   features?: ThumbnailFeatures;
   onThumbnailChange?: (change: ThumbnailChange) => void | Promise<void>;
   /**
+   * Échap vide la sélection (événement `selection`, `mode: "clear"`) quand
+   * cette grille a des vignettes sélectionnées. Ignoré si la touche a déjà été
+   * traitée (`event.defaultPrevented` : menu, dialog, popover Radix, ou un
+   * raccourci de l'application qui appelle `preventDefault()`), dans un champ
+   * de saisie, ou avec une touche de modification. Défaut true.
+   */
+  clearSelectionOnEscape?: boolean;
+  /**
    * Nouvel ordre des vignettes d'un export après un drag & drop. Le drag & drop
    * est actif dès que ce callback est fourni. Déposer un média sur un
    * emplacement vide, ou juste devant, le remplit. Les vues restent attachées
@@ -126,6 +134,19 @@ const DRAG_TYPE = "application/x-gs-contact-sheet-thumbnail";
  * nombreuses références.
  */
 export const VIRTUALIZATION_THRESHOLD = 100;
+
+/**
+ * Ancre de la sélection par plage : dernière vignette cliquée sans Maj, toutes
+ * grilles confondues (`owner` = la grille). `range` : dernière plage tracée
+ * depuis elle, pour retirer ce qu'un nouveau Maj+clic ne couvre plus.
+ */
+let selectionAnchor: { owner: object; pictureId: number; range: number[] } | null = null;
+
+/** Échap dans un champ de saisie appartient au champ. */
+function isEditableTarget(target: EventTarget | null): boolean {
+  if (!(target instanceof HTMLElement)) return false;
+  return target.isContentEditable || !!target.closest("input, textarea, select, [contenteditable='true']");
+}
 
 /** A cached image remounted by virtualization is already visible; only a new
  * reveal (or a changed URL) should fade. This flag lives with the mounted cell,
@@ -257,6 +278,7 @@ export const ContactSheetThumbnailGrid: React.FC<ContactSheetThumbnailGridProps>
   imageCache,
   features,
   onThumbnailChange,
+  clearSelectionOnEscape = true,
   onReorder,
   onExportHover,
   exportsLayout = "grouped",
@@ -505,22 +527,58 @@ export const ContactSheetThumbnailGrid: React.FC<ContactSheetThumbnailGridProps>
     endDrag();
   };
 
-  // --- Sélection : Maj+clic sélectionne une plage ------------------------------
-  // L'ancre est la dernière vignette cliquée. Avec Maj, toutes les vignettes
-  // entre l'ancre et la vignette cliquée (ordre d'affichage, tous exports
-  // confondus) prennent le nouvel état de la vignette cliquée.
-  const anchorRef = React.useRef<number | null>(null);
+  // --- Sélection ---------------------------------------------------------------
+  // Clic sur le pied : sélection simple. Case à cocher ou Ctrl/Cmd+clic : bascule.
+  // Maj+clic : plage depuis l'ancre (dernier clic sans Maj), si elle est dans
+  // cette grille ; sinon, sélection simple. L'ancre est partagée entre toutes
+  // les grilles (module) : un clic dans une autre référence la déplace.
+  const ownerRef = React.useRef({});
   const displayOrder = exports.flatMap((e) =>
     e.thumbnails.filter((t) => !isEmptySlot(t)).map((t) => t.picture_id as number),
   );
+
+  const selectionEnabled = !!enabled?.selection;
+  React.useEffect(() => {
+    if (!clearSelectionOnEscape || !selectionEnabled) return;
+    // Sur window, en bulle : après les écouteurs de document (overlays Radix en
+    // capture, raccourcis de l'application). Une touche déjà traitée
+    // (preventDefault) ne vide pas la sélection : on ne la consomme pas non plus.
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Escape" || event.defaultPrevented || event.isComposing) return;
+      if (event.shiftKey || event.ctrlKey || event.metaKey || event.altKey) return;
+      if (isEditableTarget(event.target)) return;
+      const selected: { exportId: string | number; pictureId: number }[] = [];
+      latestRef.current.exports.forEach((group) =>
+        group.thumbnails.forEach((t) => {
+          if (t.selected && !isEmptySlot(t)) selected.push({ exportId: group.id, pictureId: t.picture_id as number });
+        }),
+      );
+      if (selected.length === 0) return;
+      if (selectionAnchor?.owner === ownerRef.current) selectionAnchor = null;
+      latestRef.current.onThumbnailChange?.({
+        type: "selection",
+        mode: "clear",
+        selected: false,
+        modifiers: { shiftKey: false, ctrlKey: false, metaKey: false },
+        pictureId: selected[0].pictureId,
+        exportId: selected[0].exportId,
+        pictureIds: selected.map((s) => s.pictureId),
+      });
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [clearSelectionOnEscape, selectionEnabled]);
+  React.useEffect(() => () => {
+    if (selectionAnchor?.owner === ownerRef.current) selectionAnchor = null;
+  }, []);
 
   // --- Callbacks stables ------------------------------------------------------
   // Une vignette ne se redessine que si ses props changent (Thumbnail est
   // mémoïsé) : ses callbacks doivent donc garder leur identité d'un rendu à
   // l'autre. Ils sont créés une fois par (export, média) et lisent les
   // dernières props au moment de l'appel.
-  const latestRef = React.useRef({ onThumbnailChange, displayOrder });
-  latestRef.current = { onThumbnailChange, displayOrder };
+  const latestRef = React.useRef({ onThumbnailChange, displayOrder, exports });
+  latestRef.current = { onThumbnailChange, displayOrder, exports };
   const thumbsRef = React.useRef(new Map<string, ContactSheetThumbnail>());
   const handlersRef = React.useRef(new Map<string, ThumbnailHandlers>());
   const actionsRef = React.useRef(new Map<string, { signature: string; actions: ThumbnailAction[] }>());
@@ -550,12 +608,21 @@ export const ContactSheetThumbnailGrid: React.FC<ContactSheetThumbnailGridProps>
     const send = (change: DistributiveOmit<ThumbnailChange, "pictureId" | "exportId">) =>
       latestRef.current.onThumbnailChange?.({ ...change, pictureId, exportId } as ThumbnailChange);
     const handlers: ThumbnailHandlers = {
-      onSelectionChange: (selected, modifiers) => {
-        const pictureIds = modifiers.shiftKey
-          ? getSelectionRange(latestRef.current.displayOrder, anchorRef.current, pictureId)
-          : [pictureId];
-        anchorRef.current = pictureId;
-        send({ type: "selection", selected, modifiers, pictureIds });
+      onSelectionChange: (selected, { source, ...modifiers }) => {
+        const owner = ownerRef.current;
+        const order = latestRef.current.displayOrder;
+        const anchor = selectionAnchor;
+        if (modifiers.shiftKey && anchor?.owner === owner && order.includes(anchor.pictureId)) {
+          const range = getSelectionRange(order, anchor.pictureId, pictureId);
+          const deselectPictureIds = anchor.range.filter((id) => !range.includes(id));
+          anchor.range = range; // l'ancre reste : un autre Maj+clic ajuste la plage
+          send({ type: "selection", mode: "range", selected: true, modifiers, pictureIds: range, deselectPictureIds });
+          return;
+        }
+        selectionAnchor = { owner, pictureId, range: [pictureId] };
+        // Ctrl+clic sous macOS ouvre le menu contextuel : Cmd y tient lieu de Ctrl.
+        const mode = source === "checkbox" || modifiers.ctrlKey || modifiers.metaKey ? "toggle" : "single";
+        send({ type: "selection", mode, selected, modifiers, pictureIds: [pictureId] });
       },
       onRatingChange: (rating) => send({ type: "rating", rating }),
       onLabelChange: (label) => send({ type: "label", label }),

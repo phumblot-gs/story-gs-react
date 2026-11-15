@@ -12,6 +12,7 @@ export interface ContactSheetPictureProps extends Pick<
   | "exports"
   | "thumbnailsPerRow"
   | "onThumbnailChange"
+  | "clearSelectionOnEscape"
   | "thumbnailFeatures"
   | "imageCache"
   | "bench"
@@ -53,6 +54,7 @@ export const ContactSheetPicture: React.FC<ContactSheetPictureProps> = ({
   exports = [],
   thumbnailsPerRow = 6,
   onThumbnailChange,
+  clearSelectionOnEscape,
   thumbnailFeatures,
   bench,
   imageLoading = "grouped",
@@ -103,6 +105,7 @@ export const ContactSheetPicture: React.FC<ContactSheetPictureProps> = ({
           virtualized={virtualized}
           features={thumbnailFeatures}
           onThumbnailChange={onThumbnailChange}
+          clearSelectionOnEscape={clearSelectionOnEscape}
           onReorder={onReorder}
           bench={bench}
           imageLoading={imageLoading}

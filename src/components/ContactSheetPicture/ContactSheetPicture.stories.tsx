@@ -1,7 +1,7 @@
 import * as React from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { ContactSheetPicture, type ContactSheetPictureProps } from ".";
-import type { ContactSheetExport, ThumbnailChange } from "@/components/ContactSheetReference";
+import { applySelectionChange, type ContactSheetExport, type ThumbnailChange } from "@/components/ContactSheetReference";
 import { MediaStatus } from "@/utils/mediaStatus";
 import { Pagination as PaginationControl } from "@/components/ui/pagination";
 import { usePaginatedSelection } from "@/hooks/usePaginatedSelection";
@@ -52,12 +52,22 @@ function Playground(args: ContactSheetPictureProps) {
         })))}
         onThumbnailChange={(change) => {
           setLastChange(change);
+          if (change.type === "selection") {
+            // Clic simple, Ctrl/Cmd+clic, Maj+clic, Échap : applySelectionChange applique le mode.
+            return setGroups((all) => {
+              const after = applySelectionChange(
+                new Set(all.flatMap((g) => g.thumbnails).flatMap((t) => (t.selected && t.picture_id ? [t.picture_id] : []))),
+                change,
+              );
+              return all.map((group) => ({
+                ...group,
+                thumbnails: group.thumbnails.map((t) => (t.picture_id ? { ...t, selected: after.has(t.picture_id) } : t)),
+              }));
+            });
+          }
           setGroups((all) => all.map((group) => ({
             ...group,
             thumbnails: group.thumbnails.map((thumb) => {
-              if (change.type === "selection") {
-                return change.pictureIds.includes(thumb.picture_id!) ? { ...thumb, selected: change.selected } : thumb;
-              }
               if (group.id !== change.exportId || thumb.picture_id !== change.pictureId) return thumb;
               switch (change.type) {
                 case "rating": return { ...thumb, rating: change.rating };
@@ -88,7 +98,10 @@ function Playground(args: ContactSheetPictureProps) {
   );
 }
 
-/** Controlled selection, Shift+click, status actions and drag & drop; no reference grouping. */
+/**
+ * Controlled selection (footer click: single; checkbox or Ctrl/Cmd+click: toggle; Shift+click:
+ * range; Escape: clear), status actions and drag & drop; no reference grouping.
+ */
 export const Default: Story = { render: (args) => <Playground {...args} /> };
 
 /** Read-only: no selection toolbar or interactive thumbnail controls. */
@@ -157,7 +170,7 @@ function PaginatedDemo() {
         onSelectionChange={(selected, ids) => selection.setMany(ids, selected)}
         thumbnailFeatures={{ rating: false, label: false, tags: false, comments: false, validation: false, open: false }}
         onThumbnailChange={(change) => {
-          if (change.type === "selection") selection.setMany(change.pictureIds, change.selected);
+          if (change.type === "selection") selection.applyChange(change);
         }}
       />
     </>

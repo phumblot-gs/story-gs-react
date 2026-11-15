@@ -153,6 +153,9 @@ export interface ContactSheetExport {
   thumbnails: ContactSheetThumbnail[];
 }
 
+/** See `ThumbnailChange` (`type: "selection"`). */
+export type SelectionMode = "single" | "toggle" | "range" | "clear";
+
 export interface SelectionModifiers {
   shiftKey: boolean;
   ctrlKey: boolean;
@@ -166,13 +169,33 @@ export interface SelectionModifiers {
 export type ThumbnailChange = { pictureId: number; exportId: string | number } & (
   | {
       type: "selection";
+      /**
+       * How to apply the change. `applySelectionChange` does it for you:
+       * - `"single"`: click on the thumbnail footer. The clicked thumbnail becomes the
+       *   only selected one; if it already was, the selection is emptied.
+       * - `"toggle"`: checkbox, or Ctrl+click (Cmd+click on Mac). Adds or removes the
+       *   clicked thumbnail, the rest of the selection is kept (other references included).
+       * - `"range"`: Shift+click. Adds `pictureIds`, the range from the anchor (last click
+       *   without Shift, in the same grid) to the clicked thumbnail; removes
+       *   `deselectPictureIds`, the part of the previous range from the same anchor that
+       *   the new range no longer covers. Without an anchor in this grid: `"single"`.
+       * - `"clear"`: Escape, nothing else handled the key. Empty the whole selection.
+       */
+      mode: SelectionMode;
+      /**
+       * New state of the clicked thumbnail as a plain toggle would give it (`true` for a
+       * range, `false` for clear). Kept for applications that set `selected` on
+       * `pictureIds` without reading `mode`: they keep the previous toggle behaviour.
+       */
       selected: boolean;
       modifiers: SelectionModifiers;
       /**
-       * Thumbnails to set to `selected`: the clicked one alone, or with Shift the
-       * whole range from the last clicked thumbnail (display order).
+       * Thumbnails concerned: the clicked one, the range with Shift, the selected
+       * thumbnails of this grid for `"clear"`.
        */
       pictureIds: number[];
+      /** `"range"` only: thumbnails of the previous range to deselect (may be empty). */
+      deselectPictureIds?: number[];
     }
   | { type: "rating"; rating: number }
   | { type: "label"; label: LabelColor }

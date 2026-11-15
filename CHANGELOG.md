@@ -5,6 +5,43 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.43.0] - 2026-11-15
+
+### Ajouté
+
+- `ContactSheetReference` / `ContactSheetPicture` : modes de sélection des vues, à la manière du Finder. L'événement
+  `selection` de `onThumbnailChange` porte un nouveau champ `mode` (type `SelectionMode`) :
+  - `"single"` : clic sur le pied d'une vignette. Seule la vue cliquée reste sélectionnée, toutes références
+    confondues ; si elle était déjà la seule sélectionnée, la sélection se vide ;
+  - `"toggle"` : case à cocher, ou Ctrl+clic (Cmd+clic sur Mac, où Ctrl+clic ouvre le menu contextuel). Ajoute ou
+    retire la vue, le reste de la sélection est gardé (autres références comprises) ;
+  - `"range"` : Maj+clic. Plage de la même référence depuis l'ancre (dernier clic sans Maj) ; un nouveau Maj+clic
+    ajuste la même plage, `deselectPictureIds` liste ce qu'elle ne couvre plus. Ancre dans une autre référence (ou
+    aucune) : `"single"` ;
+  - `"clear"` : Échap vide la sélection.
+- Échap : écouté sur `window` en phase de bulle, donc après les écouteurs de `document` et les overlays Radix (menus,
+  dialogs, popovers, qui appellent `preventDefault()` en se fermant). Ignoré si la touche a déjà été traitée
+  (`event.defaultPrevented`), dans un champ de saisie, avec une touche de modification ou sans vue sélectionnée ; le
+  composant n'appelle jamais `preventDefault()` lui-même. Prop `clearSelectionOnEscape` (défaut `true`) sur
+  `ContactSheetReference`, `ContactSheetPicture` et `ContactSheetThumbnailGrid` pour le désactiver.
+- `applySelectionChange(selected, change, toId?)` : nouvelle sélection (`Set`) après un événement `selection`, avec
+  `toId` pour les identifiants de l'application. `usePaginatedSelection` : méthode `applyChange(change, toKey?)`, qui
+  gère aussi le mode « tout sélectionné » (`exclude`). Type `SelectionChangeLike`.
+- `Thumbnail` : l'événement de `onSelectionChange` indique `source: "checkbox" | "footer"` (type
+  `ThumbnailSelectionEvent`).
+- Story `Components/ContactSheetReference` → `Contact Sheet` : trois références et une sélection commune à la page.
+
+### Modifié
+
+- **Impact consommateurs (action requise pour le nouveau comportement)** — la sélection reste contrôlée par
+  l'application : tant qu'elle applique `selected` à `pictureIds` sans lire `mode`, rien ne change pour elle (bascule
+  au clic). Pour la sélection simple, Ctrl/Cmd+clic, la plage ajustable et Échap, passer l'événement à
+  `applySelectionChange` ou `selection.applyChange`. Maj+clic envoie désormais toujours `selected: true` (la plage est
+  ajoutée), au lieu du nouvel état de la vue cliquée.
+- **Impact consommateurs (Échap)** — un raccourci Échap de l'application qui doit passer avant la planche contact
+  (ex. effacer une surbrillance) doit appeler `event.preventDefault()` quand il agit ; sinon le même Échap vide aussi
+  la sélection. Ou passer `clearSelectionOnEscape={false}`.
+
 ## [1.42.1] - 2026-11-15
 
 ### Modifié
