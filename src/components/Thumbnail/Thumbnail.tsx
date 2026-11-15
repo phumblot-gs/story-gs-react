@@ -112,6 +112,15 @@ export interface ThumbnailAction {
   disabled?: boolean;
 }
 
+/** Événement de `onSelectionChange` : touches enfoncées et origine du clic. */
+export interface ThumbnailSelectionEvent {
+  shiftKey: boolean;
+  ctrlKey: boolean;
+  metaKey: boolean;
+  /** Case à cocher, ou clic sur le pied de la vignette. */
+  source: "checkbox" | "footer";
+}
+
 export interface ThumbnailProps {
   // Image data
   /** ID de la photo */
@@ -241,8 +250,13 @@ export interface ThumbnailProps {
   // Callbacks
   /** Callback appelé lors du clic sur l'image (zoom) */
   onImageClick?: () => void;
-  /** Callback appelé lors de la sélection/désélection */
-  onSelectionChange?: (selected: boolean, event: { shiftKey: boolean; ctrlKey: boolean; metaKey: boolean }) => void;
+  /**
+   * Callback appelé lors de la sélection/désélection. `source` : la case à
+   * cocher (`"checkbox"`) ou un clic sur le pied (`"footer"`, voir
+   * `selectOnFooterClick`) ; une planche contact s'en sert pour distinguer la
+   * bascule (case) de la sélection simple (pied).
+   */
+  onSelectionChange?: (selected: boolean, event: ThumbnailSelectionEvent) => void;
   /** Callback de chargement réussi de l'image */
   onImageLoad?: () => void;
   /** Callback d'erreur de chargement de l'image */
@@ -704,6 +718,7 @@ const ThumbnailBase: React.FC<ThumbnailProps> = ({
           shiftKey: clickEvent?.shiftKey || false,
           ctrlKey: clickEvent?.ctrlKey || false,
           metaKey: clickEvent?.metaKey || false,
+          source: "checkbox",
         });
         clickEventRef.current = null;
       }
@@ -727,7 +742,8 @@ const ThumbnailBase: React.FC<ThumbnailProps> = ({
     [copyFilenameOnClick, filename]
   );
 
-  // Clic sur le pied : bascule la sélection, sauf sur un élément interactif.
+  // Clic sur le pied : bascule la sélection (source "footer" : une planche
+  // contact en fait une sélection simple), sauf sur un élément interactif.
   // Les événements React traversent les portails : un clic dans un menu ouvert
   // depuis le pied (étoiles, tags…) remonte ici, d'où le test `contains`.
   const handleFooterClick = useCallback(
@@ -736,7 +752,7 @@ const ThumbnailBase: React.FC<ThumbnailProps> = ({
       const target = e.target as Element;
       if (!e.currentTarget.contains(target)) return;
       if (target.closest("button, a, input, textarea, select, [role='menu'], [role='dialog']")) return;
-      onSelectionChange(!selected, { shiftKey: e.shiftKey, ctrlKey: e.ctrlKey, metaKey: e.metaKey });
+      onSelectionChange(!selected, { shiftKey: e.shiftKey, ctrlKey: e.ctrlKey, metaKey: e.metaKey, source: "footer" });
     },
     [selectOnFooterClick, onSelectionChange, selected]
   );

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type Dispatch, type SetStateAction } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, fn, userEvent, within } from "storybook/test";
 import { Layout } from "@/components/layout";
@@ -9,6 +9,7 @@ import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/h
 import { VedetteIndicator } from "@/components/Thumbnail/VedetteIndicator";
 import { MediaStatus } from "@/utils/mediaStatus";
 import { ContactSheetReference, type ContactSheetReferenceProps } from "./ContactSheetReference";
+import { applySelectionChange } from "./selection";
 import type { ThumbnailStatusButton } from "@/components/Thumbnail/Thumbnail";
 import type {
   ContactSheetExport,
@@ -277,17 +278,19 @@ function useReferenceState(initial: { reference: ReferenceData; exports: Contact
     const current = findThumbnail(change.pictureId);
     switch (change.type) {
       case "selection":
-        // Maj+clic : toute la plage passe au nouvel état.
-        return setExports((all) =>
-          all.map((e) => ({
+        // Clic simple, Ctrl/Cmd+clic, Maj+clic, Échap : applySelectionChange applique le mode.
+        return setExports((all) => {
+          const before = new Set(
+            all.flatMap((e) => e.thumbnails).flatMap((t) => (t.selected && t.picture_id !== undefined ? [t.picture_id] : [])),
+          );
+          const after = applySelectionChange(before, change);
+          return all.map((e) => ({
             ...e,
             thumbnails: e.thumbnails.map((t) =>
-              t.picture_id !== undefined && change.pictureIds.includes(t.picture_id)
-                ? { ...t, selected: change.selected }
-                : t,
+              t.picture_id === undefined ? t : { ...t, selected: after.has(t.picture_id) },
             ),
-          })),
-        );
+          }));
+        });
       case "rating":
         return patchThumbnail(change.pictureId, { rating: change.rating });
       case "label":
@@ -509,8 +512,9 @@ export const Selected: Story = {
  * - onto another (its central 70%) → 2px dashed outline, the two are swapped;
  * - between two thumbnails, or at the start / end → vertical bar, the thumbnail is inserted.
  *
- * Selection: check a thumbnail, then Shift+click another one to select (or deselect) every
- * thumbnail in between. Dragging a selected thumbnail moves the whole selection of its export.
+ * Selection: a click on a thumbnail footer selects it alone; the checkbox or Ctrl+click (Cmd+click
+ * on Mac) adds or removes it; Shift+click selects every thumbnail between the last click and this
+ * one. Escape empties the selection. Dragging a selected thumbnail moves the whole selection of its export.
  */
 export const DragAndDropAndRangeSelection: Story = {
   render: () => <Playground count={12} />,
@@ -985,10 +989,19 @@ export const StatusButtons: Story = {
 };
 
 /** Contact sheet: several stacked references, adjustable number of thumbnails per row. */
+/**
+ * Several references, one selection shared by the page (as in an application):
+ * - click on a thumbnail footer → only that thumbnail is selected, in every reference;
+ * - checkbox, or Ctrl+click (Cmd+click on Mac) → adds or removes it, across references;
+ * - Shift+click → the range from the last click, within the same reference (in another
+ *   reference: a simple click);
+ * - Escape → empties the selection, unless a menu, a dialog or a text field takes the key.
+ */
 export const ContactSheet: Story = {
   render: () => {
     const Sheet = () => {
       const [perRow, setPerRow] = useState(6);
+      const [selection, setSelection] = useState<Set<number>>(() => new Set());
       return (
         <Layout bg="grey" className="min-h-screen">
           <div className="flex items-center gap-6 px-6 py-3 border-b border-grey-strong text-sm">
@@ -997,23 +1010,49 @@ export const ContactSheet: Story = {
               <Slider min={4} max={10} step={1} value={[perRow]} onValueChange={([v]) => setPerRow(v)} />
             </label>
           </div>
+          <div className="px-6 py-2 text-sm" data-testid="selection-count">
+            {selection.size} selected
+          </div>
           {["7e0125de91", "7e0127dr0x", "5238694"].map((ref, i) => (
-            <SheetRow key={ref} refName={ref} index={i} perRow={perRow} />
+            <SheetRow key={ref} refName={ref} index={i} perRow={perRow} selection={selection} setSelection={setSelection} />
           ))}
         </Layout>
       );
     };
-    const SheetRow = ({ refName, index, perRow }: { refName: string; index: number; perRow: number }) => {
+    const SheetRow = ({
+      refName,
+      index,
+      perRow,
+      selection,
+      setSelection,
+    }: {
+      refName: string;
+      index: number;
+      perRow: number;
+      selection: Set<number>;
+      setSelection: Dispatch<SetStateAction<Set<number>>>;
+    }) => {
       const props = useReferenceState({
         reference: makeReference(refName, index),
-        exports: [{ id: "e", name: "Place des tendances", thumbnails: makeThumbnails(refName, 6 + index * 3) }],
+        // picture_id uniques d'une référence à l'autre : la sélection de la page est indexée par eux.
+        exports: [{ id: "e", name: "Place des tendances", thumbnails: makeThumbnails(refName, 6 + index * 3, index * 100) }],
       });
+      const exports = (props.exports ?? []).map((e) => ({
+        ...e,
+        thumbnails: e.thumbnails.map((t) => ({ ...t, selected: t.picture_id !== undefined && selection.has(t.picture_id) })),
+      }));
       return (
         <ContactSheetReference
           {...props}
+          exports={exports}
           reference={props.reference!}
           attributes={ATTRIBUTES}
           thumbnailsPerRow={perRow}
+          onThumbnailChange={(change) =>
+            change.type === "selection"
+              ? setSelection((current) => applySelectionChange(current, change))
+              : props.onThumbnailChange?.(change)
+          }
         />
       );
     };

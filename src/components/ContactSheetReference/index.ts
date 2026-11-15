@@ -12,6 +12,7 @@ export { ReferenceEditModal } from "./ReferenceEditModal";
 export type { ReferenceEditModalProps } from "./ReferenceEditModal";
 
 export { isEmptySlot } from "./types";
+export { applySelectionChange } from "./selection";
 export type { ContactSheetImageCache } from "@/lib/grouped-image-loading";
 export { getReferenceDisplayName } from "./reference-name";
 
@@ -27,5 +28,6 @@ export type {
   ThumbnailChange,
   ThumbnailFeatures,
   SelectionModifiers,
+  SelectionMode,
   ReferenceUpdate,
 } from "./types";

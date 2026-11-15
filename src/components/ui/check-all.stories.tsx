@@ -79,6 +79,7 @@ must never silently apply to another set of items. A change of \`totalCount\` al
 | \`count\`, \`totalCount\`, \`isAllSelected\` | counters |
 | \`isSelected(key)\`, \`toggle(key)\` | one item |
 | \`setMany(keys, selected)\` | several items (a page, a Shift+click range) |
+| \`applyChange(change, toKey?)\` | a contact sheet \`selection\` change (single, toggle, range, clear) |
 | \`selectOnly(keys)\`, \`selectAll()\`, \`clear()\` | scope |
 | \`pageState(pageKeys)\` | \`{ selectedCount, totalCount }\` for \`CheckAll\` |
 | \`resolve(allKeys)\` | selected keys among \`allKeys\` |

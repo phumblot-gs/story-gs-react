@@ -169,7 +169,7 @@ function PaginatedContactSheet({ filters }: { filters: string }) {
           thumbnailFeatures={{ rating: false, label: false, tags: false,
             comments: false, validation: false, open: false }}
           onThumbnailChange={(change) => {
-            if (change.type === "selection") selection.setMany(change.pictureIds, change.selected);
+            if (change.type === "selection") selection.applyChange(change);
           }}
         />
       )}

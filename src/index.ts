@@ -640,6 +640,7 @@ export type {
   PaginatedSelection,
   PaginatedSelectionValue,
   UsePaginatedSelectionOptions,
+  SelectionChangeLike,
 } from "./hooks/usePaginatedSelection";
 export { Switch };
 export { TagText };
@@ -745,6 +746,7 @@ export type {
   ThumbnailPresetSize,
   ThumbnailAction,
   ThumbnailStatusButton,
+  ThumbnailSelectionEvent,
   AlertIndicatorProps,
   VedetteIndicatorProps,
   UrgentIndicatorProps,
@@ -765,6 +767,7 @@ export {
   ReferenceAttributes,
   ReferenceEditModal,
   getReferenceDisplayName,
+  applySelectionChange,
 } from "./components/ContactSheetReference";
 export type {
   ContactSheetReferenceProps,
@@ -782,6 +785,7 @@ export type {
   ThumbnailChange,
   ThumbnailFeatures,
   SelectionModifiers,
+  SelectionMode,
   ReferenceUpdate,
 } from "./components/ContactSheetReference";
 

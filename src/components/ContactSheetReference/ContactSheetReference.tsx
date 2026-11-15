@@ -118,6 +118,14 @@ export interface ContactSheetReferenceProps {
    * `ThumbnailChange`).
    */
   onThumbnailChange?: (change: ThumbnailChange) => void | Promise<void>;
+  /**
+   * Escape empties the selection (`selection` change, `mode: "clear"`) when this
+   * contact sheet has selected thumbnails. Ignored when the key was already handled
+   * (`event.defaultPrevented`: Radix menu, dialog or popover, or an application
+   * shortcut that calls `preventDefault()`), in a text field, or with a modifier
+   * key. Default true.
+   */
+  clearSelectionOnEscape?: boolean;
   /** Interactions enabled on the thumbnails (all by default). */
   thumbnailFeatures?: ThumbnailFeatures;
   /** Bench data passed to the thumbnails (rejection reasons). */
@@ -177,6 +185,7 @@ export const ContactSheetReference: React.FC<ContactSheetReferenceProps> = ({
   showEditButton = true,
   headerActions,
   onThumbnailChange,
+  clearSelectionOnEscape,
   thumbnailFeatures,
   bench,
   imageLoading,
@@ -250,6 +259,7 @@ export const ContactSheetReference: React.FC<ContactSheetReferenceProps> = ({
       renderExportHeader={(e) => (e.name ? renderBadge(e) : null)}
       features={thumbnailFeatures}
       onThumbnailChange={onThumbnailChange}
+      clearSelectionOnEscape={clearSelectionOnEscape}
       onReorder={onReorder}
       onExportHover={setHoveredExportId}
       bench={bench}
