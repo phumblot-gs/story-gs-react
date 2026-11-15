@@ -1,7 +1,11 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
+import { TruncatedText } from "@/components/ui/truncated-text";
 import type { ReferenceAttributeConfig, ReferenceData } from "./types";
 import { formatAttributeValue, getAttributeValue } from "./attribute-values";
+
+/** Largeur max du tooltip d'un libellé ou d'une valeur coupés. */
+const TOOLTIP_MAX_WIDTH = "max-w-[320px]";
 
 export interface ReferenceAttributesProps {
   reference: ReferenceData;
@@ -13,7 +17,9 @@ export interface ReferenceAttributesProps {
  * Grille d'attributs « libellé | valeur ». Trois colonnes au plus — au-delà la
  * lecture devient difficile — puis empilement selon la largeur disponible : la
  * largeur minimale d'une colonne est le tiers du conteneur (moins 1px pour
- * absorber les arrondis), sans descendre sous 240px.
+ * absorber les arrondis), sans descendre sous 240px. Dans une case, le libellé
+ * prend 1/3 de la largeur, la valeur 2/3 ; coupés par « … », ils affichent le
+ * texte complet en tooltip au survol.
  */
 export const ReferenceAttributes: React.FC<ReferenceAttributesProps> = ({
   reference,
@@ -41,13 +47,27 @@ export const ReferenceAttributes: React.FC<ReferenceAttributesProps> = ({
           return (
             <div
               key={attribute.key}
-              className="grid grid-cols-2 bg-grey-lighter border-t border-grey-light text-sm min-w-0"
+              // minmax(0, …) : une valeur très longue est coupée, elle n'élargit pas sa colonne.
+              className="grid grid-cols-[minmax(0,1fr)_minmax(0,2fr)] bg-grey-lighter border-t border-grey-light text-sm min-w-0"
               data-attribute={attribute.key}
             >
-              <dt className="px-3 py-2 font-medium truncate border-r border-grey-light">
-                {attribute.label}
-              </dt>
-              <dd className="px-3 py-2 m-0 opacity-70 truncate">{value}</dd>
+              <TruncatedText
+                as="dt"
+                text={attribute.label}
+                className="px-3 py-2 font-medium border-r border-grey-light"
+                tooltipMaxWidth={TOOLTIP_MAX_WIDTH}
+              />
+              {typeof value === "string" || typeof value === "number" ? (
+                <TruncatedText
+                  as="dd"
+                  text={String(value)}
+                  className="px-3 py-2 m-0 opacity-70"
+                  tooltipMaxWidth={TOOLTIP_MAX_WIDTH}
+                />
+              ) : (
+                // Rendu personnalisé (format renvoie un nœud) : coupé, sans tooltip.
+                <dd className="px-3 py-2 m-0 opacity-70 truncate">{value}</dd>
+              )}
             </div>
           );
         })}

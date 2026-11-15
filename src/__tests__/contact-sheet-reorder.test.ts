@@ -20,11 +20,14 @@ const rects = [cell(0, 0), cell(1, 0), cell(2, 0), cell(0, 1), cell(1, 1), cell(
 const opts = { gap: 10 };
 
 describe("computeDropTarget", () => {
-  it("permute sur le tiers central d'une autre vignette", () => {
+  it("permute sur les 70 % centraux d'une autre vignette", () => {
     expect(computeDropTarget({ x: 245, y: 45 }, rects, 0, opts)).toEqual({ kind: "swap", index: 2 });
+    // Dès 15 % de la largeur (13,5 px sur 90) : permutation, plus tôt qu'avec des tiers.
+    expect(computeDropTarget({ x: 215, y: 45 }, rects, 0, opts)).toEqual({ kind: "swap", index: 2 });
+    expect(computeDropTarget({ x: 275, y: 45 }, rects, 0, opts)).toEqual({ kind: "swap", index: 2 });
   });
 
-  it("intercale sur les tiers gauche et droit", () => {
+  it("intercale sur les 15 % gauche et droit", () => {
     expect(computeDropTarget({ x: 205, y: 45 }, rects, 0, opts)).toEqual({
       kind: "insert",
       anchor: 2,
@@ -69,10 +72,10 @@ describe("computeDropTarget", () => {
 
   it("garde la cible courante tant que le pointeur reste dans sa zone élargie (aimant)", () => {
     const previous = { kind: "swap", index: 2 } as const;
-    // 230-260 est la zone centrale ; 222 est dans le tiers gauche mais à moins de 12px.
-    expect(computeDropTarget({ x: 222, y: 45 }, rects, 0, { ...opts, previous })).toEqual(previous);
-    // Sans cible courante, 222 vaut insertion.
-    expect(computeDropTarget({ x: 222, y: 45 }, rects, 0, opts)?.kind).toBe("insert");
+    // 213,5-276,5 est la zone centrale ; 205 est dans la bande gauche mais à moins de 12px.
+    expect(computeDropTarget({ x: 205, y: 45 }, rects, 0, { ...opts, previous })).toEqual(previous);
+    // Sans cible courante, 205 vaut insertion.
+    expect(computeDropTarget({ x: 205, y: 45 }, rects, 0, opts)?.kind).toBe("insert");
   });
 });
 

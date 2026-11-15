@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
 import userEvent from "@testing-library/user-event";
@@ -50,6 +50,15 @@ const makeExports = (selected: number[] = [], status = MediaStatus.SUBMITTED_FOR
 
 const referenceCheckbox = () => screen.getByRole("checkbox", { name: /7e0125de91/ });
 
+/** Pas de mise en page : textes plus larges que leur case. Renvoie la restauration. */
+const stubCutText = () => {
+  const spies = [
+    vi.spyOn(HTMLElement.prototype, "scrollWidth", "get").mockReturnValue(400),
+    vi.spyOn(HTMLElement.prototype, "clientWidth", "get").mockReturnValue(100),
+  ];
+  return () => spies.forEach((spy) => spy.mockRestore());
+};
+
 describe("ContactSheetReference", () => {
   it("affiche les attributs configurés, même absents des données", () => {
     const { container } = render(<ContactSheetReference reference={reference} attributes={attributes} />);
@@ -63,6 +72,31 @@ describe("ContactSheetReference", () => {
     expect(container.querySelector('[data-attribute="eans"] dd')).toHaveTextContent(
       "810177861393, 810177861394",
     );
+  });
+
+  it("libellé et valeur coupés : « … » et tooltip avec le texte complet au survol", async () => {
+    onTestFinished(stubCutText());
+    const { container } = render(<ContactSheetReference reference={reference} attributes={attributes} />);
+    const value = container.querySelector('[data-attribute="extra.supplier_ref"] dd') as HTMLElement;
+    const label = container.querySelector('[data-attribute="extra.supplier_ref"] dt') as HTMLElement;
+    expect(value).toHaveClass("truncate");
+    expect(value).toHaveAttribute("data-state", "closed");
+    expect(label).toHaveAttribute("data-state", "closed");
+    await userEvent.hover(value);
+    expect(await screen.findByRole("tooltip")).toHaveTextContent("HYDRATION HEROS");
+  });
+
+  it("valeur rendue par format (nœud React) : coupée, sans tooltip", () => {
+    onTestFinished(stubCutText());
+    const { container } = render(
+      <ContactSheetReference
+        reference={reference}
+        attributes={[{ key: "color", label: "Couleur", format: () => <b>Rouge</b> }]}
+      />,
+    );
+    const value = container.querySelector('[data-attribute="color"] dd') as HTMLElement;
+    expect(value).toHaveClass("truncate");
+    expect(value).not.toHaveAttribute("data-state");
   });
 
   it("affiche les badges d'export dans l'ordre reçu", () => {

@@ -238,6 +238,8 @@ const makeReference = (ref: string, id: number): ReferenceData => ({
   category_name: "default",
   smalltext: "NO26 COF HYDRATATION HEROS SET",
   tags: ["FW26"],
+  // Valeur longue : coupée par « … », texte complet en tooltip au survol.
+  extra: { ean_alternative: ["3614273955928", "3614273955935", "3614273955942", "3614273955959"] },
 });
 
 const makeThumbnails = (ref: string, count: number, offset = 0): ContactSheetThumbnail[] =>
@@ -504,7 +506,7 @@ export const Selected: Story = {
 
 /**
  * Drag & drop, always enabled. Drag a thumbnail:
- * - onto the middle third of another → dashed outline, the two are swapped;
+ * - onto another (its central 70%) → 2px dashed outline, the two are swapped;
  * - between two thumbnails, or at the start / end → vertical bar, the thumbnail is inserted.
  *
  * Selection: check a thumbnail, then Shift+click another one to select (or deselect) every

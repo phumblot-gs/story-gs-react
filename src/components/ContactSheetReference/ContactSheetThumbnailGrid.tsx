@@ -713,7 +713,7 @@ export const ContactSheetThumbnailGrid: React.FC<ContactSheetThumbnailGridProps>
 
         {isSwapTarget && (
           <div
-            className="pointer-events-none absolute -inset-1 rounded-sm border border-dashed border-grey-strongest animate-in fade-in-0 duration-100"
+            className="pointer-events-none absolute -inset-1 rounded-sm border-2 border-dashed border-grey-strongest animate-in fade-in-0 duration-100"
             data-testid="swap-indicator"
           />
         )}
