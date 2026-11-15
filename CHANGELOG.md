@@ -5,6 +5,26 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.42.1] - 2026-11-15
+
+### Modifié
+
+- **Impact consommateurs (visible)** — `ContactSheetReference`, attributs sous le titre : dans chaque case, le libellé
+  prend 1/3 de la largeur et la valeur 2/3 (au lieu de 1/2 – 1/2). Colonnes en `minmax(0, …)` : une valeur très longue
+  est coupée au lieu d'élargir sa colonne.
+- **Impact consommateurs (visible)** — `ContactSheetReference`, drag & drop d'une vignette : la permutation s'active
+  plus tôt. La zone d'insertion passe d'un tiers à 15 % de la largeur de chaque côté de la vignette survolée, la
+  permutation couvre les 70 % centraux (au lieu du tiers central). La bande d'insertion entre deux vignettes reste
+  large (≈ 63 px pour des vignettes de 160 px et 15 px d'interstice). Inchangé pour une sélection de plusieurs
+  vignettes (chaque moitié vaut insertion). Défaut de `edgeRatio` dans `computeDropTarget` : `0.15` (était `1/3`).
+- `ContactSheetReference` : le contour pointillé de la vignette cible d'une permutation passe à 2 px (était 1 px).
+
+### Corrigé
+
+- `ContactSheetReference`, attributs : un libellé ou une valeur coupés par « … » affichent le texte complet en tooltip
+  au survol et au focus (`TruncatedText`). Une valeur rendue par `format` sous forme de nœud React reste coupée, sans
+  tooltip.
+
 ## [1.42.0] - 2026-11-15
 
 ### Modifié

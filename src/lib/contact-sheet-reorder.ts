@@ -35,8 +35,11 @@ export type DropTarget =
 export interface DropTargetOptions {
   /**
    * Part de la largeur d'une vignette, de chaque côté, qui vaut « insertion ».
-   * Le reste (au centre) vaut « permutation ». 1/3 par défaut : tiers gauche,
-   * tiers central, tiers droit.
+   * Le reste (au centre) vaut « permutation ». 0,15 par défaut : 15 % à gauche
+   * et à droite, 70 % au centre. Avec l'interstice, la bande d'insertion entre
+   * deux vignettes reste large (≈ 63 px pour des vignettes de 160 px et 15 px
+   * d'interstice) et la permutation s'active dès que le pointeur entre de 15 %
+   * dans la vignette cible.
    */
   edgeRatio?: number;
   /** Interstice entre deux vignettes (px) : la zone d'insertion le couvre. */
@@ -56,7 +59,7 @@ export interface DropTargetOptions {
   isEmpty?: (index: number) => boolean;
 }
 
-const DEFAULT_EDGE_RATIO = 1 / 3;
+const DEFAULT_EDGE_RATIO = 0.15;
 
 /** Zone (en px) qui déclenche une cible donnée. */
 export function getTargetZone(
