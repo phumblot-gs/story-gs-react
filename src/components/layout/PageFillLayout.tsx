@@ -27,7 +27,10 @@ export interface PageFillLayoutProps {
   stickyBottom?: PageFillStickyValue;
   /** Minimum panel height, in px (very small windows). Default 240. */
   minPanelHeight?: number;
-  /** Mouse wheel down over the panel: the page folds the collapsible part first. Default true. */
+  /**
+   * Mouse wheel over the panel: down, the page folds the collapsible part first; up, the content goes back
+   * to its top, then the page unfolds it, in the same gesture. Default true.
+   */
   pageFirstScroll?: boolean;
   /** Hides the window scrollbar while the component is mounted. Default false. */
   hidePageScrollbar?: boolean;

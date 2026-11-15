@@ -7,6 +7,7 @@ import { PageFillLayout } from "@/components/layout/PageFillLayout";
 import { NATIVE_SCROLL_ATTRIBUTE, PAGE_SCROLLBAR_HIDDEN_CLASS, wheelDeltaPixels } from "@/hooks/usePageFirstScroll";
 import { TabsWithViews } from "@/components/ui/tabs-with-views";
 import PageHeader from "@/components/PageHeader";
+import { mockAnimationFrames } from "./helpers/animation-frames";
 
 /**
  * Page simulée : fenêtre de 800px, document de 1200px, partie repliable de
@@ -19,6 +20,7 @@ const PANEL_OFFSET = 400;
 let scrollY = 0;
 let panelTopExtra = 0;
 let headerHeight = 0;
+let frames: ReturnType<typeof mockAnimationFrames>;
 const scrollBy = vi.fn((options: ScrollToOptions) => {
   scrollY += options.top ?? 0;
 });
@@ -28,6 +30,7 @@ beforeEach(() => {
   panelTopExtra = 0;
   headerHeight = 0;
   scrollBy.mockClear();
+  frames = mockAnimationFrames();
   Object.defineProperty(window, "innerHeight", { value: VIEWPORT, configurable: true });
   Object.defineProperty(window, "scrollY", { get: () => scrollY, configurable: true });
   Object.defineProperty(document.documentElement, "scrollHeight", { value: DOCUMENT, configurable: true });
@@ -68,14 +71,16 @@ describe("PageFillLayout — molette « page d'abord »", () => {
     scrollY = 100;
     const event = wheel();
     expect(event.defaultPrevented).toBe(true);
-    expect(scrollBy).toHaveBeenCalledWith({ top: 120, behavior: "instant" });
+    frames.flushFrames();
+    expect(scrollY).toBe(220);
   });
 
   it("le dernier cran ne dépasse pas le repli complet", () => {
     renderLayout();
     scrollY = 350;
     wheel();
-    expect(scrollBy).toHaveBeenCalledWith({ top: 50, behavior: "instant" });
+    frames.flushFrames();
+    expect(scrollY).toBe(400);
   });
 
   it("partie haute repliée : comportement natif", () => {
@@ -140,6 +145,156 @@ describe("PageFillLayout — molette « page d'abord »", () => {
     renderLayout({ pageFirstScroll: false });
     scrollY = 100;
     expect(wheel().defaultPrevented).toBe(false);
+  });
+});
+
+/** Liste qui défile dans le panneau : 300px visibles sur 1000px. */
+function renderWithList(style: React.CSSProperties = {}) {
+  render(
+    <PageFillLayout collapsible={<div>Top</div>}>
+      <div data-testid="list" style={{ overflowY: "auto", ...style }}>
+        <span data-testid="item">item</span>
+      </div>
+    </PageFillLayout>,
+  );
+  const list = screen.getByTestId("list");
+  Object.defineProperty(list, "clientHeight", { value: 300, configurable: true });
+  Object.defineProperty(list, "scrollHeight", { value: 1000, configurable: true });
+  list.scrollBy = vi.fn((options: ScrollToOptions) => {
+    list.scrollTop = Math.max(0, Math.min(700, list.scrollTop + (options.top ?? 0)));
+  }) as unknown as typeof list.scrollBy;
+  return list;
+}
+
+describe("PageFillLayout — molette vers le haut et jonction page / liste", () => {
+  it("liste en haut, page repliée : la page déplie la partie haute", () => {
+    const list = renderWithList();
+    scrollY = 400;
+    const event = wheel({ deltaY: -40 }, screen.getByTestId("item"));
+    expect(event.defaultPrevented).toBe(true);
+    expect(scrollBy).toHaveBeenCalledWith({ top: -40, behavior: "instant" });
+    expect(list.scrollBy).not.toHaveBeenCalled();
+  });
+
+  it("liste pas en haut : comportement natif", () => {
+    const list = renderWithList();
+    scrollY = 400;
+    list.scrollTop = 200;
+    expect(wheel({ deltaY: -40 }, screen.getByTestId("item")).defaultPrevented).toBe(false);
+    expect(scrollBy).not.toHaveBeenCalled();
+  });
+
+  it("liste presque en haut : elle consomme ce qui lui reste, la page prend l'excédent dans le même événement", () => {
+    const list = renderWithList();
+    scrollY = 400;
+    list.scrollTop = 15;
+    expect(wheel({ deltaY: -40 }, screen.getByTestId("item")).defaultPrevented).toBe(true);
+    expect(list.scrollTop).toBe(0);
+    expect(scrollY).toBe(375);
+  });
+
+  it("inertie d'un geste commencé dans la liste : la page se déplie sans interruption", () => {
+    const list = renderWithList();
+    scrollY = 400;
+    list.scrollTop = 45;
+    const deltas = [-65, -45, -40, -30, -20, -10];
+    const prevented = deltas.map((deltaY) => wheel({ deltaY }, screen.getByTestId("item")).defaultPrevented);
+    expect(prevented).toEqual(deltas.map(() => true));
+    frames.flushFrames(); // le premier événement (≥ 50 px, sans précédent) est traité comme un cran
+    expect(list.scrollTop).toBe(0);
+    expect(scrollY).toBe(400 - (65 + 45 + 40 + 30 + 20 + 10 - 45));
+  });
+
+  it("borné au haut de la page, puis natif une fois la page en haut", () => {
+    renderWithList();
+    scrollY = 10;
+    wheel({ deltaY: -40 }, screen.getByTestId("item"));
+    expect(scrollBy).toHaveBeenCalledWith({ top: -10, behavior: "instant" });
+    expect(scrollY).toBe(0);
+    expect(wheel({ deltaY: -40 }, screen.getByTestId("item")).defaultPrevented).toBe(false);
+  });
+
+  it("hors d'une zone qui défile : natif (la fenêtre remonte d'elle-même)", () => {
+    renderLayout();
+    scrollY = 400;
+    expect(wheel({ deltaY: -40 }).defaultPrevented).toBe(false);
+  });
+
+  it.each(["contain", "none"])("overscroll-behavior: %s sur la liste : pas de report vers la page", (value) => {
+    renderWithList({ overscrollBehaviorY: value } as React.CSSProperties);
+    scrollY = 400;
+    expect(wheel({ deltaY: -40 }, screen.getByTestId("item")).defaultPrevented).toBe(false);
+    expect(scrollBy).not.toHaveBeenCalled();
+  });
+
+  it("[data-native-scroll] : natif vers le haut aussi", () => {
+    render(
+      <PageFillLayout collapsible={<div>Top</div>}>
+        <div {...{ [NATIVE_SCROLL_ATTRIBUTE]: "" }} style={{ overflowY: "auto" }}>
+          <span data-testid="inner">inner</span>
+        </div>
+      </PageFillLayout>,
+    );
+    scrollY = 400;
+    expect(wheel({ deltaY: -40 }, screen.getByTestId("inner")).defaultPrevented).toBe(false);
+  });
+
+  it("vers le bas : l'excédent du dernier événement passe à la liste (pas d'image figée)", () => {
+    const list = renderWithList();
+    scrollY = 370;
+    expect(wheel({ deltaY: 40 }, screen.getByTestId("item")).defaultPrevented).toBe(true);
+    expect(scrollY).toBe(400);
+    expect(list.scrollTop).toBe(10);
+  });
+});
+
+describe("PageFillLayout — cran de molette de souris", () => {
+  it("un cran isolé est animé sur plusieurs images, pas appliqué d'un coup", () => {
+    renderLayout();
+    const start = performance.now();
+    expect(wheel({ deltaY: 100 }).defaultPrevented).toBe(true);
+    expect(scrollBy).not.toHaveBeenCalled();
+    frames.runFrames(start + 40);
+    expect(scrollY).toBeGreaterThan(0);
+    expect(scrollY).toBeLessThan(100);
+    frames.flushFrames();
+    expect(scrollY).toBe(100);
+    expect(scrollBy.mock.calls.every(([options]) => Number.isInteger(options.top))).toBe(true);
+  });
+
+  it("vers le haut aussi, liste en haut", () => {
+    renderWithList();
+    scrollY = 400;
+    expect(wheel({ deltaY: -100 }, screen.getByTestId("item")).defaultPrevented).toBe(true);
+    frames.flushFrames();
+    expect(scrollY).toBe(300);
+  });
+
+  it("molette tournée vite : le cran suivant tient compte de l'animation en cours", () => {
+    const list = renderWithList();
+    scrollY = 300;
+    wheel({ deltaY: 100 }, screen.getByTestId("item"));
+    wheel({ deltaY: 100 }, screen.getByTestId("item"));
+    frames.flushFrames();
+    expect(scrollY).toBe(400);
+    expect(list.scrollTop).toBe(100);
+  });
+
+  it("le trackpad (petits deltas rapprochés) n'est pas animé", () => {
+    renderLayout();
+    wheel({ deltaY: 20 });
+    wheel({ deltaY: 20 });
+    expect(scrollBy).toHaveBeenCalledTimes(2);
+    expect(frames.pending()).toBe(0);
+    expect(scrollY).toBe(40);
+  });
+
+  it("une animation en cours est arrêtée au démontage", () => {
+    const { unmount } = renderLayout();
+    wheel({ deltaY: 100 });
+    unmount();
+    frames.flushFrames();
+    expect(scrollBy).not.toHaveBeenCalled();
   });
 });
 

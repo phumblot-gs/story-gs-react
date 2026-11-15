@@ -5,6 +5,28 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.42.0] - 2026-11-15
+
+### Modifié
+
+- **Impact consommateurs (comportement, sans changement d'API)** — `PageFillLayout` / `usePageFirstScroll` : la molette
+  est symétrique. Vers le haut, au-dessus du panneau, quand la zone qui défile sous le pointeur (premier ancêtre en
+  `overflow-y: auto|scroll` qui déborde) est en haut et que la page ne l'est pas, le hook fait défiler la page (fenêtre
+  ou `scrollContainer`) : la partie haute se déplie **dans le même geste**. Avant, Chrome verrouillait le geste
+  trackpad sur la liste (*scroll latching*) et l'inertie s'y perdait : la page restait immobile jusqu'à 1 s puis
+  sautait au geste suivant. Une zone presque en haut consomme ce qui lui reste et l'excédent passe à la page dans le
+  même événement. Une zone qui peut encore monter garde le comportement natif.
+- `usePageFirstScroll`, vers le bas : l'excédent du dernier événement de repli (`delta − remaining`) passe à la zone
+  sous le pointeur au lieu d'être perdu ; la jonction page → liste ne marque plus d'image figée.
+- `usePageFirstScroll` : un cran de molette de souris intercepté (|deltaY| ≥ 50 px, hors série d'événements à moins de
+  50 ms) est animé sur ~120 ms au lieu d'un saut d'un cran entier ; les crans suivants d'une molette tournée vite
+  prolongent l'animation. Les événements du trackpad restent appliqués tels quels.
+- `usePageFirstScroll` : une zone en `overscroll-behavior: contain` (ou `none`) entre la cible et le panneau ne reporte
+  pas sa molette vers la page. Exclusions inchangées : `[data-native-scroll]`, Ctrl + molette, défilement horizontal
+  dominant, événement déjà annulé.
+- Story `Layout/PageFillLayout` → `Long content` (grille de 600 vignettes et liste en `overscroll-contain`) ; notes de
+  la story mises à jour.
+
 ## [1.41.0] - 2026-11-12
 
 ### Ajouté

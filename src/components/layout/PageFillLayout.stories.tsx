@@ -42,8 +42,12 @@ const headerRef = useRef<HTMLDivElement>(null);
   \`stickyTop\` / \`stickyBottom\` accept a number (px), a CSS value (\`"var(--app-header-height)"\`) or a
   ref of an element to measure (e.g. \`PageHeader\`, which forwards its ref).
 - **\`pageFirstScroll\`** (default true): mouse wheel down over the panel scrolls the **page** first, until
-  the collapsible part is folded, then the panel content scrolls. Wheel up is native (the content scrolls
-  back to its top, then the page brings the top part back). Exclude a zone with \`data-native-scroll\`.
+  the collapsible part is folded, then the panel content scrolls. Wheel up is symmetric: the content scrolls
+  back to its top, then the page brings the top part back, **in the same gesture** (trackpad inertia included:
+  Chrome would otherwise keep sending it to the list until the next gesture). At the junction, the excess of
+  an event goes to the other surface, so the motion never stops for a frame. An isolated mouse-wheel notch
+  that the hook takes over is animated (~120 ms); trackpad events are applied as they come. Exclude a zone
+  with \`data-native-scroll\`.
 - **\`hidePageScrollbar\`** (default false): hides the window scrollbar, which doubles the content's one.
   Scrolling still works (wheel, trackpad, keyboard).
 - **\`onCollapsedChange\`**: the collapsible part is fully folded / visible again (e.g. compact title in the header).
@@ -60,8 +64,8 @@ folded panel sits against the top of the container, and the wheel, \`onCollapsed
 forces the window. See *Layout/FullFrame → Project wizard*.
 
 **Known limits:** touch scrolling scrolls the content first (the top part only folds when swiping outside
-the panel); keyboard is not handled; a content with \`overscroll-behavior: contain\` prevents wheel-up from
-bringing the top part back.
+the panel); keyboard is not handled. A content with \`overscroll-behavior: contain\` (or \`none\`) keeps its
+wheel: once it is at its top, wheel-up does not bring the top part back (see *Long content*).
 `,
       },
     },
@@ -241,6 +245,41 @@ export const NativeScrollZone: Story = {
             ))}
           </div>
           <Column label="Page-first item" count={80} />
+        </div>
+      </PageFillLayout>
+    </div>
+  ),
+};
+
+const TILES = Array.from({ length: 600 }, (_, i) => i + 1);
+
+/**
+ * Long content, like a contact sheet: a grid of 600 tiles in a `flex-1 min-h-0 overflow-y-auto` zone, and a
+ * side list in `overscroll-behavior: contain`.
+ * **Try it with a trackpad:** over the grid, a long swipe down folds the top part then scrolls the grid without
+ * a stop at the junction. Scroll the grid a little, then a long swipe up: the grid goes back to its top and the
+ * top part unfolds **in the same gesture**, inertia included. Over the side list, wheel-up stops at its top.
+ * With a mouse wheel, each notch taken over by the page is animated.
+ */
+export const LongContent: Story = {
+  render: () => (
+    <div className="flex min-h-screen flex-col">
+      <FakeHeader title="Long content" />
+      <PageFillLayout stickyTop={60} className="flex-1 px-4 pt-6" panelClassName="pb-4" collapsible={<Kpis />}>
+        <div className="grid min-h-0 flex-1 grid-cols-[1fr_200px] gap-4">
+          <div className="min-h-0 overflow-y-auto rounded-sm bg-white p-3">
+            <div className="grid grid-cols-[repeat(auto-fill,minmax(96px,1fr))] gap-2">
+              {TILES.map((n) => (
+                <div key={n} className="flex aspect-[3/4] items-end rounded-sm bg-grey-lighter p-1 text-xs">{n}</div>
+              ))}
+            </div>
+          </div>
+          <div className="min-h-0 overflow-y-auto overscroll-contain rounded-sm bg-white p-3 text-sm">
+            <div className="pb-2 font-medium">overscroll-behavior: contain</div>
+            {Array.from({ length: 60 }, (_, i) => (
+              <div key={i} className="border-b border-grey-light py-2">Item {i + 1}</div>
+            ))}
+          </div>
         </div>
       </PageFillLayout>
     </div>

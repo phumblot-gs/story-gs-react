@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import '@testing-library/jest-dom/vitest';
 import { FullFrame } from '@/components/layout/FullFrame';
 import { PageFillLayout } from '@/components/layout/PageFillLayout';
+import { mockAnimationFrames } from './helpers/animation-frames';
 
 const originalHitTest = document.elementFromPoint;
 afterEach(() => {
@@ -80,14 +81,25 @@ describe('FullFrame wheel over fixed chrome', () => {
     vi.spyOn(body, 'getBoundingClientRect').mockReturnValue({ top: 60, left: 0, width: 800, height: 300 } as DOMRect);
     vi.spyOn(panel, 'getBoundingClientRect').mockImplementation(() => ({ top: 260 - body.scrollTop } as DOMRect));
     Object.defineProperty(document, 'elementFromPoint', { configurable: true, value: vi.fn(() => list) });
+    const frames = mockAnimationFrames();
     wheel(screen.getByText('Header action'));
+    frames.flushFrames();
     expect(body.scrollTop).toBe(120);
     expect(list.scrollTop).toBe(0);
+    // The last fold step hands its excess (40px) to the list.
     wheel(screen.getByText('Footer action'));
+    frames.flushFrames();
     expect(body.scrollTop).toBe(200);
-    expect(list.scrollTop).toBe(0);
+    expect(list.scrollTop).toBe(40);
     wheel(screen.getByText('Footer action'));
-    expect(list.scrollTop).toBe(120);
+    frames.flushFrames();
+    expect(list.scrollTop).toBe(160);
+    // Back up: the list returns to its top, then the body unfolds the top part.
+    wheel(screen.getByText('Footer action'), -120);
+    wheel(screen.getByText('Footer action'), -120);
+    frames.flushFrames();
+    expect(list.scrollTop).toBe(0);
+    expect(body.scrollTop).toBe(120);
   });
   it('preserves scrollable controls and opt-out regions in the fixed bars', () => {
     render(<FullFrame headerContent={<div data-native-scroll><button>Native</button></div>} footer={<div data-testid="menu" style={{ overflowY: 'auto' }}><button>Menu</button></div>}><p>Body content</p></FullFrame>);
