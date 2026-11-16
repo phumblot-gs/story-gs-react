@@ -1,6 +1,6 @@
 {
   "name": "@gs/gs-components-library",
-  "version": "1.43.0",
+  "version": "1.44.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -47,6 +47,10 @@
     "@radix-ui/react-toggle": "^1.1.0",
     "@radix-ui/react-toggle-group": "^1.1.0",
     "@radix-ui/react-tooltip": "^1.1.4",
+    "@tiptap/core": "^3.32.0",
+    "@tiptap/extension-document": "^3.32.0",
+    "@tiptap/extension-link": "^3.32.0",
+    "@tiptap/extension-list": "^3.32.0",
     "@tiptap/extension-mention": "^3.32.0",
     "@tiptap/pm": "^3.32.0",
     "@tiptap/react": "^3.32.0",
@@ -238,6 +242,16 @@
       "types": "./dist/components/ui/comment-composer.d.ts",
       "import": "./dist/components/comment-composer.mjs",
       "require": "./dist/components/comment-composer.cjs"
+    },
+    "./rich-text-editor": {
+      "types": "./dist/components/ui/rich-text-editor.d.ts",
+      "import": "./dist/components/rich-text-editor.mjs",
+      "require": "./dist/components/rich-text-editor.cjs"
+    },
+    "./rich-text": {
+      "types": "./dist/lib/rich-text/index.d.ts",
+      "import": "./dist/rich-text.mjs",
+      "require": "./dist/rich-text.cjs"
     }
   },
   "files": [
