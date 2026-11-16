@@ -5,6 +5,56 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.44.0] - 2026-11-16
+
+### Ajouté
+
+- `RichTextEditor` : éditeur de texte riche pour les emails (relances fournisseurs de Mediagrade), sur Tiptap comme
+  `CommentComposer`. Barre d'outils `role="toolbar"` (un seul arrêt Tab, flèches / Début / Fin) : gras (⌘/Ctrl+B),
+  italique (⌘/Ctrl+I), souligné (⌘/Ctrl+U), lien (⌘/Ctrl+K), liste à puces, liste numérotée (un seul niveau), émojis,
+  « Insérer une variable ». Valeur contrôlée (`value` / `onChange`, `null` vide le champ) ; `onChange` reçoit toujours
+  le document ramené au schéma, avec `{ isEmpty, text }`. Libellés `en` / `fr` (`locale`, `labels`), fonds white /
+  grey / black, `minHeight`, `aria-label`, `aria-describedby`, `aria-invalid`.
+  - Lien : URL fixe (`https:`, `http:`, `mailto:` seulement ; `https://` ajouté sans schéma, `mailto:` pour une
+    adresse email) **ou** variable de type `url` (`attrs.variableId`), modifiable et supprimable ; pas d'ouverture au
+    clic ; une URL tapée ou collée devient un lien.
+  - Variables (`variables: { id, label, kind? }`, `kind` `text` par défaut, `url` ou `list`) : bouton et `{{` au
+    clavier ; un `{{id}}` connu tapé ou collé devient une puce. `text` / `url` : puce en ligne (nœud `variable`).
+    `list` : bloc à part (nœud `variableBlock`), rendu en liste à puces. Une variable inconnue garde sa puce, avec un
+    style d'avertissement et une infobulle.
+  - `singleLine` (sujet d'email) : une ligne, sans barre d'outils, Entrée bloquée, texte et variables seulement (pas
+    de variable `list`), collage ramené sur une ligne.
+  - Collage nettoyé : titres, citations, tableaux deviennent des paragraphes ; images, styles, barré, attributs de
+    lien (`target`, `rel`…) et liens refusés sont retirés ; une liste imbriquée est aplatie à un niveau.
+- Point d'entrée **`@gs/gs-components-library/rich-text`** : fonctions pures du document, sans React, DOM, Tiptap ni
+  CSS, utilisables dans Node 20 (rendu de l'email par une API) comme dans le navigateur (aperçu). Aussi exportées par
+  l'index principal.
+  - `richTextValidate(value, { variables?, maxLength? })` : liste des écarts au schéma (`path`, `code`, `message`),
+    vide si le document est valide — pour refuser un template ; `richTextSanitize(value)` : le corriger.
+  - `richTextToHtml(value, values?, { inlineStyles?, variables? })` : HTML d'email sans enveloppe, texte et valeurs
+    échappés, liens filtrés (cible absente ou refusée : le texte sans lien), variable `url` en lien, variable `list` en
+    `<ul>` (rien si vide), styles en ligne par balise (`p`, `ul`, `ol`, `li`, `a`, `liParagraph`).
+  - `richTextToPlainText`, `richTextIsEmpty`, `richTextEmptyDocument`.
+  - Sujet stocké en chaîne : `richTextToTemplateString` (`"Relance {{fournisseur}}"`), `richTextFromTemplateString`,
+    `richTextRenderTemplateString` (remplacement des `{{id}}` à l'envoi).
+  - `richTextSafeHref`, `richTextNormalizeUrl`, constantes du schéma (`RICH_TEXT_BLOCKS`, `RICH_TEXT_INLINES`,
+    `RICH_TEXT_MARKS`, `RICH_TEXT_LINK_PROTOCOLS`, `RICH_TEXT_VARIABLE_TOKEN`) et types (`RichTextValue`,
+    `RichTextNode`, `RichTextVariable`, `RichTextValues`, `RichTextIssue`…).
+- Schéma du document (contrat avec l'API), fermé : `doc` ; `paragraph` ; `bulletList`, `orderedList`, `listItem` (un
+  niveau, paragraphes seulement) ; `variableBlock` (`{ id, label }`) ; `hardBreak` ; `text` avec les marques `bold`,
+  `italic`, `underline`, `link` (`{ href }` ou `{ variableId }`) ; `variable` (`{ id, label }`). Documenté dans la
+  story `UI/RichTextEditor` (page Docs).
+- Stories `UI/RichTextEditor` : vide, avec contenu, variables (aperçu email et texte brut en direct), sujet
+  (`singleLine`), variable inconnue, désactivé, français, fonds white / grey / black, dans un formulaire.
+- Dépendances directes `@tiptap/core`, `@tiptap/extension-document`, `@tiptap/extension-link`, `@tiptap/extension-list`
+  (déjà installées via `@tiptap/starter-kit`, même version).
+
+### Modifié
+
+- `CommentComposer` : style des boutons, popover d'émojis, placement et fermeture de la liste de suggestions déplacés
+  dans un module interne partagé avec `RichTextEditor` (`editor-shared`). Aucun changement de comportement ni d'API ;
+  ses tests passent sans modification.
+
 ## [1.43.0] - 2026-11-15
 
 ### Ajouté

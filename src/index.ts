@@ -829,3 +829,7 @@ export type { FileDropOptions, FileDropState, FileDropRejection, FileDropRejecti
 
 export { CommentComposer } from "./components/ui/comment-composer";
 export type { CommentComposerProps, CommentComposerValue, CommentComposerChange, CommentMention } from "./components/ui/comment-composer";
+export { RichTextEditor } from "./components/ui/rich-text-editor";
+export type { RichTextEditorProps, RichTextEditorLabels, RichTextEditorChange } from "./components/ui/rich-text-editor";
+// Fonctions pures du document : aussi disponibles sans React via "@gs/gs-components-library/rich-text".
+export * from "./lib/rich-text";

@@ -61,6 +61,7 @@ const getEntryPoints = () => {
     'table',
     'textarea',
     'comment-composer',
+    'rich-text-editor',
     'toast',
     'toaster',
     'toggle',
@@ -111,6 +112,9 @@ const getEntryPoints = () => {
   entries['utils/media-status'] = path.resolve(__dirname, 'src/utils/mediaStatus.ts');
   entries['utils/color'] = path.resolve(__dirname, 'src/utils/colorUtils.ts');
   entries['utils/notifications'] = path.resolve(__dirname, 'src/utils/notificationUtils.ts');
+
+  // Rich text: pure functions (no React, no DOM, no CSS), importable server side (Node 20).
+  entries['rich-text'] = path.resolve(__dirname, 'src/lib/rich-text/index.ts');
 
   // Icons
   entries['icons'] = path.resolve(__dirname, 'src/components/ui/icons/index.ts');

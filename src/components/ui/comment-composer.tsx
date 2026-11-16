@@ -4,12 +4,19 @@ import { EditorContent, useEditor, type JSONContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Mention from "@tiptap/extension-mention";
 import { exitSuggestion, type SuggestionProps } from "@tiptap/suggestion";
-import { AtSign, Bold, Italic, Smile } from "lucide-react";
+import { AtSign, Bold, Italic } from "lucide-react";
 import { useBgContext } from "@/components/layout/BgContext";
 import { cn } from "@/lib/utils";
-import { Popover, PopoverContent, PopoverTrigger } from "./popover";
-
-const EmojiPicker = React.lazy(() => import("./comment-emoji-picker"));
+import {
+  EditorEmojiButton,
+  editorPopupClass,
+  editorSurfaceClass,
+  editorToolClass,
+  suggestionsHost,
+  suggestionsPosition,
+  useDismissSuggestions,
+  useScrollActiveOption,
+} from "./editor-shared";
 
 export type CommentComposerValue = JSONContent;
 export interface CommentMention {
@@ -59,14 +66,6 @@ const normalize = (text: string) => text.normalize("NFD").replace(/[\u0300-\u036
 
 type MentionState = { props: SuggestionProps<CommentMention>; index: number; x: number; y: number };
 
-/**
- * Where the suggestions list is rendered: inside the dialog that holds the editor (a modal dialog — SidePanel, Sheet, Dialog —
- * blocks the pointer outside itself and would close on a click there), else at the end of the page.
- */
-function suggestionsHost(editorDom: HTMLElement | undefined): HTMLElement {
-  return editorDom?.closest<HTMLElement>('[role="dialog"], [role="alertdialog"]') ?? document.body;
-}
-
 /** A small rich-text field. Submission, notifications and persistence belong to its parent. */
 export function CommentComposer(props: CommentComposerProps) {
   const { value, defaultValue, disabled = false, mentions = [], locale = "en", className, id, "aria-describedby": describedBy, "aria-invalid": invalid } = props;
@@ -84,17 +83,12 @@ export function CommentComposer(props: CommentComposerProps) {
   const searchVersion = React.useRef(0);
   const mounted = React.useRef(true);
   React.useEffect(() => { mounted.current = true; searchVersion.current++; return () => { mounted.current = false; }; }, []);
-  const [emojiOpen, setEmojiOpen] = React.useState(false);
   const [, refreshToolbar] = React.useReducer((n) => n + 1, 0);
 
   const updateSuggestions = React.useCallback((next: SuggestionProps<CommentMention>) => {
     const rect = next.clientRect?.();
     if (!rect || !mounted.current) return;
-    const state = {
-      props: next, index: 0,
-      x: Math.max(8, Math.min(rect.left, window.innerWidth - 288)),
-      y: Math.max(8, rect.bottom + 6 + 232 > window.innerHeight ? rect.top - 238 : rect.bottom + 6),
-    };
+    const state = { props: next, index: 0, ...suggestionsPosition(rect) };
     active.current = state;
     setSuggestions(state);
   }, []);
@@ -189,41 +183,14 @@ export function CommentComposer(props: CommentComposerProps) {
   }, [editor, value]);
   React.useEffect(() => {
     editor?.setEditable(!disabled, false);
-    if (disabled) { setEmojiOpen(false); if (editor) exitSuggestion(editor.view); }
+    if (disabled && editor) exitSuggestion(editor.view);
   }, [editor, disabled]);
-  React.useEffect(() => {
-    if (!suggestions || !editor) return;
-    const close = (event: Event) => {
-      if (event.target instanceof Element && event.target.closest("[data-comment-suggestions]")) return;
-      exitSuggestion(editor.view);
-    };
-    const outside = (event: PointerEvent) => {
-      const target = event.target as Element;
-      if (!target.closest?.("[data-comment-suggestions]") && !editor.view.dom.contains(target)) exitSuggestion(editor.view);
-    };
-    window.addEventListener("resize", close);
-    window.addEventListener("scroll", close, true);
-    document.addEventListener("pointerdown", outside);
-    return () => {
-      window.removeEventListener("resize", close); window.removeEventListener("scroll", close, true);
-      document.removeEventListener("pointerdown", outside);
-    };
-  }, [suggestions, editor]);
+  useDismissSuggestions(!!suggestions, editor, "data-comment-suggestions");
+  useScrollActiveOption(listId, suggestions ? suggestions.index : null);
 
-  React.useEffect(() => {
-    if (!suggestions) return;
-    const option = document.getElementById(`${listId}-${suggestions.index}`);
-    const list = document.getElementById(listId);
-    if (!option || !list) return;
-    if (option.offsetTop < list.scrollTop) list.scrollTop = option.offsetTop;
-    else if (option.offsetTop + option.offsetHeight > list.scrollTop + list.clientHeight) {
-      list.scrollTop = option.offsetTop + option.offsetHeight - list.clientHeight;
-    }
-  }, [suggestions, listId]);
-
-  const toolClass = "inline-flex h-8 w-8 items-center justify-center rounded-sm hover:bg-blue/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue disabled:cursor-not-allowed disabled:opacity-50 aria-pressed:bg-blue/20";
+  const toolClass = editorToolClass;
   return (
-    <div className={cn("w-full rounded-sm border transition-colors focus-within:border-blue", dark ? "border-black-secondary bg-black-secondary text-white" : bg === "grey" ? "border-white bg-white text-black" : "border-grey-lighter bg-grey-lighter text-black", disabled && "opacity-50", className)}>
+    <div className={cn("w-full rounded-sm border transition-colors focus-within:border-blue", editorSurfaceClass(bg), disabled && "opacity-50", className)}>
       <div className="relative">
         {editor?.isEmpty && <span aria-hidden="true" className="pointer-events-none absolute left-2.5 top-2 text-sm font-light text-grey-strongest">{placeholder}</span>}
         <EditorContent editor={editor} />
@@ -235,21 +202,14 @@ export function CommentComposer(props: CommentComposerProps) {
             const before = editor.state.doc.textBetween(Math.max(0, editor.state.selection.from - 1), editor.state.selection.from);
             editor.chain().focus().insertContent(before && !/\s/.test(before) ? " @" : "@").run();
           }}><AtSign size={16} /></button>
-        <Popover open={emojiOpen} onOpenChange={setEmojiOpen}>
-          <PopoverTrigger asChild><button type="button" className={toolClass} title={labels.emoji} aria-label={labels.emoji} disabled={disabled || !editor} onMouseDown={event => event.preventDefault()}><Smile size={16} /></button></PopoverTrigger>
-          <PopoverContent align="start" className="w-auto max-w-[calc(100vw-16px)] border-0 p-0" onCloseAutoFocus={event => { event.preventDefault(); if (!disabled) editor?.commands.focus(); }}>
-            {emojiOpen && <React.Suspense fallback={<p role="status" className="p-4 text-sm">{labels.emojiLoading}</p>}><EmojiPicker locale={locale} theme={dark ? "dark" : "light"} onSelect={emoji => {
-              if (!latest.current.props.disabled) editor?.chain().focus().insertContent({ type: "text", text: emoji }).run();
-              setEmojiOpen(false);
-            }} /></React.Suspense>}
-          </PopoverContent>
-        </Popover>
+        <EditorEmojiButton editor={editor} disabled={disabled} locale={locale} dark={dark} label={labels.emoji} loadingLabel={labels.emojiLoading}
+          isDisabled={() => !!latest.current.props.disabled} />
         <span aria-hidden="true" className="mx-1 h-4 border-l border-current/20" />
         <button type="button" className={toolClass} title={`${labels.bold} (⌘/Ctrl+B)`} aria-label={labels.bold} aria-pressed={editor?.isActive("bold") ?? false} disabled={disabled || !editor} onMouseDown={event => event.preventDefault()} onClick={() => editor?.chain().focus().toggleBold().run()}><Bold size={16} /></button>
         <button type="button" className={toolClass} title={`${labels.italic} (⌘/Ctrl+I)`} aria-label={labels.italic} aria-pressed={editor?.isActive("italic") ?? false} disabled={disabled || !editor} onMouseDown={event => event.preventDefault()} onClick={() => editor?.chain().focus().toggleItalic().run()}><Italic size={16} /></button>
       </div>
       {!disabled && suggestions && createPortal(
-        <div data-comment-suggestions="" className={cn("fixed z-[100] w-[280px] max-w-[calc(100vw-16px)] rounded-sm border p-1 shadow-lg", dark ? "border-white/20 bg-black-secondary text-white" : "border-black/10 bg-white text-black")} style={{ left: suggestions.x, top: suggestions.y }}>
+        <div data-comment-suggestions="" className={cn("fixed z-[100] w-[280px] max-w-[calc(100vw-16px)] rounded-sm border p-1 shadow-lg", editorPopupClass(dark))} style={{ left: suggestions.x, top: suggestions.y }}>
           <div role="listbox" id={listId} aria-label={labels.suggestions} className="max-h-[224px] overflow-y-auto">
             {searchStatus !== "ready" || !suggestions.props.items.length ? <p role="status" className="px-3 py-2 text-sm text-inherit">{searchStatus === "loading" ? labels.loading : searchStatus === "error" ? labels.error : labels.empty}</p> : suggestions.props.items.map((person, index) => (
               <div role="option" id={`${listId}-${index}`} key={person.id} aria-selected={index === suggestions.index}
