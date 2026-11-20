@@ -5,6 +5,15 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.45.1] - 2026-11-20
+
+### Corrigé
+
+- `Thumbnail` : Tab et Shift+Tab dans le champ de recherche du menu des motifs de refus restent dans le menu au lieu de
+  le fermer (CR-510). Le champ arrêtait la propagation de Tab, que le `FocusScope` du popover ne voyait donc pas : sans
+  résultat, Tab sortait du popover, qui se fermait en perdant la requête. Tab remonte désormais comme Échap et boucle
+  dans le menu ; les autres touches ne remontent toujours pas aux raccourcis de l'hôte. Aucun changement d'API.
+
 ## [1.45.0] - 2026-11-20
 
 ### Ajouté
