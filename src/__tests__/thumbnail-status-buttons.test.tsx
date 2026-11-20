@@ -397,17 +397,47 @@ describe("Thumbnail — statusButtons", () => {
       expect(input).toBeInTheDocument();
     });
 
-    it("les touches saisies ne remontent pas aux raccourcis de la page", async () => {
-      const onWindowKeyDown = vi.fn();
+    // Tab and Escape must still bubble: the popover's FocusScope (Tab loop) and its dismiss layer (Escape) need them.
+    it("les touches saisies ne remontent pas aux raccourcis de la page, Tab et Échap si", async () => {
+      const windowKeys: string[] = [];
+      const onWindowKeyDown = (event: KeyboardEvent) => windowKeys.push(event.key);
       window.addEventListener("keydown", onWindowKeyDown);
       try {
         renderSearch();
         const input = await openMenu();
         await userEvent.type(input, "dv");
-        expect(onWindowKeyDown).not.toHaveBeenCalled();
+        expect(windowKeys).toEqual([]);
+        await userEvent.tab();
+        expect(windowKeys).toEqual(["Tab"]);
+        input.focus();
+        await userEvent.tab({ shift: true });
+        expect(windowKeys).toEqual(["Tab", "Tab"]);
+        input.focus();
+        await userEvent.keyboard("{Escape}");
+        expect(windowKeys).toEqual(["Tab", "Tab", "Escape"]);
       } finally {
         window.removeEventListener("keydown", onWindowKeyDown);
       }
+    });
+
+    // Review of 1.45.0: with no result, Tab from the field (last tabbable) left the portal and focusOutside closed the menu.
+    it("aucun résultat : Tab depuis le champ boucle dans le menu, la requête est conservée", async () => {
+      renderSearch();
+      const input = await openMenu();
+      await userEvent.type(input, "zzz");
+      await userEvent.tab();
+      expect(screen.getByRole("button", { name: "Close" })).toHaveFocus();
+      await userEvent.tab({ shift: true });
+      expect(input).toHaveFocus();
+      expect(input).toHaveValue("zzz");
+    });
+
+    it("avec résultats : Tab depuis le champ atteint le premier résultat", async () => {
+      renderSearch();
+      const input = await openMenu();
+      await userEvent.type(input, "reflet");
+      await userEvent.tab();
+      expect(screen.getByRole("button", { name: "Reflet gênant" })).toHaveFocus();
     });
   });
 

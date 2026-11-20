@@ -847,8 +847,8 @@ const ThumbnailBase: React.FC<ThumbnailProps> = ({
     const showOtherReasonLink =
       !isSearching && rejectMenuView === "main" && !!rejectionOptions?.secondary?.length;
     const handleSearchKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-      if (event.key === "Escape") return;
-      // Typed keys must not reach host shortcuts (grid, app) listening on window.
+      // Typed keys must not reach host shortcuts on window; Escape (dismiss) and Tab (FocusScope loop) must bubble.
+      if (event.key === "Escape" || event.key === "Tab") return;
       event.stopPropagation();
       const isComposing = event.nativeEvent.isComposing || event.keyCode === 229;
       if (event.key === "Enter" && !isComposing && searchResults.length > 0) {
