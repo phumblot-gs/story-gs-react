@@ -5,6 +5,34 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [Unreleased]
+
+### Ajouté
+
+- `Thumbnail` : champ de recherche dans le menu des motifs de refus, sous « Choisissez une raison » (CR-510). Aucun
+  changement d'API, aucune nouvelle clé i18n (libellés existants).
+  - Recherche : sur les motifs principaux et secondaires réunis (sans doublon, valeurs non textuelles ignorées), par
+    sous-chaîne insensible à la casse et aux accents. Pendant la saisie, « Autre raison » et la vue secondaire sont
+    masqués ; Entrée choisit le premier résultat (sauf pendant une composition IME). Requête vide : menu inchangé.
+  - Clavier : les événements `keydown` du champ ne remontent plus à l'hôte (ses raccourcis, ex. Shift+V dans gs_w, ne
+    se déclenchent pas pendant la saisie) ; Échap remonte et ferme le menu.
+  - Focus : champ focalisé à l'ouverture, focus conservé au passage vers « Autre raison » et au retour. Le menu repart
+    de la vue principale avec un champ vide à chaque ouverture (remise à zéro à l'ouverture, pas à la fermeture, pour
+    éviter un flash pendant l'animation de sortie).
+  - Taille stable : pendant la recherche, le menu garde la largeur et la hauteur mesurées au premier caractère, dans la
+    vue d'où elle est lancée (toujours bornées par la hauteur disponible) ; la liste filtrée s'affiche en haut et la
+    boîte ne bouge plus à chaque frappe. La taille naturelle revient quand la requête est vidée.
+  - Accessibilité et rendu : « Aucun résultat » annoncé dans une région `role="status"` ; chevron de retour et croix
+    nommés (`pagination.previous`, `button.close`) ; le champ a le même rendu clair que les champs d'ajout de tag et
+    de commentaire de la vignette.
+
+### Corrigé
+
+- `Thumbnail` : le menu des motifs de refus (`bench.config.validation.rejection_options`) est borné à la hauteur
+  disponible (`--radix-popover-content-available-height`, marge de collision 8 px) ; l'en-tête et le lien « Autre
+  raison » restent fixes, les listes de motifs principaux et secondaires défilent. Une longue liste ne déborde plus de
+  la fenêtre (CR-511). Aucun changement d'API.
+
 ## [1.44.0] - 2026-11-16
 
 ### Ajouté

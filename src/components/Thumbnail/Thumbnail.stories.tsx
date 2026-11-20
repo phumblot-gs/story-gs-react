@@ -1092,6 +1092,61 @@ export const WithRejectionOptions: Story = {
   ),
 };
 
+const accentedRejectionReasons = [
+  "Détourage imprécis",
+  "Exposition trop élevée",
+  "Reflet gênant",
+  "Étiquette visible",
+  "Mise au point floue",
+  "Colorimétrie à revoir",
+];
+
+const benchWithManyRejectionOptions = {
+  config: {
+    validation: {
+      rejection_options: {
+        active: true,
+        main: [...accentedRejectionReasons, ...Array.from({ length: 24 }, (_, i) => `Motif principal ${i + 1}`)],
+        secondary: ["Retouche peau excessive", ...Array.from({ length: 29 }, (_, i) => `Motif secondaire ${i + 1}`)],
+      },
+    },
+  },
+};
+
+/**
+ * Long rejection reason lists: the menu is capped to the space available on the side Radix
+ * picks; the header, the search field and the "other reason" link stay fixed while the reasons
+ * scroll. The search field (case and accent insensitive, e.g. "etiq") covers main and
+ * secondary reasons at once; Enter picks the first result.
+ */
+export const WithManyRejectionOptions: Story = {
+  args: { onStatusButtonClick: fn() },
+  render: (args) => (
+    <Layout bg="white" padding={4} className="pt-48">
+      <Thumbnail
+        picture_id={1}
+        src={sampleImageUrl}
+        filename="photo_avec_refus.jpg"
+        status={MediaStatus.SUBMITTED_FOR_APPROVAL}
+        size="large"
+        bench={benchWithManyRejectionOptions}
+        statusButtons={[
+          { key: "refuse", icon: "X", status: MediaStatus.REFUSED_1, label: "Refuse", rejectionReasons: true },
+          { key: "validate", icon: "Check", status: MediaStatus.VALIDATED, label: "Validate" },
+        ]}
+        onStatusButtonClick={args.onStatusButtonClick}
+      />
+    </Layout>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const page = within(canvasElement.ownerDocument.body);
+    await userEvent.click(canvas.getByRole("button", { name: "Refuse" }));
+    await expect(await page.findByTestId("rejection-reasons-list")).toBeVisible();
+    await expect(page.getByRole("textbox", { name: /search/i })).toHaveFocus();
+  },
+};
+
 /**
  * **Legacy API (deprecated)** — `onValidate` / `onReject` / `validateDisabled` /
  * `rejectDisabled`. Prefer `statusButtons` (see the Status Buttons story).
