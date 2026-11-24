@@ -120,7 +120,7 @@ Highlights:
 - **Pages:** `PageHeader`, `PageSearch`, `PageWelcome`
 - **Tables:** `DataTable` (sort, pagination, multi-select, ActionBar integration, shift-click range), the underlying shadcn `Table` primitives are also exported
 - **Buttons:** `Button`, `ButtonMenu`, `ButtonPlus`, `ButtonNotifications`, `ButtonStatus`, plus thumbnail variants (`ButtonThumbnailStars`, `ButtonThumbnailLabels`, etc.)
-- **Forms:** `Select`, `SelectAutocomplete`, `Input`, `InputOTP`, `Search`, `Checkbox`, `RadioGroup`, `Toggle`, `Switch`, `Slider`, `Calendar`
+- **Forms:** `Select`, `SelectAutocomplete`, `MultiSelect`, `Input`, `InputOTP`, `Search`, `Checkbox`, `RadioGroup`, `Toggle`, `Switch`, `Slider`, `Calendar`
 - **Containers / cards:** `Card` (with `variant="filled" | "outline"`), `Sheet`, `Drawer`, `Dialog`, `Popover`, `Tooltip`, `HoverCard`, `Accordion`, `Tabs`, `TabsWithViews`, `Carousel`
 - **Feedback:** `Alert`, `Toaster`/`toast`, `Progress`, `Skeleton`
 - **Domain:** `FileBrowser`, `FolderBrowser`, `ActivityHeatmap`, `Thumbnail`, `MediaStatus`, `StatusIndicator`

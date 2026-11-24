@@ -16,6 +16,7 @@
 @import './styles/typography.css';
 @import './styles/page-header.css';
 @import './styles/sidebar.css';
+@import './styles/multi-select.css';
 
 /* 4. Tailwind CSS */
 @tailwind base;

@@ -5,6 +5,52 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.45.0] - 2026-11-25
+
+### Ajouté
+
+- `MultiSelect` : liste déroulante à choix multiples (champ « liste à choix multiples » du formulaire de recherche
+  catalogue de Mediagrade). Options `SelectAutocompleteOption[]` (`value`, `label`, `disabled`, `icon`,
+  `searchText`), mode contrôlé `value: string[]` ou non contrôlé `defaultValue: string[]`.
+  `onChange(values, selected)` reçoit les `value` (jamais les labels, deux options pouvant avoir le même label) dans
+  l'ordre où elles ont été cochées, et les `{ value, label }` correspondants. Une valeur présente dans `value` mais
+  absente des `options` s'affiche et est renvoyée avec sa propre valeur comme label.
+  - Déclencheur : même apparence que `SelectTrigger` (fonds, tailles, rond de la flèche, `discrete`), mais une `div`
+    `role="combobox"` pour pouvoir porter des tags supprimables. Valeurs en `TagText`, résumé « +N » (infobulle avec
+    les valeurs masquées) quand elles ne tiennent plus sur une ligne ; en taille `small`, « N sélectionné(s) ».
+    `allowClear` : croix qui efface tout, menu fermé.
+  - Menu : Popover Radix avec un champ de recherche (`searchText` ou `label`, `filterFunction`), une case par option,
+    et en tête « Tout sélectionner » / « Tout désélectionner », appliqué aux seules options visibles et actives. Le
+    menu reste ouvert pendant qu'on coche. `maxSelected` : au maximum, les cases non cochées sont désactivées et le
+    menu affiche « Maximum atteint » ; « Tout sélectionner » est désactivé s'il dépasserait le maximum.
+  - Clavier : Entrée, Espace, ↓ ou ↑ ouvrent le menu depuis le déclencheur ; dans le menu, le focus reste dans la
+    recherche (`aria-activedescendant`) : ↓ / ↑ parcourent « Tout sélectionner » et les options (les désactivées sont
+    sautées), Entrée coche, Espace coche quand la recherche est vide (sinon il s'écrit), Retour arrière dans une
+    recherche vide retire la dernière valeur, Tab et Échap ferment et rendent le focus au déclencheur.
+  - Dans une `Modal`, un `SidePanel` ou un `FullFrame` : le premier Échap ferme le menu seul, le second le conteneur ;
+    la liste défile à la molette (le menu est un Popover `modal`, qui pose son propre verrou de défilement et garde le
+    focus).
+  - Fonds : le menu suit `SelectAutocomplete` (noir sur fond white et grey, black-secondary sur fond black, blanc
+    sans contexte). Chaque fond est posé avec sa couleur de texte : le menu ne dépend ni de `--popover-foreground` ni
+    d'une couleur héritée. Les tags prennent le fond du déclencheur, pas celui de la page (sinon tag et déclencheur se
+    confondent sur fond white et grey), avec `src/styles/multi-select.css`.
+  - Lignes légères (pas de `Checkbox` Radix par ligne) et mémoïsées : 1 000 options s'ouvrent en ~110 ms dans
+    Chromium, sans virtualisation.
+  - Props : `placeholder`, `searchPlaceholder`, `noResultsText`, `disabled`, `size`, `discrete`, `allowClear`,
+    `maxSelected`, `menuMaxHeight`, `popoverClassName`, `className`, `onOpenChange`, `filterFunction`, `id`,
+    `aria-label`, `aria-labelledby`, `aria-describedby`, `aria-invalid`, `debug`, `language`, `translations`.
+  - Pas encore dans cette version : `searchMode="remote"` (`onSearch`, `searchDebounceMs`, `loadingText`),
+    `allowCustomValue`, affichage des groupes (`group` est ignoré).
+- Traductions `multiSelect.*` en fr, en, es, it et de : `placeholder`, `search`, `noResults`, `selectAll`,
+  `deselectAll`, `selectedCount` (et `selectedCount_plural`), `clear`, `maxReached`, `more`.
+- Stories `UI/MultiSelect` : cas de base, avec valeurs et « +N », recherche, 1 000 options, `maxSelected`, taille
+  small, désactivé, dans une Modal, fond sombre, tous les fonds, français.
+
+### Modifié
+
+- `SelectTrigger` : styles des fonds, du rond de la flèche et des tailles déplacés dans un module interne
+  (`select-trigger-styles`) partagé avec `MultiSelect`. Classes identiques, aucun changement de rendu ni d'API.
+
 ## [1.44.0] - 2026-11-16
 
 ### Ajouté
@@ -292,6 +338,13 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
   #3a3a3a sur fond noir), texte blanc. Les menus et popovers de la librairie (portalés, fond surchargé) ne changent pas
   visuellement ; seule la couleur héritée de leur conteneur change, sans texte qui en dépende (vérifié sur
   `ButtonMenu` et `ButtonMenuSmall`, tous fonds).
+- **Impact consommateurs (visible)** — note ajoutée après coup (1.45.0). Sous un contexte `data-bg`, un composant qui
+  hérite de `text-popover-foreground` reçoit désormais du **blanc** (`0 0% 100%`) ; avant, la valeur hexadécimale
+  était ignorée et le texte restait noir par accident. Un composant local (shadcn copié dans l'application, par
+  exemple `Command` ou `PopoverContent`) qui force un fond blanc ou transparent (`bg-white`, `bg-transparent`) sans
+  forcer la couleur du texte affiche donc du texte blanc sur fond blanc. Correction côté application : poser la
+  couleur de texte avec le fond (`bg-white text-black`), ou garder `bg-popover` avec `text-popover-foreground`.
+  Constaté dans Mediagrade sur deux composants shadcn locaux.
 - Documentation de `ReorderDetails.viewChanges` (`ContactSheetReference`, `onReorder`) : elle ne liste que les médias
   dont le code de vue a changé, et non tous ceux qui ont changé de position (un média déplacé entre deux emplacements de
   même vue n'y figure pas). Pour les simples changements de position, utiliser `slots` (ou `pictureIds`) et
