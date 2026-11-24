@@ -3,6 +3,7 @@
 import * as React from "react";
 import * as SelectPrimitive from "@radix-ui/react-select";
 import { cn } from "@/lib/utils";
+import { useCollisionPadding, useMenuMaxHeight } from "@/contexts/CollisionInsetsContext";
 import { Icon } from "@/components/ui/icons";
 import { useBgContext } from "@/components/layout/BgContext";
 import {
@@ -213,11 +214,16 @@ const SelectTrigger = React.forwardRef<
   );
 });
 
+// Radix Select's own default (CONTENT_MARGIN), kept when insets are added to it.
+const SELECT_DEFAULT_COLLISION_PADDING = 10;
+
 const SelectContent = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Content>,
   SelectContentProps
->(({ className, children, debug = false, ...props }, ref) => {
+>(({ className, children, debug = false, collisionPadding, ...props }, ref) => {
   const bg = useBgContext();
+  const padding = useCollisionPadding(collisionPadding ?? SELECT_DEFAULT_COLLISION_PADDING);
+  const maxHeight = useMenuMaxHeight(undefined, "select");
 
   // Styles basés sur la maquette Figma selon le background
   const getContentStyles = () => {
@@ -246,7 +252,8 @@ const SelectContent = React.forwardRef<
         ref={ref}
         className={cn(
           // Styles de base de la liste déroulante selon Figma
-          "relative z-50 max-h-96 overflow-hidden rounded-none shadow-lg",
+          "relative z-50 overflow-hidden rounded-none shadow-lg",
+          maxHeight,
           "data-[state=open]:animate-in data-[state=closed]:animate-out",
           "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
           "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
@@ -257,6 +264,7 @@ const SelectContent = React.forwardRef<
         )}
         position="popper"
         sideOffset={5}
+        collisionPadding={padding}
         style={{ minWidth: "var(--radix-select-trigger-width)" }}
         {...props}
       >

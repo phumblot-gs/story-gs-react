@@ -3,6 +3,7 @@
 import * as React from "react";
 import * as PopoverPrimitive from "@radix-ui/react-popover";
 import { cn } from "@/lib/utils";
+import { useCollisionPadding, useMenuMaxHeight } from "@/contexts/CollisionInsetsContext";
 import { useBgContext } from "@/components/layout/BgContext";
 import { Input } from "./input";
 import { Icon } from "./icons";
@@ -145,7 +146,8 @@ export interface SelectAutocompleteProps
 
   /**
    * Maximum height of the dropdown menu.
-   * Default: `max-h-[calc(100vh-2rem)]` to adapt to available space.
+   * Default: `max-h-[calc(100vh-2rem)]` to adapt to available space, also bounded by the space left
+   * by `CollisionInsetsProvider` insets when some are reserved.
    * You can customize with Tailwind classes like `max-h-[40vh]`, `max-h-96`, etc.
    * The menu will automatically enable vertical scrolling when content exceeds this height.
    */
@@ -188,7 +190,7 @@ const SelectAutocomplete = React.forwardRef<HTMLInputElement, SelectAutocomplete
       listClassName,
       itemClassName,
       size = "normal",
-      menuMaxHeight = "max-h-[calc(100vh-2rem)]",
+      menuMaxHeight: menuMaxHeightProp,
       debug = false,
       value: valueProp,
       defaultValue,
@@ -201,6 +203,8 @@ const SelectAutocomplete = React.forwardRef<HTMLInputElement, SelectAutocomplete
     ref
   ) => {
     const bg = useBgContext();
+    const menuMaxHeight = useMenuMaxHeight(menuMaxHeightProp, "popover");
+    const collisionPadding = useCollisionPadding(undefined);
     const { t } = useTranslationSafe(translations, language);
     const noResultsText = noResultsTextProp ?? t("select.noResults");
     const loadingText = loadingTextProp ?? t("select.searching");
@@ -730,6 +734,7 @@ const SelectAutocomplete = React.forwardRef<HTMLInputElement, SelectAutocomplete
               )}
               data-bg={bg || undefined}
               sideOffset={5}
+              collisionPadding={collisionPadding}
               align="start"
               style={{ width: popoverWidth ? `${popoverWidth}px` : undefined }}
               onOpenAutoFocus={(e) => e.preventDefault()}

@@ -3,6 +3,7 @@ import * as TooltipPrimitive from "@radix-ui/react-tooltip"
 import { cva } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
+import { useCollisionPadding } from "@/contexts/CollisionInsetsContext"
 import { BgProvider, useBgContext } from "@/components/layout/BgContext"
 import { DeferredTrigger, useDeferredRoot, type DeferredRootValue } from "@/components/ui/deferred-overlays"
 
@@ -72,7 +73,8 @@ export interface TooltipContentProps
 const TooltipContent = React.forwardRef<
   React.ElementRef<typeof TooltipPrimitive.Content>,
   TooltipContentProps
->(({ className, sideOffset = 4, bg, children, ...props }, ref) => {
+>(({ className, sideOffset = 4, bg, collisionPadding, children, ...props }, ref) => {
+  const padding = useCollisionPadding(collisionPadding)
   const deferredRoot = React.useContext(DeferredTooltipContext)
   const contextBg = useBgContext()
   const surface = (bg ?? contextBg) === "black" ? "light" : "dark"
@@ -87,6 +89,7 @@ const TooltipContent = React.forwardRef<
     <TooltipPrimitive.Content
       ref={ref}
       sideOffset={sideOffset}
+      collisionPadding={padding}
       data-bg={surfaceBg}
       data-surface={surface}
       className={cn(tooltipContentVariants({ surface }), className)}

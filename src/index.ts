@@ -666,6 +666,12 @@ export type { TruncatedTextProps } from "./components/ui/truncated-text";
 export { Modal as ModalLayer };
 export { ButtonNotifications };
 export type { ButtonNotificationsRef };
+export type { ButtonNotificationsProps } from "./components/notifications/types";
+export type {
+  NotificationProps,
+  NotificationLinkProps,
+  NotificationLinkRenderer,
+} from "./components/notifications/NotificationPanel";
 export { PageHeader };
 export { PageSearch };
 export { PageWelcome };
@@ -807,6 +813,9 @@ export type { Language as TranslationLanguage, TranslationProviderProps, Transla
 
 export { StyleProvider, useStyles, useGlobalStyles } from "./contexts/StyleProvider";
 export type { StyleConfig } from "./contexts/StyleProvider";
+
+export { CollisionInsetsProvider, useCollisionInsets } from "./contexts/CollisionInsetsContext";
+export type { CollisionInsets, CollisionInsetsProviderProps } from "./contexts/CollisionInsetsContext";
 
 // Export root components for easy setup
 export { GSComponentsRoot, GSGlobalStyles } from "./components/GSComponentsRoot";

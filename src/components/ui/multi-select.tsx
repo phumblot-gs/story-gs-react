@@ -5,6 +5,7 @@ import * as PopoverPrimitive from "@radix-ui/react-popover";
 import { Check, Minus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { BgProvider, useBgContext } from "@/components/layout/BgContext";
+import { useCollisionPadding } from "@/contexts/CollisionInsetsContext";
 import { useTranslationSafe, type TranslationMap } from "@/contexts/TranslationContext";
 import { Icon } from "./icons";
 import { TagText } from "./tag-text";
@@ -251,6 +252,9 @@ const MultiSelect = React.forwardRef<HTMLDivElement, MultiSelectProps>(
     ref
   ) => {
     const bg = useBgContext();
+    // Marges réservées par l'hôte (CollisionInsetsProvider) ; la hauteur du menu suit déjà la hauteur
+    // disponible calculée par Radix, qui en tient compte.
+    const collisionPadding = useCollisionPadding(undefined);
     const { t } = useTranslationSafe(translations, language);
     const placeholderText = placeholder ?? t("multiSelect.placeholder");
     const searchPlaceholderText = searchPlaceholder ?? t("multiSelect.search");
@@ -697,6 +701,7 @@ const MultiSelect = React.forwardRef<HTMLDivElement, MultiSelectProps>(
             data-bg={bg || undefined}
             data-multi-select-menu=""
             sideOffset={5}
+            collisionPadding={collisionPadding}
             align="start"
             className={cn(
               "z-50 flex flex-col overflow-hidden rounded-none border p-0 shadow-lg",

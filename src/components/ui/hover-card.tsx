@@ -3,6 +3,7 @@ import * as HoverCardPrimitive from "@radix-ui/react-hover-card"
 import { cva } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
+import { useCollisionPadding } from "@/contexts/CollisionInsetsContext"
 import { BgProvider } from "@/components/layout/BgContext"
 
 const HoverCard = HoverCardPrimitive.Root
@@ -42,13 +43,15 @@ export interface HoverCardContentProps
 const HoverCardContent = React.forwardRef<
   React.ElementRef<typeof HoverCardPrimitive.Content>,
   HoverCardContentProps
->(({ className, align = "center", sideOffset = 5, surface = "light", portal = true, container, children, ...props }, ref) => {
+>(({ className, align = "center", sideOffset = 5, surface = "light", portal = true, container, collisionPadding, children, ...props }, ref) => {
+  const padding = useCollisionPadding(collisionPadding)
   const surfaceBg = surface === "light" ? "white" : "black"
   const content = (
     <HoverCardPrimitive.Content
       ref={ref}
       align={align}
       sideOffset={sideOffset}
+      collisionPadding={padding}
       data-bg={surfaceBg}
       data-surface={surface}
       className={cn(hoverCardContentVariants({ surface }), className)}

@@ -5,7 +5,7 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
-## [1.45.0] - 2026-11-25
+## [1.48.0] - 2026-11-25
 
 ### Ajouté
 
@@ -39,6 +39,8 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
   - Props : `placeholder`, `searchPlaceholder`, `noResultsText`, `disabled`, `size`, `discrete`, `allowClear`,
     `maxSelected`, `menuMaxHeight`, `popoverClassName`, `className`, `onOpenChange`, `filterFunction`, `id`,
     `aria-label`, `aria-labelledby`, `aria-describedby`, `aria-invalid`, `debug`, `language`, `translations`.
+  - Marges réservées par l'hôte (`CollisionInsetsProvider`, `collisionInsets` de `GSComponentsRoot`, 1.47.0) :
+    ajoutées au `collisionPadding` du menu, dont la hauteur reste bornée par la hauteur disponible calculée par Radix.
   - Pas encore dans cette version : `searchMode="remote"` (`onSearch`, `searchDebounceMs`, `loadingText`),
     `allowCustomValue`, affichage des groupes (`group` est ignoré).
 - Traductions `multiSelect.*` en fr, en, es, it et de : `placeholder`, `search`, `noResults`, `selectAll`,
@@ -50,6 +52,117 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 - `SelectTrigger` : styles des fonds, du rond de la flèche et des tailles déplacés dans un module interne
   (`select-trigger-styles`) partagé avec `MultiSelect`. Classes identiques, aucun changement de rendu ni d'API.
+## [1.47.0] - 2026-11-24
+
+### Modifié
+
+- `Thumbnail` : navigation dans les résultats de recherche du menu des motifs de refus, comme l'ancien menu gs_node
+  (CR-510). Sans requête, le menu est inchangé. Aucun changement d'API, aucune nouvelle clé i18n.
+  - Option active unique, mise en évidence comme le survol : la première par défaut ; ↑ / ↓ dans le champ la déplacent
+    (en bouclant) et la font défiler dans la vue ; le survol souris la définit et elle reste active quand la souris
+    quitte la liste. Quand les résultats changent, elle est conservée si elle y figure encore, sinon c'est la première.
+  - Entrée valide l'option active (et non plus toujours la première) ; Entrée et ↑ / ↓ sont ignorées pendant une
+    composition IME.
+  - Pendant la recherche, la taille du menu reste figée, hauteur comprise (comme en 1.45.x) : largeur et hauteur sont
+    mesurées au premier caractère et relâchées quand la requête est vidée. Les résultats s'affichent en haut, la liste
+    défile au-delà, et la hauteur reste bornée par la hauteur disponible.
+  - Échap avec une requête la vide, revient à la vue principale et laisse le menu ouvert, sans remonter aux raccourcis
+    de l'hôte, que le focus soit dans le champ, sur une option ou sur Fermer ; Échap sur une requête vide ferme le
+    menu comme avant.
+
+### Ajouté
+
+- Marge haute réservée pour tous les popovers et menus de la librairie (CR-511) : `CollisionInsetsProvider`
+  (`insets={{ top, right, bottom, left }}`, en px) et la prop `collisionInsets` de `GSComponentsRoot`, plus le hook
+  `useCollisionInsets`. Pour une application affichée sous un en-tête que l'hôte dessine par-dessus (gs_w dans
+  l'iframe de gs_node) : `<GSComponentsRoot collisionInsets={{ top: 60 }}>`. Chaque marge s'ajoute, côté par côté, au
+  `collisionPadding` effectif : celui de l'appelant, sinon le défaut Radix (0, et 10 pour `SelectContent`) ; un
+  objet partiel garde la sémantique Radix (côtés absents à 0, ex. `{ left: 4 }` + `{ top: 60 }` →
+  `{ top: 60, right: 0, bottom: 0, left: 4 }`). Sont couverts `PopoverContent`, `DropdownMenuContent` / `SubContent`,
+  `SelectContent`, `TooltipContent`, `HoverCardContent`, `ContextMenuContent` / `SubContent`, `MenubarContent` /
+  `SubContent` et `SelectAutocomplete`, donc tous les composants bâtis dessus (menu des motifs de refus de
+  `Thumbnail`, `ButtonThumbnail*`, `ButtonMenu*`, `ButtonMenuStatus`, menus de l'`ActionBar`…). Avec une marge, la hauteur max par défaut de ces
+  menus (`menuMaxHeight`, `max-h-96` de `SelectContent`) est aussi bornée par la hauteur disponible calculée par
+  Radix ; un `menuMaxHeight` fourni par l'appelant est conservé tel quel. Sans provider ou à 0 : aucun changement.
+  Un provider imbriqué **remplace** les marges du parent pour son sous-arbre (pas de fusion) ; un `GSComponentsRoot`
+  imbriqué sans `collisionInsets` les remet donc à zéro.
+  Story : *Context/CollisionInsetsProvider*.
+- `Thumbnail` : accessibilité de la recherche des motifs — `role="listbox"` sur les résultats, `role="option"` et
+  `aria-selected` sur chacun ; le champ devient un `combobox` (`aria-expanded` quand des résultats sont affichés,
+  `aria-autocomplete="list"`, `aria-controls`, `aria-activedescendant`). Les options restent atteignables au Tab.
+
+## [1.46.0] - 2026-11-24
+
+### Sécurité
+
+- `zod`, `@hookform/resolvers` et `react-router-dom` ne sont plus des dépendances de la librairie (passées en
+  `devDependencies`, pour les stories et l'app de démo seulement). Les apps qui l'installent ne reçoivent plus zod 3
+  (GHSA-mrhx-c7xc-m3w5) ni react-router 6 (GHSA-wrjc-x8rr-h8h6, GHSA-337j-9hxr-rhxg), ni les alertes Dependabot qui
+  en venaient. Le `dist` n'importait déjà ni zod ni `@hookform/resolvers` ; il n'importe plus `react-router-dom`.
+
+### Ajouté
+
+- `ButtonNotifications` : prop `renderLink` (transmise à `ActivityPanel` puis à `NotificationPanel`) pour rendre le
+  lien de chaque notification avec le routeur de l'app. Elle reçoit `{ href, className, onClick, children }` ; garder
+  `onClick`, qui bloque la navigation quand `redirectLink` est vide ou `"#"` et marque la notification comme lue.
+  Types exportés : `ButtonNotificationsProps`, `NotificationProps`, `NotificationLinkProps`,
+  `NotificationLinkRenderer`.
+
+### Modifié
+
+- `NotificationPanel` ne dépend plus d'aucun routeur : sans `renderLink`, chaque notification est un `<a href>`
+  simple (la garde vide / `"#"` et `onClick` sont inchangés). Avant, le `<Link>` du react-router-dom 6 embarqué levait
+  « useHref() may be used only in the context of a \<Router> » dans les apps sur react-router 7 ou 8 : le panneau
+  plantait à l'ouverture.
+
+### Migration
+
+- Pour garder la navigation côté client (sans rechargement de page) :
+
+  ```tsx
+  import { Link } from "react-router"; // ou "react-router-dom"
+
+  <ButtonNotifications renderLink={({ href, ...props }) => <Link to={href} {...props} />} />
+  ```
+
+- Une app qui importait `zod` ou `react-router-dom` sans les déclarer dans son propre `package.json` doit les ajouter.
+
+## [1.45.1] - 2026-11-20
+
+### Corrigé
+
+- `Thumbnail` : Tab et Shift+Tab dans le champ de recherche du menu des motifs de refus restent dans le menu au lieu de
+  le fermer (CR-510). Le champ arrêtait la propagation de Tab, que le `FocusScope` du popover ne voyait donc pas : sans
+  résultat, Tab sortait du popover, qui se fermait en perdant la requête. Tab remonte désormais comme Échap et boucle
+  dans le menu ; les autres touches ne remontent toujours pas aux raccourcis de l'hôte. Aucun changement d'API.
+
+## [1.45.0] - 2026-11-20
+
+### Ajouté
+
+- `Thumbnail` : champ de recherche dans le menu des motifs de refus, sous « Choisissez une raison » (CR-510). Aucun
+  changement d'API, aucune nouvelle clé i18n (libellés existants).
+  - Recherche : sur les motifs principaux et secondaires réunis (sans doublon, valeurs non textuelles ignorées), par
+    sous-chaîne insensible à la casse et aux accents. Pendant la saisie, « Autre raison » et la vue secondaire sont
+    masqués ; Entrée choisit le premier résultat (sauf pendant une composition IME). Requête vide : menu inchangé.
+  - Clavier : les événements `keydown` du champ ne remontent plus à l'hôte (ses raccourcis, ex. Shift+V dans gs_w, ne
+    se déclenchent pas pendant la saisie) ; Échap remonte et ferme le menu.
+  - Focus : champ focalisé à l'ouverture, focus conservé au passage vers « Autre raison » et au retour. Le menu repart
+    de la vue principale avec un champ vide à chaque ouverture (remise à zéro à l'ouverture, pas à la fermeture, pour
+    éviter un flash pendant l'animation de sortie).
+  - Taille stable : pendant la recherche, le menu garde la largeur et la hauteur mesurées au premier caractère, dans la
+    vue d'où elle est lancée (toujours bornées par la hauteur disponible) ; la liste filtrée s'affiche en haut et la
+    boîte ne bouge plus à chaque frappe. La taille naturelle revient quand la requête est vidée.
+  - Accessibilité et rendu : « Aucun résultat » annoncé dans une région `role="status"` ; chevron de retour et croix
+    nommés (`pagination.previous`, `button.close`) ; le champ a le même rendu clair que les champs d'ajout de tag et
+    de commentaire de la vignette.
+
+### Corrigé
+
+- `Thumbnail` : le menu des motifs de refus (`bench.config.validation.rejection_options`) est borné à la hauteur
+  disponible (`--radix-popover-content-available-height`, marge de collision 8 px) ; l'en-tête et le lien « Autre
+  raison » restent fixes, les listes de motifs principaux et secondaires défilent. Une longue liste ne déborde plus de
+  la fenêtre (CR-511). Aucun changement d'API.
 
 ## [1.44.0] - 2026-11-16
 
@@ -338,7 +451,7 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
   #3a3a3a sur fond noir), texte blanc. Les menus et popovers de la librairie (portalés, fond surchargé) ne changent pas
   visuellement ; seule la couleur héritée de leur conteneur change, sans texte qui en dépende (vérifié sur
   `ButtonMenu` et `ButtonMenuSmall`, tous fonds).
-- **Impact consommateurs (visible)** — note ajoutée après coup (1.45.0). Sous un contexte `data-bg`, un composant qui
+- **Impact consommateurs (visible)** — note ajoutée après coup (1.48.0). Sous un contexte `data-bg`, un composant qui
   hérite de `text-popover-foreground` reçoit désormais du **blanc** (`0 0% 100%`) ; avant, la valeur hexadécimale
   était ignorée et le texte restait noir par accident. Un composant local (shadcn copié dans l'application, par
   exemple `Command` ou `PopoverContent`) qui force un fond blanc ou transparent (`bg-white`, `bg-transparent`) sans
