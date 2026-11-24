@@ -5,6 +5,42 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.46.0] - 2026-11-24
+
+### Sécurité
+
+- `zod`, `@hookform/resolvers` et `react-router-dom` ne sont plus des dépendances de la librairie (passées en
+  `devDependencies`, pour les stories et l'app de démo seulement). Les apps qui l'installent ne reçoivent plus zod 3
+  (GHSA-mrhx-c7xc-m3w5) ni react-router 6 (GHSA-wrjc-x8rr-h8h6, GHSA-337j-9hxr-rhxg), ni les alertes Dependabot qui
+  en venaient. Le `dist` n'importait déjà ni zod ni `@hookform/resolvers` ; il n'importe plus `react-router-dom`.
+
+### Ajouté
+
+- `ButtonNotifications` : prop `renderLink` (transmise à `ActivityPanel` puis à `NotificationPanel`) pour rendre le
+  lien de chaque notification avec le routeur de l'app. Elle reçoit `{ href, className, onClick, children }` ; garder
+  `onClick`, qui bloque la navigation quand `redirectLink` est vide ou `"#"` et marque la notification comme lue.
+  Types exportés : `ButtonNotificationsProps`, `NotificationProps`, `NotificationLinkProps`,
+  `NotificationLinkRenderer`.
+
+### Modifié
+
+- `NotificationPanel` ne dépend plus d'aucun routeur : sans `renderLink`, chaque notification est un `<a href>`
+  simple (la garde vide / `"#"` et `onClick` sont inchangés). Avant, le `<Link>` du react-router-dom 6 embarqué levait
+  « useHref() may be used only in the context of a \<Router> » dans les apps sur react-router 7 ou 8 : le panneau
+  plantait à l'ouverture.
+
+### Migration
+
+- Pour garder la navigation côté client (sans rechargement de page) :
+
+  ```tsx
+  import { Link } from "react-router"; // ou "react-router-dom"
+
+  <ButtonNotifications renderLink={({ href, ...props }) => <Link to={href} {...props} />} />
+  ```
+
+- Une app qui importait `zod` ou `react-router-dom` sans les déclarer dans son propre `package.json` doit les ajouter.
+
 ## [1.45.1] - 2026-11-20
 
 ### Corrigé
