@@ -1,6 +1,6 @@
 import * as React from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { cleanup, render, renderHook, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, renderHook, screen } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
 import userEvent from "@testing-library/user-event";
 
@@ -11,6 +11,7 @@ import { ActionBar } from "@/components/layout/ActionBar";
 import { ActionBarProvider } from "@/components/layout/ActionBarContext";
 import { GSComponentsRoot } from "@/components/GSComponentsRoot";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
+import { MultiSelect } from "@/components/ui/multi-select";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "@/components/ui/context-menu";
 import { CollisionInsetsProvider, useCollisionPadding } from "@/contexts/CollisionInsetsContext";
@@ -306,5 +307,31 @@ describe("marge haute réservée (CollisionInsetsProvider)", () => {
     render(<CollisionInsetsProvider insets={{ top: 0 }}>{thumbnail()}</CollisionInsetsProvider>);
     await openRejectionMenu();
     expect(last(captured.popover)).toBe(8);
+  });
+});
+
+describe("MultiSelect", () => {
+  const openMultiSelect = () => {
+    const trigger = screen.getByRole("combobox");
+    trigger.focus();
+    fireEvent.keyDown(trigger, { key: "Enter" });
+  };
+  const options = [{ value: "pe27", label: "PE27" }];
+
+  it("sans provider : collisionPadding inchangé (défaut Radix)", () => {
+    render(<MultiSelect options={options} />);
+    openMultiSelect();
+    expect(screen.getByRole("listbox")).toBeInTheDocument();
+    expect(last(captured.popover)).toBeUndefined();
+  });
+
+  it("avec { top: 60 } : la marge est réservée en haut", () => {
+    render(
+      <CollisionInsetsProvider insets={{ top: 60 }}>
+        <MultiSelect options={options} />
+      </CollisionInsetsProvider>,
+    );
+    openMultiSelect();
+    expect(last(captured.popover)).toEqual({ top: 60, right: 0, bottom: 0, left: 0 });
   });
 });

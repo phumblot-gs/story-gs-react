@@ -24,6 +24,8 @@ import {
 } from "./components/ui/select";
 import { SelectAutocomplete } from "./components/ui/select-autocomplete";
 import type { SelectAutocompleteOption, SelectedOption } from "./components/ui/select-autocomplete";
+import { MultiSelect } from "./components/ui/multi-select";
+import type { MultiSelectProps } from "./components/ui/multi-select";
 import type { LinkProps } from "./components/ui/link";
 import { Input } from "./components/ui/input";
 import { InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator } from "./components/ui/input-otp";
@@ -440,6 +442,8 @@ export { FileBrowser };
 export { Select, SelectTrigger, SelectContent, SelectItem, SelectValue };
 export { SelectAutocomplete };
 export type { SelectAutocompleteOption, SelectedOption };
+export { MultiSelect };
+export type { MultiSelectProps };
 export { Input };
 export { InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator };
 export { Search };

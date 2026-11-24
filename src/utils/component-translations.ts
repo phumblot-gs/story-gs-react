@@ -1343,6 +1343,78 @@ export const componentTranslations: TranslationMap = {
     DE: "Wird gesucht..."
   },
 
+  // MultiSelect
+  "multiSelect.placeholder": {
+    EN: "Select…",
+    FR: "Sélectionner…",
+    ES: "Seleccionar…",
+    IT: "Seleziona…",
+    DE: "Auswählen…"
+  },
+  "multiSelect.search": {
+    EN: "Search…",
+    FR: "Rechercher…",
+    ES: "Buscar…",
+    IT: "Cerca…",
+    DE: "Suchen…"
+  },
+  "multiSelect.noResults": {
+    EN: "No results",
+    FR: "Aucun résultat",
+    ES: "Sin resultados",
+    IT: "Nessun risultato",
+    DE: "Keine Ergebnisse"
+  },
+  "multiSelect.selectAll": {
+    EN: "Select all",
+    FR: "Tout sélectionner",
+    ES: "Seleccionar todo",
+    IT: "Seleziona tutto",
+    DE: "Alle auswählen"
+  },
+  "multiSelect.deselectAll": {
+    EN: "Deselect all",
+    FR: "Tout désélectionner",
+    ES: "Deseleccionar todo",
+    IT: "Deseleziona tutto",
+    DE: "Alle abwählen"
+  },
+  "multiSelect.selectedCount": {
+    EN: "{count} selected",
+    FR: "{count} sélectionné",
+    ES: "{count} seleccionado",
+    IT: "{count} selezionato",
+    DE: "{count} ausgewählt"
+  },
+  "multiSelect.selectedCount_plural": {
+    EN: "{count} selected",
+    FR: "{count} sélectionnés",
+    ES: "{count} seleccionados",
+    IT: "{count} selezionati",
+    DE: "{count} ausgewählt"
+  },
+  "multiSelect.clear": {
+    EN: "Clear all",
+    FR: "Tout effacer",
+    ES: "Borrar todo",
+    IT: "Cancella tutto",
+    DE: "Alle löschen"
+  },
+  "multiSelect.maxReached": {
+    EN: "Maximum reached ({max})",
+    FR: "Maximum atteint ({max})",
+    ES: "Máximo alcanzado ({max})",
+    IT: "Massimo raggiunto ({max})",
+    DE: "Maximum erreicht ({max})"
+  },
+  "multiSelect.more": {
+    EN: "{count} more: {labels}",
+    FR: "{count} de plus : {labels}",
+    ES: "{count} más: {labels}",
+    IT: "altri {count}: {labels}",
+    DE: "{count} weitere: {labels}"
+  },
+
   // Pagination (accessibilité)
   "pagination.previousPage": {
     EN: "Previous page",

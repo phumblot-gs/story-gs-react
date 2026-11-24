@@ -6,6 +6,11 @@ import { cn } from "@/lib/utils";
 import { useCollisionPadding, useMenuMaxHeight } from "@/contexts/CollisionInsetsContext";
 import { Icon } from "@/components/ui/icons";
 import { useBgContext } from "@/components/layout/BgContext";
+import {
+  getSelectTriggerBackgroundStyles,
+  getSelectTriggerIconButtonStyles,
+  getSelectTriggerSizeStyles,
+} from "./select-trigger-styles";
 
 export interface SelectProps {
   children: React.ReactNode;
@@ -122,31 +127,10 @@ const SelectTrigger = React.forwardRef<
     return () => observer.disconnect();
   }, [triggerNode]);
 
-  // Styles basés sur la maquette Figma
-  // Hérite du contexte bg via useBgContext()
-  // Inclut une couleur de placeholder adaptée au contexte (sinon le gris foncé
-  // par défaut est illisible sur le trigger noir).
-  const getBackgroundStyles = () => {
-    if (disabled) {
-      // État désactivé - toujours gris peu importe le fond
-      return "bg-grey-lighter text-grey-stronger border-grey-lighter data-[placeholder]:text-grey-stronger";
-    }
-
-    switch (bg) {
-      case "white":
-        // Le composant s'affiche sur fond blanc - bordure invisible (même couleur que bg)
-        return "bg-grey-lighter text-black border-grey-lighter hover:border-black/50 focus:border-black/50 hover:border-[0.5px] focus:border-[0.5px] data-[placeholder]:text-grey-strongest";
-      case "black":
-        // Le composant s'affiche sur fond noir - bordure invisible (même couleur que bg)
-        // Placeholder en gris clair pour rester lisible sur le trigger sombre.
-        return "bg-black-secondary text-white border-black-secondary hover:border-white/50 focus:border-white/50 hover:border-[0.5px] focus:border-[0.5px] data-[placeholder]:text-grey-stronger";
-      case "grey":
-        // Le composant s'affiche sur fond gris - bordure invisible (même couleur que bg)
-        return "bg-white text-black border-white hover:border-black/50 focus:border-black/50 hover:border-[0.5px] focus:border-[0.5px] data-[placeholder]:text-grey-strongest";
-      default:
-        return "bg-grey-lighter text-black border-grey-lighter hover:border-black/50 focus:border-black/50 hover:border-[0.5px] focus:border-[0.5px] data-[placeholder]:text-grey-strongest";
-    }
-  };
+  // Styles basés sur la maquette Figma, partagés avec MultiSelect (select-trigger-styles).
+  // Hérite du contexte bg via useBgContext() ; inclut une couleur de placeholder
+  // adaptée au contexte (sinon le gris foncé est illisible sur le trigger noir).
+  const getBackgroundStyles = () => getSelectTriggerBackgroundStyles(bg, disabled);
 
   // Détermine quelle icône afficher
   const getIcon = () => {
@@ -157,46 +141,8 @@ const SelectTrigger = React.forwardRef<
   };
 
   // Détermine les styles du bouton circulaire selon le bg et l'état
-  const getIconButtonStyles = () => {
-    // État ouvert (liste déroulée) - même pour tous les backgrounds
-    if (isOpen) {
-      return "bg-blue-primary text-black";
-    }
-
-    // État pressé - même pour tous les backgrounds
-    if (isPressed) {
-      return "bg-black text-blue-primary";
-    }
-
-    // État hover - même pour tous les backgrounds
-    if (isHovered) {
-      return "bg-black text-white";
-    }
-
-    // Mode discret : au repos, le rond adopte le fond du trigger pour
-    // visuellement disparaître ; seule l'icône reste perceptible.
-    if (discrete) {
-      switch (bg) {
-        case "grey":
-          return "bg-white text-black";          // trigger sur grey = fond white
-        case "black":
-          return "bg-black-secondary text-white"; // trigger sur black = fond black-secondary
-        case "white":
-        default:
-          return "bg-grey-lighter text-black";   // trigger sur white = fond grey-lighter
-      }
-    }
-
-    // État par défaut selon le background
-    switch (bg) {
-      case "grey":
-        return "bg-grey-lighter text-black";
-      case "white":
-      case "black":
-      default:
-        return "bg-white text-black";
-    }
-  };
+  const getIconButtonStyles = () =>
+    getSelectTriggerIconButtonStyles(bg, { isOpen, isPressed, isHovered, discrete });
 
   // Gère le clic sur l'icône X pour effacer
   const handleClearPointerDown = (e: React.PointerEvent) => {
@@ -208,22 +154,7 @@ const SelectTrigger = React.forwardRef<
   };
 
   // Styles conditionnels selon la taille
-  const getSizeStyles = () => {
-    if (size === "small") {
-      return {
-        trigger: "h-4 py-0 pl-2 pr-[2px]",
-        button: "h-3 w-3",
-        iconWrapper: "w-[5px] h-[5px]",
-        iconSize: 5,
-      };
-    }
-    return {
-      trigger: "h-[30px] py-1 pl-3 pr-[4px]",
-      button: "h-4 w-4",
-      iconWrapper: "w-[10px] h-[10px]",
-      iconSize: 10,
-    };
-  };
+  const getSizeStyles = () => getSelectTriggerSizeStyles(size);
 
   const sizeStyles = getSizeStyles();
 
