@@ -5,6 +5,30 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [Unreleased]
+
+### Modifié
+
+- `Thumbnail` : navigation dans les résultats de recherche du menu des motifs de refus, comme l'ancien menu gs_node
+  (CR-510). Sans requête, le menu est inchangé. Aucun changement d'API, aucune nouvelle clé i18n.
+  - Option active unique, mise en évidence comme le survol : la première par défaut ; ↑ / ↓ dans le champ la déplacent
+    (en bouclant) et la font défiler dans la vue ; le survol souris la définit et elle reste active quand la souris
+    quitte la liste. Quand les résultats changent, elle est conservée si elle y figure encore, sinon c'est la première.
+  - Entrée valide l'option active (et non plus toujours la première) ; Entrée et ↑ / ↓ sont ignorées pendant une
+    composition IME.
+  - Pendant la recherche, la taille du menu reste figée, hauteur comprise (comme en 1.45.x) : largeur et hauteur sont
+    mesurées au premier caractère et relâchées quand la requête est vidée. Les résultats s'affichent en haut, la liste
+    défile au-delà, et la hauteur reste bornée par la hauteur disponible.
+  - Échap avec une requête la vide, revient à la vue principale et laisse le menu ouvert, sans remonter aux raccourcis
+    de l'hôte, que le focus soit dans le champ, sur une option ou sur Fermer ; Échap sur une requête vide ferme le
+    menu comme avant.
+
+### Ajouté
+
+- `Thumbnail` : accessibilité de la recherche des motifs — `role="listbox"` sur les résultats, `role="option"` et
+  `aria-selected` sur chacun ; le champ devient un `combobox` (`aria-expanded` quand des résultats sont affichés,
+  `aria-autocomplete="list"`, `aria-controls`, `aria-activedescendant`). Les options restent atteignables au Tab.
+
 ## [1.46.0] - 2026-11-24
 
 ### Sécurité

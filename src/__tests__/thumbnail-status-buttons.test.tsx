@@ -150,7 +150,7 @@ describe("Thumbnail — statusButtons", () => {
     };
     const openMenu = async () => {
       await userEvent.click(screen.getByRole("button", { name: "Refuse" }));
-      return screen.findByRole("textbox", { name: "Search..." });
+      return screen.findByRole("combobox", { name: "Search..." });
     };
     const listedReasons = () =>
       Array.from(screen.getByTestId("rejection-reasons-list").querySelectorAll("button")).map((b) => b.textContent);
@@ -215,20 +215,20 @@ describe("Thumbnail — statusButtons", () => {
       expect(input).toBeInTheDocument();
     });
 
-    it("Entrée choisit le premier résultat et émet le motif", async () => {
+    it("Entrée sans flèche ni survol choisit le premier résultat et émet le motif", async () => {
       const onStatusButtonClick = renderSearch();
       const input = await openMenu();
       await userEvent.type(input, "e{Enter}");
       expect(onStatusButtonClick).toHaveBeenCalledWith("refuse", "Détourage imprécis");
-      expect(screen.queryByRole("textbox", { name: "Search..." })).not.toBeInTheDocument();
+      expect(screen.queryByRole("combobox", { name: "Search..." })).not.toBeInTheDocument();
     });
 
     it("la recherche est vidée à la réouverture", async () => {
       renderSearch();
       const input = await openMenu();
       await userEvent.type(input, "flou");
-      await userEvent.keyboard("{Escape}");
-      expect(screen.queryByRole("textbox", { name: "Search..." })).not.toBeInTheDocument();
+      await userEvent.keyboard("{Escape}{Escape}");
+      expect(screen.queryByRole("combobox", { name: "Search..." })).not.toBeInTheDocument();
       const reopened = await openMenu();
       expect(reopened).toHaveValue("");
       expect(listedReasons()).toEqual(["Détourage imprécis", "Reflet gênant", "Flou"]);
@@ -245,7 +245,7 @@ describe("Thumbnail — statusButtons", () => {
         expect(listedReasons()).toEqual(secondaryReasons);
         await userEvent.click(screen.getByRole("button", { name: "Retouche peau" }));
         expect(onStatusButtonClick).toHaveBeenCalledWith("refuse", "Retouche peau");
-        expect(screen.queryByRole("textbox", { name: "Search..." })).not.toBeInTheDocument();
+        expect(screen.queryByRole("combobox", { name: "Search..." })).not.toBeInTheDocument();
       });
 
       it("le chevron de retour ramène à la vue principale", async () => {
@@ -276,7 +276,7 @@ describe("Thumbnail — statusButtons", () => {
         await userEvent.click(screen.getByRole("button", { name: "Other reason" }));
         await userEvent.type(input, "zzz");
         await userEvent.click(screen.getByRole("button", { name: "Close" }));
-        expect(screen.queryByRole("textbox", { name: "Search..." })).not.toBeInTheDocument();
+        expect(screen.queryByRole("combobox", { name: "Search..." })).not.toBeInTheDocument();
         const reopened = await openMenu();
         expect(reopened).toHaveValue("");
         expect(listedReasons()).toEqual(mainReasons);
@@ -309,38 +309,41 @@ describe("Thumbnail — statusButtons", () => {
       };
       const menuContent = () =>
         screen.getByTestId("rejection-reasons-list").closest("[data-radix-popper-content-wrapper] > *") as HTMLElement;
+      const frozenStyle = () => ({ width: menuContent().style.width, height: menuContent().style.height });
 
-      it("fige la taille mesurée au premier caractère, la garde pendant la saisie, la relâche quand la requête est vidée", async () => {
+      // Product decision (CR-510, option A): the box keeps its size while typing, as in 1.45.x.
+      it("fige largeur et hauteur au premier caractère, les garde quand les résultats changent, les relâche quand la requête est vidée", async () => {
         stubLayout();
         renderSearch();
         const input = await openMenu();
-        expect(menuContent().style.height).toBe("");
+        expect(frozenStyle()).toEqual({ width: "", height: "" });
 
         size = { width: 230, height: 310 };
         await userEvent.type(input, "e");
-        expect(menuContent()).toHaveStyle({ width: "230px", height: "310px" });
+        expect(frozenStyle()).toEqual({ width: "230px", height: "310px" });
 
         size = { width: 200, height: 120 };
         await userEvent.type(input, "tiq");
         expect(listedReasons()).toEqual(["Étiquette visible"]);
-        expect(menuContent()).toHaveStyle({ width: "230px", height: "310px" });
+        expect(frozenStyle()).toEqual({ width: "230px", height: "310px" });
+
         await userEvent.type(input, "zzz");
-        expect(within(screen.getByTestId("rejection-reasons-list")).getByRole("status")).toHaveTextContent("No results");
-        expect(menuContent()).toHaveStyle({ width: "230px", height: "310px" });
+        expect(listedReasons()).toEqual([]);
+        expect(screen.getByText("No results")).toBeInTheDocument();
+        expect(frozenStyle()).toEqual({ width: "230px", height: "310px" });
 
         await userEvent.clear(input);
-        expect(menuContent().style.width).toBe("");
-        expect(menuContent().style.height).toBe("");
+        expect(frozenStyle()).toEqual({ width: "", height: "" });
       });
 
-      it("garde la borne à la hauteur disponible pendant le gel", async () => {
+      it("reste bornée par la hauteur disponible, la liste défile au-delà", async () => {
         stubLayout();
         renderSearch();
         const input = await openMenu();
         size = { width: 230, height: 310 };
         await userEvent.type(input, "e");
-        expect(menuContent()).toHaveStyle({ height: "310px" });
         expect(menuContent()).toHaveClass("max-h-[var(--radix-popover-content-available-height)]");
+        expect(screen.getByTestId("rejection-reasons-list")).toHaveClass("min-h-0", "flex-1", "overflow-y-auto");
       });
 
       it("une requête faite uniquement d'espaces ne fige pas la taille", async () => {
@@ -349,18 +352,16 @@ describe("Thumbnail — statusButtons", () => {
         const input = await openMenu();
         size = { width: 230, height: 310 };
         await userEvent.type(input, "   ");
-        expect(menuContent().style.width).toBe("");
-        expect(menuContent().style.height).toBe("");
+        expect(frozenStyle()).toEqual({ width: "", height: "" });
       });
 
-      // Menu not laid out yet (e.g. still animating in): freezing at 0x0 would collapse it.
+      // Menu not laid out yet (e.g. still animating in): freezing at 0 would collapse it.
       it("une mesure à 0 ne fige pas la taille", async () => {
         stubLayout();
         renderSearch();
         const input = await openMenu();
         await userEvent.type(input, "e");
-        expect(menuContent().style.width).toBe("");
-        expect(menuContent().style.height).toBe("");
+        expect(frozenStyle()).toEqual({ width: "", height: "" });
       });
 
       it("depuis la vue secondaire, fige la taille de cette vue ; réinitialisée à la réouverture", async () => {
@@ -368,16 +369,161 @@ describe("Thumbnail — statusButtons", () => {
         renderSearch();
         await openMenu();
         await userEvent.click(screen.getByRole("button", { name: "Other reason" }));
-        expect(menuContent().style.height).toBe("");
 
         size = { width: 260, height: 180 };
-        const input = screen.getByRole("textbox", { name: "Search..." });
+        const input = screen.getByRole("combobox", { name: "Search..." });
         await userEvent.type(input, "reflet");
-        expect(menuContent()).toHaveStyle({ width: "260px", height: "180px" });
+        expect(frozenStyle()).toEqual({ width: "260px", height: "180px" });
 
         await userEvent.click(screen.getByRole("button", { name: "Close" }));
         await openMenu();
-        expect(menuContent().style.height).toBe("");
+        expect(frozenStyle()).toEqual({ width: "", height: "" });
+      });
+    });
+
+    describe("option active (comportement du menu gs_node)", () => {
+      const activeOption = () => screen.getByRole("option", { selected: true });
+
+      it("la première option est active par défaut, exposée par aria-activedescendant", async () => {
+        renderSearch();
+        const input = await openMenu();
+        expect(input).not.toHaveAttribute("aria-activedescendant");
+        expect(input).toHaveAttribute("aria-expanded", "false");
+        expect(input).toHaveAttribute("aria-autocomplete", "list");
+        await userEvent.type(input, "re");
+        expect(input).toHaveAttribute("aria-expanded", "true");
+        const listbox = screen.getByRole("listbox");
+        expect(within(listbox).getAllByRole("option").map((o) => o.textContent)).toEqual([
+          "Détourage imprécis",
+          "Reflet gênant",
+          "Retouche peau",
+        ]);
+        expect(activeOption()).toHaveTextContent("Détourage imprécis");
+        expect(input).toHaveAttribute("aria-activedescendant", activeOption().id);
+        expect(input).toHaveAttribute("aria-controls", listbox.id);
+        expect(screen.getByRole("option", { name: "Retouche peau" })).toHaveAttribute("aria-selected", "false");
+      });
+
+      it("les flèches déplacent l'option active et bouclent en bout de liste, sans remonter à la page", async () => {
+        const windowKeys: string[] = [];
+        const onWindowKeyDown = (event: KeyboardEvent) => windowKeys.push(event.key);
+        window.addEventListener("keydown", onWindowKeyDown);
+        const scrollIntoView = vi.fn();
+        Element.prototype.scrollIntoView = scrollIntoView;
+        try {
+          renderSearch();
+          const input = await openMenu();
+          await userEvent.type(input, "e");
+          expect(activeOption()).toHaveTextContent("Détourage imprécis");
+          await userEvent.keyboard("{ArrowDown}");
+          expect(activeOption()).toHaveTextContent("Reflet gênant");
+          expect(scrollIntoView).toHaveBeenLastCalledWith({ block: "nearest" });
+          await userEvent.keyboard("{ArrowUp}{ArrowUp}");
+          expect(activeOption()).toHaveTextContent("Retouche peau");
+          await userEvent.keyboard("{ArrowDown}");
+          expect(activeOption()).toHaveTextContent("Détourage imprécis");
+          expect(input).toHaveAttribute("aria-activedescendant", activeOption().id);
+          expect(windowKeys).toEqual([]);
+        } finally {
+          window.removeEventListener("keydown", onWindowKeyDown);
+          delete (Element.prototype as Partial<Element>).scrollIntoView;
+        }
+      });
+
+      it("le survol définit l'option active, Entrée la valide (pas la première)", async () => {
+        const onStatusButtonClick = renderSearch();
+        const input = await openMenu();
+        await userEvent.type(input, "e");
+        fireEvent.mouseMove(screen.getByRole("option", { name: "Étiquette visible" }));
+        expect(activeOption()).toHaveTextContent("Étiquette visible");
+        await userEvent.keyboard("{Enter}");
+        expect(onStatusButtonClick).toHaveBeenCalledWith("refuse", "Étiquette visible");
+      });
+
+      // gs_node's react-select cleared it on mouse leave; the user asked not to reproduce that.
+      it("l'option survolée reste active quand la souris quitte la liste", async () => {
+        renderSearch();
+        const input = await openMenu();
+        await userEvent.type(input, "e");
+        const option = screen.getByRole("option", { name: "Retouche peau" });
+        fireEvent.mouseMove(option);
+        fireEvent.mouseLeave(option);
+        fireEvent.mouseLeave(screen.getByRole("listbox"));
+        expect(activeOption()).toHaveTextContent("Retouche peau");
+      });
+
+      it("garde l'option active si elle reste dans les résultats, sinon revient à la première", async () => {
+        renderSearch();
+        const input = await openMenu();
+        await userEvent.type(input, "e");
+        fireEvent.mouseMove(screen.getByRole("option", { name: "Retouche peau" }));
+        await userEvent.type(input, "t");
+        expect(activeOption()).toHaveTextContent("Retouche peau");
+        await userEvent.type(input, "iq");
+        expect(activeOption()).toHaveTextContent("Étiquette visible");
+        await userEvent.type(input, "{Backspace}{Backspace}");
+        expect(activeOption()).toHaveTextContent("Détourage imprécis");
+      });
+    });
+
+    describe("Échap", () => {
+      it("avec une requête : la vide, revient à la vue principale et garde le menu ouvert", async () => {
+        const windowKeys: string[] = [];
+        const onWindowKeyDown = (event: KeyboardEvent) => windowKeys.push(event.key);
+        window.addEventListener("keydown", onWindowKeyDown);
+        try {
+          renderSearch();
+          await openMenu();
+          await userEvent.click(screen.getByRole("button", { name: "Other reason" }));
+          const input = screen.getByRole("combobox", { name: "Search..." });
+          await userEvent.type(input, "reflet");
+          await userEvent.keyboard("{Escape}");
+          expect(screen.getByRole("combobox", { name: "Search..." })).toHaveValue("");
+          expect(screen.getByRole("combobox", { name: "Search..." })).toHaveFocus();
+          expect(listedReasons()).toEqual(["Détourage imprécis", "Reflet gênant", "Flou"]);
+          expect(windowKeys).toEqual([]);
+        } finally {
+          window.removeEventListener("keydown", onWindowKeyDown);
+        }
+      });
+
+      // Only the field stopped propagation: from an option or Close, Escape used to reach host shortcuts.
+      it.each([
+        ["une option", () => userEvent.tab()],
+        ["le bouton Fermer", () => userEvent.tab({ shift: true })],
+      ])("avec une requête, focus sur %s : la vide, garde le menu ouvert, ne remonte pas à la page", async (target, focusTarget) => {
+        const windowKeys: string[] = [];
+        const onWindowKeyDown = (event: KeyboardEvent) => windowKeys.push(event.key);
+        window.addEventListener("keydown", onWindowKeyDown);
+        try {
+          renderSearch();
+          const input = await openMenu();
+          await userEvent.type(input, "reflet");
+          await focusTarget();
+          const focused = document.activeElement as HTMLElement;
+          expect(focused).not.toBe(input);
+          if (target === "une option") expect(focused).toHaveAttribute("role", "option");
+          else expect(focused).toHaveAccessibleName("Close");
+          windowKeys.length = 0;
+          await userEvent.keyboard("{Escape}");
+          const field = screen.getByRole("combobox", { name: "Search..." });
+          expect(field).toHaveValue("");
+          expect(field).toHaveFocus();
+          expect(listedReasons()).toEqual(["Détourage imprécis", "Reflet gênant", "Flou"]);
+          expect(windowKeys).toEqual([]);
+        } finally {
+          window.removeEventListener("keydown", onWindowKeyDown);
+        }
+      });
+
+      it("requête vide : ferme le menu", async () => {
+        renderSearch();
+        const input = await openMenu();
+        await userEvent.type(input, "flou");
+        await userEvent.keyboard("{Escape}");
+        expect(input).toBeInTheDocument();
+        await userEvent.keyboard("{Escape}");
+        expect(screen.queryByRole("combobox", { name: "Search..." })).not.toBeInTheDocument();
       });
     });
 
@@ -397,6 +543,18 @@ describe("Thumbnail — statusButtons", () => {
       expect(input).toBeInTheDocument();
     });
 
+    it("↑ / ↓ pendant une composition IME ne déplacent pas l'option active", async () => {
+      renderSearch();
+      const input = await openMenu();
+      await userEvent.type(input, "e");
+      fireEvent.keyDown(input, { key: "ArrowDown", keyCode: 229 });
+      expect(screen.getByRole("option", { selected: true })).toHaveTextContent("Détourage imprécis");
+      fireEvent.keyDown(input, { key: "ArrowUp", isComposing: true });
+      expect(screen.getByRole("option", { selected: true })).toHaveTextContent("Détourage imprécis");
+      fireEvent.keyDown(input, { key: "ArrowDown" });
+      expect(screen.getByRole("option", { selected: true })).toHaveTextContent("Reflet gênant");
+    });
+
     // Tab and Escape must still bubble: the popover's FocusScope (Tab loop) and its dismiss layer (Escape) need them.
     it("les touches saisies ne remontent pas aux raccourcis de la page, Tab et Échap si", async () => {
       const windowKeys: string[] = [];
@@ -413,6 +571,8 @@ describe("Thumbnail — statusButtons", () => {
         await userEvent.tab({ shift: true });
         expect(windowKeys).toEqual(["Tab", "Tab"]);
         input.focus();
+        await userEvent.keyboard("{Escape}");
+        expect(windowKeys).toEqual(["Tab", "Tab"]);
         await userEvent.keyboard("{Escape}");
         expect(windowKeys).toEqual(["Tab", "Tab", "Escape"]);
       } finally {
@@ -437,7 +597,7 @@ describe("Thumbnail — statusButtons", () => {
       const input = await openMenu();
       await userEvent.type(input, "reflet");
       await userEvent.tab();
-      expect(screen.getByRole("button", { name: "Reflet gênant" })).toHaveFocus();
+      expect(screen.getByRole("option", { name: "Reflet gênant" })).toHaveFocus();
     });
   });
 

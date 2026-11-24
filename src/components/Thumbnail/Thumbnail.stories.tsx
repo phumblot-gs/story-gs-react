@@ -1117,7 +1117,7 @@ const benchWithManyRejectionOptions = {
  * Long rejection reason lists: the menu is capped to the space available on the side Radix
  * picks; the header, the search field and the "other reason" link stay fixed while the reasons
  * scroll. The search field (case and accent insensitive, e.g. "etiq") covers main and
- * secondary reasons at once; Enter picks the first result.
+ * secondary reasons at once; Enter picks the active result (the first one, or the one moved to with ↑ / ↓ or the mouse).
  */
 export const WithManyRejectionOptions: Story = {
   args: { onStatusButtonClick: fn() },
@@ -1143,7 +1143,7 @@ export const WithManyRejectionOptions: Story = {
     const page = within(canvasElement.ownerDocument.body);
     await userEvent.click(canvas.getByRole("button", { name: "Refuse" }));
     await expect(await page.findByTestId("rejection-reasons-list")).toBeVisible();
-    await expect(page.getByRole("textbox", { name: /search/i })).toHaveFocus();
+    await expect(page.getByRole("combobox", { name: /search/i })).toHaveFocus();
   },
 };
 

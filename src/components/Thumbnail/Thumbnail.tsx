@@ -518,12 +518,16 @@ const ThumbnailBase: React.FC<ThumbnailProps> = ({
   const [rejectSearch, setRejectSearch] = useState("");
   const rejectSearchRef = useRef<HTMLInputElement>(null);
   const rejectMenuContentRef = useRef<HTMLDivElement>(null);
+  const rejectMenuId = React.useId();
   // Size of the view the search started from, so filtering never resizes the menu.
   const [rejectMenuFrozenSize, setRejectMenuFrozenSize] = useState<{ width: number; height: number } | null>(null);
+  // null means the first search result is active.
+  const [rejectActiveReason, setRejectActiveReason] = useState<string | null>(null);
   const resetRejectMenu = useCallback(() => {
     setRejectMenuView("main");
     setRejectSearch("");
     setRejectMenuFrozenSize(null);
+    setRejectActiveReason(null);
   }, []);
   const changeRejectSearch = useCallback(
     (query: string) => {
@@ -536,9 +540,19 @@ const ThumbnailBase: React.FC<ThumbnailProps> = ({
           setRejectMenuFrozenSize({ width: content.offsetWidth, height: content.offsetHeight });
         }
       }
+      if (
+        rejectActiveReason !== null &&
+        !filterRejectionReasons(
+          bench?.config?.validation?.rejection_options?.main,
+          bench?.config?.validation?.rejection_options?.secondary,
+          query,
+        ).includes(rejectActiveReason)
+      ) {
+        setRejectActiveReason(null);
+      }
       setRejectSearch(query);
     },
-    [rejectSearch],
+    [rejectSearch, rejectActiveReason, bench],
   );
 
   // Options de rejet du bench
@@ -840,21 +854,45 @@ const ThumbnailBase: React.FC<ThumbnailProps> = ({
     const searchResults = isSearching
       ? filterRejectionReasons(rejectionOptions?.main, rejectionOptions?.secondary, rejectSearch)
       : [];
-    const visibleReasons = isSearching
-      ? searchResults
-      : (rejectMenuView === "main" ? rejectionOptions?.main : rejectionOptions?.secondary) ?? [];
+    const viewReasons = (rejectMenuView === "main" ? rejectionOptions?.main : rejectionOptions?.secondary) ?? [];
     const showBackButton = !isSearching && rejectMenuView === "secondary";
     const showOtherReasonLink =
       !isSearching && rejectMenuView === "main" && !!rejectionOptions?.secondary?.length;
+    const activeIndex = Math.max(0, rejectActiveReason === null ? 0 : searchResults.indexOf(rejectActiveReason));
+    const activeReason = searchResults[activeIndex];
+    const allReasons = isSearching
+      ? filterRejectionReasons(rejectionOptions?.main, rejectionOptions?.secondary, "")
+      : [];
+    const reasonOptionId = (reason: string) => `${rejectMenuId}-reason-${allReasons.indexOf(reason)}`;
+    const listboxId = `${rejectMenuId}-results`;
+    const moveActiveReason = (offset: number) => {
+      const count = searchResults.length;
+      const next = searchResults[(activeIndex + offset + count) % count];
+      setRejectActiveReason(next);
+      document.getElementById(reasonOptionId(next))?.scrollIntoView?.({ block: "nearest" });
+    };
     const handleSearchKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
       // Typed keys must not reach host shortcuts on window; Escape (dismiss) and Tab (FocusScope loop) must bubble.
       if (event.key === "Escape" || event.key === "Tab") return;
       event.stopPropagation();
+      if (!isSearching || searchResults.length === 0) return;
       const isComposing = event.nativeEvent.isComposing || event.keyCode === 229;
-      if (event.key === "Enter" && !isComposing && searchResults.length > 0) {
+      if ((event.key === "ArrowDown" || event.key === "ArrowUp") && !isComposing) {
         event.preventDefault();
-        choose(searchResults[0]);
+        moveActiveReason(event.key === "ArrowDown" ? 1 : -1);
+      } else if (event.key === "Enter" && !isComposing) {
+        event.preventDefault();
+        choose(activeReason);
       }
+    };
+    // Called from Radix's capture listener on document: stopping there keeps the Escape that clears the query
+    // away from the focused element and from host shortcuts on window, wherever focus is in the menu.
+    const handleEscapeKeyDown = (event: KeyboardEvent) => {
+      if (!isSearching) return;
+      event.preventDefault();
+      event.stopPropagation();
+      resetRejectMenu();
+      rejectSearchRef.current?.focus({ preventScroll: true });
     };
     return (
       <Popover
@@ -893,6 +931,7 @@ const ThumbnailBase: React.FC<ThumbnailProps> = ({
           collisionPadding={8}
           ref={rejectMenuContentRef}
           style={isSearching && rejectMenuFrozenSize ? rejectMenuFrozenSize : undefined}
+          onEscapeKeyDown={handleEscapeKeyDown}
           onOpenAutoFocus={(event) => {
             event.preventDefault();
             rejectSearchRef.current?.focus({ preventScroll: true });
@@ -932,22 +971,51 @@ const ThumbnailBase: React.FC<ThumbnailProps> = ({
                   placeholder={t("select.search")}
                   aria-label={t("select.search")}
                   className="mt-2"
+                  role="combobox"
+                  aria-expanded={isSearching}
+                  aria-autocomplete="list"
+                  aria-controls={isSearching ? listboxId : undefined}
+                  aria-activedescendant={activeReason !== undefined ? reasonOptionId(activeReason) : undefined}
                   onChange={(event) => changeRejectSearch(event.target.value)}
                   onKeyDown={handleSearchKeyDown}
                 />
               </BgProvider>
             </div>
             <div data-testid="rejection-reasons-list" className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
-              {visibleReasons.map((reason, index) => (
-                <button
-                  key={`${isSearching ? "search" : rejectMenuView}-${index}`}
-                  type="button"
-                  className="w-full px-3 py-1.5 text-left text-sm text-white hover:bg-white/10 transition-colors"
-                  onClick={() => choose(reason)}
-                >
-                  {reason}
-                </button>
-              ))}
+              {isSearching ? (
+                <div role="listbox" id={listboxId} aria-label={t("thumbnail.chooseReason")}>
+                  {searchResults.map((reason) => (
+                    <button
+                      key={reasonOptionId(reason)}
+                      id={reasonOptionId(reason)}
+                      type="button"
+                      role="option"
+                      aria-selected={reason === activeReason}
+                      className={cn(
+                        "w-full px-3 py-1.5 text-left text-sm text-white transition-colors",
+                        reason === activeReason && "bg-white/10",
+                      )}
+                      onMouseMove={() => {
+                        if (reason !== activeReason) setRejectActiveReason(reason);
+                      }}
+                      onClick={() => choose(reason)}
+                    >
+                      {reason}
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                viewReasons.map((reason, index) => (
+                  <button
+                    key={`${rejectMenuView}-${index}`}
+                    type="button"
+                    className="w-full px-3 py-1.5 text-left text-sm text-white hover:bg-white/10 transition-colors"
+                    onClick={() => choose(reason)}
+                  >
+                    {reason}
+                  </button>
+                ))
+              )}
               <div role="status">
                 {isSearching && searchResults.length === 0 && (
                   <p className="px-3 py-1.5 text-sm text-grey-lighter">{t("select.noResults")}</p>
