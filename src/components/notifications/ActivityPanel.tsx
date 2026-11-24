@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Sheet, SheetContent, SheetClose, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { IconProvider } from "@/components/ui/icon-provider";
-import NotificationPanel, { NotificationProps } from "./NotificationPanel";
+import NotificationPanel, { NotificationLinkRenderer, NotificationProps } from "./NotificationPanel";
 import { useTranslation } from "@/contexts/TranslationContext";
 import { formatDateForLocale } from "@/utils/translations";
 
@@ -14,6 +14,8 @@ export interface ActivityPanelProps {
   debug?: boolean;
   onMarkAllAsRead?: (notifications: NotificationProps[]) => void;
   onNotificationClick?: (notification_id: string) => void;
+  /** Renders each notification's link with the app router. Defaults to a plain `<a href>`. */
+  renderLink?: NotificationLinkRenderer;
 }
 
 const ActivityPanel: React.FC<ActivityPanelProps> = ({
@@ -22,7 +24,8 @@ const ActivityPanel: React.FC<ActivityPanelProps> = ({
   notifications,
   debug = false,
   onMarkAllAsRead,
-  onNotificationClick
+  onNotificationClick,
+  renderLink
 }) => {
   const [localNotifications, setLocalNotifications] = useState<NotificationProps[]>(notifications);
   const unreadCount = localNotifications.filter(notification => notification.unread).length;
@@ -144,6 +147,7 @@ const ActivityPanel: React.FC<ActivityPanelProps> = ({
                       <NotificationPanel 
                         {...notification} 
                         onClick={handleNotificationClick} 
+                        renderLink={renderLink}
                       />
                     </div>
                   ))}
