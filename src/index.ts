@@ -810,6 +810,9 @@ export type { Language as TranslationLanguage, TranslationProviderProps, Transla
 export { StyleProvider, useStyles, useGlobalStyles } from "./contexts/StyleProvider";
 export type { StyleConfig } from "./contexts/StyleProvider";
 
+export { CollisionInsetsProvider, useCollisionInsets } from "./contexts/CollisionInsetsContext";
+export type { CollisionInsets, CollisionInsetsProviderProps } from "./contexts/CollisionInsetsContext";
+
 // Export root components for easy setup
 export { GSComponentsRoot, GSGlobalStyles } from "./components/GSComponentsRoot";
 export type { GSComponentsRootProps } from "./components/GSComponentsRoot";

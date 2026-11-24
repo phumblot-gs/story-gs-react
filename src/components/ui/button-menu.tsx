@@ -10,6 +10,7 @@ import { useIsInActionBar } from "@/components/layout/ActionBar"
 import { ButtonMenuItems } from "./button-menu-items"
 import { getSelectedMenuValues } from "@/lib/menu-selection"
 import { cn } from "@/lib/utils"
+import { useMenuMaxHeight } from "@/contexts/CollisionInsetsContext"
 
 export interface ButtonMenuAction {
   /** Unique identifier for the action (required for multiSelect mode) */
@@ -90,7 +91,8 @@ export interface ButtonMenuProps extends Omit<ToggleProps, "onClick" | "isActive
   debug?: boolean
   /**
    * Maximum height of the dropdown menu.
-   * Default: `max-h-[calc(100vh-2rem)]` to adapt to available space.
+   * Default: `max-h-[calc(100vh-2rem)]` to adapt to available space, also bounded by the space left
+   * by `CollisionInsetsProvider` insets when some are reserved.
    * You can customize with Tailwind classes like `max-h-[40vh]`, `max-h-96`, etc.
    * The menu will automatically enable vertical scrolling when content exceeds this height.
    */
@@ -186,7 +188,7 @@ export const ButtonMenu = React.forwardRef<HTMLButtonElement, ButtonMenuProps>(
       defaultOpen = false,
       onOpenChange,
       debug = false,
-      menuMaxHeight = "max-h-[calc(100vh-2rem)]",
+      menuMaxHeight: menuMaxHeightProp,
       menuSide = "bottom",
       menuAlign = "start",
       menuBgContext,
@@ -197,6 +199,7 @@ export const ButtonMenu = React.forwardRef<HTMLButtonElement, ButtonMenuProps>(
     ref
   ) => {
     const bg = useBgContext()
+    const menuMaxHeight = useMenuMaxHeight(menuMaxHeightProp, "dropdown-menu")
     const isInActionBar = useIsInActionBar()
     const [internalOpen, setInternalOpen] = React.useState(defaultOpen)
     

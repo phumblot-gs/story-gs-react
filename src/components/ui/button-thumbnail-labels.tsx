@@ -10,6 +10,7 @@ import { useBgContext, BgProvider } from "@/components/layout/BgContext"
 import { useIsInActionBar } from "@/components/layout/ActionBar"
 import { VStack } from "@/components/layout"
 import { cn } from "@/lib/utils"
+import { useMenuMaxHeight } from "@/contexts/CollisionInsetsContext"
 import { useTranslationSafe, TranslationMap } from "@/contexts/TranslationContext"
 
 export type LabelColor = "blue" | "green" | "orange" | "pink" | "purple" | "red" | "yellow" | "white" | "transparent"
@@ -91,7 +92,8 @@ export interface ButtonThumbnailLabelsProps extends Omit<ToggleProps, "onClick" 
   debug?: boolean
   /**
    * Hauteur maximale du menu déroulant.
-   * Par défaut : `max-h-[calc(100vh-2rem)]` pour s'adapter à l'espace disponible.
+   * Par défaut : `max-h-[calc(100vh-2rem)]` pour s'adapter à l'espace disponible, borné aussi par la place
+   * laissée par les marges de `CollisionInsetsProvider` quand il en réserve.
    */
   menuMaxHeight?: string
   /**
@@ -169,7 +171,7 @@ export const ButtonThumbnailLabels = React.forwardRef<HTMLButtonElement, ButtonT
       defaultOpen = false,
       onOpenChange,
       debug = false,
-      menuMaxHeight = "max-h-[calc(100vh-2rem)]",
+      menuMaxHeight: menuMaxHeightProp,
       menuSide = "bottom",
       menuAlign = "start",
       menuBgContext,
@@ -178,6 +180,7 @@ export const ButtonThumbnailLabels = React.forwardRef<HTMLButtonElement, ButtonT
     ref
   ) => {
     const bg = useBgContext()
+    const menuMaxHeight = useMenuMaxHeight(menuMaxHeightProp, "dropdown-menu")
     const isInActionBar = useIsInActionBar()
     const [internalOpen, setInternalOpen] = React.useState(defaultOpen)
     

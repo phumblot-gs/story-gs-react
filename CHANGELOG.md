@@ -25,6 +25,21 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ### Ajouté
 
+- Marge haute réservée pour tous les popovers et menus de la librairie (CR-511) : `CollisionInsetsProvider`
+  (`insets={{ top, right, bottom, left }}`, en px) et la prop `collisionInsets` de `GSComponentsRoot`, plus le hook
+  `useCollisionInsets`. Pour une application affichée sous un en-tête que l'hôte dessine par-dessus (gs_w dans
+  l'iframe de gs_node) : `<GSComponentsRoot collisionInsets={{ top: 60 }}>`. Chaque marge s'ajoute, côté par côté, au
+  `collisionPadding` effectif : celui de l'appelant, sinon le défaut Radix (0, et 10 pour `SelectContent`) ; un
+  objet partiel garde la sémantique Radix (côtés absents à 0, ex. `{ left: 4 }` + `{ top: 60 }` →
+  `{ top: 60, right: 0, bottom: 0, left: 4 }`). Sont couverts `PopoverContent`, `DropdownMenuContent` / `SubContent`,
+  `SelectContent`, `TooltipContent`, `HoverCardContent`, `ContextMenuContent` / `SubContent`, `MenubarContent` /
+  `SubContent` et `SelectAutocomplete`, donc tous les composants bâtis dessus (menu des motifs de refus de
+  `Thumbnail`, `ButtonThumbnail*`, `ButtonMenu*`, `ButtonMenuStatus`, menus de l'`ActionBar`…). Avec une marge, la hauteur max par défaut de ces
+  menus (`menuMaxHeight`, `max-h-96` de `SelectContent`) est aussi bornée par la hauteur disponible calculée par
+  Radix ; un `menuMaxHeight` fourni par l'appelant est conservé tel quel. Sans provider ou à 0 : aucun changement.
+  Un provider imbriqué **remplace** les marges du parent pour son sous-arbre (pas de fusion) ; un `GSComponentsRoot`
+  imbriqué sans `collisionInsets` les remet donc à zéro.
+  Story : *Context/CollisionInsetsProvider*.
 - `Thumbnail` : accessibilité de la recherche des motifs — `role="listbox"` sur les résultats, `role="option"` et
   `aria-selected` sur chacun ; le champ devient un `combobox` (`aria-expanded` quand des résultats sont affichés,
   `aria-autocomplete="list"`, `aria-controls`, `aria-activedescendant`). Les options restent atteignables au Tab.

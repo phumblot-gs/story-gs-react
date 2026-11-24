@@ -2,6 +2,7 @@ import React from 'react';
 import { ThemeProvider, ThemeProviderProps } from '@/contexts/ThemeContext';
 import { TranslationProvider, TranslationProviderProps } from '@/contexts/TranslationContext';
 import { StyleProvider, StyleConfig } from '@/contexts/StyleProvider';
+import { CollisionInsetsProvider, type CollisionInsets } from '@/contexts/CollisionInsetsContext';
 
 export interface GSComponentsRootProps {
   children: React.ReactNode;
@@ -20,6 +21,14 @@ export interface GSComponentsRootProps {
    * Translation provider props
    */
   translationConfig?: Omit<TranslationProviderProps, 'children'>;
+
+  /**
+   * Viewport strips (px) covered by the host page, e.g. `{ top: 60 }` under a host header drawn over the app's
+   * iframe. Every library popover, dropdown, select, tooltip and menu stays clear of them. Applied even when
+   * `withProviders` is false. Replaces, without merging, the insets of an enclosing provider: a nested
+   * `GSComponentsRoot` without this prop resets them to 0 for its subtree. See `CollisionInsetsProvider`.
+   */
+  collisionInsets?: CollisionInsets;
 
   /**
    * Whether to wrap with providers
@@ -54,17 +63,20 @@ export const GSComponentsRoot: React.FC<GSComponentsRootProps> = ({
   styleConfig,
   themeConfig,
   translationConfig,
+  collisionInsets,
   withProviders = true,
 }) => {
+  const content = <CollisionInsetsProvider insets={collisionInsets}>{children}</CollisionInsetsProvider>;
+
   if (!withProviders) {
-    return <>{children}</>;
+    return <>{content}</>;
   }
 
   return (
     <StyleProvider config={styleConfig}>
       <ThemeProvider {...themeConfig}>
         <TranslationProvider {...translationConfig}>
-          {children}
+          {content}
         </TranslationProvider>
       </ThemeProvider>
     </StyleProvider>
