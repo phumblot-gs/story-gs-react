@@ -27,6 +27,8 @@ A component that manages the display and interaction with notifications.
 - Limit management: Limits the display to a configurable number of notifications (100 by default)
 - Ref API: Exposes methods to add notifications programmatically
 - onClick callback: Called when the user clicks on the notification button, in parallel with opening/closing the panel
+- No router dependency: each notification is a plain \`<a href>\` by default. Pass \`renderLink\` to use your router's link and keep client-side navigation:
+  \`renderLink={({ href, ...props }) => <Link to={href} {...props} />}\`
 
 ## Notification Limit Management Rules
 

@@ -662,6 +662,12 @@ export type { TruncatedTextProps } from "./components/ui/truncated-text";
 export { Modal as ModalLayer };
 export { ButtonNotifications };
 export type { ButtonNotificationsRef };
+export type { ButtonNotificationsProps } from "./components/notifications/types";
+export type {
+  NotificationProps,
+  NotificationLinkProps,
+  NotificationLinkRenderer,
+} from "./components/notifications/NotificationPanel";
 export { PageHeader };
 export { PageSearch };
 export { PageWelcome };

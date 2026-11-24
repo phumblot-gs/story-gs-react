@@ -3,25 +3,12 @@ import React from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import NotificationPanel from "./NotificationPanel";
 import { MediaStatus } from "@/utils/mediaStatus";
-import { MemoryRouter } from "react-router-dom";
+import { Link, MemoryRouter } from "react-router-dom";
 
 const meta: Meta<typeof NotificationPanel> = {
   title: "Components/NotificationPanel",
   component: NotificationPanel,
-  parameters: {
-    layout: "centered",
-    backgrounds: {
-      default: "dark",
-    },
-  },
   tags: ["autodocs"],
-  decorators: [
-    (Story) => (
-      <MemoryRouter>
-        <Story />
-      </MemoryRouter>
-    ),
-  ],
   argTypes: {
     title: {
       control: { type: "text" },
@@ -56,6 +43,41 @@ const meta: Meta<typeof NotificationPanel> = {
     unread: {
       control: { type: "boolean" },
       description: "Whether the notification has been read",
+    },
+    renderLink: {
+      control: false,
+      description:
+        "Renders the link with the app router, for client-side navigation. Defaults to a plain `<a href>`. Keep `onClick`: it blocks navigation for an empty or \"#\" link.",
+      table: {
+        type: { summary: "(props: NotificationLinkProps) => ReactNode" },
+        defaultValue: { summary: "<a href={href} …>" },
+      },
+    },
+  },
+  parameters: {
+    layout: "centered",
+    backgrounds: {
+      default: "dark",
+    },
+    docs: {
+      description: {
+        component: `
+A single notification row. It does not depend on any router: by default the row is a plain \`<a href>\`
+(full page load). To keep client-side navigation, pass your router's link through \`renderLink\`
+(on \`ButtonNotifications\`, which forwards it here):
+
+\`\`\`tsx
+import { Link } from "react-router"; // or "react-router-dom", Next.js Link, …
+
+<ButtonNotifications
+  notifications={notifications}
+  renderLink={({ href, ...props }) => <Link to={href} {...props} />}
+/>
+\`\`\`
+
+Spread all props: \`onClick\` blocks navigation when \`redirectLink\` is empty or \`"#"\` and marks the notification as read.
+        `,
+      },
     },
   },
 };
@@ -110,4 +132,20 @@ export const DifferentStatus: Story = {
     ...Default.args,
     pictureStatus: MediaStatus.VALIDATED,
   },
+};
+
+/** Client-side navigation with the app router's Link (here React Router, inside a MemoryRouter). */
+export const WithRouterLink: Story = {
+  args: {
+    ...Default.args,
+    redirectLink: "/productions/42",
+    renderLink: ({ href, ...props }) => <Link to={href} {...props} />,
+  },
+  decorators: [
+    (Story) => (
+      <MemoryRouter>
+        <Story />
+      </MemoryRouter>
+    ),
+  ],
 };
