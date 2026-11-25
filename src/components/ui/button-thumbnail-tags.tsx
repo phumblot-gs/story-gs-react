@@ -9,6 +9,7 @@ import { useBgContext, BgProvider } from "@/components/layout/BgContext"
 import { useIsInActionBar } from "@/components/layout/ActionBar"
 import { VStack } from "@/components/layout"
 import { cn } from "@/lib/utils"
+import { useMenuMaxHeight } from "@/contexts/CollisionInsetsContext"
 import { Icon } from "@/components/ui/icons"
 import { TagText } from "@/components/ui/tag-text"
 import { Input } from "@/components/ui/input"
@@ -65,7 +66,8 @@ export interface ButtonThumbnailTagsProps extends Omit<ToggleProps, "onClick" | 
   debug?: boolean
   /**
    * Hauteur maximale du menu déroulant.
-   * Par défaut : `max-h-[calc(100vh-2rem)]` pour s'adapter à l'espace disponible.
+   * Par défaut : `max-h-[calc(100vh-2rem)]`, borné aussi par la hauteur disponible du côté où le menu s'ouvre
+   * (marges de `CollisionInsetsProvider` déduites) : une longue liste défile au lieu de sortir de l'écran.
    */
   menuMaxHeight?: string
   /**
@@ -105,7 +107,7 @@ export const ButtonThumbnailTags = React.forwardRef<HTMLButtonElement, ButtonThu
       defaultOpen = false,
       onOpenChange,
       debug = false,
-      menuMaxHeight = "max-h-[calc(100vh-2rem)]",
+      menuMaxHeight: menuMaxHeightProp,
       menuSide = "bottom",
       menuAlign = "start",
       menuBgContext,
@@ -114,6 +116,7 @@ export const ButtonThumbnailTags = React.forwardRef<HTMLButtonElement, ButtonThu
     ref
   ) => {
     const bg = useBgContext()
+    const menuMaxHeight = useMenuMaxHeight(menuMaxHeightProp, "dropdown-menu")
     const isInActionBar = useIsInActionBar()
     const { t } = useTranslationSafe()
     const [internalOpen, setInternalOpen] = React.useState(defaultOpen)

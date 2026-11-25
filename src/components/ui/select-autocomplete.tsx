@@ -3,6 +3,8 @@
 import * as React from "react";
 import * as PopoverPrimitive from "@radix-ui/react-popover";
 import { cn } from "@/lib/utils";
+import { stopScrollLockPropagation } from "@/lib/scroll-lock";
+import { useCollisionPadding, useMenuMaxHeight } from "@/contexts/CollisionInsetsContext";
 import { useBgContext } from "@/components/layout/BgContext";
 import { Input } from "./input";
 import { Icon } from "./icons";
@@ -145,7 +147,8 @@ export interface SelectAutocompleteProps
 
   /**
    * Maximum height of the dropdown menu.
-   * Default: `max-h-[calc(100vh-2rem)]` to adapt to available space.
+   * Default: `max-h-[calc(100vh-2rem)]`, also bounded by the height available on the side where the menu
+   * opens (which leaves out `CollisionInsetsProvider` insets), so a long list scrolls instead of leaving the screen.
    * You can customize with Tailwind classes like `max-h-[40vh]`, `max-h-96`, etc.
    * The menu will automatically enable vertical scrolling when content exceeds this height.
    */
@@ -188,7 +191,7 @@ const SelectAutocomplete = React.forwardRef<HTMLInputElement, SelectAutocomplete
       listClassName,
       itemClassName,
       size = "normal",
-      menuMaxHeight = "max-h-[calc(100vh-2rem)]",
+      menuMaxHeight: menuMaxHeightProp,
       debug = false,
       value: valueProp,
       defaultValue,
@@ -201,6 +204,9 @@ const SelectAutocomplete = React.forwardRef<HTMLInputElement, SelectAutocomplete
     ref
   ) => {
     const bg = useBgContext();
+    const menuMaxHeight = useMenuMaxHeight(menuMaxHeightProp, "popover");
+    // 8 px du bord de la fenêtre, comme ButtonMenu et le menu des motifs de Thumbnail.
+    const collisionPadding = useCollisionPadding(8);
     const { t } = useTranslationSafe(translations, language);
     const noResultsText = noResultsTextProp ?? t("select.noResults");
     const loadingText = loadingTextProp ?? t("select.searching");
@@ -378,9 +384,14 @@ const SelectAutocomplete = React.forwardRef<HTMLInputElement, SelectAutocomplete
     );
 
     // Gestion du focus
+    // Le clic qui donne le focus resélectionne le texte : le navigateur y place le curseur après le focus.
+    const selectOnClickRef = React.useRef(false);
+
     const handleFocus = React.useCallback(
       (e: React.FocusEvent<HTMLInputElement>) => {
         props.onFocus?.(e);
+        // Tout le texte est sélectionné : taper remplace le libellé de l'option choisie au lieu de s'y ajouter.
+        e.currentTarget.select();
         if (openOnFocus && !disabled) {
           setIsOpen(true);
           // Réinitialiser le texte de recherche au focus
@@ -396,6 +407,7 @@ const SelectAutocomplete = React.forwardRef<HTMLInputElement, SelectAutocomplete
     // Gestion du blur - ne pas fermer si on clique dans le popover
     const handleBlur = React.useCallback(
       (e: React.FocusEvent<HTMLInputElement>) => {
+        selectOnClickRef.current = false;
         props.onBlur?.(e);
         // Ne pas fermer immédiatement - laisser onInteractOutside gérer
       },
@@ -659,7 +671,15 @@ const SelectAutocomplete = React.forwardRef<HTMLInputElement, SelectAutocomplete
             onFocus={handleFocus}
             onBlur={handleBlur}
             onKeyDown={handleKeyDown}
-            onClick={() => {
+            onMouseDown={(e) => {
+              // Clic qui va donner le focus : le clic qui suit resélectionnera le texte.
+              if (document.activeElement !== e.currentTarget) selectOnClickRef.current = true;
+            }}
+            onClick={(e) => {
+              if (selectOnClickRef.current) {
+                selectOnClickRef.current = false;
+                e.currentTarget.select();
+              }
               // Ouvrir au clic si fermé
               if (!isOpen && !disabled) {
                 setIsOpen(true);
@@ -730,10 +750,15 @@ const SelectAutocomplete = React.forwardRef<HTMLInputElement, SelectAutocomplete
               )}
               data-bg={bg || undefined}
               sideOffset={5}
+              collisionPadding={collisionPadding}
               align="start"
               style={{ width: popoverWidth ? `${popoverWidth}px` : undefined }}
               onOpenAutoFocus={(e) => e.preventDefault()}
               onInteractOutside={handleInteractOutside}
+              // Rendue sous <body>, la liste est hors d'un SidePanel ou d'un Dialog, dont le verrou de défilement
+              // annulerait la molette et le doigt : voir scroll-lock.
+              onWheel={stopScrollLockPropagation()}
+              onTouchMove={stopScrollLockPropagation()}
               onEscapeKeyDown={() => {
                 setIsOpen(false);
                 setHighlightedIndex(-1);
@@ -745,7 +770,7 @@ const SelectAutocomplete = React.forwardRef<HTMLInputElement, SelectAutocomplete
                 ref={listRef}
                 // no `popup-action` here: on a black background its rule paints the list white inside the menu
                 className={cn(
-                  "overflow-y-auto py-2",
+                  "overflow-y-auto overscroll-contain py-2",
                   menuMaxHeight,
                   listClassName
                 )}

@@ -13,6 +13,7 @@ import { Icon } from "@/components/ui/icons"
 import MediaStatus from "@/components/MediaStatus"
 import { MediaStatus as MediaStatusEnum } from "@/utils/mediaStatus"
 import { cn } from "@/lib/utils"
+import { useMenuMaxHeight } from "@/contexts/CollisionInsetsContext"
 
 export interface ButtonMenuStatusOption {
   /** Media status of the option: its colour, and the value given to `onStatusChange`. */
@@ -97,7 +98,8 @@ export interface ButtonMenuStatusProps extends Omit<ToggleProps, "onClick" | "is
   debug?: boolean
   /**
    * Maximum height of the dropdown menu.
-   * Default: `max-h-[calc(100vh-2rem)]` to adapt to available space.
+   * Default: `max-h-[calc(100vh-2rem)]`, also bounded by the height available on the side where the menu
+   * opens (which leaves out `CollisionInsetsProvider` insets), so a long list scrolls instead of leaving the screen.
    * You can customize with Tailwind classes like `max-h-[40vh]`, `max-h-96`, etc.
    * The menu will automatically enable vertical scrolling when content exceeds this height.
    */
@@ -160,7 +162,7 @@ export const ButtonMenuStatus = React.forwardRef<HTMLButtonElement, ButtonMenuSt
       defaultOpen = false,
       onOpenChange,
       debug = false,
-      menuMaxHeight = "max-h-[calc(100vh-2rem)]",
+      menuMaxHeight: menuMaxHeightProp,
       menuSide = "bottom",
       menuAlign = "start",
       menuBgContext,
@@ -170,6 +172,7 @@ export const ButtonMenuStatus = React.forwardRef<HTMLButtonElement, ButtonMenuSt
     ref
   ) => {
     const bg = useBgContext()
+    const menuMaxHeight = useMenuMaxHeight(menuMaxHeightProp, "dropdown-menu")
     const isInActionBar = useIsInActionBar()
     const [internalOpen, setInternalOpen] = React.useState(defaultOpen)
     

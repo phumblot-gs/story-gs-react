@@ -5,6 +5,215 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.48.1] - 2026-11-25
+
+### Corrigé
+
+- **Liste qui ne défile pas dans un `SidePanel` ou un `Dialog`** (remonté par gs-mediagrade sur `SelectAutocomplete`,
+  1.48.0) : dans un `SidePanel` ou un `Dialog` Radix, la liste ouverte d'un `SelectAutocomplete` ne défilait ni à la
+  molette ni au doigt ; seules les flèches atteignaient les options du bas. Le verrou de défilement de la fenêtre
+  (react-remove-scroll, écouteur `wheel` / `touchmove` sur `document`) n'accepte que les évènements venus de
+  l'overlay ou de la fenêtre, et annulait ceux de la liste, rendue dans un Portal sous `<body>`. La `Modal` de la
+  librairie n'était pas touchée : sa fenêtre est rendue dans l'overlay, l'évènement remonte donc par lui.
+  Les menus non modaux de la librairie arrêtent désormais la propagation de `wheel` et `touchmove` (helper interne
+  `stopScrollLockPropagation`) : le verrou ne les voit plus, la liste défile, et la page derrière la fenêtre reste
+  verrouillée. Mesuré dans Chromium (liste de 1 220 px pour 288 px visibles) : `scrollTop` restait à 0 dans un
+  `SidePanel` et un `Dialog`, il passe à 200 après un cran de molette.
+  - Règle : tout menu non modal de la librairie arrête la molette et le doigt. Un menu modal pose son propre verrou,
+    qui passe devant celui de la fenêtre, et défilait déjà ; on ne peut pas tout passer en modal (le champ de
+    `SelectAutocomplete` est hors du menu, les menus `ButtonThumbnail*` sont non modaux exprès pour laisser la grille
+    utilisable).
+  - Corrigés : `SelectAutocomplete`, `PopoverContent` (donc le menu des motifs de refus de `Thumbnail`,
+    `LanguageSwitcher`, les popovers d'émojis et de lien des éditeurs), `DropdownMenuContent` et
+    `DropdownMenuSubContent` en `modal={false}` (menus `ButtonThumbnail*`, menu de `RichTextEditor`),
+    `ContextMenuContent` / `SubContent` et `MenubarContent` / `SubContent` (exportés, non utilisés par les composants
+    de la librairie ; `Menubar` n'est jamais modal).
+  - Déjà corrects, mesurés dans Chromium dans un `SidePanel` : `ButtonMenu`, `ButtonMenuSmall`, `ButtonMenuStatus`
+    et les autres `DropdownMenu` modaux, `Select`, `MultiSelect` (Popover modal, reçoit la même protection sans effet
+    visible), et les suggestions `@` / `{{` de `CommentComposer` et `RichTextEditor`, rendues dans la fenêtre qui
+    contient l'éditeur.
+  - Les `onWheel` / `onTouchMove` passés à ces menus sont toujours appelés. En
+    revanche, ces évènements ne remontent plus au-delà du menu : un écouteur `wheel` posé sur `document` ou `window`
+    ne reçoit plus la molette faite dans un menu ouvert.
+  - Listes de `SelectAutocomplete` et `MultiSelect` en `overscroll-contain` : arrivées en bout de liste, elles ne
+    font pas défiler ce qui est derrière.
+- Stories `UI/SelectAutocomplete` : « Dans une Modal », « Dans un SidePanel », « Dans un Dialog Radix ».
+- **Menu plus haut que la fenêtre** : une longue liste ouverte au milieu de l'écran sortait par le bas (story
+  `UI/SelectAutocomplete` → *With Many Options* : 668 px demandés pour 340 px disponibles sous le champ). La hauteur
+  max par défaut des menus de la librairie (`calc(100vh - 2rem)`, et `max-h-96` pour `SelectContent`) est désormais
+  toujours bornée par la hauteur disponible du côté où le menu s'ouvre, calculée par Radix ; en 1.47.0, elle ne
+  l'était qu'avec des marges `collisionInsets`. La liste défile au lieu de sortir de l'écran. Concerne
+  `SelectAutocomplete`, `ButtonMenu`, `ButtonMenuSmall`, `ButtonMenuStatus`, `ButtonThumbnail*` et `SelectContent`.
+  Un `menuMaxHeight` fourni par l'appelant reste appliqué tel quel.
+- `SelectAutocomplete` et `MultiSelect` : marge de 8 px avec le bord de la fenêtre (`collisionPadding`, 0 avant),
+  comme `ButtonMenu` et le menu des motifs de refus de `Thumbnail` ; les marges `collisionInsets` s'y ajoutent.
+
+### Modifié
+
+- `SelectAutocomplete` : au focus, tout le texte du champ est sélectionné. Taper remplace le libellé de l'option
+  choisie au lieu de s'y ajouter (avant : « Option 1xyz »), sans passer par la croix. Suggestion de gs-mediagrade.
+  Au clic qui donne le focus, la sélection est refaite après le clic (le navigateur y place le curseur) ; un clic
+  dans le champ déjà actif place le curseur normalement.
+
+## [1.48.0] - 2026-11-25
+
+### Ajouté
+
+- `MultiSelect` : liste déroulante à choix multiples (champ « liste à choix multiples » du formulaire de recherche
+  catalogue de Mediagrade). Options `SelectAutocompleteOption[]` (`value`, `label`, `disabled`, `icon`,
+  `searchText`), mode contrôlé `value: string[]` ou non contrôlé `defaultValue: string[]`.
+  `onChange(values, selected)` reçoit les `value` (jamais les labels, deux options pouvant avoir le même label) dans
+  l'ordre où elles ont été cochées, et les `{ value, label }` correspondants. Une valeur présente dans `value` mais
+  absente des `options` s'affiche et est renvoyée avec sa propre valeur comme label.
+  - Déclencheur : même apparence que `SelectTrigger` (fonds, tailles, rond de la flèche, `discrete`), mais une `div`
+    `role="combobox"` pour pouvoir porter des tags supprimables. Valeurs en `TagText`, résumé « +N » (infobulle avec
+    les valeurs masquées) quand elles ne tiennent plus sur une ligne ; en taille `small`, « N sélectionné(s) ».
+    `allowClear` : croix qui efface tout, menu fermé.
+  - Menu : Popover Radix avec un champ de recherche (`searchText` ou `label`, `filterFunction`), une case par option,
+    et en tête « Tout sélectionner » / « Tout désélectionner », appliqué aux seules options visibles et actives. Le
+    menu reste ouvert pendant qu'on coche. `maxSelected` : au maximum, les cases non cochées sont désactivées et le
+    menu affiche « Maximum atteint » ; « Tout sélectionner » est désactivé s'il dépasserait le maximum.
+  - Clavier : Entrée, Espace, ↓ ou ↑ ouvrent le menu depuis le déclencheur ; dans le menu, le focus reste dans la
+    recherche (`aria-activedescendant`) : ↓ / ↑ parcourent « Tout sélectionner » et les options (les désactivées sont
+    sautées), Entrée coche, Espace coche quand la recherche est vide (sinon il s'écrit), Retour arrière dans une
+    recherche vide retire la dernière valeur, Tab et Échap ferment et rendent le focus au déclencheur.
+  - Dans une `Modal`, un `SidePanel` ou un `FullFrame` : le premier Échap ferme le menu seul, le second le conteneur ;
+    la liste défile à la molette (le menu est un Popover `modal`, qui pose son propre verrou de défilement et garde le
+    focus).
+  - Fonds : le menu suit `SelectAutocomplete` (noir sur fond white et grey, black-secondary sur fond black, blanc
+    sans contexte). Chaque fond est posé avec sa couleur de texte : le menu ne dépend ni de `--popover-foreground` ni
+    d'une couleur héritée. Les tags prennent le fond du déclencheur, pas celui de la page (sinon tag et déclencheur se
+    confondent sur fond white et grey), avec `src/styles/multi-select.css`.
+  - Lignes légères (pas de `Checkbox` Radix par ligne) et mémoïsées : 1 000 options s'ouvrent en ~110 ms dans
+    Chromium, sans virtualisation.
+  - Props : `placeholder`, `searchPlaceholder`, `noResultsText`, `disabled`, `size`, `discrete`, `allowClear`,
+    `maxSelected`, `menuMaxHeight`, `popoverClassName`, `className`, `onOpenChange`, `filterFunction`, `id`,
+    `aria-label`, `aria-labelledby`, `aria-describedby`, `aria-invalid`, `debug`, `language`, `translations`.
+  - Marges réservées par l'hôte (`CollisionInsetsProvider`, `collisionInsets` de `GSComponentsRoot`, 1.47.0) :
+    ajoutées au `collisionPadding` du menu, dont la hauteur reste bornée par la hauteur disponible calculée par Radix.
+  - Pas encore dans cette version : `searchMode="remote"` (`onSearch`, `searchDebounceMs`, `loadingText`),
+    `allowCustomValue`, affichage des groupes (`group` est ignoré).
+- Traductions `multiSelect.*` en fr, en, es, it et de : `placeholder`, `search`, `noResults`, `selectAll`,
+  `deselectAll`, `selectedCount` (et `selectedCount_plural`), `clear`, `maxReached`, `more`.
+- Stories `UI/MultiSelect` : cas de base, avec valeurs et « +N », recherche, 1 000 options, `maxSelected`, taille
+  small, désactivé, dans une Modal, fond sombre, tous les fonds, français.
+
+### Modifié
+
+- `SelectTrigger` : styles des fonds, du rond de la flèche et des tailles déplacés dans un module interne
+  (`select-trigger-styles`) partagé avec `MultiSelect`. Classes identiques, aucun changement de rendu ni d'API.
+## [1.47.0] - 2026-11-24
+
+### Modifié
+
+- `Thumbnail` : navigation dans les résultats de recherche du menu des motifs de refus, comme l'ancien menu gs_node
+  (CR-510). Sans requête, le menu est inchangé. Aucun changement d'API, aucune nouvelle clé i18n.
+  - Option active unique, mise en évidence comme le survol : la première par défaut ; ↑ / ↓ dans le champ la déplacent
+    (en bouclant) et la font défiler dans la vue ; le survol souris la définit et elle reste active quand la souris
+    quitte la liste. Quand les résultats changent, elle est conservée si elle y figure encore, sinon c'est la première.
+  - Entrée valide l'option active (et non plus toujours la première) ; Entrée et ↑ / ↓ sont ignorées pendant une
+    composition IME.
+  - Pendant la recherche, la taille du menu reste figée, hauteur comprise (comme en 1.45.x) : largeur et hauteur sont
+    mesurées au premier caractère et relâchées quand la requête est vidée. Les résultats s'affichent en haut, la liste
+    défile au-delà, et la hauteur reste bornée par la hauteur disponible.
+  - Échap avec une requête la vide, revient à la vue principale et laisse le menu ouvert, sans remonter aux raccourcis
+    de l'hôte, que le focus soit dans le champ, sur une option ou sur Fermer ; Échap sur une requête vide ferme le
+    menu comme avant.
+
+### Ajouté
+
+- Marge haute réservée pour tous les popovers et menus de la librairie (CR-511) : `CollisionInsetsProvider`
+  (`insets={{ top, right, bottom, left }}`, en px) et la prop `collisionInsets` de `GSComponentsRoot`, plus le hook
+  `useCollisionInsets`. Pour une application affichée sous un en-tête que l'hôte dessine par-dessus (gs_w dans
+  l'iframe de gs_node) : `<GSComponentsRoot collisionInsets={{ top: 60 }}>`. Chaque marge s'ajoute, côté par côté, au
+  `collisionPadding` effectif : celui de l'appelant, sinon le défaut Radix (0, et 10 pour `SelectContent`) ; un
+  objet partiel garde la sémantique Radix (côtés absents à 0, ex. `{ left: 4 }` + `{ top: 60 }` →
+  `{ top: 60, right: 0, bottom: 0, left: 4 }`). Sont couverts `PopoverContent`, `DropdownMenuContent` / `SubContent`,
+  `SelectContent`, `TooltipContent`, `HoverCardContent`, `ContextMenuContent` / `SubContent`, `MenubarContent` /
+  `SubContent` et `SelectAutocomplete`, donc tous les composants bâtis dessus (menu des motifs de refus de
+  `Thumbnail`, `ButtonThumbnail*`, `ButtonMenu*`, `ButtonMenuStatus`, menus de l'`ActionBar`…). Avec une marge, la hauteur max par défaut de ces
+  menus (`menuMaxHeight`, `max-h-96` de `SelectContent`) est aussi bornée par la hauteur disponible calculée par
+  Radix ; un `menuMaxHeight` fourni par l'appelant est conservé tel quel. Sans provider ou à 0 : aucun changement.
+  Un provider imbriqué **remplace** les marges du parent pour son sous-arbre (pas de fusion) ; un `GSComponentsRoot`
+  imbriqué sans `collisionInsets` les remet donc à zéro.
+  Story : *Context/CollisionInsetsProvider*.
+- `Thumbnail` : accessibilité de la recherche des motifs — `role="listbox"` sur les résultats, `role="option"` et
+  `aria-selected` sur chacun ; le champ devient un `combobox` (`aria-expanded` quand des résultats sont affichés,
+  `aria-autocomplete="list"`, `aria-controls`, `aria-activedescendant`). Les options restent atteignables au Tab.
+
+## [1.46.0] - 2026-11-24
+
+### Sécurité
+
+- `zod`, `@hookform/resolvers` et `react-router-dom` ne sont plus des dépendances de la librairie (passées en
+  `devDependencies`, pour les stories et l'app de démo seulement). Les apps qui l'installent ne reçoivent plus zod 3
+  (GHSA-mrhx-c7xc-m3w5) ni react-router 6 (GHSA-wrjc-x8rr-h8h6, GHSA-337j-9hxr-rhxg), ni les alertes Dependabot qui
+  en venaient. Le `dist` n'importait déjà ni zod ni `@hookform/resolvers` ; il n'importe plus `react-router-dom`.
+
+### Ajouté
+
+- `ButtonNotifications` : prop `renderLink` (transmise à `ActivityPanel` puis à `NotificationPanel`) pour rendre le
+  lien de chaque notification avec le routeur de l'app. Elle reçoit `{ href, className, onClick, children }` ; garder
+  `onClick`, qui bloque la navigation quand `redirectLink` est vide ou `"#"` et marque la notification comme lue.
+  Types exportés : `ButtonNotificationsProps`, `NotificationProps`, `NotificationLinkProps`,
+  `NotificationLinkRenderer`.
+
+### Modifié
+
+- `NotificationPanel` ne dépend plus d'aucun routeur : sans `renderLink`, chaque notification est un `<a href>`
+  simple (la garde vide / `"#"` et `onClick` sont inchangés). Avant, le `<Link>` du react-router-dom 6 embarqué levait
+  « useHref() may be used only in the context of a \<Router> » dans les apps sur react-router 7 ou 8 : le panneau
+  plantait à l'ouverture.
+
+### Migration
+
+- Pour garder la navigation côté client (sans rechargement de page) :
+
+  ```tsx
+  import { Link } from "react-router"; // ou "react-router-dom"
+
+  <ButtonNotifications renderLink={({ href, ...props }) => <Link to={href} {...props} />} />
+  ```
+
+- Une app qui importait `zod` ou `react-router-dom` sans les déclarer dans son propre `package.json` doit les ajouter.
+
+## [1.45.1] - 2026-11-20
+
+### Corrigé
+
+- `Thumbnail` : Tab et Shift+Tab dans le champ de recherche du menu des motifs de refus restent dans le menu au lieu de
+  le fermer (CR-510). Le champ arrêtait la propagation de Tab, que le `FocusScope` du popover ne voyait donc pas : sans
+  résultat, Tab sortait du popover, qui se fermait en perdant la requête. Tab remonte désormais comme Échap et boucle
+  dans le menu ; les autres touches ne remontent toujours pas aux raccourcis de l'hôte. Aucun changement d'API.
+
+## [1.45.0] - 2026-11-20
+
+### Ajouté
+
+- `Thumbnail` : champ de recherche dans le menu des motifs de refus, sous « Choisissez une raison » (CR-510). Aucun
+  changement d'API, aucune nouvelle clé i18n (libellés existants).
+  - Recherche : sur les motifs principaux et secondaires réunis (sans doublon, valeurs non textuelles ignorées), par
+    sous-chaîne insensible à la casse et aux accents. Pendant la saisie, « Autre raison » et la vue secondaire sont
+    masqués ; Entrée choisit le premier résultat (sauf pendant une composition IME). Requête vide : menu inchangé.
+  - Clavier : les événements `keydown` du champ ne remontent plus à l'hôte (ses raccourcis, ex. Shift+V dans gs_w, ne
+    se déclenchent pas pendant la saisie) ; Échap remonte et ferme le menu.
+  - Focus : champ focalisé à l'ouverture, focus conservé au passage vers « Autre raison » et au retour. Le menu repart
+    de la vue principale avec un champ vide à chaque ouverture (remise à zéro à l'ouverture, pas à la fermeture, pour
+    éviter un flash pendant l'animation de sortie).
+  - Taille stable : pendant la recherche, le menu garde la largeur et la hauteur mesurées au premier caractère, dans la
+    vue d'où elle est lancée (toujours bornées par la hauteur disponible) ; la liste filtrée s'affiche en haut et la
+    boîte ne bouge plus à chaque frappe. La taille naturelle revient quand la requête est vidée.
+  - Accessibilité et rendu : « Aucun résultat » annoncé dans une région `role="status"` ; chevron de retour et croix
+    nommés (`pagination.previous`, `button.close`) ; le champ a le même rendu clair que les champs d'ajout de tag et
+    de commentaire de la vignette.
+
+### Corrigé
+
+- `Thumbnail` : le menu des motifs de refus (`bench.config.validation.rejection_options`) est borné à la hauteur
+  disponible (`--radix-popover-content-available-height`, marge de collision 8 px) ; l'en-tête et le lien « Autre
+  raison » restent fixes, les listes de motifs principaux et secondaires défilent. Une longue liste ne déborde plus de
+  la fenêtre (CR-511). Aucun changement d'API.
+
 ## [1.44.0] - 2026-11-16
 
 ### Ajouté
@@ -292,6 +501,13 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
   #3a3a3a sur fond noir), texte blanc. Les menus et popovers de la librairie (portalés, fond surchargé) ne changent pas
   visuellement ; seule la couleur héritée de leur conteneur change, sans texte qui en dépende (vérifié sur
   `ButtonMenu` et `ButtonMenuSmall`, tous fonds).
+- **Impact consommateurs (visible)** — note ajoutée après coup (1.48.0). Sous un contexte `data-bg`, un composant qui
+  hérite de `text-popover-foreground` reçoit désormais du **blanc** (`0 0% 100%`) ; avant, la valeur hexadécimale
+  était ignorée et le texte restait noir par accident. Un composant local (shadcn copié dans l'application, par
+  exemple `Command` ou `PopoverContent`) qui force un fond blanc ou transparent (`bg-white`, `bg-transparent`) sans
+  forcer la couleur du texte affiche donc du texte blanc sur fond blanc. Correction côté application : poser la
+  couleur de texte avec le fond (`bg-white text-black`), ou garder `bg-popover` avec `text-popover-foreground`.
+  Constaté dans Mediagrade sur deux composants shadcn locaux.
 - Documentation de `ReorderDetails.viewChanges` (`ContactSheetReference`, `onReorder`) : elle ne liste que les médias
   dont le code de vue a changé, et non tous ceux qui ont changé de position (un média déplacé entre deux emplacements de
   même vue n'y figure pas). Pour les simples changements de position, utiliser `slots` (ou `pictureIds`) et

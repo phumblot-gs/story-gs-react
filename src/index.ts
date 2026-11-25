@@ -24,6 +24,8 @@ import {
 } from "./components/ui/select";
 import { SelectAutocomplete } from "./components/ui/select-autocomplete";
 import type { SelectAutocompleteOption, SelectedOption } from "./components/ui/select-autocomplete";
+import { MultiSelect } from "./components/ui/multi-select";
+import type { MultiSelectProps } from "./components/ui/multi-select";
 import type { LinkProps } from "./components/ui/link";
 import { Input } from "./components/ui/input";
 import { InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator } from "./components/ui/input-otp";
@@ -440,6 +442,8 @@ export { FileBrowser };
 export { Select, SelectTrigger, SelectContent, SelectItem, SelectValue };
 export { SelectAutocomplete };
 export type { SelectAutocompleteOption, SelectedOption };
+export { MultiSelect };
+export type { MultiSelectProps };
 export { Input };
 export { InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator };
 export { Search };
@@ -662,6 +666,12 @@ export type { TruncatedTextProps } from "./components/ui/truncated-text";
 export { Modal as ModalLayer };
 export { ButtonNotifications };
 export type { ButtonNotificationsRef };
+export type { ButtonNotificationsProps } from "./components/notifications/types";
+export type {
+  NotificationProps,
+  NotificationLinkProps,
+  NotificationLinkRenderer,
+} from "./components/notifications/NotificationPanel";
 export { PageHeader };
 export { PageSearch };
 export { PageWelcome };
@@ -803,6 +813,9 @@ export type { Language as TranslationLanguage, TranslationProviderProps, Transla
 
 export { StyleProvider, useStyles, useGlobalStyles } from "./contexts/StyleProvider";
 export type { StyleConfig } from "./contexts/StyleProvider";
+
+export { CollisionInsetsProvider, useCollisionInsets } from "./contexts/CollisionInsetsContext";
+export type { CollisionInsets, CollisionInsetsProviderProps } from "./contexts/CollisionInsetsContext";
 
 // Export root components for easy setup
 export { GSComponentsRoot, GSGlobalStyles } from "./components/GSComponentsRoot";

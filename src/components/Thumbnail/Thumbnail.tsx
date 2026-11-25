@@ -27,6 +27,12 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Spinner } from "@/components/ui/spinner";
 import { DeferredOverlaysProvider, useDeferredOverlayScope } from "@/components/ui/deferred-overlays";
 import { areThumbnailPropsEqual } from "./thumbnail-props-equal";
+import { filterRejectionReasons } from "./rejection-reasons";
+import { Input } from "@/components/ui/input";
+import { BgProvider } from "@/components/layout/BgContext";
+
+// Background context handed to every menu of the thumbnail; their fields render on it.
+const THUMBNAIL_MENU_BG = "white" as const;
 
 /** Configuration de rejet du bench */
 export interface BenchRejectionOptions {
@@ -509,6 +515,45 @@ const ThumbnailBase: React.FC<ThumbnailProps> = ({
 
   // État pour la vue du menu de rejet (main ou secondary)
   const [rejectMenuView, setRejectMenuView] = useState<"main" | "secondary">("main");
+  const [rejectSearch, setRejectSearch] = useState("");
+  const rejectSearchRef = useRef<HTMLInputElement>(null);
+  const rejectMenuContentRef = useRef<HTMLDivElement>(null);
+  const rejectMenuId = React.useId();
+  // Size of the view the search started from, so filtering never resizes the menu.
+  const [rejectMenuFrozenSize, setRejectMenuFrozenSize] = useState<{ width: number; height: number } | null>(null);
+  // null means the first search result is active.
+  const [rejectActiveReason, setRejectActiveReason] = useState<string | null>(null);
+  const resetRejectMenu = useCallback(() => {
+    setRejectMenuView("main");
+    setRejectSearch("");
+    setRejectMenuFrozenSize(null);
+    setRejectActiveReason(null);
+  }, []);
+  const changeRejectSearch = useCallback(
+    (query: string) => {
+      if (query.trim() === "") {
+        setRejectMenuFrozenSize(null);
+      } else if (rejectSearch.trim() === "") {
+        // offsetWidth/offsetHeight ignore the entry zoom transform; 0 means the menu is not laid out yet.
+        const content = rejectMenuContentRef.current;
+        if (content && content.offsetWidth > 0 && content.offsetHeight > 0) {
+          setRejectMenuFrozenSize({ width: content.offsetWidth, height: content.offsetHeight });
+        }
+      }
+      if (
+        rejectActiveReason !== null &&
+        !filterRejectionReasons(
+          bench?.config?.validation?.rejection_options?.main,
+          bench?.config?.validation?.rejection_options?.secondary,
+          query,
+        ).includes(rejectActiveReason)
+      ) {
+        setRejectActiveReason(null);
+      }
+      setRejectSearch(query);
+    },
+    [rejectSearch, rejectActiveReason, bench],
+  );
 
   // Options de rejet du bench
   const rejectionOptions = bench?.config?.validation?.rejection_options;
@@ -595,10 +640,7 @@ const ThumbnailBase: React.FC<ThumbnailProps> = ({
     if (!disabledReasonMenus) return;
     const closed = disabledReasonMenus.split("|");
     setOpenMenu((current) => {
-      if (current && closed.includes(current)) {
-        setRejectMenuView("main");
-        return null;
-      }
+      if (current && closed.includes(current)) return null;
       return current;
     });
   }, [disabledReasonMenus]);
@@ -796,7 +838,61 @@ const ThumbnailBase: React.FC<ThumbnailProps> = ({
     const choose = (reason: string) => {
       button.onSelect(reason);
       handleMenuOpenChange(menuId, false);
-      setRejectMenuView("main");
+    };
+    const closeMenu = () => handleMenuOpenChange(menuId, false);
+    // The clicked view-switch button unmounts, so focus would fall back to body.
+    const switchRejectMenuView = (view: "main" | "secondary") => {
+      setRejectMenuView(view);
+      rejectSearchRef.current?.focus({ preventScroll: true });
+    };
+    // Reset on open, not on close: the full list would flash back during the exit animation.
+    const openMenuFresh = () => {
+      resetRejectMenu();
+      handleMenuOpenChange(menuId, true);
+    };
+    const isSearching = rejectSearch.trim() !== "";
+    const searchResults = isSearching
+      ? filterRejectionReasons(rejectionOptions?.main, rejectionOptions?.secondary, rejectSearch)
+      : [];
+    const viewReasons = (rejectMenuView === "main" ? rejectionOptions?.main : rejectionOptions?.secondary) ?? [];
+    const showBackButton = !isSearching && rejectMenuView === "secondary";
+    const showOtherReasonLink =
+      !isSearching && rejectMenuView === "main" && !!rejectionOptions?.secondary?.length;
+    const activeIndex = Math.max(0, rejectActiveReason === null ? 0 : searchResults.indexOf(rejectActiveReason));
+    const activeReason = searchResults[activeIndex];
+    const allReasons = isSearching
+      ? filterRejectionReasons(rejectionOptions?.main, rejectionOptions?.secondary, "")
+      : [];
+    const reasonOptionId = (reason: string) => `${rejectMenuId}-reason-${allReasons.indexOf(reason)}`;
+    const listboxId = `${rejectMenuId}-results`;
+    const moveActiveReason = (offset: number) => {
+      const count = searchResults.length;
+      const next = searchResults[(activeIndex + offset + count) % count];
+      setRejectActiveReason(next);
+      document.getElementById(reasonOptionId(next))?.scrollIntoView?.({ block: "nearest" });
+    };
+    const handleSearchKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+      // Typed keys must not reach host shortcuts on window; Escape (dismiss) and Tab (FocusScope loop) must bubble.
+      if (event.key === "Escape" || event.key === "Tab") return;
+      event.stopPropagation();
+      if (!isSearching || searchResults.length === 0) return;
+      const isComposing = event.nativeEvent.isComposing || event.keyCode === 229;
+      if ((event.key === "ArrowDown" || event.key === "ArrowUp") && !isComposing) {
+        event.preventDefault();
+        moveActiveReason(event.key === "ArrowDown" ? 1 : -1);
+      } else if (event.key === "Enter" && !isComposing) {
+        event.preventDefault();
+        choose(activeReason);
+      }
+    };
+    // Called from Radix's capture listener on document: stopping there keeps the Escape that clears the query
+    // away from the focused element and from host shortcuts on window, wherever focus is in the menu.
+    const handleEscapeKeyDown = (event: KeyboardEvent) => {
+      if (!isSearching) return;
+      event.preventDefault();
+      event.stopPropagation();
+      resetRejectMenu();
+      rejectSearchRef.current?.focus({ preventScroll: true });
     };
     return (
       <Popover
@@ -804,8 +900,8 @@ const ThumbnailBase: React.FC<ThumbnailProps> = ({
         open={openMenu === menuId && !button.disabled}
         onOpenChange={(open) => {
           if (open && button.disabled) return;
-          handleMenuOpenChange(menuId, open);
-          if (!open) setRejectMenuView("main");
+          if (open) openMenuFresh();
+          else closeMenu();
         }}
       >
         {withTooltip(
@@ -821,7 +917,8 @@ const ThumbnailBase: React.FC<ThumbnailProps> = ({
                 aria-label={button.label}
                 onClick={(e) => {
                   e.preventDefault();
-                  handleMenuOpenChange(menuId, openMenu !== menuId);
+                  if (openMenu === menuId) closeMenu();
+                  else openMenuFresh();
                 }}
               />
             </span>
@@ -831,85 +928,114 @@ const ThumbnailBase: React.FC<ThumbnailProps> = ({
           side="top"
           align="start"
           sideOffset={8}
-          className="w-auto min-w-[200px] max-w-[280px] rounded-sm border-0 bg-black p-0"
+          collisionPadding={8}
+          ref={rejectMenuContentRef}
+          style={isSearching && rejectMenuFrozenSize ? rejectMenuFrozenSize : undefined}
+          onEscapeKeyDown={handleEscapeKeyDown}
+          onOpenAutoFocus={(event) => {
+            event.preventDefault();
+            rejectSearchRef.current?.focus({ preventScroll: true });
+          }}
+          className="flex w-auto min-w-[200px] max-w-[280px] max-h-[var(--radix-popover-content-available-height)] flex-col overflow-hidden rounded-sm border-0 bg-black p-0"
         >
-          {rejectMenuView === "main" ? (
-            <VStack gap={0} padding={0}>
-              {/* Header */}
-              <div className="flex items-center justify-between px-3 pt-3 pb-2">
-                <span className="text-sm font-medium text-white">{t("thumbnail.chooseReason")}</span>
-                <button
-                  type="button"
-                  className="text-white hover:text-grey-lighter transition-colors p-0.5"
-                  onClick={() => handleMenuOpenChange(menuId, false)}
-                >
-                  <Icon name="X" size={10} strokeWidth={1} />
-                </button>
-              </div>
-              {/* Main options */}
-              {rejectionOptions?.main?.map((reason, index) => (
-                <button
-                  key={`main-${index}`}
-                  type="button"
-                  className="w-full px-3 py-1.5 text-left text-sm text-white hover:bg-white/10 transition-colors"
-                  onClick={() => choose(reason)}
-                >
-                  {reason}
-                </button>
-              ))}
-              {/* Link to secondary options */}
-              {rejectionOptions?.secondary && rejectionOptions.secondary.length > 0 && (
-                <>
-                  <div className="mx-3 border-t border-white/20" />
-                  <button
-                    type="button"
-                    className="w-full px-3 py-1.5 flex items-center justify-between text-sm text-grey-lighter hover:bg-white/10 transition-colors"
-                    onClick={() => setRejectMenuView("secondary")}
-                  >
-                    <span>{t("thumbnail.otherReason")}</span>
-                    <Icon name="ChevronRight" size={14} strokeWidth={2} />
-                  </button>
-                </>
-              )}
-            </VStack>
-          ) : (
-            <VStack gap={0} padding={0}>
-              {/* Header with back button */}
-              <div className="flex items-center justify-between px-3 pt-3 pb-2">
+          <VStack gap={0} padding={0} className="min-h-0 flex-1">
+            <div className="shrink-0 px-3 pt-3 pb-2">
+              <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    className="text-white hover:text-grey-lighter transition-colors p-0.5"
-                    onClick={() => setRejectMenuView("main")}
-                  >
-                    <Icon name="ChevronLeft" size={14} strokeWidth={2} />
-                  </button>
+                  {showBackButton && (
+                    <button
+                      type="button"
+                      className="text-white hover:text-grey-lighter transition-colors p-0.5"
+                      aria-label={t("pagination.previous")}
+                      onClick={() => switchRejectMenuView("main")}
+                    >
+                      <Icon name="ChevronLeft" size={14} strokeWidth={2} />
+                    </button>
+                  )}
                   <span className="text-sm font-medium text-white">{t("thumbnail.chooseReason")}</span>
                 </div>
                 <button
                   type="button"
                   className="text-white hover:text-grey-lighter transition-colors p-0.5"
-                  onClick={() => {
-                    handleMenuOpenChange(menuId, false);
-                    setRejectMenuView("main");
-                  }}
+                  aria-label={t("button.close")}
+                  onClick={closeMenu}
                 >
                   <Icon name="X" size={10} strokeWidth={1} />
                 </button>
               </div>
-              {/* Secondary options */}
-              {rejectionOptions?.secondary?.map((reason, index) => (
+              <BgProvider value={THUMBNAIL_MENU_BG}>
+                <Input
+                  ref={rejectSearchRef}
+                  type="text"
+                  value={rejectSearch}
+                  placeholder={t("select.search")}
+                  aria-label={t("select.search")}
+                  className="mt-2"
+                  role="combobox"
+                  aria-expanded={isSearching}
+                  aria-autocomplete="list"
+                  aria-controls={isSearching ? listboxId : undefined}
+                  aria-activedescendant={activeReason !== undefined ? reasonOptionId(activeReason) : undefined}
+                  onChange={(event) => changeRejectSearch(event.target.value)}
+                  onKeyDown={handleSearchKeyDown}
+                />
+              </BgProvider>
+            </div>
+            <div data-testid="rejection-reasons-list" className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
+              {isSearching ? (
+                <div role="listbox" id={listboxId} aria-label={t("thumbnail.chooseReason")}>
+                  {searchResults.map((reason) => (
+                    <button
+                      key={reasonOptionId(reason)}
+                      id={reasonOptionId(reason)}
+                      type="button"
+                      role="option"
+                      aria-selected={reason === activeReason}
+                      className={cn(
+                        "w-full px-3 py-1.5 text-left text-sm text-white transition-colors",
+                        reason === activeReason && "bg-white/10",
+                      )}
+                      onMouseMove={() => {
+                        if (reason !== activeReason) setRejectActiveReason(reason);
+                      }}
+                      onClick={() => choose(reason)}
+                    >
+                      {reason}
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                viewReasons.map((reason, index) => (
+                  <button
+                    key={`${rejectMenuView}-${index}`}
+                    type="button"
+                    className="w-full px-3 py-1.5 text-left text-sm text-white hover:bg-white/10 transition-colors"
+                    onClick={() => choose(reason)}
+                  >
+                    {reason}
+                  </button>
+                ))
+              )}
+              <div role="status">
+                {isSearching && searchResults.length === 0 && (
+                  <p className="px-3 py-1.5 text-sm text-grey-lighter">{t("select.noResults")}</p>
+                )}
+              </div>
+            </div>
+            {showOtherReasonLink && (
+              <div className="shrink-0">
+                <div className="mx-3 border-t border-white/20" />
                 <button
-                  key={`secondary-${index}`}
                   type="button"
-                  className="w-full px-3 py-1.5 text-left text-sm text-white hover:bg-white/10 transition-colors"
-                  onClick={() => choose(reason)}
+                  className="w-full px-3 py-1.5 flex items-center justify-between text-sm text-grey-lighter hover:bg-white/10 transition-colors"
+                  onClick={() => switchRejectMenuView("secondary")}
                 >
-                  {reason}
+                  <span>{t("thumbnail.otherReason")}</span>
+                  <Icon name="ChevronRight" size={14} strokeWidth={2} />
                 </button>
-              ))}
-            </VStack>
-          )}
+              </div>
+            )}
+          </VStack>
         </PopoverContent>
       </Popover>
     );
@@ -1193,7 +1319,7 @@ const ThumbnailBase: React.FC<ThumbnailProps> = ({
                     className={cn("p-0 w-4 h-4", ratingDisabled && externallyDisabledButtonClass)}
                     menuSide="top"
                     menuAlign={size === "small" ? "start" : "end"}
-                    menuBgContext="white"
+                    menuBgContext={THUMBNAIL_MENU_BG}
                     disabled={ratingDisabled}
                     open={openMenu === "stars" && !ratingDisabled}
                     onOpenChange={(open) => handleMenuOpenChange("stars", open)}
@@ -1212,7 +1338,7 @@ const ThumbnailBase: React.FC<ThumbnailProps> = ({
                     className={cn("p-0 w-4 h-4", labelDisabled && externallyDisabledButtonClass)}
                     menuSide="top"
                     menuAlign={size === "small" ? "start" : "end"}
-                    menuBgContext="white"
+                    menuBgContext={THUMBNAIL_MENU_BG}
                     disabled={labelDisabled}
                     open={openMenu === "labels" && !labelDisabled}
                     onOpenChange={(open) => handleMenuOpenChange("labels", open)}
@@ -1230,7 +1356,7 @@ const ThumbnailBase: React.FC<ThumbnailProps> = ({
                   className="p-0 w-4 h-4"
                   menuSide="top"
                   menuAlign="end"
-                  menuBgContext="white"
+                  menuBgContext={THUMBNAIL_MENU_BG}
                   open={openMenu === "tags"}
                   onOpenChange={(open) => handleMenuOpenChange("tags", open)}
                 />
@@ -1246,7 +1372,7 @@ const ThumbnailBase: React.FC<ThumbnailProps> = ({
                   className="p-0 w-4 h-4"
                   menuSide="top"
                   menuAlign="end"
-                  menuBgContext="white"
+                  menuBgContext={THUMBNAIL_MENU_BG}
                   open={openMenu === "comments"}
                   onOpenChange={(open) => handleMenuOpenChange("comments", open)}
                 />

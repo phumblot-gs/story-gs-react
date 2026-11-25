@@ -6,9 +6,12 @@ import { TranslationProvider } from "./contexts/TranslationContext";
 import { Toaster } from "./components/ui/sonner";
 
 import Index from "./pages/Index";
+import { ArticleSearchExample } from "./stories/examples/ArticleSearchExample";
+import { SSOBackofficeExample } from "./stories/examples/SSOBackofficeExample";
 import Test from "./pages/Test";
 import NotFound from "./pages/NotFound";
 import ThemeCustomizerPage from "./pages/ThemeCustomizerPage";
+import { ReferenceImportExample } from "./stories/examples/ReferenceImportExample";
 
 // Individual component pages
 import ActivityPanelPage from "./pages/ActivityPanelPage";
@@ -36,6 +39,9 @@ function App() {
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/test" element={<Test />} />
+            <Route path="/examples/article-search" element={<ArticleSearchExample />} />
+            <Route path="/examples/sso" element={<SSOBackofficeExample />} />
+            <Route path="/examples/reference-import" element={<ReferenceImportExample />} />
             <Route path="/theme-customizer" element={<ThemeCustomizerPage />} />
             
             {/* Individual component pages */}

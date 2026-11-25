@@ -1,0 +1,106 @@
+/*
+ * MultiSelect : les tags du déclencheur prennent le fond du déclencheur (data-bg posé sur
+ * .multi-select-tags), pas celui de la page. Les règles [data-bg] .tag-text de figma-tokens.css
+ * visent n'importe quel ancêtre : à spécificité égale, la règle écrite en dernier gagnerait
+ * (fond grey sur une page grey alors que le déclencheur est blanc). La classe ajoutée ici
+ * les rend prioritaires.
+ */
+
+.multi-select-tags[data-bg="white"] .tag-text {
+  background: var(--tag-text-w-bg-default);
+  color: var(--tag-text-w-fg-default);
+}
+.multi-select-tags[data-bg="white"] .tag-text:hover:not(.tag-text-disabled) {
+  background: var(--tag-text-w-bg-hover);
+  color: var(--tag-text-w-fg-hover);
+}
+.multi-select-tags[data-bg="white"] .tag-text:active:not(.tag-text-disabled) {
+  background: var(--tag-text-w-bg-pressed);
+  color: var(--tag-text-w-fg-pressed);
+}
+.multi-select-tags[data-bg="white"] .tag-text.tag-text-disabled {
+  background: var(--tag-text-w-bg-disabled);
+  color: var(--tag-text-w-fg-disabled);
+}
+.multi-select-tags[data-bg="white"] .tag-cross {
+  color: var(--tag-cross-w-fg-default);
+}
+.multi-select-tags[data-bg="white"] .tag-text:hover .tag-cross:not(:disabled) {
+  color: var(--tag-cross-w-fg-hover);
+}
+.multi-select-tags[data-bg="white"] .tag-text:active .tag-cross:not(:disabled) {
+  color: var(--tag-cross-w-fg-pressed);
+}
+.multi-select-tags[data-bg="white"] .tag-cross:disabled,
+.multi-select-tags[data-bg="white"] .tag-text-disabled .tag-cross {
+  color: var(--tag-cross-w-fg-disabled);
+}
+
+.multi-select-tags[data-bg="grey"] .tag-text {
+  background: var(--tag-text-g-bg-default);
+  color: var(--tag-text-g-fg-default);
+}
+.multi-select-tags[data-bg="grey"] .tag-text:hover:not(.tag-text-disabled) {
+  background: var(--tag-text-g-bg-hover);
+  color: var(--tag-text-g-fg-hover);
+}
+.multi-select-tags[data-bg="grey"] .tag-text:active:not(.tag-text-disabled) {
+  background: var(--tag-text-g-bg-pressed);
+  color: var(--tag-text-g-fg-pressed);
+}
+.multi-select-tags[data-bg="grey"] .tag-text.tag-text-disabled {
+  background: var(--tag-text-g-bg-disabled);
+  color: var(--tag-text-g-fg-disabled);
+}
+.multi-select-tags[data-bg="grey"] .tag-cross {
+  color: var(--tag-cross-g-fg-default);
+}
+.multi-select-tags[data-bg="grey"] .tag-text:hover .tag-cross:not(:disabled) {
+  color: var(--tag-cross-g-fg-hover);
+}
+.multi-select-tags[data-bg="grey"] .tag-text:active .tag-cross:not(:disabled) {
+  color: var(--tag-cross-g-fg-pressed);
+}
+.multi-select-tags[data-bg="grey"] .tag-cross:disabled,
+.multi-select-tags[data-bg="grey"] .tag-text-disabled .tag-cross {
+  color: var(--tag-cross-g-fg-disabled);
+}
+
+.multi-select-tags[data-bg="black"] .tag-text {
+  background: var(--tag-text-b-bg-default);
+  color: var(--tag-text-b-fg-default);
+}
+.multi-select-tags[data-bg="black"] .tag-text:hover:not(.tag-text-disabled) {
+  background: var(--tag-text-b-bg-hover);
+  color: var(--tag-text-b-fg-hover);
+}
+.multi-select-tags[data-bg="black"] .tag-text:active:not(.tag-text-disabled) {
+  background: var(--tag-text-b-bg-pressed);
+  color: var(--tag-text-b-fg-pressed);
+}
+.multi-select-tags[data-bg="black"] .tag-text.tag-text-disabled {
+  background: var(--tag-text-b-bg-disabled);
+  color: var(--tag-text-b-fg-disabled);
+}
+.multi-select-tags[data-bg="black"] .tag-cross {
+  color: var(--tag-cross-b-fg-default);
+}
+.multi-select-tags[data-bg="black"] .tag-text:hover .tag-cross:not(:disabled) {
+  color: var(--tag-cross-b-fg-hover);
+}
+.multi-select-tags[data-bg="black"] .tag-text:active .tag-cross:not(:disabled) {
+  color: var(--tag-cross-b-fg-pressed);
+}
+.multi-select-tags[data-bg="black"] .tag-cross:disabled,
+.multi-select-tags[data-bg="black"] .tag-text-disabled .tag-cross {
+  color: var(--tag-cross-b-fg-disabled);
+}
+
+/*
+ * Déclencheur black-secondary (#3a3a3a) : le tag « fond noir » a le même fond et disparaîtrait.
+ * Il prend le noir de la page (#292828), au repos et pressé ; survol inchangé (blanc).
+ */
+.multi-select-tags[data-bg="black"] .tag-text,
+.multi-select-tags[data-bg="black"] .tag-text:active:not(.tag-text-disabled) {
+  background: var(--color-black);
+}

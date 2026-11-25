@@ -19,7 +19,8 @@ const ButtonNotifications = forwardRef<ButtonNotificationsRef, ButtonNotificatio
   onMarkAllAsRead,
   onNotificationClick,
   debug = false,
-  limit = 100 // Default limit is 100
+  limit = 100, // Default limit is 100
+  renderLink
 }, ref) => {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [localNotifications, setLocalNotifications] = useState<NotificationProps[]>([]);
@@ -140,6 +141,7 @@ const ButtonNotifications = forwardRef<ButtonNotificationsRef, ButtonNotificatio
         notifications={localNotifications}
         onMarkAllAsRead={handleMarkAllAsRead}
         onNotificationClick={handleNotificationClick}
+        renderLink={renderLink}
         debug={debug}
       />
     </>

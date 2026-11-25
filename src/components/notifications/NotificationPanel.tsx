@@ -3,7 +3,6 @@ import React from "react";
 import MediaStatus from "../MediaStatus";
 import { MediaStatus as MediaStatusEnum } from "@/utils/mediaStatus";
 import { cn } from "@/lib/utils";
-import { Link } from "react-router-dom";
 import { TruncatedText } from "@/components/ui/truncated-text";
 
 export type NotificationType = "comment" | "transfer" | "other";
@@ -19,8 +18,31 @@ export interface NotificationProps {
   unread: boolean;
 }
 
+/**
+ * Props passed to `renderLink`. Spread them on the router's link and map `href`
+ * to its destination prop, for example `({ href, ...props }) => <Link to={href} {...props} />`.
+ * `onClick` must be kept: it blocks navigation for an empty or "#" link and marks the notification as read.
+ */
+export interface NotificationLinkProps {
+  href: string;
+  className: string;
+  onClick: (event: React.MouseEvent<HTMLElement>) => void;
+  children: React.ReactNode;
+}
+
+/** Renders the link around a notification, typically with the app router's Link. */
+export type NotificationLinkRenderer = (props: NotificationLinkProps) => React.ReactNode;
+
+const defaultRenderLink: NotificationLinkRenderer = ({ href, className, onClick, children }) => (
+  <a href={href} className={className} onClick={onClick}>
+    {children}
+  </a>
+);
+
 interface NotificationPanelProps extends NotificationProps {
   onClick?: (notification_id: string) => void;
+  /** Renders the link with the app router (client-side navigation). Defaults to a plain `<a href>`. */
+  renderLink?: NotificationLinkRenderer;
 }
 
 const NotificationPanel: React.FC<NotificationPanelProps> = ({
@@ -32,14 +54,15 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({
   redirectLink,
   date,
   unread,
-  onClick
+  onClick,
+  renderLink = defaultRenderLink
 }) => {
   const formattedTime = date.toLocaleTimeString(undefined, {
     hour: "2-digit",
     minute: "2-digit"
   });
 
-  const handleClick = (e: React.MouseEvent) => {
+  const handleClick = (e: React.MouseEvent<HTMLElement>) => {
     // Si l'URL n'est pas valide, bloquer la redirection
     if (!redirectLink || redirectLink === "#" || redirectLink.trim() === "") {
       e.preventDefault();
@@ -51,15 +74,7 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({
     }
   };
 
-  return (
-    <Link 
-      to={redirectLink} 
-      className={cn(
-        "block no-underline text-white transition-all duration-200 group", 
-        !unread && "opacity-30 hover:opacity-100"
-      )}
-      onClick={handleClick}
-    >
+  const content = (
       <div className="flex items-start p-2.5 gap-2.5 bg-black-secondary">
         <div className="flex-1 min-w-0 flex flex-col">
           <div className="flex justify-between items-start">
@@ -86,7 +101,20 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({
           </div>
         </div>
       </div>
-    </Link>
+  );
+
+  return (
+    <>
+      {renderLink({
+        href: redirectLink,
+        className: cn(
+          "block no-underline text-white transition-all duration-200 group",
+          !unread && "opacity-30 hover:opacity-100"
+        ),
+        onClick: handleClick,
+        children: content
+      })}
+    </>
   );
 };
 

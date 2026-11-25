@@ -3,6 +3,8 @@ import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu"
 import { Check, ChevronRight, Circle } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import { stopScrollLockPropagation } from "@/lib/scroll-lock"
+import { useCollisionPadding } from "@/contexts/CollisionInsetsContext"
 import { DeferredTrigger, useDeferredRoot, type DeferredRootValue } from "@/components/ui/deferred-overlays"
 
 // Racine différée (voir deferred-overlays) : lue par le déclencheur et le contenu.
@@ -69,14 +71,18 @@ DropdownMenuSubTrigger.displayName =
 const DropdownMenuSubContent = React.forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.SubContent>,
   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.SubContent>
->(({ className, ...props }, ref) => (
+>(({ className, collisionPadding, onWheel, onTouchMove, ...props }, ref) => (
   <DropdownMenuPrimitive.SubContent
     ref={ref}
+    collisionPadding={useCollisionPadding(collisionPadding)}
     className={cn(
       "z-50 min-w-[8rem] overflow-hidden rounded-sm border bg-popover p-1 text-popover-foreground shadow-lg data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
       className
     )}
     {...props}
+    // Menu non modal dans un SidePanel ou un Dialog : voir scroll-lock.
+    onWheel={stopScrollLockPropagation(onWheel)}
+    onTouchMove={stopScrollLockPropagation(onTouchMove)}
   />
 ))
 DropdownMenuSubContent.displayName =
@@ -85,22 +91,28 @@ DropdownMenuSubContent.displayName =
 const DropdownMenuContent = React.forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Content>
->(({ className, sideOffset = 4, ...props }, ref) =>
+>(({ className, sideOffset = 4, collisionPadding, onWheel, onTouchMove, ...props }, ref) => {
+  const padding = useCollisionPadding(collisionPadding)
   // Racine différée : menu fermé, rien à rendre.
-  React.useContext(DeferredMenuContext) ? null : (
+  if (React.useContext(DeferredMenuContext)) return null
+  return (
   <DropdownMenuPrimitive.Portal>
     <DropdownMenuPrimitive.Content
       ref={ref}
       sideOffset={sideOffset}
+      collisionPadding={padding}
       className={cn(
         "z-50 overflow-hidden rounded-sm border bg-popover p-2 text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
         className
       )}
       {...props}
+      // Menu non modal (`modal={false}`) dans un SidePanel ou un Dialog : voir scroll-lock.
+      onWheel={stopScrollLockPropagation(onWheel)}
+      onTouchMove={stopScrollLockPropagation(onTouchMove)}
     />
   </DropdownMenuPrimitive.Portal>
   )
-)
+})
 DropdownMenuContent.displayName = DropdownMenuPrimitive.Content.displayName
 
 const DropdownMenuItem = React.forwardRef<
