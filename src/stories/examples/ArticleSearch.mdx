@@ -1,0 +1,101 @@
+import { Meta, Canvas } from '@storybook/addon-docs/blocks';
+import * as Stories from './ArticleSearchExample.stories';
+
+<Meta of={Stories} name="Guide" />
+
+# Article search — find first, organise second
+
+This example separates two decisions that previously shared the same toolbar: **which articles to find** and **how to display them**. It uses existing GS components with local demonstration data. The interface is in French; this guide is in English.
+
+## Search defines the scope
+
+Keep the field selector next to the search input, in reading order: “Search in” followed by the query. Default to **All fields**, so users can enter a reference, article name, shelf or zone without first knowing which attribute to choose. Keep precise reference, shelf and zone searches available in the `Select`.
+
+Update the placeholder whenever the selected field changes. A shelf search must never display a reference-search placeholder. Keep a visible `Label` for both controls.
+
+Use one explicit “Search” action below the `Card`, aligned with its right edge, with `Button variant="inverse"`. Enter submits the same form. Editing a draft does not silently change the current results. A short status message explains whether a draft needs applying.
+
+After submission, show the applied field and term beside the result count. Counts describe the matching articles, not the number of shelf rows. Show the in-stock count for the same matching set.
+
+<Canvas of={Stories.ByShelf} />
+
+## Display changes presentation
+
+Place **Articles / By shelf / By zone** directly above the table using `SegmentedControl`. These visible choices replace a separate grouping dropdown and make the detailed article list discoverable. Changing the display preserves the applied search.
+
+Use `DataTable` for both article rows and grouped status counts. Do not wrap the table in a padded `Card`; keep the available width for columns. The grouped table keeps the original status breakdown: not started, planned, in progress, shot and total.
+
+Selecting a non-empty shelf or zone opens its articles and adds an explicit context badge. “Back to summary” restores the grouped view. “View all articles” clears the search and group context and opens the complete article list. This reset is distinct from changing the display of existing search results.
+
+## Empty shelves belong to the shelf view
+
+Keep the `Switch` next to the display controls and show it only in **By shelf**. Label it “Include empty shelves” with the number of genuinely empty shelves. Add a “Empty” badge to zero-count rows; they are not links to non-existent articles.
+
+Empty shelves come from the location inventory. Do not infer emptiness from filtered results: a shelf containing articles that fail the current search is not an empty shelf. A reference search cannot match an empty shelf; shelf and zone searches can match empty locations by their own attributes.
+
+## Components and behaviour
+
+- `Layout`, `HStack`, `VStack`: shared background context, spacing and responsive composition.
+- `Card`, `Label`, `Select`, `Search`, `Button`: one clearly bounded search form.
+- `Text`, `Badge`: result count, applied search and group context.
+- `SegmentedControl`: mutually exclusive result presentations.
+- `Switch`: contextual inclusion of empty shelves.
+- `DataTable`: sorting, pagination, page-size selection and grouped summaries.
+
+Keep keyboard submission and explicit links on group labels. Reset pagination after searches, view changes and group navigation. An empty result state should explain how to recover and offer “View all articles”.
+
+In production, connect the article and location inventories to the backend, use the same search semantics for counts and rows, and distinguish loading or request failures from a genuine empty result. The demo does not perform network searches or change stock.
+
+## Two proposals for searching a pasted reference list
+
+Both proposals keep the search scope separate from the result presentation. Lists use **exact identifier matching with OR semantics**: an article matches if its complete reference appears in the list. They do not concatenate the pasted column into a single substring query.
+
+### Proposal 1 — smart paste in the existing search
+
+Keep one main search field and add a permanent hint that an Excel reference column can be pasted. On a multi-line paste, replace the normal query controls with a compact, explicitly labelled reference-list summary. Show a count, a short reference preview and “Edit list”. A visible “Paste a reference list” action makes the feature discoverable without knowing the shortcut.
+
+No search runs on paste. The user verifies the detected list, then chooses “Search N references”. The exact-match scope is clearly announced, including when the previously selected field was a shelf or zone. Users can return to the simple search.
+
+This option keeps everyday text search lightweight. Its trade-off is a layout change on paste, which needs clear feedback and an easy way back.
+
+<Canvas of={Stories.SmartPasteWithList} />
+
+### Proposal 2 — a dedicated reference-list mode
+
+Use a visible **Simple search / Reference list** control. In list mode, show a labelled multi-line `Textarea`, instructions for copying one Excel column, a parsed reference count and a dedicated “Search N references” action. Keep the raw text visible for inspection and correction.
+
+This option makes batch search explicit and suits frequent spreadsheet workflows. Its trade-off is the extra mode choice and the larger editing area.
+
+<Canvas of={Stories.ExplicitListWithData} />
+
+### Shared rules
+
+- Accept one reference per line, with Windows or Unix line endings. Ignore blank lines and an optional first-row “Reference”, “Référence” or “Ref” header.
+- Keep identifiers as strings, including leading zeros and punctuation. The demo ignores letter case for matching and deduplication; confirm identifier semantics with the backend before integration.
+- Deduplicate references and explain how many duplicates were ignored. Show only a short preview in compact mode, so large lists do not create thousands of chips.
+- Reject multiple non-empty clipboard columns and explain how to recover. Never silently search product names or quantities as if they were identifiers.
+- Require an explicit submission; keep existing results until it occurs. Disable submission for empty or ambiguous lists.
+- After submission, distinguish unique references searched, references found and references without a result. Make missing references available in a selectable text area for copying and correction.
+- Preserve the submitted list when switching between Articles, By shelf and By zone. Empty shelves cannot match a reference list, so their display option is hidden for an applied list.
+- In production, validate batch size and identifier rules with the service and fetch missing-reference results from the backend. The examples use the local demonstration catalogue.
+
+## Keyboard proposal — a search field that expands downwards
+
+The **Keyboard — expandable search** story adds a third interaction to compare with the two batch-entry proposals. The empty field shows “Maj+Entrée pour une recherche multiple”. The “Multiple” button is embedded inside the field and provides the same action for mouse, touch and assistive technology users.
+
+### Keyboard sequence
+
+- With the search field or its collapsed criterion summary focused, **Shift+Enter** expands the editor and focuses it. This shortcut does not submit the search. Tab and Shift+Tab retain their normal navigation behaviour; Enter on the embedded Multiple button also opens the editor.
+- **Enter** in the editor creates another criterion. **Ctrl/Command+Enter** submits the form.
+- **Escape** collapses the editor and restores focus to the compact control. It preserves all entered values and does not submit a search.
+- With several values, the compact control displays a prominent **N criteria** badge instead of the empty-field placeholder. Activate the summary or the Multiple button to edit the preserved list again.
+- With zero or one value, collapsing returns to a normal editable search field. A separate Clear action removes all draft criteria.
+- Pasting an Excel column directly into the compact field also shows its parsed criterion count. Ambiguous multi-column input stays available for correction and blocks submission.
+
+The currently selected attribute stays in effect for multiple values. Reference lists use exact identifier matches; shelf, zone and all-field criteria preserve the corresponding text-search semantics. Matching any criterion includes the article. Optional column headers are interpreted for the selected field. Counts represent unique values; duplicates and blank lines are ignored.
+
+Instructions and parsing feedback are displayed inside the expanded composite field. The collapsed field has no visible helper text beneath it. Applied results and draft input remain distinct until submission. Changing the selected field or editing a collapsed list never silently launches a new search.
+
+<Canvas of={Stories.KeyboardWithCriteria} />
+
+<Canvas of={Stories.KeyboardExpanded} />

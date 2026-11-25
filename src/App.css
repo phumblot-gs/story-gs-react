@@ -5,6 +5,14 @@
   text-align: center;
 }
 
+#root:has(.gs-reference-import),
+#root:has(.gs-sso-backoffice),
+#root:has(.gs-article-search) {
+  max-width: none;
+  padding: 0;
+  text-align: left;
+}
+
 .logo {
   height: 6em;
   padding: 1.5em;
