@@ -3,6 +3,7 @@ import * as ContextMenuPrimitive from "@radix-ui/react-context-menu"
 import { Check, ChevronRight, Circle } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import { stopScrollLockPropagation } from "@/lib/scroll-lock"
 import { useCollisionPadding } from "@/contexts/CollisionInsetsContext"
 
 const ContextMenu = ContextMenuPrimitive.Root
@@ -41,7 +42,7 @@ ContextMenuSubTrigger.displayName = ContextMenuPrimitive.SubTrigger.displayName
 const ContextMenuSubContent = React.forwardRef<
   React.ElementRef<typeof ContextMenuPrimitive.SubContent>,
   React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.SubContent>
->(({ className, collisionPadding, ...props }, ref) => (
+>(({ className, collisionPadding, onWheel, onTouchMove, ...props }, ref) => (
   <ContextMenuPrimitive.SubContent
     ref={ref}
     collisionPadding={useCollisionPadding(collisionPadding)}
@@ -50,6 +51,9 @@ const ContextMenuSubContent = React.forwardRef<
       className
     )}
     {...props}
+    // Menu non modal dans un SidePanel ou un Dialog : voir scroll-lock.
+    onWheel={stopScrollLockPropagation(onWheel)}
+    onTouchMove={stopScrollLockPropagation(onTouchMove)}
   />
 ))
 ContextMenuSubContent.displayName = ContextMenuPrimitive.SubContent.displayName
@@ -57,7 +61,7 @@ ContextMenuSubContent.displayName = ContextMenuPrimitive.SubContent.displayName
 const ContextMenuContent = React.forwardRef<
   React.ElementRef<typeof ContextMenuPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.Content>
->(({ className, collisionPadding, ...props }, ref) => (
+>(({ className, collisionPadding, onWheel, onTouchMove, ...props }, ref) => (
   <ContextMenuPrimitive.Portal>
     <ContextMenuPrimitive.Content
       ref={ref}
@@ -67,6 +71,9 @@ const ContextMenuContent = React.forwardRef<
         className
       )}
       {...props}
+      // Menu non modal dans un SidePanel ou un Dialog : voir scroll-lock.
+      onWheel={stopScrollLockPropagation(onWheel)}
+      onTouchMove={stopScrollLockPropagation(onTouchMove)}
     />
   </ContextMenuPrimitive.Portal>
 ))

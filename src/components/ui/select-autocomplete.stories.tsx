@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { SelectAutocomplete, SelectAutocompleteOption, SelectedOption } from "./select-autocomplete";
-import { Layout, VStack } from "@/components/layout";
+import { Layout, Modal, SidePanel, VStack } from "@/components/layout";
+import { Dialog, DialogContent, DialogTitle } from "./dialog";
+import { Button } from "./button";
 import { useState } from "react";
 
 const meta: Meta<typeof SelectAutocomplete> = {
@@ -659,3 +661,99 @@ export const WithDebug: Story = {
   },
 };
 
+const SUPPLIERS: SelectAutocompleteOption[] = Array.from({ length: 60 }, (_, i) => ({
+  value: `supplier-${i}`,
+  label: `Fournisseur ${String(i + 1).padStart(2, "0")}`,
+}));
+
+function SupplierField() {
+  const [value, setValue] = useState("");
+  return (
+    <SelectAutocomplete
+      options={SUPPLIERS}
+      value={value}
+      onChange={(selected) => setValue(selected.value)}
+      placeholder="Fournisseur"
+      menuMaxHeight="max-h-[288px]"
+    />
+  );
+}
+
+const SCROLL_NOTE = "La liste défile à la molette et au doigt, malgré le verrou de défilement de la fenêtre.";
+
+function SupplierInModal() {
+  const [open, setOpen] = useState(true);
+  return (
+    <>
+      <Button onClick={() => setOpen(true)}>Ouvrir la fenêtre</Button>
+      <Modal isOpen={open} onClose={() => setOpen(false)} title="Nouveau projet" header={<span>Nouveau projet</span>}>
+        <VStack gap={2} padding={0}>
+          <SupplierField />
+          <p style={{ fontSize: 12 }}>{SCROLL_NOTE}</p>
+        </VStack>
+      </Modal>
+    </>
+  );
+}
+
+export const InsideModal: Story = {
+  name: "Dans une Modal",
+  render: () => <SupplierInModal />,
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Liste rendue dans un Portal, hors de la fenêtre : le menu arrête la propagation de wheel / touchmove pour que le verrou de défilement de la Modal ne les annule pas.",
+      },
+    },
+  },
+};
+
+function SupplierInSidePanel() {
+  const [open, setOpen] = useState(true);
+  return (
+    <>
+      <Button onClick={() => setOpen(true)}>Ouvrir le panneau</Button>
+      <SidePanel isOpen={open} onClose={() => setOpen(false)} title="Nouveau projet">
+        <VStack gap={2} padding={4}>
+          <SupplierField />
+          <p style={{ fontSize: 12 }}>{SCROLL_NOTE}</p>
+        </VStack>
+      </SidePanel>
+    </>
+  );
+}
+
+export const InsideSidePanel: Story = {
+  name: "Dans un SidePanel",
+  render: () => <SupplierInSidePanel />,
+};
+
+function SupplierInDialog() {
+  const [open, setOpen] = useState(true);
+  return (
+    <>
+      <Button onClick={() => setOpen(true)}>Ouvrir le Dialog</Button>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent aria-describedby={undefined}>
+          <DialogTitle>Nouveau projet</DialogTitle>
+          <SupplierField />
+          <p style={{ fontSize: 12 }}>{SCROLL_NOTE}</p>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+}
+
+export const InsideDialog: Story = {
+  name: "Dans un Dialog Radix",
+  render: () => <SupplierInDialog />,
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Overlay et fenêtre côte à côte (structure shadcn) : sans la correction, le verrou de défilement de l'overlay annulait la molette dans la liste.",
+      },
+    },
+  },
+};

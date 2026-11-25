@@ -3,6 +3,7 @@ import * as MenubarPrimitive from "@radix-ui/react-menubar"
 import { Check, ChevronRight, Circle } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import { stopScrollLockPropagation } from "@/lib/scroll-lock"
 import { useCollisionPadding } from "@/contexts/CollisionInsetsContext"
 
 const MenubarMenu = MenubarPrimitive.Menu
@@ -69,7 +70,7 @@ MenubarSubTrigger.displayName = MenubarPrimitive.SubTrigger.displayName
 const MenubarSubContent = React.forwardRef<
   React.ElementRef<typeof MenubarPrimitive.SubContent>,
   React.ComponentPropsWithoutRef<typeof MenubarPrimitive.SubContent>
->(({ className, collisionPadding, ...props }, ref) => (
+>(({ className, collisionPadding, onWheel, onTouchMove, ...props }, ref) => (
   <MenubarPrimitive.SubContent
     ref={ref}
     collisionPadding={useCollisionPadding(collisionPadding)}
@@ -78,6 +79,9 @@ const MenubarSubContent = React.forwardRef<
       className
     )}
     {...props}
+    // Menu non modal dans un SidePanel ou un Dialog : voir scroll-lock.
+    onWheel={stopScrollLockPropagation(onWheel)}
+    onTouchMove={stopScrollLockPropagation(onTouchMove)}
   />
 ))
 MenubarSubContent.displayName = MenubarPrimitive.SubContent.displayName
@@ -87,7 +91,7 @@ const MenubarContent = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof MenubarPrimitive.Content>
 >(
   (
-    { className, align = "start", alignOffset = -4, sideOffset = 8, collisionPadding, ...props },
+    { className, align = "start", alignOffset = -4, sideOffset = 8, collisionPadding, onWheel, onTouchMove, ...props },
     ref
   ) => (
     <MenubarPrimitive.Portal>
@@ -102,6 +106,9 @@ const MenubarContent = React.forwardRef<
           className
         )}
         {...props}
+        // Menu non modal dans un SidePanel ou un Dialog : voir scroll-lock.
+        onWheel={stopScrollLockPropagation(onWheel)}
+        onTouchMove={stopScrollLockPropagation(onTouchMove)}
       />
     </MenubarPrimitive.Portal>
   )

@@ -127,11 +127,14 @@ describe("marge haute réservée (CollisionInsetsProvider)", () => {
       expect(last(captured.popover)).toBe(8);
     });
 
-    it("ButtonThumbnailStars : collisionPadding 8 et hauteur max historique", async () => {
+    it("ButtonThumbnailStars : collisionPadding 8, hauteur bornée par la hauteur disponible même sans marge", async () => {
+      // 1.48.1 : sans cette borne, une longue liste ouverte au milieu de l'écran en sortait.
       render(<ButtonThumbnailStars value={3} defaultOpen />);
       const menu = await screen.findByRole("menu");
       expect(last(captured.dropdown)).toBe(8);
-      expect(menu).toHaveClass("max-h-[calc(100vh-2rem)]");
+      expect(menu).toHaveClass(
+        "max-h-[min(calc(100vh-2rem),var(--radix-dropdown-menu-content-available-height))]",
+      );
     });
 
     it("ButtonMenu de l'ActionBar : collisionPadding 8", async () => {
@@ -318,20 +321,20 @@ describe("MultiSelect", () => {
   };
   const options = [{ value: "pe27", label: "PE27" }];
 
-  it("sans provider : collisionPadding inchangé (défaut Radix)", () => {
+  it("sans provider : collisionPadding 8", () => {
     render(<MultiSelect options={options} />);
     openMultiSelect();
     expect(screen.getByRole("listbox")).toBeInTheDocument();
-    expect(last(captured.popover)).toBeUndefined();
+    expect(last(captured.popover)).toBe(8);
   });
 
-  it("avec { top: 60 } : la marge est réservée en haut", () => {
+  it("avec { top: 60 } : la marge s'ajoute aux 8 px du haut", () => {
     render(
       <CollisionInsetsProvider insets={{ top: 60 }}>
         <MultiSelect options={options} />
       </CollisionInsetsProvider>,
     );
     openMultiSelect();
-    expect(last(captured.popover)).toEqual({ top: 60, right: 0, bottom: 0, left: 0 });
+    expect(last(captured.popover)).toEqual(reserved);
   });
 });

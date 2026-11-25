@@ -4,6 +4,7 @@ import * as React from "react";
 import * as PopoverPrimitive from "@radix-ui/react-popover";
 import { Check, Minus } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { stopScrollLockPropagation } from "@/lib/scroll-lock";
 import { BgProvider, useBgContext } from "@/components/layout/BgContext";
 import { useCollisionPadding } from "@/contexts/CollisionInsetsContext";
 import { useTranslationSafe, type TranslationMap } from "@/contexts/TranslationContext";
@@ -254,7 +255,8 @@ const MultiSelect = React.forwardRef<HTMLDivElement, MultiSelectProps>(
     const bg = useBgContext();
     // Marges réservées par l'hôte (CollisionInsetsProvider) ; la hauteur du menu suit déjà la hauteur
     // disponible calculée par Radix, qui en tient compte.
-    const collisionPadding = useCollisionPadding(undefined);
+    // 8 px du bord de la fenêtre, comme ButtonMenu et le menu des motifs de Thumbnail.
+    const collisionPadding = useCollisionPadding(8);
     const { t } = useTranslationSafe(translations, language);
     const placeholderText = placeholder ?? t("multiSelect.placeholder");
     const searchPlaceholderText = searchPlaceholder ?? t("multiSelect.search");
@@ -713,6 +715,10 @@ const MultiSelect = React.forwardRef<HTMLDivElement, MultiSelectProps>(
               palette.menu,
               popoverClassName
             )}
+            // Même protection que les menus non modaux (voir scroll-lock), sans effet visible ici : le Popover
+            // modal pose déjà son propre verrou, qui laisse défiler la liste.
+            onWheel={stopScrollLockPropagation()}
+            onTouchMove={stopScrollLockPropagation()}
             onOpenAutoFocus={(e) => {
               e.preventDefault();
               searchRef.current?.focus();
@@ -758,7 +764,7 @@ const MultiSelect = React.forwardRef<HTMLDivElement, MultiSelectProps>(
               aria-multiselectable="true"
               aria-label={ariaLabel}
               aria-labelledby={ariaLabel ? undefined : ariaLabelledBy}
-              className={cn("min-h-0 flex-1 overflow-y-auto py-1", menuMaxHeight)}
+              className={cn("min-h-0 flex-1 overflow-y-auto overscroll-contain py-1", menuMaxHeight)}
             >
               {showSelectAll && (
                 <div
