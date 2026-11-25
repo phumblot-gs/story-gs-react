@@ -55,8 +55,8 @@ export interface ButtonThumbnailStarsProps extends Omit<ToggleProps, "onClick" |
   debug?: boolean
   /**
    * Hauteur maximale du menu déroulant.
-   * Par défaut : `max-h-[calc(100vh-2rem)]` pour s'adapter à l'espace disponible, borné aussi par la place
-   * laissée par les marges de `CollisionInsetsProvider` quand il en réserve.
+   * Par défaut : `max-h-[calc(100vh-2rem)]`, borné aussi par la hauteur disponible du côté où le menu s'ouvre
+   * (marges de `CollisionInsetsProvider` déduites) : une longue liste défile au lieu de sortir de l'écran.
    */
   menuMaxHeight?: string
   /**

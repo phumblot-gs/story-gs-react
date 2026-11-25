@@ -62,25 +62,17 @@ export function useCollisionPadding(padding: CollisionPadding | undefined): Coll
   return Object.fromEntries(SIDES.map((side) => [side, base(side) + Math.max(0, insets[side] ?? 0)]));
 }
 
-// Within insets, also bounded by Radix's available height, which accounts for collisionPadding (hence the insets).
+// Default max height of the library's menus: the historical cap, also bounded by the height Radix finds available on
+// the side where the menu opens (which accounts for collisionPadding, hence the insets). Without that bound, a long
+// list opened mid-screen overflowed the viewport, whatever the insets.
 const MENU_MAX_HEIGHT = {
-  "dropdown-menu": {
-    default: "max-h-[calc(100vh-2rem)]",
-    withinInsets: "max-h-[min(calc(100vh-2rem),var(--radix-dropdown-menu-content-available-height))]",
-  },
-  popover: {
-    default: "max-h-[calc(100vh-2rem)]",
-    withinInsets: "max-h-[min(calc(100vh-2rem),var(--radix-popover-content-available-height))]",
-  },
-  select: {
-    default: "max-h-96",
-    withinInsets: "max-h-[min(24rem,var(--radix-select-content-available-height))]",
-  },
+  "dropdown-menu": "max-h-[min(calc(100vh-2rem),var(--radix-dropdown-menu-content-available-height))]",
+  popover: "max-h-[min(calc(100vh-2rem),var(--radix-popover-content-available-height))]",
+  select: "max-h-[min(24rem,var(--radix-select-content-available-height))]",
 } as const;
 
 /** Default max-height class of a library menu, unless `custom` is given. */
 export function useMenuMaxHeight(custom: string | undefined, kind: keyof typeof MENU_MAX_HEIGHT) {
-  const insets = useCollisionInsets();
   if (custom !== undefined) return custom;
-  return MENU_MAX_HEIGHT[kind][hasInsets(insets) ? "withinInsets" : "default"];
+  return MENU_MAX_HEIGHT[kind];
 }

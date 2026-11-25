@@ -92,8 +92,8 @@ export interface ButtonMenuSmallProps extends Omit<ToggleProps, "onClick" | "isA
   debug?: boolean
   /**
    * Maximum height of the dropdown menu.
-   * Default: `max-h-[calc(100vh-2rem)]` to adapt to available space, also bounded by the space left
-   * by `CollisionInsetsProvider` insets when some are reserved.
+   * Default: `max-h-[calc(100vh-2rem)]`, also bounded by the height available on the side where the menu
+   * opens (which leaves out `CollisionInsetsProvider` insets), so a long list scrolls instead of leaving the screen.
    * You can customize with Tailwind classes like `max-h-[40vh]`, `max-h-96`, etc.
    * The menu will automatically enable vertical scrolling when content exceeds this height.
    */

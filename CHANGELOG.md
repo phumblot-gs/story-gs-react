@@ -5,6 +5,56 @@ Tous les changements notables de ce projet seront documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
+## [1.48.1] - 2026-11-25
+
+### Corrigé
+
+- **Liste qui ne défile pas dans un `SidePanel` ou un `Dialog`** (remonté par gs-mediagrade sur `SelectAutocomplete`,
+  1.48.0) : dans un `SidePanel` ou un `Dialog` Radix, la liste ouverte d'un `SelectAutocomplete` ne défilait ni à la
+  molette ni au doigt ; seules les flèches atteignaient les options du bas. Le verrou de défilement de la fenêtre
+  (react-remove-scroll, écouteur `wheel` / `touchmove` sur `document`) n'accepte que les évènements venus de
+  l'overlay ou de la fenêtre, et annulait ceux de la liste, rendue dans un Portal sous `<body>`. La `Modal` de la
+  librairie n'était pas touchée : sa fenêtre est rendue dans l'overlay, l'évènement remonte donc par lui.
+  Les menus non modaux de la librairie arrêtent désormais la propagation de `wheel` et `touchmove` (helper interne
+  `stopScrollLockPropagation`) : le verrou ne les voit plus, la liste défile, et la page derrière la fenêtre reste
+  verrouillée. Mesuré dans Chromium (liste de 1 220 px pour 288 px visibles) : `scrollTop` restait à 0 dans un
+  `SidePanel` et un `Dialog`, il passe à 200 après un cran de molette.
+  - Règle : tout menu non modal de la librairie arrête la molette et le doigt. Un menu modal pose son propre verrou,
+    qui passe devant celui de la fenêtre, et défilait déjà ; on ne peut pas tout passer en modal (le champ de
+    `SelectAutocomplete` est hors du menu, les menus `ButtonThumbnail*` sont non modaux exprès pour laisser la grille
+    utilisable).
+  - Corrigés : `SelectAutocomplete`, `PopoverContent` (donc le menu des motifs de refus de `Thumbnail`,
+    `LanguageSwitcher`, les popovers d'émojis et de lien des éditeurs), `DropdownMenuContent` et
+    `DropdownMenuSubContent` en `modal={false}` (menus `ButtonThumbnail*`, menu de `RichTextEditor`),
+    `ContextMenuContent` / `SubContent` et `MenubarContent` / `SubContent` (exportés, non utilisés par les composants
+    de la librairie ; `Menubar` n'est jamais modal).
+  - Déjà corrects, mesurés dans Chromium dans un `SidePanel` : `ButtonMenu`, `ButtonMenuSmall`, `ButtonMenuStatus`
+    et les autres `DropdownMenu` modaux, `Select`, `MultiSelect` (Popover modal, reçoit la même protection sans effet
+    visible), et les suggestions `@` / `{{` de `CommentComposer` et `RichTextEditor`, rendues dans la fenêtre qui
+    contient l'éditeur.
+  - Les `onWheel` / `onTouchMove` passés à ces menus sont toujours appelés. En
+    revanche, ces évènements ne remontent plus au-delà du menu : un écouteur `wheel` posé sur `document` ou `window`
+    ne reçoit plus la molette faite dans un menu ouvert.
+  - Listes de `SelectAutocomplete` et `MultiSelect` en `overscroll-contain` : arrivées en bout de liste, elles ne
+    font pas défiler ce qui est derrière.
+- Stories `UI/SelectAutocomplete` : « Dans une Modal », « Dans un SidePanel », « Dans un Dialog Radix ».
+- **Menu plus haut que la fenêtre** : une longue liste ouverte au milieu de l'écran sortait par le bas (story
+  `UI/SelectAutocomplete` → *With Many Options* : 668 px demandés pour 340 px disponibles sous le champ). La hauteur
+  max par défaut des menus de la librairie (`calc(100vh - 2rem)`, et `max-h-96` pour `SelectContent`) est désormais
+  toujours bornée par la hauteur disponible du côté où le menu s'ouvre, calculée par Radix ; en 1.47.0, elle ne
+  l'était qu'avec des marges `collisionInsets`. La liste défile au lieu de sortir de l'écran. Concerne
+  `SelectAutocomplete`, `ButtonMenu`, `ButtonMenuSmall`, `ButtonMenuStatus`, `ButtonThumbnail*` et `SelectContent`.
+  Un `menuMaxHeight` fourni par l'appelant reste appliqué tel quel.
+- `SelectAutocomplete` et `MultiSelect` : marge de 8 px avec le bord de la fenêtre (`collisionPadding`, 0 avant),
+  comme `ButtonMenu` et le menu des motifs de refus de `Thumbnail` ; les marges `collisionInsets` s'y ajoutent.
+
+### Modifié
+
+- `SelectAutocomplete` : au focus, tout le texte du champ est sélectionné. Taper remplace le libellé de l'option
+  choisie au lieu de s'y ajouter (avant : « Option 1xyz »), sans passer par la croix. Suggestion de gs-mediagrade.
+  Au clic qui donne le focus, la sélection est refaite après le clic (le navigateur y place le curseur) ; un clic
+  dans le champ déjà actif place le curseur normalement.
+
 ## [1.48.0] - 2026-11-25
 
 ### Ajouté

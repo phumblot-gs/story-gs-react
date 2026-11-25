@@ -3,6 +3,7 @@ import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu"
 import { Check, ChevronRight, Circle } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import { stopScrollLockPropagation } from "@/lib/scroll-lock"
 import { useCollisionPadding } from "@/contexts/CollisionInsetsContext"
 import { DeferredTrigger, useDeferredRoot, type DeferredRootValue } from "@/components/ui/deferred-overlays"
 
@@ -70,7 +71,7 @@ DropdownMenuSubTrigger.displayName =
 const DropdownMenuSubContent = React.forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.SubContent>,
   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.SubContent>
->(({ className, collisionPadding, ...props }, ref) => (
+>(({ className, collisionPadding, onWheel, onTouchMove, ...props }, ref) => (
   <DropdownMenuPrimitive.SubContent
     ref={ref}
     collisionPadding={useCollisionPadding(collisionPadding)}
@@ -79,6 +80,9 @@ const DropdownMenuSubContent = React.forwardRef<
       className
     )}
     {...props}
+    // Menu non modal dans un SidePanel ou un Dialog : voir scroll-lock.
+    onWheel={stopScrollLockPropagation(onWheel)}
+    onTouchMove={stopScrollLockPropagation(onTouchMove)}
   />
 ))
 DropdownMenuSubContent.displayName =
@@ -87,7 +91,7 @@ DropdownMenuSubContent.displayName =
 const DropdownMenuContent = React.forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Content>
->(({ className, sideOffset = 4, collisionPadding, ...props }, ref) => {
+>(({ className, sideOffset = 4, collisionPadding, onWheel, onTouchMove, ...props }, ref) => {
   const padding = useCollisionPadding(collisionPadding)
   // Racine différée : menu fermé, rien à rendre.
   if (React.useContext(DeferredMenuContext)) return null
@@ -102,6 +106,9 @@ const DropdownMenuContent = React.forwardRef<
         className
       )}
       {...props}
+      // Menu non modal (`modal={false}`) dans un SidePanel ou un Dialog : voir scroll-lock.
+      onWheel={stopScrollLockPropagation(onWheel)}
+      onTouchMove={stopScrollLockPropagation(onTouchMove)}
     />
   </DropdownMenuPrimitive.Portal>
   )

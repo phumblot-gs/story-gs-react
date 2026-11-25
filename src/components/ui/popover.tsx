@@ -3,6 +3,7 @@ import * as React from "react"
 import * as PopoverPrimitive from "@radix-ui/react-popover"
 
 import { cn } from "@/lib/utils"
+import { stopScrollLockPropagation } from "@/lib/scroll-lock"
 import { DeferredTrigger, useDeferredRoot, type DeferredRootValue } from "@/components/ui/deferred-overlays"
 import { useCollisionPadding } from "@/contexts/CollisionInsetsContext"
 
@@ -36,7 +37,7 @@ PopoverTrigger.displayName = PopoverPrimitive.Trigger.displayName
 const PopoverContent = React.forwardRef<
   React.ElementRef<typeof PopoverPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof PopoverPrimitive.Content>
->(({ className, align = "center", sideOffset = 4, collisionPadding, ...props }, ref) => {
+>(({ className, align = "center", sideOffset = 4, collisionPadding, onWheel, onTouchMove, ...props }, ref) => {
   const padding = useCollisionPadding(collisionPadding)
   // Racine différée : popover fermé, rien à rendre.
   if (React.useContext(DeferredPopoverContext)) return null
@@ -52,6 +53,9 @@ const PopoverContent = React.forwardRef<
         className
       )}
       {...props}
+      // Dans un SidePanel ou un Dialog, le verrou de défilement annulerait la molette (voir scroll-lock).
+      onWheel={stopScrollLockPropagation(onWheel)}
+      onTouchMove={stopScrollLockPropagation(onTouchMove)}
     />
   </PopoverPrimitive.Portal>
   )
